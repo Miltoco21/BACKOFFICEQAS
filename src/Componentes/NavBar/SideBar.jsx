@@ -53,8 +53,6 @@ export default function PermanentDrawerLeft() {
   useEffect(()=>{
     if(currentUrl == ""){
       var urlArr = window.location.href.split("/")
-      console.log("urlArr:")
-      console.log(urlArr)
       if( urlArr.length > 4 ){
         setSubCurrentUrl("/" + urlArr[4] )
       }
@@ -117,7 +115,6 @@ export default function PermanentDrawerLeft() {
           
           icon: <Settings />,
           action: ()=>{
-            console.log("ver config")
             setShowScreenConfig(true)
           }
         }
@@ -143,13 +140,6 @@ export default function PermanentDrawerLeft() {
   },[menuItems])
 
 
-  useEffect(()=>{
-    console.log("subcurrent es: " + subCurrentUrl)
-
-  },[subCurrentUrl])
-
-
-
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -169,13 +159,6 @@ export default function PermanentDrawerLeft() {
         <Divider />
         <List>
           {currentUrl != "" && menuItems.length>0 && menuItems.map((item) => {
-            // console.log("currentUrl:")
-            // console.log(currentUrl)
-            // console.log("item:")
-            // console.log(item)
-            // console.log("es el current?" + ( currentUrl == item.link  ? "si" : "no") )
-
-
             return(
             <React.Fragment key={item.text}>
               <ListItem disablePadding>
