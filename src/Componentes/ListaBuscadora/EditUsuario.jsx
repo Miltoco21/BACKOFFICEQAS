@@ -313,8 +313,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               error={Boolean(errores.selectedRegion)}
               helperText={errores.selectedRegion}
             >
-              {regionOptions.map((region) => (
-                <MenuItem key={region.regionID} value={region.regionID}>
+              {regionOptions.map((region,ix) => (
+                <MenuItem key={ix} value={region.regionID}>
                   {region.regionNombre}
                 </MenuItem>
               ))}
@@ -330,8 +330,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               error={Boolean(errores.comuna)}
               helperText={errores.comuna}
             >
-              {comunaOptions.map((comuna) => (
-                <MenuItem key={comuna} value={comuna}>
+              {comunaOptions.map((comuna,ix) => (
+                <MenuItem key={ix} value={comuna}>
                   {comuna}
                 </MenuItem>
               ))}
@@ -367,8 +367,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               error={Boolean(errores.selectedRol)}
               helperText={errores.selectedRol}
             >
-              {rolesOptions.map((rol) => (
-                <MenuItem key={rol} value={rol}>
+              {rolesOptions.map((rol,ix) => (
+                <MenuItem key={ix} value={rol}>
                   {rol}
                 </MenuItem>
               ))}

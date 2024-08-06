@@ -39,6 +39,9 @@ export default function PermanentDrawerLeft() {
   const [openSubMenu, setOpenSubMenu] = useState({});
   const [showScreenConfig, setShowScreenConfig] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
+  const [currentUrl, setCurrentUrl] = useState("");
+  const [subCurrentUrl, setSubCurrentUrl] = useState("");
+
 
   const handleSubMenuClick = (text) => {
     setOpenSubMenu((prevOpenSubMenu) => ({
@@ -48,6 +51,18 @@ export default function PermanentDrawerLeft() {
   };
 
   useEffect(()=>{
+    if(currentUrl == ""){
+      var urlArr = window.location.href.split("/")
+      console.log("urlArr:")
+      console.log(urlArr)
+      if( urlArr.length > 4 ){
+        setSubCurrentUrl("/" + urlArr[4] )
+      }
+      urlArr.splice(0,3)
+      setCurrentUrl("/" + urlArr[0])
+    }
+
+
     if(menuItems.length == 0){
       var menuItemsBase = [
         { text: "Home", link: "/", icon: <HomeIcon /> },
@@ -112,7 +127,28 @@ export default function PermanentDrawerLeft() {
       ];
       setMenuItems(menuItemsBase)
     }
+
+    
+
   },[])
+
+  useEffect(()=>{
+    // console.log("cambio items")
+    menuItems.forEach((itemx,ix)=>{
+      if(itemx.link == currentUrl){
+        handleSubMenuClick(itemx.text)
+      }
+    })
+
+  },[menuItems])
+
+
+  useEffect(()=>{
+    console.log("subcurrent es: " + subCurrentUrl)
+
+  },[subCurrentUrl])
+
+
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -132,7 +168,15 @@ export default function PermanentDrawerLeft() {
       >
         <Divider />
         <List>
-          {menuItems.length>0 && menuItems.map((item) => (
+          {currentUrl != "" && menuItems.length>0 && menuItems.map((item) => {
+            // console.log("currentUrl:")
+            // console.log(currentUrl)
+            // console.log("item:")
+            // console.log(item)
+            // console.log("es el current?" + ( currentUrl == item.link  ? "si" : "no") )
+
+
+            return(
             <React.Fragment key={item.text}>
               <ListItem disablePadding>
                 <Link
@@ -142,10 +186,18 @@ export default function PermanentDrawerLeft() {
                     )}
                   }}
                   to={item.link}
-                  style={{ textDecoration: "none", color: "inherit" }}
+                  style={{ 
+                    textDecoration: "none", 
+                    width:"100%",
+                    backgroundColor:(currentUrl == item.link ? "#4d4d4d" : "transparent"),
+                    color:(currentUrl == item.link ? "whitesmoke" : "black")
+                  }}
                 >
                   <ListItemButton onClick={() => handleSubMenuClick(item.text)}>
-                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemIcon style={{
+                      backgroundColor:(currentUrl == item.link ? "#4d4d4d" : "transparent"),
+                      color:(currentUrl == item.link ? "whitesmoke" : "black")
+                    }}>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />
                     {item.subMenuItems ? (
                       openSubMenu[item.text] ? <ExpandLess /> : <ExpandMore />
@@ -155,35 +207,47 @@ export default function PermanentDrawerLeft() {
               </ListItem>
               {item.subMenuItems && openSubMenu[item.text] && (
                 <List component="div" disablePadding>
-                  {item.subMenuItems.map((subItem) => (
+                  {item.subMenuItems.map((subItem) => {
+                    console.log("")
+                    console.log("subItem:")
+                    console.log(subItem)
+                    console.log("la union de currents seria:")
+                    console.log(currentUrl + subCurrentUrl)
+                    return(
                     <ListItem key={subItem.text} disablePadding>
                       <Link
                         to={subItem.link}
-                        style={{ textDecoration: "none", color: "inherit" }}
-                      >
+                        style={{
+                          textDecoration: "none",
+                          color: "inherit",
+                          backgroundColor:(currentUrl + subCurrentUrl == subItem.link ? "#A0A0A0" : "transparent"),
+                          color: "black"
+                        }}
+                        >
+
                         <ListItemButton>
                           <ListItemIcon />
-                          <ListItemIcon>{subItem.icon}</ListItemIcon>
+                          <ListItemIcon style={{
+                            color:(currentUrl + subCurrentUrl == item.link ? "whitesmoke" : "black")
+                          }}>{subItem.icon}</ListItemIcon>
                           <ListItemText primary={subItem.text} />
                         </ListItemButton>
                       </Link>
                     </ListItem>
-                  ))}
+                  )
+                }
+                )
+                }
                 </List>
               )}
             </React.Fragment>
-          ))}
+
+          )}
+        )}
+
         </List>
       </Drawer>
-      <IconButton
-        onClick={()=>{ setShowScreenConfig(true) }} 
-        edge="end"
-        >
-        <Settings />
-      </IconButton>
       <ScreenDialogConfig openDialog={showScreenConfig} setOpenDialog={setShowScreenConfig} />
-
-
     </Box>
   );
 }

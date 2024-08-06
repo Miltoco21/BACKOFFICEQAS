@@ -32,7 +32,6 @@ export default function Usuarios() {
     <div>
       <Box sx={{ display: "flex" }}>
         <SideBar  />
-        <Typography>asd</Typography>
         <Box sx={{  flex: 1 }}>
           <Button
             variant="outlined"
