@@ -220,6 +220,7 @@ export default function PermanentDrawerLeft() {
                         style={{
                           textDecoration: "none",
                           color: "inherit",
+                          width:"100%",
                           backgroundColor:(currentUrl + subCurrentUrl == subItem.link ? "#A0A0A0" : "transparent"),
                           color: "black"
                         }}
@@ -227,9 +228,7 @@ export default function PermanentDrawerLeft() {
 
                         <ListItemButton>
                           <ListItemIcon />
-                          <ListItemIcon style={{
-                            color:(currentUrl + subCurrentUrl == item.link ? "whitesmoke" : "black")
-                          }}>{subItem.icon}</ListItemIcon>
+                          <ListItemIcon>{subItem.icon}</ListItemIcon>
                           <ListItemText primary={subItem.text} />
                         </ListItemButton>
                       </Link>
