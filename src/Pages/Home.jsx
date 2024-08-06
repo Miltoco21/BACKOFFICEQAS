@@ -1,61 +1,94 @@
-/* eslint-disable no-undef */
-/* eslint-disable react-refresh/only-export-components */
-/* eslint-disable no-unused-vars */
-import React from "react";
-import CssBaseline from "@mui/material/CssBaseline";
-import { Grid, Container } from "@mui/material";
+import React, { useState } from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { useNavigate } from 'react-router-dom';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'; // Importar el icono
+import SideBar from '../Componentes/NavBar/SideBar';
+import Card2 from '../Componentes/Home/Card2';
 
-import BoxDatosCaja from "../Components/BoxOptions/BoxDatosCaja";
-import BoxGestionCaja from "../Components/BoxOptions/BoxGestionCaja";
+const defaultTheme = createTheme();
 
-import BoxSumaProd from "../Components/BoxOptions/BoxSumaProd";
-import Navbar from "../Components/Navbar/Navbar";
-import BoxBuscador from "../Components/BoxOptions/BoxBuscador";
+const Home = ({ userData, setUserData }) => {
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
-const Home = () => {
+  const handleLogout = () => {
+    setUserData(null);
+    sessionStorage.clear(); // Limpiar sessionStorage
+    navigate('/login');
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <>
+    <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <Container
-        sx={{
-          background: "rgb(146, 181, 176)",
-        }}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Navbar />
-          </Grid>
-
-          {/* Main Content */}
-          <Grid item xs={12}
-          sm={12}
-          md={12}
-          lg={12}>
-            <Grid container>
-              {/* BoxDatosCaja */}
-              <Grid
-                item
-                xs={12}
-                sm={12}
-                md={6}
-                lg={6}
-                // style={{ position: "relative" }}
-              >
-                <BoxDatosCaja />
-                <BoxBuscador />
-
-                <BoxSumaProd />
-              </Grid>
-
-              {/* BoxGestionCaja */}
-              <Grid item xs={12} sm={12} md={6}>
-                <BoxGestionCaja />
-              </Grid>
+      <Box sx={{ display: 'flex' }}>
+        <SideBar />
+        <Box sx={{ flex: 1, p: 3 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h5">
+              Bienvenido, {userData ? `${userData.nombres} ${userData.apellidos}` : 'Usuario'}
+            </Typography>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleClickOpen}
+              startIcon={<ExitToAppIcon />}
+            >
+              Cerrar Sesión
+            </Button>
+          </Box>
+          <Typography variant="h6">
+            Rol: {userData ? userData.rol : 'rol'}
+          </Typography>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Confirmar Cierre de Sesión"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                ¿Estás seguro de que deseas cerrar sesión?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} color="primary">
+                Cancelar
+              </Button>
+              <Button onClick={handleLogout} color="primary" autoFocus>
+                Cerrar Sesión
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            <Grid item xs={12} sm={6} md={4}>
+              <Card2 />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Card2 />
             </Grid>
           </Grid>
-        </Grid>
-      </Container>
-    </>
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 };
 
