@@ -22,10 +22,11 @@ import {
   Select,
   Snackbar
 } from "@mui/material";
+import ModelConfig from "../../Models/ModelConfig";
 
 const IngresoSubFamilias = ({onClose}) => {
   const theme = createTheme();
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
 
   const [errors, setErrors] = useState({ descripcionSubFamilia: "" });

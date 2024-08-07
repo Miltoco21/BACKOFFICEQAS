@@ -15,9 +15,10 @@ import {
   Snackbar,
   Select,
 } from "@mui/material";
+import ModelConfig from "../../Models/ModelConfig";
 
 const IngresoFamilias = ({ onClose }) => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   const [errors, setErrors] = useState({ descripcionFamilia: "" });
   const [categories, setCategories] = useState([]);

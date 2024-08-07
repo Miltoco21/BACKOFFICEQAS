@@ -16,6 +16,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
+import ModelConfig from "../../Models/ModelConfig";
 
 const EditarProducto = ({
   open,
@@ -104,7 +105,7 @@ const EditarProducto = ({
 
     try {
       const response = await axios.put(
-        "https://www.easyposdev.somee.com/api/ProductosTmp/",
+        ModelConfig.get().urlBase + "/ProductosTmp/",
         editProducto
       );
 

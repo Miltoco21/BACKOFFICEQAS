@@ -191,11 +191,6 @@ export default function PermanentDrawerLeft() {
               {item.subMenuItems && openSubMenu[item.text] && (
                 <List component="div" disablePadding>
                   {item.subMenuItems.map((subItem) => {
-                    console.log("")
-                    console.log("subItem:")
-                    console.log(subItem)
-                    console.log("la union de currents seria:")
-                    console.log(currentUrl + subCurrentUrl)
                     return(
                     <ListItem key={subItem.text} disablePadding>
                       <Link

@@ -18,6 +18,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import EditarCategoria from "./EditarCategoria";
+import ModelConfig from "../../Models/ModelConfig";
 
 const ITEMS_PER_PAGE = 10;
 const SearchListCategories = () => {
@@ -49,7 +50,7 @@ const SearchListCategories = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetAllCategorias`
+          ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetAllCategorias`
         );
         console.log("API Response:", response.data.categorias);
         setCategories(response.data.categorias);
@@ -66,7 +67,7 @@ const SearchListCategories = () => {
     const updateCategories = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetAllCategorias`
+          ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetAllCategorias`
         );
         
         if (Array.isArray(response.data.categorias)) {

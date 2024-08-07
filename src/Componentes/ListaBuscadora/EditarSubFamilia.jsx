@@ -14,6 +14,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
+import ModelConfig from "../../Models/ModelConfig";
 
 const EditarSubFamilia = ({
   subfamily,
@@ -29,7 +30,7 @@ const EditarSubFamilia = ({
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   useEffect(() => {
     if (subfamily) {
@@ -53,7 +54,7 @@ const EditarSubFamilia = ({
 
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/UpdateSubFamilia`,
+        `${apiUrl}/NivelMercadoLogicos/UpdateSubFamilia`,
         {
           idSubFamilia: editSubFamily.idSubFamilia,
           descripcionSubFamilia: editSubFamily.descripcion,

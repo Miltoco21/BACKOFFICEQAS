@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import EditarSubFamilia from "./EditarSubFamilia"; // Make sure to provide the correct path
+import ModelConfig from "../../Models/ModelConfig";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -47,10 +48,18 @@ const SearchListSubFamilias = () => {
   };
 
   const updatePageData = () => {
+
+    console.log("setPageSubFamilies:")
+    console.log(filteredSubFamilies.slice(
+      ITEMS_PER_PAGE * (currentPage - 1), // 10 * (1 - 1)///////0
+      ITEMS_PER_PAGE * currentPage ///////// 10 * 1//////////10
+    ))
+
+
     setPageSubFamilies(
       filteredSubFamilies.slice(
-        ITEMS_PER_PAGE * (currentPage - 1),
-        ITEMS_PER_PAGE * currentPage
+        ITEMS_PER_PAGE * (currentPage - 1), // 10 * (1 - 1)///////0
+        ITEMS_PER_PAGE * currentPage ///////// 10 * 1//////////10
       )
     );
   };
@@ -60,6 +69,7 @@ const SearchListSubFamilias = () => {
   };
 
   useEffect(() => {
+    console.log("cantidad de paginas:" + Math.ceil(filteredSubFamilies.length / ITEMS_PER_PAGE))
     setTotalPages(Math.ceil(filteredSubFamilies.length / ITEMS_PER_PAGE));
   }, [filteredSubFamilies]);
 
@@ -67,7 +77,7 @@ const SearchListSubFamilias = () => {
     async function fetchCategories() {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetAllCategorias`
+          ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetAllCategorias`
         );
         setCategories(response.data.categorias);
       } catch (error) {
@@ -83,7 +93,7 @@ const SearchListSubFamilias = () => {
       if (selectedCategoryId !== "") {
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`
+            ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`
           );
           setSubCategories(response.data.subCategorias);
         } catch (error) {
@@ -100,7 +110,7 @@ const SearchListSubFamilias = () => {
       if (selectedSubCategoryId !== "" && selectedCategoryId !== "") {
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}`
+            ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}`
           );
           setFamilies(response.data.familias);
         } catch (error) {
@@ -116,7 +126,7 @@ const SearchListSubFamilias = () => {
     if (selectedFamilyId !== "" && selectedCategoryId !== "" && selectedSubCategoryId !== "") {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${selectedFamilyId}`
+          ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${selectedFamilyId}`
         );
         setSubFamilies(response.data.subFamilias);
       } catch (error) {

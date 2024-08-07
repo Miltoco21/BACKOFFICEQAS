@@ -21,12 +21,13 @@ import {
   Snackbar
 } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import ModelConfig from "../../Models/ModelConfig";
 
 const theme = createTheme();
 
 
 const IngresoCategorias = ({ onSubmitSuccess }) => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   const [descripcionCategoria, setDescripcionCategoria] = useState("");
   const [errors, setErrors] = useState({});
   

@@ -21,9 +21,10 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
+import ModelConfig from "../../Models/ModelConfig";
 
 const Editp2 = ({ product, open, handleClose }) => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   const [editedProduct, setEditedProduct] = useState({});
   const [refresh, setRefresh] = useState(false);
@@ -62,7 +63,7 @@ const Editp2 = ({ product, open, handleClose }) => {
     async function fetchCategories() {
       try {
         const response = await axios.get(
-        `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetAllCategorias`
+        `${apiUrl}/NivelMercadoLogicos/GetAllCategorias`
         );
         console.log("API response:", response.data.categorias); // Add this line
         setCategories(response.data.categorias);
@@ -74,12 +75,16 @@ const Editp2 = ({ product, open, handleClose }) => {
     fetchCategories();
   }, []);
 
+
   useEffect(() => {
     const fetchSubCategories = async () => {
-      if (selectedCategoryId ) {
+      if (selectedCategoryId && categories.length>0 ) {
         try {
+          const categoriaCoincide = categories.find(categoria=> categoria.descripcion ===selectedCategoryId);
+          console.log("categoriaCoincide:")
+          console.log(categoriaCoincide)
           const response = await axios.get(
-            `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${idCategoriaFind.idCategoria}`
+            `${apiUrl}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${categoriaCoincide.idCategoria}`
           );
           
           console.log("Subcategories Response:", response.data.subCategorias);
@@ -101,11 +106,11 @@ const Editp2 = ({ product, open, handleClose }) => {
         try {
           console.log("selectedSubCategoryId", selectedSubCategoryId)
           console.log("subcategories", subcategories)
-          const SubCategoriaFind = subcategoriesFind.find(sc=> sc.descripcion === selectedSubCategoryId);
+          const SubCategoriaFind = subcategories.find(sc=> sc.descripcion === selectedSubCategoryId);
           console.log("idCategoriaFind", SubCategoriaFind)
 
           const response = await axios.get(
-            `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${SubCategoriaFind.idSubcategoria}`
+            `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${SubCategoriaFind.idSubcategoria}`
           );
 
           console.log("n5 Families Response:", response.data.familias);
@@ -131,11 +136,11 @@ const Editp2 = ({ product, open, handleClose }) => {
         try {
           console.log("selectedFamilyId", selectedFamilyId)
           console.log("families", families)
-          const familiaFind = familiesFind.find(f=> f.descripcion === selectedFamilyId)
+          const familiaFind = families.find(f=> f.descripcion === selectedFamilyId)
           console.log("familiaFind", familiaFind)
 
           const response = await axios.get(
-            `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${familiaFind.idFamilia}`
+            `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${familiaFind.idFamilia}`
           );
 
           console.log("n6 SubFamilies Response:", response.data.subFamilias);
@@ -192,8 +197,18 @@ const Editp2 = ({ product, open, handleClose }) => {
   // }, [editedProduct]);
 
   useEffect(() => {
-    setSelectedCategoryId(editedProduct.categoria || "");
-  }, [editedProduct]);
+    if(categories.length>0 && Object.keys(editedProduct).length>0){
+      setSelectedCategoryId(editedProduct.categoria || "");
+      setSelectedSubCategoryId(editedProduct.subCategoria || "");
+      setSelectedFamilyId(editedProduct.familia || "");
+      setSelectedSubFamilyId(editedProduct.subFamilia || "");
+        console.log("cambio producto")
+        console.log(editedProduct)
+        
+        console.log("categories:")
+        console.log(categories)
+    }
+  }, [editedProduct, categories.length]);
 
   // useEffect(() => {
   //   setSelectedSubCategoryId(editedProduct.subCategoria || "");
@@ -229,12 +244,11 @@ const Editp2 = ({ product, open, handleClose }) => {
     event.preventDefault();
 
     const idCategoria = categories.find(categoria=> categoria.descripcion ===editedProduct.categoria);
-    const idSubCategoriaFind = subcategoriesFind.find(scategoria=> scategoria.descripcion === editedProduct.subCategoria);
-    const idFamiliaFind = familiesFind.find(fam=> fam.descripcion === editedProduct.familia);
-    const idSubFamiliaFind = subfamiliesFind.find(sf=> sf.descripcion === editedProduct.subFamilia)
+    const idSubCategoriaFind = subcategories.find(scategoria=> scategoria.descripcion === editedProduct.subCategoria);
+    const idFamiliaFind = families.find(fam=> fam.descripcion === editedProduct.familia);
+    const idSubFamiliaFind = subfamilies.find(sf=> sf.descripcion === editedProduct.subFamilia)
 
     if(idCategoria){
-      console.log("idFamiliaFind", idFamiliaFind);
       const idCategoriaFil = idCategoria.idCategoria;
       const idSubCategoriaFil = idSubCategoriaFind.idSubcategoria;
       const idFamiliaFil = idFamiliaFind.idFamilia;
@@ -260,7 +274,7 @@ const Editp2 = ({ product, open, handleClose }) => {
 
     try {
       const response = await axios.put(
-      `${import.meta.env.VITE_URL_API2}/ProductosTmp/UpdateProducto`, nuevoObjetoActualizado
+      `${apiUrl}/ProductosTmp/UpdateProducto`, nuevoObjetoActualizado
       );
       console.log("API Response:", response.data);
 
@@ -369,7 +383,7 @@ const Editp2 = ({ product, open, handleClose }) => {
               {subcategories.map((subcategory) => (
                 <MenuItem
                   key={subcategory.idSubcategoria}
-                  value={subcategory.idSubcategoria}
+                  value={subcategory.descripcion}
                 >
                   {subcategory.descripcion}
                 </MenuItem>
@@ -397,7 +411,9 @@ const Editp2 = ({ product, open, handleClose }) => {
                 {editedProduct.familia}
               </MenuItem>
               {families.map((family) => (
-                <MenuItem key={family.idFamilia} value={family.idFamilia}>
+                <MenuItem 
+                key={family.idFamilia} 
+                value={family.descripcion}>
                   {family.descripcion}
                 </MenuItem>
               ))}
@@ -426,7 +442,7 @@ const Editp2 = ({ product, open, handleClose }) => {
               {subfamilies.map((subfamily) => (
                 <MenuItem
                   key={subfamily.idSubFamilia}
-                  value={subfamily.idSubFamilia}
+                  value={subfamily.descripcion}
                 >
                   {subfamily.descripcion}
                 </MenuItem>

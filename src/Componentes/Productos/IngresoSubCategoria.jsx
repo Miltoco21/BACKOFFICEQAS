@@ -19,9 +19,10 @@ import {
   Select,
   Snackbar
 } from "@mui/material";
+import ModelConfig from "../../Models/ModelConfig";
 
 const IngresoSubCategorias = ({onClose}) => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   const [categories, setCategories] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
@@ -85,7 +86,7 @@ const IngresoSubCategorias = ({onClose}) => {
         setSnackbarMessage("Error al crear la familia");
       }
     } catch (error) {
-      console.log(error.response.data, "Error Debug");
+      console.log(error, "Error Debug");
       // Handle error and display a message
     }
   };

@@ -14,6 +14,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
+import ModelConfig from "../../Models/ModelConfig";
 
 const EditarSubCategoria = ({
   subcategory,
@@ -29,7 +30,7 @@ const EditarSubCategoria = ({
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [refresh, setRefresh] = useState(false);
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   useEffect(() => {
     if (subcategory) {
       console.log("Subcategory:", subcategory);
@@ -77,8 +78,8 @@ const EditarSubCategoria = ({
       fetchSubcategories(); // Actualizar lista de subcategorías
       handleClose();
     } catch (error) {
-      console.error("Error updating category:", error.response);
-      setErrorMessage(error.response.data.descripcion);
+      console.error("Error updating category:", error);
+      setErrorMessage(error);
       setOpenErrorDialog(true);
     }
   };

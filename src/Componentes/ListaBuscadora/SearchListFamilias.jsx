@@ -23,6 +23,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import EditarFamilia from "./EditarFamilia";
+import ModelConfig from "../../Models/ModelConfig";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -69,7 +70,7 @@ const SearchListFamilias = () => {
     async function fetchCategories() {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetAllCategorias`
+          ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetAllCategorias`
         );
         console.log("API response:", response.data.categorias);
         setCategories(response.data.categorias);
@@ -86,10 +87,10 @@ const SearchListFamilias = () => {
       if (selectedCategoryId !== "") {
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`
+            ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`
           );
           console.log(
-            `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?$CategoriaID=${selectedCategoryId}`
+            ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?$CategoriaID=${selectedCategoryId}`
           );
           console.log("Subcategories Response:", response.data.subCategorias);
           setSubCategories(response.data.subCategorias);
@@ -106,7 +107,7 @@ const SearchListFamilias = () => {
     if (selectedSubCategoryId !== "" && selectedCategoryId !== "") {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}`
+          ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}`
         );
         console.log("API Response:", response.data.familias);
         setFamilies(response.data.familias);

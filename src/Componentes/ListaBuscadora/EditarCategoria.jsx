@@ -14,6 +14,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
+import ModelConfig from "../../Models/ModelConfig";
 
 const EditarCategoria = ({ category, open, handleClose }) => {
   const [editCategory, setEditCategory] = useState({
@@ -47,7 +48,7 @@ const EditarCategoria = ({ category, open, handleClose }) => {
 
     try {
       const response = await axios.put(
-         `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/UpdateCategoria`,
+         ModelConfig.get().urlBase + `/NivelMercadoLogicos/UpdateCategoria`,
         {
           idCategoria: editCategory.idCategoria,
           descripcionCategoria: editCategory.descripcionCategoria,

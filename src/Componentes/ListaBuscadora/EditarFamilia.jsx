@@ -15,6 +15,7 @@ import {
   DialogActions,
   Snackbar
 } from "@mui/material";
+import ModelConfig from "../../Models/ModelConfig";
 
 const EditarFamilia = ({ open, handleClose, family, fetchFamilies }) => {
   const [editFamily, setEditFamily] = useState({
@@ -51,7 +52,7 @@ const EditarFamilia = ({ open, handleClose, family, fetchFamilies }) => {
 
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/UpdateFamilia`,
+        ModelConfig.get().urlBase + `/NivelMercadoLogicos/UpdateFamilia`,
         {
           idFamilia: editFamily.idFamilia,
           descripcionFamilia: editFamily.descripcion,

@@ -28,6 +28,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Editp2 from "../Productos/Editp2";
+import ModelConfig from "../../Models/ModelConfig";
 
 const ITEMS_PER_PAGE = 10;
 const SearchListProducts = () => {
@@ -64,7 +65,7 @@ const SearchListProducts = () => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_URL_API2}/ProductosTmp/GetProductos`
+          ModelConfig.get().urlBase + `/ProductosTmp/GetProductos`
         );
         console.log("API Response:", response.data);
         if (Array.isArray(response.data.productos)) {
@@ -85,7 +86,7 @@ const SearchListProducts = () => {
     const updateProducts = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_URL_API2}/ProductosTmp/GetProductos`
+          ModelConfig.get().urlBase + `/ProductosTmp/GetProductos`
         );
         
         if (Array.isArray(response.data.productos)) {
@@ -96,9 +97,9 @@ const SearchListProducts = () => {
       }
     };
 
-    const intervalId = setInterval(updateProducts, 3000); // Actualizar cada 3 segundos
+    // const intervalId = setInterval(updateProducts, 3000); // Actualizar cada 3 segundos
 
-    return () => clearInterval(intervalId); // Limpiar intervalo cuando el componente se desmonta
+    // return () => clearInterval(intervalId); // Limpiar intervalo cuando el componente se desmonta
   }, []);
 
 
@@ -164,7 +165,7 @@ const SearchListProducts = () => {
 
       // Llamada a la API para eliminar el producto
       const response = await axios.delete(
-        `${import.meta.env.VITE_URL_API2}/ProductosTmp/DeleteProducto?id=${id}`
+        ModelConfig.get().urlBase + `/ProductosTmp/DeleteProducto?id=${id}`
       );
 
       if (response.data.statusCode === 201) {

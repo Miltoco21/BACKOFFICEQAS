@@ -8,6 +8,7 @@ import { Box, TextField, Table,IconButton, TableBody,Pagination, TableCell, Tabl
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import EditarSubCategoria from "./EditarSubcategoria";
+import ModelConfig from "../../Models/ModelConfig";
 
 
 const ITEMS_PER_PAGE = 10;
@@ -53,7 +54,7 @@ const SearchListSubCategories = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetAllCategorias`);
+        const response = await axios.get(ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetAllCategorias`);
         setCategories(response.data.categorias);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -63,19 +64,20 @@ const SearchListSubCategories = () => {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    const fetchSubCategories = async () => {
-      if (selectedCategoryId !== "") {
-        try {
-          const response = await axios.get(`${import.meta.env.VITE_URL_API2}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`);
-          console.log(`${apiUrl}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?$CategoriaID=${selectedCategoryId}`);
-          console.log("Subcategories Response:", response.data.subCategorias);
-          setSubCategories(response.data.subCategorias);
-        } catch (error) {
-          console.error("Error fetching subcategories:", error);
-        }
+  const fetchSubCategories = async () => {
+    if (selectedCategoryId !== "") {
+      try {
+        const response = await axios.get(ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`);
+        console.log(`${apiUrl}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?$CategoriaID=${selectedCategoryId}`);
+        console.log("Subcategories Response:", response.data.subCategorias);
+        setSubCategories(response.data.subCategorias);
+      } catch (error) {
+        console.error("Error fetching subcategories:", error);
       }
-    };
+    }
+  };
+  
+  useEffect(() => {
   
     fetchSubCategories();
   }, [selectedCategoryId,refresh]);
@@ -172,6 +174,9 @@ const SearchListSubCategories = () => {
         {/* ModalEditar */}
       <EditarSubCategoria
         subcategory={editSubCategoryData}
+        fetchSubcategories={()=>{
+          fetchSubCategories()
+        }}
         open={openEditModal}
         handleClose={handleCloseEditModal}
         
