@@ -20,6 +20,7 @@ import {
   Radio,
   Typography,
 } from "@mui/material";
+import ModelConfig from "../../Models/ModelConfig";
 
 const Step1Component = ({ data, onNext }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(
@@ -153,8 +154,9 @@ const Step1Component = ({ data, onNext }) => {
   useEffect(() => {
     async function fetchCategories() {
       try {
+        console.log("asd")
         const response = await axios.get(
-          "https://www.easyposdev.somee.com/api/NivelMercadoLogicos/GetAllCategorias"
+          ModelConfig.get().urlBase + "/NivelMercadoLogicos/GetAllCategoriasxxx"
         );
         setCategories(response.data.categorias);
       } catch (error) {
@@ -170,7 +172,7 @@ const Step1Component = ({ data, onNext }) => {
       if (selectedCategoryId !== "") {
         try {
           const response = await axios.get(
-            `https://www.easyposdev.somee.com/api/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`
+            ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`
           );
           setSubCategories(response.data.subCategorias);
         } catch (error) {
@@ -187,7 +189,7 @@ const Step1Component = ({ data, onNext }) => {
       if (selectedSubCategoryId !== "" && selectedCategoryId !== "") {
         try {
           const response = await axios.get(
-            `https://www.easyposdev.somee.com/api/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}`
+            ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}`
           );
           setFamilies(response.data.familias);
         } catch (error) {
@@ -208,7 +210,7 @@ const Step1Component = ({ data, onNext }) => {
       ) {
         try {
           const response = await axios.get(
-            `https://www.easyposdev.somee.com/api/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${selectedFamilyId}`
+            ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${selectedFamilyId}`
           );
           setSubFamilies(response.data.subFamilias);
         } catch (error) {

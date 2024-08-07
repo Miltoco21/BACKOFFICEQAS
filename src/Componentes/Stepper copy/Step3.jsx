@@ -23,8 +23,12 @@ import {
   Typography,
 } from "@mui/material";
 
+import ModelConfig from "../../Models/ModelConfig";
+
+
 const Step3Component = ({ data, onNext, stepData }) => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl =  ModelConfig.get().urlBase;
+;
 
   const [newUnidad, setNewUnidad] = useState("");
   const [stockInicial, setStockInicial] = useState("");
@@ -46,7 +50,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
   const fetchProduct = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_URL_API2}/ProductosTmp/GetProductos`
+        `${apiUrl}/ProductosTmp/GetProductos`
       );
       console.log("API Response:", response.data);
       if (Array.isArray(response.data.productos)) {

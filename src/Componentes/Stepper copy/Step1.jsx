@@ -21,9 +21,12 @@ import {
   FormControlLabel,
   Radio,
 } from "@mui/material";
+ 
+import ModelConfig from "../../Models/ModelConfig";
+ 
 
 const Step1Component = ({ data, onNext, setStepData }) => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(
     data.selectedCategoryId
