@@ -25,11 +25,12 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import ModelConfig from "../../Models/ModelConfig";
 
 export const defaultTheme = createTheme();
 
 const PreciosGenerales = ({ onClose }) => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl =  ModelConfig.get().urlBase;
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState([]);
 
@@ -48,6 +49,11 @@ const PreciosGenerales = ({ onClose }) => {
   const [filteredClientes, setFilteredClientes] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null); // Estado para mantener el producto seleccionado
 
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubCategories] = useState([]);
+  const [families, setFamilies] = useState([]);
+  const [subfamilies, setSubFamilies] = useState([]);
+
   const handleSearchCliente = (e) => {
     setSearchClienteTerm(e.target.value);
   };
@@ -56,20 +62,21 @@ const PreciosGenerales = ({ onClose }) => {
   const endIndex = Math.min(startIndex + rowsPerPage, clientes.length);
   const clientesPaginados = clientes.slice(startIndex, endIndex);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_URL_API2}/Clientes/GetAllClientes`
-        );
-        setClientes(response.data.cliente);
-        console.log("clientes:", response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  const fetchDataClientes = async () => {
+    try {
+      const response = await axios.get(
+         ModelConfig.get().urlBase + `/Clientes/GetAllClientes`
+      );
+      setClientes(response.data.cliente);
+      console.log("clientes:", response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+
+    fetchDataClientes();
   }, []);
 
   const handleSelectAll = (event) => {
@@ -210,6 +217,10 @@ const PreciosGenerales = ({ onClose }) => {
       return updatedProducts;
     });
   };
+
+  const findIdCategoryFromDescription = (desc)=>{
+
+  }
 
   const handleGuardarClick = async (selectedProduct) => {
     try {

@@ -9,11 +9,13 @@ import SideBar from '../Componentes/NavBar/SideBar.jsx';
 import AsocCliente from '../Componentes/Card-Modal/AsocCliente.jsx';
 import PreciosGenerales from '../Componentes/Card-Modal/PreciosGenerales.jsx';
 import BoxBuscador from '../Componentes/Card-Modal/BoxBuscador.jsx';
+import PreciosPorCategoria from '../Componentes/Card-Modal/PreciosPorCategoria.jsx';
 
 export const defaultTheme = createTheme();
 
 const Precios = () => {
   const [openPrecios, setOpenPrecios] = useState(false);
+  const [openPreciosCategoria, setOpenPreciosCategoria] = useState(false);
   const [openAsocClientes, setOpenAsocClientes] = useState(false);
 
   const handleOpenModal = () => {
@@ -49,6 +51,22 @@ const Precios = () => {
         >
           Precios Generales
         </Button>
+
+        <Button
+          variant="outlined"
+          sx={{
+            my: 1,
+            mx: 2,
+          }}
+          startIcon={<Add />}
+          onClick={()=>{
+            setOpenPreciosCategoria(true)
+          }}
+        >
+          Precios Por Categoria
+        </Button>
+
+
         <Button
           variant="outlined"
           sx={{
@@ -69,6 +87,12 @@ const Precios = () => {
       <Dialog open={openPrecios} onClose={handleCloseModal}>
         <PreciosGenerales onClose={handleCloseModal}/>
       </Dialog>
+
+      <Dialog maxWidth={"md"} open={openPreciosCategoria} onClose={()=>{ setOpenPreciosCategoria(false) }}>
+        <PreciosPorCategoria onClose={handleCloseModal}/>
+      </Dialog>
+
+
     </ThemeProvider>
   );
 };
