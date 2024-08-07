@@ -22,6 +22,20 @@ class ModelConfig {
         return ModelConfig.getInstance().sesion.cargar(1);
     }
 
+    static getValueOrDefault(name){
+        const all = ModelConfig.get()
+
+        if(all[name] == undefined){
+            if(BaseConfig[name] != undefined){
+                ModelConfig.change(name, BaseConfig[name])
+                return BaseConfig[name]
+            }
+            console.log("no existe el valor defualt para '" + name + "'")
+        }else{
+            return all[name] 
+        }
+    }
+
     static change(propName, propValue){
         var all = ModelConfig.get();
         all[propName] = propValue;

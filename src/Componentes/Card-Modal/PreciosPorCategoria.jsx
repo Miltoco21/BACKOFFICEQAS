@@ -32,53 +32,15 @@ export const defaultTheme = createTheme();
 
 const PreciosPorCategoria = ({ onClose }) => {
   const apiUrl =  ModelConfig.get().urlBase;
-  const [searchTerm, setSearchTerm] = useState("");
+  const [txtBuscar, setTxtBuscar] = useState("");
   const [products, setProducts] = useState([]);
+  const [productsSinFiltrar, setProductsSinFiltrar] = useState([]);
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [openDialog, setOpenDialog] = useState(false);
-  const [productToDelete, setProductToDelete] = useState(null);
-  const [clientes, setClientes] = useState([]);
-  const [selectAll, setSelectAll] = useState(false);
-  const [selectedClientes, setSelectedClientes] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const [searchClienteTerm, setSearchClienteTerm] = useState("");
-  const [filteredClientes, setFilteredClientes] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null); // Estado para mantener el producto seleccionado
-
-  const [categories, setCategories] = useState([]);
-  const [subcategories, setSubCategories] = useState([]);
-  const [families, setFamilies] = useState([]);
-  const [subfamilies, setSubFamilies] = useState([]);
-
-  const handleSearchCliente = (e) => {
-    setSearchClienteTerm(e.target.value);
-  };
-
-  const startIndex = page * rowsPerPage;
-  const endIndex = Math.min(startIndex + rowsPerPage, clientes.length);
-  const clientesPaginados = clientes.slice(startIndex, endIndex);
-
-  const fetchDataClientes = async () => {
-    try {
-      const response = await axios.get(
-         ModelConfig.get().urlBase + `/Clientes/GetAllClientes`
-      );
-      setClientes(response.data.cliente);
-      console.log("clientes:", response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  useEffect(() => {
-
-    fetchDataClientes();
-  }, []);
+  
+  const [margen, setMargen] = useState( ModelConfig.getValueOrDefault("margenGanancia") );
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -87,6 +49,7 @@ const PreciosPorCategoria = ({ onClose }) => {
           `${apiUrl}/ProductosTmp/GetProductos`,
         );
         setProducts(response.data.productos);
+        setProductsSinFiltrar(response.data.productos);
         console.log(response.data.productos);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -99,13 +62,31 @@ const PreciosPorCategoria = ({ onClose }) => {
   }, []);
 
   const handleSearchButtonClick = async () => {
-    if (searchTerm.trim() === "") {
+    if (txtBuscar.trim() === "") {
       setErrorMessage("El campo de búsqueda está vacío");
       setOpenSnackbar(true);
       // setProducts([])
       return;
     }
+
+    filtrarProductos()
   };
+
+  const filtrarProductos = ()=>{
+    var productsFilter = productsSinFiltrar.filter((product)=>{
+      return (
+        product.nombre.toLowerCase().indexOf(txtBuscar)> -1
+        || product.categoria.toLowerCase().indexOf(txtBuscar)> -1
+        || product.subCategoria.toLowerCase().indexOf(txtBuscar)> -1
+        || product.familia.toLowerCase().indexOf(txtBuscar)> -1
+        || product.subFamilia.toLowerCase().indexOf(txtBuscar)> -1
+      )
+    })
+
+    console.log("productsFilter")
+    console.log(productsFilter)
+    setProducts(productsFilter)
+  }
 
   const handlePrecioChange = (e, index) => {
     const { value } = e.target;
@@ -170,8 +151,13 @@ const PreciosPorCategoria = ({ onClose }) => {
     }
   };
 
-  // Función para manejar el clic del botón "Asociar"
-  console.log("selectedproduct", selectedProduct);
+  
+  const calcularGanancia = (prod)=>{
+    const fac =  (100 + parseInt(margen)) / 100
+    const val = prod.precioVenta * fac
+    // return (val)
+    return Math.round(val)
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -199,7 +185,7 @@ const PreciosPorCategoria = ({ onClose }) => {
                     fontWeight: "bold",
                   }}
                 >
-                  Buscador una categoria
+                  Buscar una categoria
                 </InputLabel>
               </Grid>
 
@@ -223,8 +209,8 @@ const PreciosPorCategoria = ({ onClose }) => {
                   fullWidth
                   focused
                   placeholder="Ingresar Descripcion"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={txtBuscar}
+                  onChange={(e) => setTxtBuscar(e.target.value)}
                 />
                 <Button
                   sx={{
@@ -261,9 +247,10 @@ const PreciosPorCategoria = ({ onClose }) => {
                   variant="outlined"
                   type="number"
                   fullWidth
-                  value={"30"}
+                  value={margen}
                   onChange={(e) => {
                     //handlePrecioChange(e, index)
+                    setMargen(e.target.value)
                   }}
                 />
               </Grid>
@@ -300,17 +287,37 @@ const PreciosPorCategoria = ({ onClose }) => {
                }}
             >
               <Table>
-                <TableBody>
+                <TableHead>
                 <TableRow>
-                <TableCell colSpan={2}>
+                <TableCell colSpan={3}>
                   <Typography variant="h5">
                     Productos afectados
                   </Typography>
                   </TableCell>
                 </TableRow>
+                </TableHead>
+                <TableHead>
+                <TableRow>
+                <TableCell >
+                    Nombre
+                </TableCell>
+                <TableCell>
+                    Precio Actual
+                </TableCell>
+                <TableCell>
+                    Precio Futuro
+                </TableCell>
+                </TableRow>
+                  </TableHead>
+                <TableBody>
                   {products.map((product, index) => (
-                    <TableRow key={product.id}>
+                    <TableRow key={index}>
                       <TableCell>{product.nombre}</TableCell>
+                      <TableCell>${product.precioVenta}</TableCell>
+                      <TableCell sx={{
+                        color:"#0E5E05",
+                        fontWeight:"bold"
+                      }}>${ calcularGanancia(product)}</TableCell>
                       {/* <TableCell>
                         <TextField
                           name="precio"
@@ -320,9 +327,6 @@ const PreciosPorCategoria = ({ onClose }) => {
                           onChange={(e) => handlePrecioChange(e, index)}
                         />
                       </TableCell> */}
-                      <TableCell>
-                        
-                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
