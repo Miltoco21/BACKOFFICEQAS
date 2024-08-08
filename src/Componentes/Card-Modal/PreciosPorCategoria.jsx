@@ -23,6 +23,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControlLabel,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ModelConfig from "../../Models/ModelConfig";
@@ -39,6 +40,13 @@ const PreciosPorCategoria = ({ onClose }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  
+  const [checkTodas, setCheckTodas] = useState(false);
+  const [checkCategorias, setCheckCategorias] = useState(false);
+  const [checkSubcategorias, setCheckSubcategorias] = useState(false);
+  const [checkFamilias, setCheckFamilias] = useState(false);
+  const [checkSubfamilias, setCheckSubfamilias] = useState(false);
+
   
   const [margen, setMargen] = useState( ModelConfig.getValueOrDefault("margenGanancia") );
 
@@ -73,13 +81,15 @@ const PreciosPorCategoria = ({ onClose }) => {
   };
 
   const filtrarProductos = ()=>{
+
+
     var productsFilter = productsSinFiltrar.filter((product)=>{
       return (
-        product.nombre.toLowerCase().indexOf(txtBuscar)> -1
-        || product.categoria.toLowerCase().indexOf(txtBuscar)> -1
-        || product.subCategoria.toLowerCase().indexOf(txtBuscar)> -1
-        || product.familia.toLowerCase().indexOf(txtBuscar)> -1
-        || product.subFamilia.toLowerCase().indexOf(txtBuscar)> -1
+        //product.nombre.toLowerCase().indexOf(txtBuscar)> -1
+        ( (checkTodas || checkCategorias) && product.categoria.toLowerCase().indexOf(txtBuscar)> -1)
+        || ((checkTodas || checkSubcategorias) && product.subCategoria.toLowerCase().indexOf(txtBuscar)> -1)
+        || ((checkTodas || checkFamilias) && product.familia.toLowerCase().indexOf(txtBuscar)> -1)
+        || ((checkTodas || checkSubfamilias) && product.subFamilia.toLowerCase().indexOf(txtBuscar)> -1)
       )
     })
 
@@ -161,8 +171,8 @@ const PreciosPorCategoria = ({ onClose }) => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Grid container justifyContent="center" sx={{ width: 650 }}>
-        <Grid item xs={12} md={10} lg={10}>
+      <Grid container justifyContent="center">
+        <Grid item xs={12} md={10} lg={12}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="h5" align="center" gutterBottom>
               Precios por categorias
@@ -194,7 +204,7 @@ const PreciosPorCategoria = ({ onClose }) => {
                 xs={10}
                 md={10}
                 sm={10}
-                lg={10}
+                lg={12}
                 sx={{
                   margin: 1,
                   display: "flex",
@@ -228,11 +238,71 @@ const PreciosPorCategoria = ({ onClose }) => {
                   Buscar
                 </Button>
               </Grid>
+
+
               <Grid item
                 xs={10}
                 md={10}
                 sm={10}
-                lg={10}
+                lg={12}
+
+                sx={{
+                  margin: 1,
+                }}
+                >
+                <FormControlLabel
+                  sx={{
+                    userSelect:"none"
+                  }}
+                  label="Todas"
+                  checked={checkTodas}
+                  control={<Checkbox onChange={(e)=>{ setCheckTodas(e.target.checked) }} />}
+                />
+
+                <FormControlLabel
+                  sx={{
+                    userSelect:"none"
+                  }}
+                  label="Categorias"
+                  checked={checkCategorias}
+                  control={<Checkbox onChange={(e)=>{ setCheckCategorias(e.target.checked) }} />}
+                />
+
+                <FormControlLabel
+                    sx={{
+                      userSelect:"none"
+                    }}
+                  label="Subcategorias"
+                  checked={checkSubcategorias}
+                  control={<Checkbox onChange={(e)=>{ setCheckSubcategorias(e.target.checked) }} />}
+                />
+
+                <FormControlLabel
+                    sx={{
+                      userSelect:"none"
+                    }}
+                  label="Famillias"
+                  checked={checkFamilias}
+                  control={<Checkbox onChange={(e)=>{ setCheckFamilias(e.target.checked) }} />}
+                />
+
+                <FormControlLabel
+                    sx={{
+                      userSelect:"none"
+                    }}
+                  label="Subfamilias"
+                  checked={checkSubfamilias}
+                  control={<Checkbox onChange={(e)=>{ setCheckSubfamilias(e.target.checked) }} />}
+                />
+
+
+                </Grid>
+
+              <Grid item
+                xs={10}
+                md={10}
+                sm={10}
+                lg={12}
 
                 sx={{
                   margin: 1,
@@ -259,7 +329,7 @@ const PreciosPorCategoria = ({ onClose }) => {
                 xs={10}
                 md={10}
                 sm={10}
-                lg={10}
+                lg={12}
                 sx={{
                   margin: 1,
                   display: "flex",

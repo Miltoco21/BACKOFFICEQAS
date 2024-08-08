@@ -88,7 +88,7 @@ const Precios = () => {
         <PreciosGenerales onClose={handleCloseModal}/>
       </Dialog>
 
-      <Dialog maxWidth={"md"} open={openPreciosCategoria} onClose={()=>{ setOpenPreciosCategoria(false) }}>
+      <Dialog maxWidth={"lg"} open={openPreciosCategoria} onClose={()=>{ setOpenPreciosCategoria(false) }}>
         <PreciosPorCategoria onClose={handleCloseModal}/>
       </Dialog>
 
