@@ -21,9 +21,11 @@ import {
   FormControlLabel,
   Radio,
   Typography,
+  InputAdornment,
 } from "@mui/material";
 
 import ModelConfig from "../../Models/ModelConfig";
+import { AttachMoney, DraftsOutlined, Money, Percent } from "@mui/icons-material";
 
 
 const Step3CC = ({ data, onNext, stepData }) => {
@@ -42,6 +44,9 @@ const Step3CC = ({ data, onNext, stepData }) => {
   const [ultimoFoco, setUltimoFoco] = useState("");
   const [iva, setIva] = useState(ModelConfig.get().iva)
   const [margenGanancia, setMargenGanancia] = useState(ModelConfig.get().margenGanancia);
+  
+  const [valorIva, setValorIva] = useState(0)
+  const [valorMargenGanancia, setValorMargenGanancia] = useState(0);
   
   const [product, setProduct] = useState([]);
 
@@ -72,7 +77,7 @@ const Step3CC = ({ data, onNext, stepData }) => {
   ];
 
 
-  console.log("data:", data);
+  // console.log("data:", data);
 
   const fetchProduct = async () => {
     try {
@@ -121,7 +126,7 @@ const Step3CC = ({ data, onNext, stepData }) => {
     // Crear objeto con los datos del paso 4
     const step4Data = {
       formatoVenta: 0, // Debes proporcionar un valor adecuado aquí
-      precioVenta: parseInt(precioVenta) || 0, // Convertir a número y usar 0 si no hay valor
+      precioVenta: parseFloat(precioVenta) || 0, // Convertir a número y usar 0 si no hay valor
       precioNeto: parseFloat(precioNeto) || 0, // Convertir a número y usar 0 si no hay valor
     };
 
@@ -263,7 +268,7 @@ const Step3CC = ({ data, onNext, stepData }) => {
       return false;
     }
     if (isNaN(parseFloat(stockCritico)) || parseFloat(stockCritico) === 0) {
-      setEmptyFieldsMessage("El stock inicial no puede ser cero.");
+      setEmptyFieldsMessage("El stock critico no puede ser cero.");
       return false;
     }
 
@@ -283,56 +288,29 @@ const Step3CC = ({ data, onNext, stepData }) => {
   };
 
   const logicaPrecios = ()=>{
-    console.log("logicaPrecios")
-    console.log("ultimoFoco")
-    console.log(ultimoFoco)
-
-    if(ultimoFoco == "precioCosto" &&  precioCosto > 0){
+    if(ultimoFoco != "precioVenta" &&  precioCosto > 0){
       const sumGan = parseFloat(precioCosto) * ( parseInt(margenGanancia) / 100)
       const neto = parseFloat(precioCosto) + sumGan
       const sumIva = parseFloat(neto) * (parseInt(iva) / 100)
-      const final = parseInt(neto + sumIva)
+      const final = Math.round(parseFloat(neto + sumIva))
       setPrecioNeto(neto)
       setPrecioVenta(final)
-    }else if(ultimoFoco == "precioVenta" && precioVenta>0){
-
-      /*
-       
-      venta = 10
-      iva = 1.9
-      neto = 8.1
-      ganancia = 0.3 = 2.43
-      compra = 5.67
-
-
-
-      compra = 5.67
-      ganancia = 0.3 = 1.70
-      neto = 7.37
-
-      iva = 0.19 = 1.4
-      venta = 8.77
-
-
-
-       */
-      const sumIva = parseFloat(precioVenta) * (parseInt(iva) / 100)
-      const neto = parseFloat(precioVenta) - sumIva
-
-
-      const sumGan = parseFloat(neto) * ( parseInt(margenGanancia) / 100)
-      const costo = parseFloat(neto) - sumGan
       
+      setValorIva((final - neto).toFixed(2))
+      setValorMargenGanancia((neto - precioCosto).toFixed(2))
 
+    }else if(ultimoFoco != "precioCosto" && precioVenta>0){
+      const neto = parseFloat(precioVenta) / (1  + (parseInt(iva) / 100) )
+      const costo = parseFloat(neto) / (1 + parseInt(margenGanancia) / 100)
+      setValorIva((precioVenta - neto).toFixed(2))
+      setValorMargenGanancia((neto - costo).toFixed(2))
 
-
-      setPrecioNeto(neto)
-      setPrecioCosto(costo)
+      setPrecioNeto((neto).toFixed(2))
+      setPrecioCosto(costo.toFixed(2))
     }
 
   }
   const setFocus = (field) => {
-    console.log("setfocus + " + field);
     setUltimoFoco(field)
   }
 
@@ -341,9 +319,9 @@ const Step3CC = ({ data, onNext, stepData }) => {
     // Asegurar que el valor solo contenga números
     // Eliminar caracteres especiales específicos
     const newValue = event.target.value.replace(/[^0000000-9]/g, 0);
-    console.log("handleChange de " + field)
-    console.log("newValue")
-    console.log(newValue)
+    // console.log("handleChange de " + field)
+    // console.log("newValue")
+    // console.log(newValue)
     if (field === "precioCosto") {
       setPrecioCosto(newValue);
     } else if (field === "precioVenta") {
@@ -419,32 +397,59 @@ const Step3CC = ({ data, onNext, stepData }) => {
 
           <Grid item xs={12} md={6}>
             <Box>
-            <InputLabel sx={{ marginBottom: "4%" }}>
-              Margen ganancia(%)
+                <InputLabel sx={{ marginBottom: "4%" }}>
+              Margen ganancia
               </InputLabel>
-              <TextField
-                required
-                sx={{ width: "100%" }}
-                name="margenGanancia"
-                fullWidth
-                value={margenGanancia}
-                onClick={()=>{ setFocus("margenGanancia") }}
-                onChange={(event) => handleChange(event, "margenGanancia")}
-                onKeyDown={(event) => handleKeyDown(event, "margenGanancia")}
-                inputProps={{
-                  inputMode: "numeric", // Establece el modo de entrada como numérico
-                  pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
-                }}
-              />
+
+            <Grid container spacing={1}>
+              <Grid item xs={12} md={6}>
+                <TextField
+                icon
+                  required
+                  name="margenGanancia"
+                  fullWidth
+                  value={margenGanancia}
+                  onClick={()=>{ setFocus("margenGanancia") }}
+                  onChange={(event) => handleChange(event, "margenGanancia")}
+                  onKeyDown={(event) => handleKeyDown(event, "margenGanancia")}
+                  InputProps={{
+                    inputMode: "numeric", // Establece el modo de entrada como numérico
+                    pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Percent />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  required
+                  fullWidth
+                  value={valorMargenGanancia}
+                  InputProps={{
+                    inputMode: "numeric", // Establece el modo de entrada como numérico
+                    pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AttachMoney />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+            </Grid>
             </Box>
           </Grid>
 
           <Grid item xs={12} md={6}>
             <Box>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-               iva(%)
+            <InputLabel sx={{ marginBottom: "4%" }}>
+               iva
               </InputLabel>
-              <Grid display="flex" alignItems="center">
+            <Grid container spacing={1}>
+              <Grid item xs={12} md={6}>
               <Select
                 required
                 fullWidth
@@ -460,7 +465,24 @@ const Step3CC = ({ data, onNext, stepData }) => {
                   </MenuItem>
                 ))}
               </Select>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  required
+                  fullWidth
+                  value={valorIva}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AttachMoney />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
             </Grid>
+
+
             </Box>
           </Grid>
 
@@ -476,29 +498,18 @@ const Step3CC = ({ data, onNext, stepData }) => {
                 onChange={(event) => handleChange(event, "precioCosto")}
                 onKeyDown={(event) => handleKeyDown(event, "precioCosto")}
                 onClick={()=>{ setFocus("precioCosto") }}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Box>
-              <TextField
-                required
-                sx={{
-                  width: "100%",
-                }}
-                label="Precio Venta"
-                fullWidth
-                value={precioVenta}
-                onClick={()=>{ setFocus("precioVenta") }}
-                onChange={(event) => handleChange(event, "precioVenta")}
-                onKeyDown={(event) => handleKeyDown(event, "precioVenta")}
-                inputProps={{
-                  inputMode: "numeric", // Establece el modo de entrada como numérico
-                  pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AttachMoney />
+                    </InputAdornment>
+                  ),
                 }}
               />
             </Box>
           </Grid>
+
           <Grid item xs={12} md={4}>
             <Box>
               <TextField
@@ -508,12 +519,47 @@ const Step3CC = ({ data, onNext, stepData }) => {
                 }}
                 label="Precio Venta Neto"
                 fullWidth
+                disabled={true}
                 value={precioNeto}
                 onChange={(event) => handleChange(event, "precioNeto")}
                 onKeyDown={(event) => handleKeyDown(event, "precioNeto")}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AttachMoney />
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Box>
           </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Box>
+              <TextField
+                required
+                sx={{
+                  width: "100%",
+                }}
+                label="Precio Venta publico"
+                fullWidth
+                value={precioVenta}
+                onClick={()=>{ setFocus("precioVenta") }}
+                onChange={(event) => handleChange(event, "precioVenta")}
+                onKeyDown={(event) => handleKeyDown(event, "precioVenta")}
+                InputProps={{
+                  inputMode: "numeric", // Establece el modo de entrada como numérico
+                  pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AttachMoney />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+          </Grid>
+          
 
           <Grid item xs={12} md={6}>
             <Box>
