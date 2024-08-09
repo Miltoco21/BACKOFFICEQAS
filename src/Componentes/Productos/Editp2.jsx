@@ -59,97 +59,134 @@ const Editp2 = ({ product, open, handleClose }) => {
     setEditedProduct(product);
   }, []);
 
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const response = await axios.get(
-        `${apiUrl}/NivelMercadoLogicos/GetAllCategorias`
-        );
-        console.log("API response:", response.data.categorias); // Add this line
-        setCategories(response.data.categorias);
-      } catch (error) {
-        console.log(error);
-      }
+  const fetchCategories = async() =>{
+    console.log("fetchCategories")
+    try {
+      const response = await axios.get(
+      `${apiUrl}/NivelMercadoLogicos/GetAllCategorias`
+      );
+      console.log("categorias"); // Add this line
+      console.log(response.data); // Add this line
+      setCategories(response.data.categorias);
+    } catch (error) {
+      console.log(error);
     }
+  }
 
+  useEffect(() => {
     fetchCategories();
   }, []);
 
 
-  useEffect(() => {
-    const fetchSubCategories = async () => {
-      if (selectedCategoryId && categories.length>0 ) {
-        try {
-          const categoriaCoincide = categories.find(categoria=> categoria.descripcion ===selectedCategoryId);
-          console.log("categoriaCoincide:")
-          console.log(categoriaCoincide)
-          const response = await axios.get(
-            `${apiUrl}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${categoriaCoincide.idCategoria}`
-          );
-          
-          console.log("Subcategories Response:", response.data.subCategorias);
-          setSubCategories(response.data.subCategorias);
-        } catch (error) {
-          console.error("Error fetching subcategories:", error);
-        }
+  const fetchSubCategories = async () => {
+    console.log("fetchSubCategories")
+
+    if (selectedCategoryId && categories.length>0 ) {
+      try {
+        const categoriaCoincide = categories.find(categoria=> categoria.descripcion ===selectedCategoryId);
+        // console.log("categoriaCoincide:")
+        // console.log(categoriaCoincide)
+        const response = await axios.get(
+          `${apiUrl}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${categoriaCoincide.idCategoria}`
+        );
+        
+        console.log("subCategorias");
+        console.log(response.data.subCategorias);
+        setSubCategories(response.data.subCategorias);
+      } catch (error) {
+        console.error("Error fetching subcategories:", error);
       }
-    };
+    // }else{
+    //   setTimeout(() => {
+    //     fetchSubCategories()
+    //   }, 100);
+    }
+  };
+
+  useEffect(() => {
+
+    console.log("cambio selectedCategoryId")
+    console.log(selectedCategoryId)
+
+
 
     fetchSubCategories();
   }, [selectedCategoryId]);
 
 
+  const fetchFamilies = async () => {
+    console.log("fetchFamilies")
+
+    if (selectedSubCategoryId !== "" && selectedCategoryId !== "" && subcategories.length>0) {
+      try {
+        // console.log("selectedSubCategoryId", selectedSubCategoryId)
+        // console.log("subcategories", subcategories)
+        const SubCategoriaFind = subcategories.find(sc=> sc.descripcion === selectedSubCategoryId);
+        // console.log("idCategoriaFind", SubCategoriaFind)
+
+        const response = await axios.get(
+          `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${SubCategoriaFind.idSubcategoria}`
+        );
+
+        console.log("familias")
+        console.log(response.data.familias);
+        setFamilies(response.data.familias);
+      } catch (error) {
+        console.error("Error fetching Families:", error);
+      }
+    // }else{
+    //   setTimeout(() => {
+    //     fetchFamilies()
+    //   }, 100);
+    }
+  };
 
   useEffect(() => {
-    const fetchFamilies = async () => {
-      if (selectedSubCategoryId !== "" && selectedCategoryId !== "") {
-        try {
-          console.log("selectedSubCategoryId", selectedSubCategoryId)
-          console.log("subcategories", subcategories)
-          const SubCategoriaFind = subcategories.find(sc=> sc.descripcion === selectedSubCategoryId);
-          console.log("idCategoriaFind", SubCategoriaFind)
+    console.log("cambio selectedSubCategoryId")
+    console.log(selectedSubCategoryId)
 
-          const response = await axios.get(
-            `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${SubCategoriaFind.idSubcategoria}`
-          );
 
-          console.log("n5 Families Response:", response.data.familias);
-          setFamilies(response.data.familias);
-        } catch (error) {
-          console.error("Error fetching Families:", error);
-        }
-      }
-    };
 
     fetchFamilies();
   }, [selectedSubCategoryId]);
 
-  
+  const fetchSubFamilies = async () => {
+    console.log("fetchSubFamilies")
+
+    if (
+      selectedFamilyId !== "" &&
+      selectedCategoryId !== "" &&
+      selectedSubCategoryId !== "" &&
+      families.length>0
+    ) {
+      try {
+        // console.log("selectedFamilyId", selectedFamilyId)
+        // console.log("families", families)
+        const familiaFind = families.find(f=> f.descripcion === selectedFamilyId)
+        // console.log("familiaFind", familiaFind)
+
+        const response = await axios.get(
+          `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${familiaFind.idFamilia}`
+        );
+
+        console.log("subFamilias:");
+        console.log(response.data.subFamilias);
+        setSubFamilies(response.data.subFamilias);
+      } catch (error) {
+        console.error("Error fetching SubFamilies:", error);
+      }
+    // }else{
+    //   setTimeout(() => {
+    //     fetchSubFamilies()
+    //   }, 100);
+    }
+  };
 
   useEffect(() => {
-    const fetchSubFamilies = async () => {
-      if (
-        selectedFamilyId !== "" &&
-        selectedCategoryId !== "" &&
-        selectedSubCategoryId !== ""
-      ) {
-        try {
-          console.log("selectedFamilyId", selectedFamilyId)
-          console.log("families", families)
-          const familiaFind = families.find(f=> f.descripcion === selectedFamilyId)
-          console.log("familiaFind", familiaFind)
 
-          const response = await axios.get(
-            `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${familiaFind.idFamilia}`
-          );
+    console.log("cambio selectedFamilyId")
+    console.log(selectedFamilyId)
 
-          console.log("n6 SubFamilies Response:", response.data.subFamilias);
-          setSubFamilies(response.data.subFamilias);
-        } catch (error) {
-          console.error("Error fetching SubFamilies:", error);
-        }
-      }
-    };
 
     fetchSubFamilies();
   }, [selectedFamilyId]);
@@ -197,18 +234,39 @@ const Editp2 = ({ product, open, handleClose }) => {
   // }, [editedProduct]);
 
   useEffect(() => {
+    // console.log("cambio editedproducto o categories.length")
+    
     if(categories.length>0 && Object.keys(editedProduct).length>0){
       setSelectedCategoryId(editedProduct.categoria || "");
+    }
+
+    if(subcategories.length>0 && Object.keys(editedProduct).length>0){
       setSelectedSubCategoryId(editedProduct.subCategoria || "");
       setSelectedFamilyId(editedProduct.familia || "");
       setSelectedSubFamilyId(editedProduct.subFamilia || "");
-        console.log("cambio producto")
-        console.log(editedProduct)
+        // console.log("cambio producto")
+        // console.log(editedProduct)
         
-        console.log("categories:")
-        console.log(categories)
+        // console.log("categories:")
+        // console.log(categories)
     }
-  }, [editedProduct, categories.length]);
+
+    if(families.length>0 && Object.keys(editedProduct).length>0){
+      setSelectedFamilyId(editedProduct.familia || "");
+    }
+
+    if(subfamilies.length>0 && Object.keys(editedProduct).length>0){
+      setSelectedSubFamilyId(editedProduct.subFamilia || "");
+    }
+
+  }, [
+    editedProduct, categories.length,
+    subcategories.length,
+    families.length,
+    subfamilies.length
+  ]);
+
+
 
   // useEffect(() => {
   //   setSelectedSubCategoryId(editedProduct.subCategoria || "");
@@ -241,12 +299,38 @@ const Editp2 = ({ product, open, handleClose }) => {
   };
 
   const handleSave = async (event) => {
+
+    
     event.preventDefault();
+    console.log("editedProduct")
+    console.log(editedProduct)    
+
+    console.log("categories")
+    console.log(categories)    
+
+
+    console.log("subcategories")
+    console.log(subcategories)    
+
+
+    console.log("families")
+    console.log(families)    
+
+
+    console.log("subfamilies")
+    console.log(subfamilies)    
+
+    if(categories.length<1 ||
+      subcategories.length<1 ||
+      families.length<1 ||
+        subfamilies.length<1 )return
 
     const idCategoria = categories.find(categoria=> categoria.descripcion ===editedProduct.categoria);
     const idSubCategoriaFind = subcategories.find(scategoria=> scategoria.descripcion === editedProduct.subCategoria);
     const idFamiliaFind = families.find(fam=> fam.descripcion === editedProduct.familia);
     const idSubFamiliaFind = subfamilies.find(sf=> sf.descripcion === editedProduct.subFamilia)
+    console.log("idSubFamiliaFind")
+    console.log(idSubFamiliaFind)
 
     if(idCategoria){
       const idCategoriaFil = idCategoria.idCategoria;
@@ -337,7 +421,7 @@ const Editp2 = ({ product, open, handleClose }) => {
                 setEditedProduct((prevProduct) => ({
                   ...prevProduct,
                  
-                  // categoria: e.target.value,
+                  categoria: e.target.value,
                   // categoriaDes: e.target.name, // Update the categoria property
                 }));
               }}
@@ -451,8 +535,27 @@ const Editp2 = ({ product, open, handleClose }) => {
           </Grid>
 
           <Grid item xs={6}>
-            <InputLabel>Selecciona Marca</InputLabel>
-            <Select
+            <InputLabel>Marca</InputLabel>
+            <Grid item xs={6}>
+              <TextField
+                name="marca"
+                label=""
+                value={editedProduct.marca || ""}
+                onChange={(e) => {
+                  // setSelectedCategoryId(e.target.value);
+                  // // setEditedProduct.categoria=e.target.value;
+                  setEditedProduct((prevProduct) => ({
+                    ...prevProduct,
+                    marca: e.target.value,
+                  }));
+                }}
+                fullWidth
+              />
+            </Grid>
+
+
+
+            {/* <Select
               fullWidth
               value={selectedMarcaId}
               onChange={(e) => {
@@ -474,7 +577,11 @@ const Editp2 = ({ product, open, handleClose }) => {
                   {marca.nombre}
                 </MenuItem>
               ))}
-            </Select>
+            </Select> */}
+
+
+
+
           </Grid>
 
           <Grid item xs={6}>
