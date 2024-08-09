@@ -10,15 +10,19 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import Step1 from "./Step1";
+import Step1CC from "./Step1CC";//con codigo
 import Step2 from "./Step2";
 import Step3 from "./Step3";
+import Step3CC from "./Step3CC";//con codigo
 import Step4 from "./Step4";
 import Step5 from "./Step5";
 import Step6 from "./Step6";
 
 const steps = ["Paso 1", "Paso 2"];
 
-const StepperSI = () => {
+const StepperSI = ({
+  conCodigo = false
+}) => {
   const [activeStep, setActiveStep] = useState(0);
   const [open, setOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
@@ -114,17 +118,24 @@ const StepperSI = () => {
   };
 
   const getStepContent = (step) => {
-    switch (step) {
-      case 0:
-        return <Step1 data={stepData} onNext={handleNext} setStepData={setStepData} />;
-      case 1:
-        return <Step3 data={stepData} onNext={handleNext}setStepData={setStepData}  />;
-      // return <Step2 data={data.step2} onNext={handleNext} />;
-      case 2:
-      // return <Step6 data={data.step6} onNext={handleNext} />;
-      // return <Step4 data={data.step4} onNext={handleNext} />;
-      // return <Step3 data={data.step3} onNext={handleNext} />;
+    if(conCodigo){
+      switch (step) {
+        case 0:
+          return <Step1CC data={stepData} onNext={handleNext} setStepData={setStepData} />;
+          case 1:
+            return <Step3CC data={stepData} onNext={handleNext}setStepData={setStepData}  />;
+            case 2:
+      }
+    }else{
+      switch (step) {
+        case 0:
+          return <Step1 data={stepData} onNext={handleNext} setStepData={setStepData} />;
+          case 1:
+            return <Step3 data={stepData} onNext={handleNext}setStepData={setStepData}  />;
+            case 2:
+      }
     }
+
   };
 
   return (
@@ -150,9 +161,9 @@ const StepperSI = () => {
           <div>
             {getStepContent(activeStep)}
             <div>
-              <Button disabled={activeStep === 0} onClick={handleBack}>
+              {/* <Button disabled={activeStep === 0} onClick={handleBack}>
                 Volver
-              </Button>
+              </Button> */}
               {/* {activeStep === steps.length - 1 && (
                 <Button
                   variant="contained"

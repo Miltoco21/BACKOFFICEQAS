@@ -8,10 +8,11 @@ import Add from "@mui/icons-material/Add";
 import Modal from "@mui/joy/Modal";
 import Stepperproductos from "../Componentes/Stepper/Stepperproductos";
 import Stepper2 from "../Componentes/Stepper/Stepper2";
-import { Stepper } from "@mui/material";
+import { IconButton, Stepper } from "@mui/material";
 import StepperNO from "../Componentes/Stepper/StepperNo";
 import StepperSI from "../Componentes/Stepper copy/StepperSI";
 import SearchListProducts from "../Componentes/Productos/SearchListProduct";
+import { HorizontalSplit } from "@mui/icons-material";
 
 const Productos = () => {
   const [open, setOpen] = useState(false);
@@ -43,16 +44,24 @@ const Productos = () => {
           style={{ marginLeft: "18px", padding: "14px", marginTop: "6px" }}
           onClick={handleOpenStepper}
         >
-          + Producto sin código
+          <Add/>
+          Producto sin código
         </Button>
-        {/* <Button
+        <Button
           size="large"
           variant="outlined"
           style={{ marginLeft: "18px", padding: "14px", marginTop: "6px" }}
+          
           onClick={handleOpenStepper2}
         >
-          + Producto con código
-        </Button> */}
+          <HorizontalSplit sx={{transform: "rotate(270deg)"}}/>
+          <Add sx={{
+                width: "15px",
+                position: "relative",
+                left: "-7px"
+          }}/>
+          Producto con código
+        </Button>
 
         <SearchListProducts/>
 
@@ -90,7 +99,7 @@ const Productos = () => {
               maxWidth: "180vw", // Adjust as needed
             }}
           >
-            <StepperSI />
+            <StepperSI conCodigo={true} />
           </Box>
         </Modal>
       </Box>

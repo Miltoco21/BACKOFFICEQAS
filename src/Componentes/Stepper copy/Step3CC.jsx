@@ -1,0 +1,601 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  Box,
+  Grid,
+  Select,
+  MenuItem,
+  InputLabel,
+  Paper,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  Snackbar,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Typography,
+} from "@mui/material";
+
+import ModelConfig from "../../Models/ModelConfig";
+
+
+const Step3CC = ({ data, onNext, stepData }) => {
+  const apiUrl =  ModelConfig.get().urlBase;
+;
+
+  const [newUnidad, setNewUnidad] = useState("");
+  const [stockInicial, setStockInicial] = useState(1);
+  const [stockCritico, setStockCritico] = useState(1);
+  const [precioCosto, setPrecioCosto] = useState(0);
+  const [selectedUnidadId, setSelectedUnidadId] = useState(data.selectedUnidadId || "");
+  const [selectedUnidadVentaId, setSelectedUnidadVentaId] = useState(data.selectedUnidadVentaId || ""  );
+  
+  const [precioVenta, setPrecioVenta] = useState(0);
+  const [precioNeto, setPrecioNeto] = useState(0);
+  const [ultimoFoco, setUltimoFoco] = useState("");
+  const [iva, setIva] = useState(ModelConfig.get().iva)
+  const [margenGanancia, setMargenGanancia] = useState(ModelConfig.get().margenGanancia);
+  
+  const [product, setProduct] = useState([]);
+
+
+  const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
+  const [openDialog1, setOpenDialog1] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const unidades = [
+    { idUnidad: 0, descripcion: "Sin unidad" },
+    { idUnidad: 1, descripcion: "KG" },
+    { idUnidad: 2, descripcion: "UNI" },
+    { idUnidad: 3, descripcion: "MM" },
+    { idUnidad: 4, descripcion: "CM" },
+    { idUnidad: 5, descripcion: "LT" },
+    { idUnidad: 6, descripcion: "OZ" },
+    { idUnidad: 7, descripcion: "CAJON" },
+    { idUnidad: 8, descripcion: "DISPLAY" },
+    { idUnidad: 9, descripcion: "PALLET" },
+    { idUnidad: 10, descripcion: "MALLA" },
+  ];
+
+  var ivas = [
+    { idUnidad: 0, descripcion: "Sin iva" },
+    { idUnidad: ModelConfig.get().iva, descripcion: ModelConfig.get().iva + "%" }
+  ];
+
+
+  console.log("data:", data);
+
+  const fetchProduct = async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/ProductosTmp/GetProductos`
+      );
+      console.log("API Response:", response.data);
+      if (Array.isArray(response.data.productos)) {
+        setProduct(response.data.productos);
+      }
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    }
+  };
+
+  const handleNext = async () => {
+    const isValid = validateFields();
+
+    if (!isValid) {
+      // Si los campos no son válidos, no continuar
+      return;
+    }
+
+    setLoading(true);
+
+    // Crear objeto con los datos del paso 1
+    const step1Data = {
+      respuestaSINO: "",
+      pesoSINO: "",
+      marca: data.marca,
+      categoriaID: data.selectedCategoryId || 0, // Utilizamos 0 si el valor es undefined
+      subCategoriaID: data.selectedSubCategoryId || 0,
+      familiaID: data.selectedFamilyId || 0,
+      subFamilia: data.selectedSubFamilyId || 0,
+      nombre: data.nombre, // Debes proporcionar un valor adecuado aquí
+    };
+
+    // Crear objeto con los datos del paso 3
+    const step3Data = {
+      unidad: selectedUnidadId, // Debes proporcionar un valor adecuado aquí
+      unidadVenta: selectedUnidadVentaId, // Debes proporcionar un valor adecuado aquí
+      precioCosto: parseFloat(precioCosto) || 0, // Convertir a número y usar 0 si no hay valor
+      stockInicial: parseInt(stockInicial) || 0, // Convertir a número entero y usar 0 si no hay valor
+    };
+
+    // Crear objeto con los datos del paso 4
+    const step4Data = {
+      formatoVenta: 0, // Debes proporcionar un valor adecuado aquí
+      precioVenta: parseInt(precioVenta) || 0, // Convertir a número y usar 0 si no hay valor
+      precioNeto: parseFloat(precioNeto) || 0, // Convertir a número y usar 0 si no hay valor
+    };
+
+    // Combinar todos los pasos en un solo objeto
+    const requestData = {
+      name: "", // Debes proporcionar un valor adecuado aquí
+      step1: step1Data,
+      step2: {
+        bodega: "", // Debes proporcionar un valor adecuado aquí
+        proveedor: "", // Debes proporcionar un valor adecuado aquí
+      },
+      step3: step3Data,
+      step4: step4Data,
+      step5: {
+        stockCritico: parseInt(stockCritico), // Debes proporcionar un valor adecuado aquí
+        impuesto: "", // Debes proporcionar un valor adecuado aquí
+        selectedFile: {}, // Debes proporcionar un valor adecuado aquí
+        nota: "", // Debes proporcionar un valor adecuado aquí
+      },
+    };
+
+
+    
+
+
+
+    console.log("Datos objeto productos", requestData);
+    try {
+      // Enviar la petición POST al endpoint con los datos combinados
+      const response = await axios.post(
+        `${apiUrl}/ProductosTmp/AddProducto`,
+        requestData
+      );
+
+      // Manejar la respuesta de la API
+      console.log("Response PROD GAURDADO:", response.data);
+      if (response.status === 201) {
+        setEmptyFieldsMessage("Producto guardado exitosamente");
+        setOpenSnackbar(true);
+        fetchProduct();
+        console.log("Productos",product)
+      }
+
+      // Llamar a la función onNext para continuar con el siguiente paso
+      onNext(requestData, 3);
+    } catch (error) {
+      setSnackbarMessage("Error al guardar el producto");
+      setOpenSnackbar(true);
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
+  };
+  const handleOpenDialog1 = () => {
+    setOpenDialog1(true);
+  };
+  const handleCloseDialog1 = () => {
+    setOpenDialog1(false);
+  };
+
+  const handleUnidadSelect = (selectedUnidadId) => {
+    setSelectedUnidadId(selectedUnidadId === "" ? 0 : selectedUnidadId);
+    console.log("Unidad seleccionada:", selectedUnidadId);
+  };
+
+  const handleUnidadVentaSelect = (selectedUnidadId) => {
+    setSelectedUnidadVentaId(selectedUnidadId === "" ? 0 : selectedUnidadId);
+    console.log("Unidad seleccionada:", selectedUnidadId);
+  };
+
+
+  const handleIvaSelect = (selectedUnidadId) => {
+    setIva(selectedUnidadId === "" ? 0 : selectedUnidadId);
+    console.log("Unidad seleccionada:", selectedUnidadId);
+  };
+
+
+  const handleCreateUnidad = () => {
+    // Implement the logic to create a new category here.
+    // You can use the newCategory state to get the input value.
+
+    // After creating the category, you can close the dialog.
+    setOpenDialog1(false);
+  };
+
+  const validateFields = () => {
+    // Verificar si todos los campos están vacíos
+
+    // Verificar cada campo individualmente y mostrar el primer campo vacío
+    if (selectedUnidadId === "") {
+      setEmptyFieldsMessage("Debe seleccionar una unidad de compra.");
+      return false;
+    }
+
+    if (selectedUnidadVentaId === "") {
+      setEmptyFieldsMessage("Debe seleccionar una unidad de venta.");
+      return false;
+    }
+
+    if (precioCosto === "") {
+      setEmptyFieldsMessage("Favor completar precio de costo.");
+      return false;
+    }
+    if (isNaN(parseFloat(precioCosto)) || parseFloat(precioCosto) === 0) {
+      setEmptyFieldsMessage("El precio de costo no puede ser cero.");
+      return false;
+    }
+
+    if (precioVenta === "") {
+      setEmptyFieldsMessage("Favor completar precio de venta.");
+      return false;
+    }
+    if (isNaN(parseFloat(precioVenta)) || parseFloat(precioVenta) === 0) {
+      setEmptyFieldsMessage("El precio de venta no puede ser cero.");
+      return false;
+    }
+    if (parseFloat(precioVenta) < parseFloat(precioCosto)) {
+      setEmptyFieldsMessage(
+        "El precio de venta debe ser al menos igual al precio de costo."
+      );
+      return false;
+    }
+
+    if (stockInicial === "") {
+      setEmptyFieldsMessage("Favor completar Stock Inicial.");
+      return false;
+    }
+    if (isNaN(parseFloat(stockInicial)) || parseFloat(stockInicial) === 0) {
+      setEmptyFieldsMessage("El stock inicial no puede ser cero.");
+      return false;
+    }
+
+    if (stockCritico === "") {
+      setEmptyFieldsMessage("Favor completar Stock critico.");
+      return false;
+    }
+    if (isNaN(parseFloat(stockCritico)) || parseFloat(stockCritico) === 0) {
+      setEmptyFieldsMessage("El stock inicial no puede ser cero.");
+      return false;
+    }
+
+    // Si todos los campos están completos, limpiar el mensaje de error
+    setEmptyFieldsMessage("");
+    return true;
+  };
+
+  const handleKeyDown = (event, field) => {
+    // Verificar en qué campo se está escribiendo
+    if (field === "precio") {
+      // Permitir solo dígitos numéricos y la tecla de retroceso
+      if (!/^\d+$/.test(event.key) && event.key !== "Backspace") {
+        event.preventDefault();
+      }
+    }
+  };
+
+  const logicaPrecios = ()=>{
+    console.log("logicaPrecios")
+    console.log("ultimoFoco")
+    console.log(ultimoFoco)
+
+    if(ultimoFoco == "precioCosto" &&  precioCosto > 0){
+      const sumGan = parseFloat(precioCosto) * ( parseInt(margenGanancia) / 100)
+      const neto = parseFloat(precioCosto) + sumGan
+      const sumIva = parseFloat(neto) * (parseInt(iva) / 100)
+      const final = parseInt(neto + sumIva)
+      setPrecioNeto(neto)
+      setPrecioVenta(final)
+    }else if(ultimoFoco == "precioVenta" && precioVenta>0){
+
+      /*
+       
+      venta = 10
+      iva = 1.9
+      neto = 8.1
+      ganancia = 0.3 = 2.43
+      compra = 5.67
+
+
+
+      compra = 5.67
+      ganancia = 0.3 = 1.70
+      neto = 7.37
+
+      iva = 0.19 = 1.4
+      venta = 8.77
+
+
+
+       */
+      const sumIva = parseFloat(precioVenta) * (parseInt(iva) / 100)
+      const neto = parseFloat(precioVenta) - sumIva
+
+
+      const sumGan = parseFloat(neto) * ( parseInt(margenGanancia) / 100)
+      const costo = parseFloat(neto) - sumGan
+      
+
+
+
+      setPrecioNeto(neto)
+      setPrecioCosto(costo)
+    }
+
+  }
+  const setFocus = (field) => {
+    console.log("setfocus + " + field);
+    setUltimoFoco(field)
+  }
+
+
+  const handleChange = (event, field) => {
+    // Asegurar que el valor solo contenga números
+    // Eliminar caracteres especiales específicos
+    const newValue = event.target.value.replace(/[^0000000-9]/g, 0);
+    console.log("handleChange de " + field)
+    console.log("newValue")
+    console.log(newValue)
+    if (field === "precioCosto") {
+      setPrecioCosto(newValue);
+    } else if (field === "precioVenta") {
+      setPrecioVenta(newValue);
+    } else if (field === "stockInicial") {
+      setStockInicial(newValue);
+    }else if (field === "stockCritico") {
+      setStockCritico(newValue);
+    } else if (field === "precioNeto") {
+      // setPrecioNeto(newValue);
+    } else if (field === "margenGanancia") {
+      setMargenGanancia(newValue);
+    }
+  };
+
+  useEffect(()=>{
+    logicaPrecios()
+  },[precioCosto, precioVenta, margenGanancia, iva])
+  return (
+    <Paper
+      elevation={3}
+      sx={{
+        padding: "16px",
+        width: "100%",
+      }}
+    >
+      {" "}
+      <form onSubmit={handleNext}>
+        <Grid container spacing={2} item xs={12} md={12}>
+          <Grid item xs={12} md={6}>
+            <InputLabel sx={{ marginBottom: "2%" }}>
+              Unidad de Compra
+            </InputLabel>
+            <Grid display="flex" alignItems="center">
+              <Select
+                required
+                fullWidth
+                sx={{ width: "100%" }}
+                value={selectedUnidadId}
+                onChange={(e) => handleUnidadSelect(e.target.value)}
+                label="Seleccionar Unidad"
+              >
+                {unidades.map((unidad) => (
+                  <MenuItem key={unidad.idUnidad} value={unidad.idUnidad}>
+                    {unidad.descripcion}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <InputLabel sx={{ marginBottom: "2%" }}>
+              Unidad de venta
+            </InputLabel>
+            <Grid display="flex" alignItems="center">
+              <Select
+                required
+                fullWidth
+                sx={{ width: "100%" }}
+                value={selectedUnidadVentaId}
+                onChange={(e) => handleUnidadVentaSelect(e.target.value)}
+                label="Seleccionar Unidad"
+              >
+                {unidades.map((unidad) => (
+                  <MenuItem key={unidad.idUnidad} value={unidad.idUnidad}>
+                    {unidad.descripcion}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Box>
+            <InputLabel sx={{ marginBottom: "4%" }}>
+              Margen ganancia(%)
+              </InputLabel>
+              <TextField
+                required
+                sx={{ width: "100%" }}
+                name="margenGanancia"
+                fullWidth
+                value={margenGanancia}
+                onClick={()=>{ setFocus("margenGanancia") }}
+                onChange={(event) => handleChange(event, "margenGanancia")}
+                onKeyDown={(event) => handleKeyDown(event, "margenGanancia")}
+                inputProps={{
+                  inputMode: "numeric", // Establece el modo de entrada como numérico
+                  pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+                }}
+              />
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Box>
+              <InputLabel sx={{ marginBottom: "4%" }}>
+               iva(%)
+              </InputLabel>
+              <Grid display="flex" alignItems="center">
+              <Select
+                required
+                fullWidth
+                sx={{ width: "100%" }}
+                value={iva}
+                onClick={()=>{ setFocus("iva") }}
+                onChange={(e) => handleIvaSelect(e.target.value)}
+                label="Seleccionar iva"
+              >
+                {ivas.map((ivaItem) => (
+                  <MenuItem key={ivaItem.idUnidad} value={ivaItem.idUnidad}>
+                    {ivaItem.descripcion}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Box>
+              <TextField
+                required
+                sx={{ width: "100%" }}
+                label="Precio Costo"
+                name="precioCosto"
+                fullWidth
+                value={precioCosto}
+                onChange={(event) => handleChange(event, "precioCosto")}
+                onKeyDown={(event) => handleKeyDown(event, "precioCosto")}
+                onClick={()=>{ setFocus("precioCosto") }}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box>
+              <TextField
+                required
+                sx={{
+                  width: "100%",
+                }}
+                label="Precio Venta"
+                fullWidth
+                value={precioVenta}
+                onClick={()=>{ setFocus("precioVenta") }}
+                onChange={(event) => handleChange(event, "precioVenta")}
+                onKeyDown={(event) => handleKeyDown(event, "precioVenta")}
+                inputProps={{
+                  inputMode: "numeric", // Establece el modo de entrada como numérico
+                  pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+                }}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box>
+              <TextField
+                required
+                sx={{
+                  width: "100%",
+                }}
+                label="Precio Venta Neto"
+                fullWidth
+                value={precioNeto}
+                onChange={(event) => handleChange(event, "precioNeto")}
+                onKeyDown={(event) => handleKeyDown(event, "precioNeto")}
+              />
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Box>
+              <TextField
+                required
+                sx={{ width: "100%" }}
+                label="Stock Inicial"
+                fullWidth
+                value={stockInicial}
+                onChange={(event) => handleChange(event, "stockInicial")}
+                onKeyDown={(event) => handleKeyDown(event, "stockInicial")}
+                inputProps={{
+                  inputMode: "numeric", // Establece el modo de entrada como numérico
+                  pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+                }}
+              />
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Box>
+              <TextField
+                required
+                sx={{ width: "100%" }}
+                label="Stock critico"
+                fullWidth
+                value={stockCritico}
+                onChange={(event) => handleChange(event, "stockCritico")}
+                onKeyDown={(event) => handleKeyDown(event, "stockCritico")}
+              />
+            </Box>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="secondary"
+              onClick={handleNext}
+              disabled={loading}
+            >
+              {loading ? "Guardando..." : "Guardar Producto"}
+            </Button>
+          </Grid>
+          <Grid item xs={12} md={8}>
+            <Box mt={2}>
+              {
+                <Typography variant="body2" color="error">
+                  {emptyFieldsMessage}
+                </Typography>
+              }
+            </Box>
+          </Grid>
+        </Grid>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          message={emptyFieldsMessage}
+        />
+      </form>
+      <Dialog open={openDialog1} onClose={handleCloseDialog1}>
+        <DialogTitle>Crear Unidad de Compra</DialogTitle>
+        <DialogContent sx={{ marginTop: "9px" }}>
+          <TextField
+            label="Ingresa Unidad de Compra"
+            fullWidth
+            value={newUnidad}
+            onChange={(e) => setNewUnidad(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog1} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleCreateUnidad} color="primary">
+            Crear
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Paper>
+  );
+};
+
+export default Step3CC;
