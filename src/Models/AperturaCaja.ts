@@ -1,12 +1,11 @@
 import StorageSesion from '../Helpers/StorageSesion.ts';
 import BaseConfig from "../definitions/BaseConfig.ts";
-import MovimientoCaja from "../Types/MovimientoCaja.ts";
 import axios from "axios";
 import Model from './Model.ts';
 import ModelConfig from './ModelConfig.ts';
 
 
-class AperturaCaja extends Model implements MovimientoCaja{
+class AperturaCaja extends Model{
     motivo: string | null | undefined;
     rutProveedor: string | null | undefined;
     idUsuario: string | null | undefined;

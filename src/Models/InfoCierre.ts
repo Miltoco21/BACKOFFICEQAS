@@ -1,8 +1,6 @@
 import StorageSesion from '../Helpers/StorageSesion.ts';
-import IProduct from '../Types/IProduct.ts';
 import Model from './Model.ts';
 import BaseConfig from "../definitions/BaseConfig.ts";
-import IPagoBoleta, { IProductoPagoBoleta, ITransferencia } from '../Types/IPagoBoleta.ts';
 import axios from 'axios';
 import ModelConfig from './ModelConfig.ts';
 

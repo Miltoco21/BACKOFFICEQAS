@@ -1,13 +1,11 @@
 import StorageSesion from '../Helpers/StorageSesion.ts';
 import Model from './Model.ts';
 import BaseConfig from "../definitions/BaseConfig.ts";
-import IPagoBoleta, { IProductoPagoBoleta, ITransferencia } from '../Types/IPagoBoleta.ts';
 import axios from 'axios';
-import MovimientoCaja from '../Types/MovimientoCaja.ts';
 import ModelConfig from './ModelConfig.ts';
 
 
-class Ingreso extends Model implements MovimientoCaja{
+class Ingreso extends Model{
   codigoUsuario: number;
   codigoSucursal: number;
   puntoVenta: string;

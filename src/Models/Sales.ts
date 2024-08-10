@@ -1,7 +1,6 @@
 import StorageSesion from '../Helpers/StorageSesion.ts';
 import BaseConfig from "../definitions/BaseConfig.ts";
 import Product from './Product.ts';
-import IProductSold from '../Types/IProductSold.ts';
 import Singleton from './Singleton.ts';
 import ProductSold from './ProductSold.ts';
 import axios from 'axios';

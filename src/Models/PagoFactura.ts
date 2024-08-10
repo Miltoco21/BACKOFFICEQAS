@@ -1,20 +1,18 @@
 import StorageSesion from '../Helpers/StorageSesion.ts';
-import IProduct from '../Types/IProduct.ts';
 import Model from './Model.ts';
 import BaseConfig from "../definitions/BaseConfig.ts";
-import IPagoBoleta, { IProductoPagoBoleta, ITransferencia } from '../Types/IPagoBoleta.ts';
 import axios from 'axios';
 import ModelConfig from './ModelConfig.ts';
 
 
-class PagoFactura extends Model implements IPagoBoleta  {
+class PagoFactura extends Model{
     idUsuario: number;
     codigoClienteSucursal: number;
     codigoCliente: number;
     total: number;
-    products: IProductoPagoBoleta[];
+    products: any[];
     metodoPago: string;
-    transferencias: ITransferencia;
+    transferencias: any;
 
     async hacerPagoFactura(data,callbackOk, callbackWrong){
 

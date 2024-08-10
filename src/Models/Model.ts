@@ -1,5 +1,4 @@
 import StorageSesion from '../Helpers/StorageSesion.ts';
-import IProduct from '../Types/IProduct.ts';
 import Sale from './Sale.ts';
 import Sales from './Sales.ts';
 

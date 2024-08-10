@@ -1,11 +1,10 @@
 import StorageSesion from '../Helpers/StorageSesion.ts';
-import IProduct from '../Types/IProduct.ts';
 import Product from './Product.ts';
 import BaseConfig from "../definitions/BaseConfig.ts";
 import System from '../Helpers/System.ts';
 
 
-class ProductSold extends Product implements IProduct {
+class ProductSold extends Product{
     quantity: number;
     total: number;
     idProducto: number;

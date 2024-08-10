@@ -1,12 +1,11 @@
 import StorageSesion from '../Helpers/StorageSesion.ts';
 import BaseConfig from "../definitions/BaseConfig.ts";
-import IUser from "./../Types/IUser.ts";
 import axios from "axios";
 import Model from './Model.ts';
 import ModelConfig from './ModelConfig.ts';
 
 
-class User extends Model implements IUser{
+class User extends Model{
     codigoUsuario: number;
     rut: string;
     clave: string;
