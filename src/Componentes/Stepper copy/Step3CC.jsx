@@ -26,6 +26,7 @@ import {
 
 import ModelConfig from "../../Models/ModelConfig";
 import { AttachMoney, DraftsOutlined, Money, Percent } from "@mui/icons-material";
+import Product from "../../Models/Product";
 
 
 const Step3CC = ({ data, onNext, stepData }) => {
@@ -289,24 +290,42 @@ const Step3CC = ({ data, onNext, stepData }) => {
 
   const logicaPrecios = ()=>{
     if(ultimoFoco != "precioVenta" &&  precioCosto > 0){
-      const sumGan = parseFloat(precioCosto) * ( parseInt(margenGanancia) / 100)
-      const neto = parseFloat(precioCosto) + sumGan
-      const sumIva = parseFloat(neto) * (parseInt(iva) / 100)
-      const final = Math.round(parseFloat(neto + sumIva))
-      setPrecioNeto(neto)
-      setPrecioVenta(final)
+
+      const tmpProduct = {}
+      tmpProduct.precioVenta = 0
+      tmpProduct.precioCosto = precioCosto
+      tmpProduct.gananciaPorcentaje = margenGanancia
+      tmpProduct.ivaPorcentaje = iva
+      tmpProduct.gananciaValor = 0
+      tmpProduct.ivaValor = 0
+      tmpProduct.precioNeto = 0
+
+      Product.logicaPrecios(tmpProduct)
+
+      setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
+      setPrecioVenta(tmpProduct.precioVenta.toFixed(0))
       
-      setValorIva((final - neto).toFixed(2))
-      setValorMargenGanancia((neto - precioCosto).toFixed(2))
+      setValorIva(tmpProduct.ivaValor.toFixed(0))
+      setValorMargenGanancia(tmpProduct.gananciaValor.toFixed(0))
 
     }else if(ultimoFoco != "precioCosto" && precioVenta>0){
-      const neto = parseFloat(precioVenta) / (1  + (parseInt(iva) / 100) )
-      const costo = parseFloat(neto) / (1 + parseInt(margenGanancia) / 100)
-      setValorIva((precioVenta - neto).toFixed(2))
-      setValorMargenGanancia((neto - costo).toFixed(2))
 
-      setPrecioNeto((neto).toFixed(2))
-      setPrecioCosto(costo.toFixed(2))
+      const tmpProduct = {}
+      tmpProduct.precioVenta = precioVenta
+      tmpProduct.precioCosto = 0
+      tmpProduct.gananciaPorcentaje = margenGanancia
+      tmpProduct.ivaPorcentaje = iva
+      tmpProduct.gananciaValor = 0
+      tmpProduct.ivaValor = 0
+      tmpProduct.precioNeto = 0
+
+      Product.logicaPrecios(tmpProduct)
+
+      setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
+      setPrecioCosto(tmpProduct.precioCosto.toFixed(0))
+      
+      setValorIva(tmpProduct.ivaValor.toFixed(0))
+      setValorMargenGanancia(tmpProduct.gananciaValor.toFixed(0))
     }
 
   }
