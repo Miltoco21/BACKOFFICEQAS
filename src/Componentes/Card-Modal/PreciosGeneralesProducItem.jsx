@@ -49,6 +49,8 @@ const PreciosGeneralesProducItem = ({
     changePriceValue("ivaValor",product.ivaValor)
     changePriceValue("precioVenta",product.precioVenta)
     changePriceValue("precioCosto",product.precioCosto)
+    changePercentValue("ivaPorcentaje",product.ivaPorcentaje)
+    changePercentValue("gananciaPorcentaje",product.gananciaPorcentaje)
 
     console.log(product)
   }
@@ -79,8 +81,13 @@ const PreciosGeneralesProducItem = ({
   }
 
   const changePercentValue = (propName,newValue)=>{
-    // console.log("changePercentValue para " + propName + ".. nuevo valor : " + newValue)
-    if(newValue == '') newValue = 0
+    console.log("changePercentValue para " + propName + ".. nuevo valor : " + newValue)
+    if(newValue == '') newValue = "0"
+    newValue = parseFloat(newValue)
+    newValue = newValue.toFixed(0)
+    newValue = parseInt(newValue)
+
+
     if(Validator.isCantidad(newValue)){
       setProducts((prevProducts) => {
         const updatedProducts = [...prevProducts];
