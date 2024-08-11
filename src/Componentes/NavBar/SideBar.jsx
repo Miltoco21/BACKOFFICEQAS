@@ -29,6 +29,7 @@ import { IconButton, Typography } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 
 import ScreenDialogConfig from "../ScreenDialog/AdminConfig";
+import CONSTANTS from "../../definitions/Constants";
 
 
 
@@ -117,10 +118,7 @@ export default function PermanentDrawerLeft() {
           action: ()=>{
             setShowScreenConfig(true)
           }
-        }
-
-        
-
+        },
       ];
       setMenuItems(menuItemsBase)
     }
@@ -218,11 +216,13 @@ export default function PermanentDrawerLeft() {
                 </List>
               )}
             </React.Fragment>
-
           )}
         )}
 
         </List>
+        <Typography sx={{
+          margin:"0 20px"
+        }}>{CONSTANTS.appName + " - " + CONSTANTS.appVersion}</Typography>
       </Drawer>
       <ScreenDialogConfig openDialog={showScreenConfig} setOpenDialog={setShowScreenConfig} />
     </Box>
