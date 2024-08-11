@@ -84,10 +84,10 @@ const PreciosPorCategoria = ({ onClose }) => {
     var productsFilter = productsSinFiltrar.filter((product)=>{
       return (
         //product.nombre.toLowerCase().indexOf(txtBuscar)> -1
-        ( (checkTodas || checkCategorias) && product.categoria.toLowerCase().indexOf(txtBuscar)> -1)
-        || ((checkTodas || checkSubcategorias) && product.subCategoria.toLowerCase().indexOf(txtBuscar)> -1)
-        || ((checkTodas || checkFamilias) && product.familia.toLowerCase().indexOf(txtBuscar)> -1)
-        || ((checkTodas || checkSubfamilias) && product.subFamilia.toLowerCase().indexOf(txtBuscar)> -1)
+        ( (checkTodas || checkCategorias) && product.categoria.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
+        || ((checkTodas || checkSubcategorias) && product.subCategoria.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
+        || ((checkTodas || checkFamilias) && product.familia.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
+        || ((checkTodas || checkSubfamilias) && product.subFamilia.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
       )
     })
 
