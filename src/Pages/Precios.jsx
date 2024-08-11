@@ -38,7 +38,11 @@ const Precios = () => {
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
 
-      <Box sx={{ display: 'flex' }}>
+      <Box 
+        sx={{ 
+          display: 'flex',
+          height:'100px'
+        }}>
         <SideBar />
         <Button
           variant="outlined"
@@ -46,7 +50,7 @@ const Precios = () => {
             my: 1,
             mx: 2,
           }}
-          startIcon={<Add />}
+          // startIcon={<Add />}
           onClick={handleOpenModal}
         >
           Precios Generales
@@ -58,7 +62,7 @@ const Precios = () => {
             my: 1,
             mx: 2,
           }}
-          startIcon={<Add />}
+          // startIcon={<Add />}
           onClick={()=>{
             setOpenPreciosCategoria(true)
           }}
@@ -67,7 +71,7 @@ const Precios = () => {
         </Button>
 
 
-        <Button
+        {/* <Button
           variant="outlined"
           sx={{
             my: 1,
@@ -77,14 +81,14 @@ const Precios = () => {
           onClick={handleOpenModalAsoClientes}
         >
           Asociación Clientes
-        </Button>
+        </Button> */}
       </Box>
 
       <Dialog open={openAsocClientes} onClose={handleCloseModalAsoClientes}>
         <BoxBuscador onClosePreciosClientes={handleCloseModalAsoClientes}  />
       </Dialog>
 
-      <Dialog open={openPrecios} onClose={handleCloseModal}>
+      <Dialog maxWidth={"lg"} open={openPrecios} onClose={handleCloseModal}>
         <PreciosGenerales onClose={handleCloseModal}/>
       </Dialog>
 

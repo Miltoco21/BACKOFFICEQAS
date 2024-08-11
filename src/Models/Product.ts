@@ -21,11 +21,142 @@ class Product extends Model{
         return Product.instance;
     }
 
+    static initLogica(product){
+        if(!product.ivaPorcentaje) {
+            // console.log("no tiene valor product.ivaPorcentaje")
+            product.ivaPorcentaje = 19
+        }
+            if(!product.ivaValor) {
+            // console.log("no tiene valor product.ivaValor")
+            product.ivaValor = 0
+        }
+            if(!product.gananciaPorcentaje) {
+            // console.log("no tiene valor product.gananciaPorcentaje")
+            product.gananciaPorcentaje = 30
+        }
+            if(!product.gananciaValor) {
+            // console.log("no tiene valor product.gananciaValor")
+            product.gananciaValor = 0
+        }
+    }
+
+    static logicaPrecios(product){
+        // console.log("logicaPrecios para ")
+        if(!product.gananciaPorcentaje) Product.initLogica(product)
+        // console.log(product)
+        
+        if(product.precioVenta <= 0 && product.precioCosto > 0){
+            // console.log("calculando sin precio de venta y con precio de costo")
+        
+            // console.log("product.precioCosto")
+            // console.log(product.precioCosto)
+            // console.log("product.gananciaPorcentaje")
+            // console.log(product.gananciaPorcentaje)
+            // console.log("product.ivaPorcentaje")
+            // console.log(product.ivaPorcentaje)
+        
+            const sumGan = (product.precioCosto) * ( (product.gananciaPorcentaje) / 100)
+            // console.log("sumGan")
+            // console.log(sumGan)
+            
+            const neto = parseFloat(product.precioCosto) + sumGan
+            
+            
+            // console.log("neto")
+            // console.log(neto)
+            
+            const sumIva = (neto) * ((product.ivaPorcentaje) / 100)
+            
+            // console.log("sumIva")
+            // console.log(sumIva)
+            
+            
+            
+            const final = ((neto + sumIva))
+            
+            // console.log("final")
+            // console.log(final)
+            
+            product.precioVenta = final
+            product.precioNeto = neto
+            product.gananciaValor = sumGan
+            product.ivaValor = sumIva
+        
+        }else if(product.precioVenta >0 && product.precioCosto <= 0){
+        
+        
+        
+            // console.log("calculando sin precio de costo y con precio de venta")
+        
+            // console.log("product.precioCosto")
+            // console.log(product.precioCosto)
+            // console.log("product.gananciaPorcentaje")
+            // console.log(product.gananciaPorcentaje)
+            // console.log("product.ivaPorcentaje")
+            // console.log(product.ivaPorcentaje)
+            
+            const neto = parseFloat(product.precioVenta) / (1  + (parseInt(product.ivaPorcentaje) / 100) )
+            // console.log("neto")
+            // console.log(neto)
+            const costo = neto / (1 + parseInt(product.gananciaPorcentaje) / 100)
+        
+            // console.log("costo")
+            // console.log(costo)
+            
+            var sumGan = neto - costo
+            // console.log("sumGan")
+            // console.log(sumGan)
+            var sumIva = product.precioVenta - neto
+            // console.log("sumIva")
+            // console.log(sumIva)
+
+            product.precioCosto = costo
+            product.precioNeto = neto
+            product.gananciaValor = sumGan
+            product.ivaValor = sumIva
+
+
+            }
+        
+        // console.log(product)
+    }
+
+    //recalcular logica de costo/neto/venta
+    static puedeRecalcular(product){
+        return (
+            product.precioCosto * product.precioVenta == 0 
+            && product.precioCosto != product.precioVenta
+        )
+    }
+
+    async getAll(callbackOk, callbackWrong){
+        try {
+            const configs = ModelConfig.get()
+            var url = configs.urlBase + "/api/ProductosTmp/GetProductos"
+            url = url.replace("/api/api","/api")
+
+            const response = await axios.get(url);
+            if(
+                response.data.statusCode == 200
+                || response.data.statusCode == 201
+
+            ){
+                callbackOk(response.data.productos, response);
+            }else{
+               callbackWrong("respuesta incorrecta del servidor") 
+            }
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            callbackWrong(error) 
+          }
+    }
+
     async findByDescription({description, codigoCliente},callbackOk, callbackWrong){
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase +
             "/api/ProductosTmp/GetProductosByDescripcion?descripcion=" + (description+"")
+            url = url.replace("/api/api","/api")
             if(codigoCliente){
                 url += "&codigoCliente=" + codigoCliente
             }
