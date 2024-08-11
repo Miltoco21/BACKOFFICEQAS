@@ -48,8 +48,8 @@ const AdminConfig = ({openDialog,setOpenDialog}) => {
 
   const handlerSaveAction = ()=>{
     ModelConfig.change("urlBase",urlBase);
-    ModelConfig.change("cantidadProductosBusquedaRapida", iva)
-    ModelConfig.change("iva", cantBusqRap)
+    ModelConfig.change("cantidadProductosBusquedaRapida", cantBusqRap)
+    ModelConfig.change("iva", iva)
 
     console.log("save config");
     setOpenDialog(false)
