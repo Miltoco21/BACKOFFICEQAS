@@ -242,8 +242,8 @@ const Editp2 = ({ product, open, handleClose }) => {
 
     if(subcategories.length>0 && Object.keys(editedProduct).length>0){
       setSelectedSubCategoryId(editedProduct.subCategoria || "");
-      setSelectedFamilyId(editedProduct.familia || "");
-      setSelectedSubFamilyId(editedProduct.subFamilia || "");
+      // setSelectedFamilyId(editedProduct.familia || "");
+      // setSelectedSubFamilyId(editedProduct.subFamilia || "");
         // console.log("cambio producto")
         // console.log(editedProduct)
         
@@ -263,7 +263,9 @@ const Editp2 = ({ product, open, handleClose }) => {
     editedProduct, categories.length,
     subcategories.length,
     families.length,
-    subfamilies.length
+    subfamilies.length,
+
+
   ]);
 
 
@@ -323,7 +325,10 @@ const Editp2 = ({ product, open, handleClose }) => {
     if(categories.length<1 ||
       subcategories.length<1 ||
       families.length<1 ||
-        subfamilies.length<1 )return
+      subfamilies.length<1 ){
+        alert("Completar las familias")
+        return
+    }
 
     const idCategoria = categories.find(categoria=> categoria.descripcion ===editedProduct.categoria);
     const idSubCategoriaFind = subcategories.find(scategoria=> scategoria.descripcion === editedProduct.subCategoria);
@@ -362,12 +367,14 @@ const Editp2 = ({ product, open, handleClose }) => {
       );
       console.log("API Response:", response.data);
 
-      if (response.status === 201) {
+      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
         console.log("Producto updated successfully:", response.data);
-        setIsEditSuccessful(true);
+        // setIsEditSuccessful(true);
         setSuccessDialogOpen(true);
         setSuccessMessage(response.data.message);
         setRefresh((prevRefresh) => !prevRefresh);
+        handleClose();
+        window.location.reload(1)
       }
     } catch (error) {
       console.error("Error updating producto:", error);
@@ -384,7 +391,6 @@ const Editp2 = ({ product, open, handleClose }) => {
 
     console.log("Edited Product:", editedProduct);
     // Additional logic to update the product in the database can be added here
-    handleClose();
   };
 
   return (
