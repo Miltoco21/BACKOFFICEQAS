@@ -28,6 +28,8 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ModelConfig from "../../Models/ModelConfig";
 import { Label } from "@mui/icons-material";
+import PreciosGeneralesProducItem from "./PreciosGeneralesProducItem";
+import Product from "../../Models/Product";
 
 export const defaultTheme = createTheme();
 
@@ -51,19 +53,15 @@ const PreciosPorCategoria = ({ onClose }) => {
   const [margen, setMargen] = useState( ModelConfig.getValueOrDefault("margenGanancia") );
 
   useEffect(() => {
+
     const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/ProductosTmp/GetProductos`,
-        );
-        setProducts(response.data.productos);
-        setProductsSinFiltrar(response.data.productos);
-        console.log(response.data.productos);
-      } catch (error) {
-        console.error("Error fetching products:", error);
+      Product.getInstance().getAll((prods)=>{
+        setProducts(prods.slice(0, 10));
+        setProductsSinFiltrar(prods);
+      },(error)=>{
         setErrorMessage("Error al buscar el producto por descripción");
         setOpenSnackbar(true);
-      }
+      })
     };
 
     fetchProducts();
@@ -298,7 +296,7 @@ const PreciosPorCategoria = ({ onClose }) => {
 
                 </Grid>
 
-              <Grid item
+              {/* <Grid item
                 xs={10}
                 md={10}
                 sm={10}
@@ -323,8 +321,8 @@ const PreciosPorCategoria = ({ onClose }) => {
                     setMargen(e.target.value)
                   }}
                 />
-              </Grid>
-              <Grid
+              </Grid> */}
+              {/* <Grid
                 item
                 xs={10}
                 md={10}
@@ -345,7 +343,7 @@ const PreciosPorCategoria = ({ onClose }) => {
               >
                 Aplicar cambios
               </Button>
-              </Grid>
+              </Grid> */}
             </div>
 
             <TableContainer
@@ -353,7 +351,6 @@ const PreciosPorCategoria = ({ onClose }) => {
               style={{
                 overflowX: "auto",
                 marginTop: 20,
-                maxHeight: 500
                }}
             >
               <Table>
@@ -366,39 +363,28 @@ const PreciosPorCategoria = ({ onClose }) => {
                   </TableCell>
                 </TableRow>
                 </TableHead>
-                <TableHead>
-                <TableRow>
-                <TableCell >
-                    Nombre
-                </TableCell>
-                <TableCell>
-                    Precio Actual
-                </TableCell>
-                <TableCell>
-                    Precio Futuro
-                </TableCell>
-                </TableRow>
-                  </TableHead>
-                <TableBody>
+             
+                <TableBody key={1}>
                   {products.map((product, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{product.nombre}</TableCell>
-                      <TableCell>${product.precioVenta}</TableCell>
-                      <TableCell sx={{
-                        color:"#0E5E05",
-                        fontWeight:"bold"
-                      }}>${ calcularGanancia(product)}</TableCell>
-                      {/* <TableCell>
-                        <TextField
-                          name="precio"
-                          variant="outlined"
-                          fullWidth
-                          value={product.precioVenta}
-                          onChange={(e) => handlePrecioChange(e, index)}
-                        />
-                      </TableCell> */}
-                    </TableRow>
-                  ))}
+                      <PreciosGeneralesProducItem 
+                      key={product.id} 
+                      product={product} 
+                      index={index} 
+                      setProducts={setProducts}
+                      onUpdatedOk={()=>{
+                        setSuccessMessage("Precio editado exitosamente");
+                        setOpenSnackbar(true);
+                        setTimeout(() => {
+                          // onClose();
+                        }, 2000);
+                      }}
+                      onUpdatedWrong={(error)=>{
+                        console.error("Error al actualizar el producto:", error);
+                        setErrorMessage("Error al actualizar el producto");
+                        setOpenSnackbar(true);
+                      }}
+                      />
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
