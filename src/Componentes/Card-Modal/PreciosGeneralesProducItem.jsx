@@ -44,7 +44,13 @@ const PreciosGeneralesProducItem = ({
 
   const init = ()=>{
     Product.initLogica(product)
-    changePriceValue("precioCosto", product.precioCosto)
+    changePriceValue("gananciaValor",product.gananciaValor)
+    changePriceValue("precioNeto",product.precioNeto)
+    changePriceValue("ivaValor",product.ivaValor)
+    changePriceValue("precioVenta",product.precioVenta)
+    changePriceValue("precioCosto",product.precioCosto)
+
+    console.log(product)
   }
 
   const changePriceValue = (propName,newValue)=>{
