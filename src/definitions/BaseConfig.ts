@@ -7,6 +7,7 @@ const BaseConfig =  {
     sesionExprire: 2 * 60 * 1000, //en milisegundos
     margenGanancia: 30, //en %
     iva: 19, //en %
+    cantidadProductosBusquedaRapida:20,
     cantidadDescripcionCorta:30,
     buttonDelayClick: 1500, //en milisegundos
 };
