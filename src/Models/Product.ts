@@ -25,17 +25,6 @@ class Product extends Model{
 
         product.ivaPorcentaje = ModelConfig.get().iva
 
-        // if(product.precioNeto>0 && product.precioVenta>0){
-        //     product.ivaValor = product.precioVenta - product.precioNeto
-        //     product.ivaPorcentaje = product.ivaValor * 100 / product.precioNeto
-        // }
-
-        if(product.precioNeto>0 && product.precioCosto>0){
-            product.gananciaValor = product.precioNeto - product.precioCosto
-            product.gananciaPorcentaje = product.gananciaValor * 100 / product.precioCosto
-        }
-
-
         // if(!product.ivaPorcentaje) {
         //     // console.log("no tiene valor product.ivaPorcentaje")
         //     product.ivaPorcentaje = 19
@@ -52,14 +41,29 @@ class Product extends Model{
             // console.log("no tiene valor product.gananciaValor")
             product.gananciaValor = 0
         }
-    }
 
-    static logicaPrecios(product){
-        // console.log("logicaPrecios para ")
-        if(!product.gananciaPorcentaje) Product.initLogica(product)
+        // if(product.precioNeto>0 && product.precioVenta>0){
+        //     product.ivaValor = product.precioVenta - product.precioNeto
+        //     product.ivaPorcentaje = product.ivaValor * 100 / product.precioNeto
+        // }
+
+        if(product.precioNeto>0 && product.precioCosto>0){
+            product.gananciaValor = product.precioNeto - product.precioCosto
+            product.gananciaPorcentaje = product.gananciaValor * 100 / product.precioCosto
+            product.gananciaPorcentaje = parseInt(product.gananciaPorcentaje)
+        }
+
+
+    }
+    
+    //direccion indica si se calcula para el lado del costo o del precio final
+    static logicaPrecios(product, direccion = "final"){
+        // console.log("logicaPrecios " + direccion + " para ")
         // console.log(product)
-        
-        if(product.precioVenta <= 0 && product.precioCosto > 0){
+        if(!product.gananciaPorcentaje) Product.initLogica(product)
+        if(product.ivaPorcentaje) product.ivaPorcentaje = ModelConfig.get().iva
+        // if(product.precioVenta <= 0 && product.precioCosto > 0){
+        if( direccion == 'final' ){
             // console.log("calculando sin precio de venta y con precio de costo")
         
             // console.log("product.precioCosto")
@@ -96,9 +100,8 @@ class Product extends Model{
             product.gananciaValor = sumGan
             product.ivaValor = sumIva
         
-        }else if(product.precioVenta >0 && product.precioCosto <= 0){
-        
-        
+        // }else if(product.precioVenta >0 && product.precioCosto <= 0){
+        }else if(direccion == "costo"){
         
             // console.log("calculando sin precio de costo y con precio de venta")
         
@@ -133,14 +136,6 @@ class Product extends Model{
             }
         
         // console.log(product)
-    }
-
-    //recalcular logica de costo/neto/venta
-    static puedeRecalcular(product){
-        return (
-            product.precioCosto * product.precioVenta == 0 
-            && product.precioCosto != product.precioVenta
-        )
     }
 
     async getAll(callbackOk, callbackWrong){

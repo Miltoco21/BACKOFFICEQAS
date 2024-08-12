@@ -49,9 +49,6 @@ const PreciosPorCategoria = ({ onClose }) => {
   const [checkFamilias, setCheckFamilias] = useState(false);
   const [checkSubfamilias, setCheckSubfamilias] = useState(false);
 
-  
-  const [margen, setMargen] = useState( ModelConfig.getValueOrDefault("margenGanancia") );
-
   useEffect(() => {
 
     const fetchProducts = async () => {
@@ -96,75 +93,11 @@ const PreciosPorCategoria = ({ onClose }) => {
     setProducts(productsFilter)
   }
 
-  const handlePrecioChange = (e, index) => {
-    const { value } = e.target;
-    setProducts((prevProducts) => {
-      const updatedProducts = [...prevProducts];
-      updatedProducts[index] = {
-        ...updatedProducts[index],
-        precioVenta: value,
-      };
-      return updatedProducts;
-    });
-  };
 
-  const handleGuardarClick = async (selectedProduct) => {
-    try {
-      console.log("Datos antes de la actualización:", selectedProduct);
-
-      const editedProduct = {
-        ...selectedProduct,
-        categoria:
-          selectedProduct.categoria === "" ? 0 : selectedProduct.categoria,
-        subCategoria:
-          selectedProduct.subCategoria === ""
-            ? 0
-            : selectedProduct.subCategoria,
-        familia: selectedProduct.familia === "" ? 0 : selectedProduct.familia,
-        subFamilia:
-          selectedProduct.subFamilia === "" ? 0 : selectedProduct.subFamilia,
-      };
-
-      const response = await axios.put(
-        `${apiUrl}/ProductosTmp/UpdateProducto`,
-        {
-          idProducto: editedProduct.idProducto,
-          nombre: editedProduct.nombre,
-          categoria: editedProduct.categoria,
-          subCategoria: editedProduct.subCategoria,
-          familia: editedProduct.familia,
-          subFamilia: editedProduct.subFamilia,
-          precioVenta: editedProduct.precioVenta,
-          bodega: editedProduct.bodega,
-          impuesto: editedProduct.impuesto,
-          marca: editedProduct.marca,
-          nota: editedProduct.nota,
-          proveedor: editedProduct.proveedor,
-        }
-      );
-
-      console.log("Respuesta del servidor:", response.data);
-
-      if (response.data.statusCode === 200) {
-        setSuccessMessage("Precio editado exitosamente");
-        setOpenSnackbar(true);
-        setTimeout(() => {
-          onClose();
-        }, 2000);
-      }
-    } catch (error) {
-      console.error("Error al actualizar el producto:", error);
-      setErrorMessage("Error al actualizar el producto");
-      setOpenSnackbar(true);
-    }
-  };
-
-  
-  const calcularGanancia = (prod)=>{
-    const fac =  (100 + parseInt(margen)) / 100
-    const val = prod.precioVenta * fac
-    // return (val)
-    return Math.round(val)
+  const checkTxtBuscar = (e)=>{
+    // console.log(e)
+    if(e.keyCode == 13)
+    handleSearchButtonClick()
   }
 
   return (
@@ -219,6 +152,7 @@ const PreciosPorCategoria = ({ onClose }) => {
                   placeholder="Ingresar Descripcion"
                   value={txtBuscar}
                   onChange={(e) => setTxtBuscar(e.target.value)}
+                  onKeyDown={(e) => checkTxtBuscar(e)}
                 />
                 <Button
                   sx={{

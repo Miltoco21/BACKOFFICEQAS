@@ -36,11 +36,42 @@ const PreciosGeneralesProducItem = ({
   onUpdatedWrong
  }) => {
 
+  const [ultimoFoco, setUltimoFoco] = useState("")
+
   useEffect(()=>{
     init()
-
-    // console.log(product)
   },[])
+
+  useEffect(()=>{
+    // console.log("product")
+    // console.log(product)
+
+    if(ultimoFoco == "precioCosto" || ultimoFoco == "gananciaPorcentaje"){
+      // setTimeout(() => {
+        Product.logicaPrecios(product,"final")
+        changePriceValue("gananciaValor",product.gananciaValor)
+        changePriceValue("precioNeto",product.precioNeto)
+        changePriceValue("ivaValor",product.ivaValor)
+        changePriceValue("precioVenta",product.precioVenta)
+        changePriceValue("precioCosto",product.precioCosto)
+        setUltimoFoco("")
+      // }, 500);
+    }
+
+    if(ultimoFoco == "precioVenta"){
+      // setTimeout(() => {
+        Product.logicaPrecios(product,"costo")
+        changePriceValue("gananciaValor",product.gananciaValor)
+        changePriceValue("precioNeto",product.precioNeto)
+        changePriceValue("ivaValor",product.ivaValor)
+        changePriceValue("precioVenta",product.precioVenta)
+        changePriceValue("precioCosto",product.precioCosto)
+        setUltimoFoco("")
+      // }, 500);
+    }
+
+  },[ product ])
+
 
   const init = ()=>{
     Product.initLogica(product)
@@ -52,7 +83,7 @@ const PreciosGeneralesProducItem = ({
     changePercentValue("ivaPorcentaje",product.ivaPorcentaje)
     changePercentValue("gananciaPorcentaje",product.gananciaPorcentaje)
 
-    console.log(product)
+    // console.log(product)
   }
 
   const changePriceValue = (propName,newValue)=>{
@@ -78,10 +109,11 @@ const PreciosGeneralesProducItem = ({
       // console.log("no es valido")
     }
     // console.log(product)
+    setUltimoFoco(propName)
   }
 
   const changePercentValue = (propName,newValue)=>{
-    console.log("changePercentValue para " + propName + ".. nuevo valor : " + newValue)
+    // console.log("changePercentValue para " + propName + ".. nuevo valor : " + newValue)
     if(newValue == '') newValue = "0"
     newValue = parseFloat(newValue)
     newValue = newValue.toFixed(0)
@@ -94,13 +126,13 @@ const PreciosGeneralesProducItem = ({
         updatedProducts[index] = {
           ...updatedProducts[index],
         }
-        updatedProducts[index][propName] = newValue
+        updatedProducts[index][propName] = parseInt(newValue)
         return updatedProducts;
       });
+      setUltimoFoco(propName)
     }
     // console.log(product)
 
-    return false
   }
 
 
@@ -135,17 +167,6 @@ const PreciosGeneralesProducItem = ({
     }
   };
 
-
-  const calcular = ()=>{
-    Product.logicaPrecios(product)
-
-    changePriceValue("gananciaValor",product.gananciaValor)
-    changePriceValue("precioNeto",product.precioNeto)
-    changePriceValue("ivaValor",product.ivaValor)
-    changePriceValue("precioVenta",product.precioVenta)
-    changePriceValue("precioCosto",product.precioCosto)
-  }
-
   return (
     <TableRow key={index} sx={{
       backgroundColor: ( index % 2 == 0 ? "whitesmoke" : "#e5e5e5")
@@ -158,6 +179,7 @@ const PreciosGeneralesProducItem = ({
           fullWidth
           value={product.precioCosto}
           onChange={(e) => changePriceValue("precioCosto",e.target.value)}
+          onClick={()=>setUltimoFoco("precioCosto")}
           InputProps={{
             inputMode: "numeric", // Establece el modo de entrada como numérico
             pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
@@ -179,6 +201,7 @@ const PreciosGeneralesProducItem = ({
           fullWidth
           value={product.gananciaPorcentaje}
           onChange={(e) => changePercentValue("gananciaPorcentaje",e.target.value)}
+          onClick={()=>setUltimoFoco("gananciaPorcentaje")}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -250,6 +273,7 @@ const PreciosGeneralesProducItem = ({
           fullWidth
           value={product.precioVenta}
           onChange={(e) => changePriceValue("precioVenta",e.target.value)}
+          onClick={()=>setUltimoFoco("precioVenta")}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -260,18 +284,6 @@ const PreciosGeneralesProducItem = ({
         />
       </TableCell>
 
-      <TableCell>
-        <Button
-          onClick={() => {
-            calcular()
-          }}
-          disabled = { !Product.puedeRecalcular(product) }
-          variant="contained"
-          color="primary"
-        >
-          Calcular
-        </Button>
-      </TableCell>
       <TableCell>
         <Button
           onClick={() => handleGuardarClick()}
