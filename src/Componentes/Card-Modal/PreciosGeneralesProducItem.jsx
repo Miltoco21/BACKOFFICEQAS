@@ -191,6 +191,8 @@ const PreciosGeneralesProducItem = ({
           name="gananciaValor"
           variant="outlined"
           fullWidth
+          disabled={true}
+
           value={product.gananciaValor}
           onChange={(e) => changePriceValue("gananciaValor",e.target.value)}
 
@@ -211,6 +213,7 @@ const PreciosGeneralesProducItem = ({
           variant="outlined"
           fullWidth
           value={product.ivaPorcentaje}
+          disabled={true}
           onChange={(e) => changePercentValue("ivaPorcentaje",e.target.value)}
           InputProps={{
             startAdornment: (
@@ -224,6 +227,8 @@ const PreciosGeneralesProducItem = ({
           name="ivaValor"
           variant="outlined"
           fullWidth
+          disabled={true}
+
           value={product.ivaValor}
           onChange={(e) => changePriceValue("ivaValor",e.target.value)}
           InputProps={{

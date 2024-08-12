@@ -23,10 +23,12 @@ class Product extends Model{
 
     static initLogica(product){
 
-        if(product.precioNeto>0 && product.precioVenta>0){
-            product.ivaValor = product.precioVenta - product.precioNeto
-            product.ivaPorcentaje = product.ivaValor * 100 / product.precioNeto
-        }
+        product.ivaPorcentaje = ModelConfig.get().iva
+
+        // if(product.precioNeto>0 && product.precioVenta>0){
+        //     product.ivaValor = product.precioVenta - product.precioNeto
+        //     product.ivaPorcentaje = product.ivaValor * 100 / product.precioNeto
+        // }
 
         if(product.precioNeto>0 && product.precioCosto>0){
             product.gananciaValor = product.precioNeto - product.precioCosto
@@ -34,10 +36,10 @@ class Product extends Model{
         }
 
 
-        if(!product.ivaPorcentaje) {
-            // console.log("no tiene valor product.ivaPorcentaje")
-            product.ivaPorcentaje = 19
-        }
+        // if(!product.ivaPorcentaje) {
+        //     // console.log("no tiene valor product.ivaPorcentaje")
+        //     product.ivaPorcentaje = 19
+        // }
             if(!product.ivaValor) {
             // console.log("no tiene valor product.ivaValor")
             product.ivaValor = 0
