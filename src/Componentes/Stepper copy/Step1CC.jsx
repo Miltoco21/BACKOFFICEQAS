@@ -261,7 +261,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
       if (selectedSubCategoryId !== "" && selectedCategoryId !== "") {
         try {
           const response = await axios.get(
-            `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}`
+            `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}&CategoriaID=${selectedCategoryId}`
           );
           setFamilies(response.data.familias);
         } catch (error) {
@@ -282,7 +282,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
       ) {
         try {
           const response = await axios.get(
-            `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${selectedFamilyId}`
+            `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${selectedFamilyId}&SubCategoriaID=${selectedSubCategoryId}&CategoriaID=${selectedCategoryId}`
           );
           setSubFamilies(response.data.subFamilias);
         } catch (error) {
