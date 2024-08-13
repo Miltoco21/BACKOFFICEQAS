@@ -30,6 +30,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import ModelConfig from "../../Models/ModelConfig";
 
 const BoxCtaCorriente = ({ onClose }) => {
   const {
@@ -54,12 +55,12 @@ const BoxCtaCorriente = ({ onClose }) => {
     searchText,
     setSearchText,
   } = useContext(SelectedOptionsContext);
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   const fetchDeudaData = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_URL_API2}/Clientes/GetClientesDeudasByIdCliente?codigoClienteSucursal=${selectedCodigoClienteSucursal}&codigoCliente=${selectedCodigoCliente}`
+        `${apiUrl}/Clientes/GetClientesDeudasByIdCliente?codigoClienteSucursal=${selectedCodigoClienteSucursal}&codigoCliente=${selectedCodigoCliente}`
       );
 
       console.log("Nuevas Deudas:", response.data);
@@ -266,12 +267,12 @@ const BoxCtaCorriente = ({ onClose }) => {
       setLoading(true);
 
       let endpoint =
-     ` ${import.meta.env.VITE_URL_API2}/Clientes/PostClientePagarDeudaByIdCliente`;
+     ` ${apiUrl}/Clientes/PostClientePagarDeudaByIdCliente`;
 
       // Si el método de pago es TRANSFERENCIA, cambiar el endpoint y agregar datos de transferencia
       if (metodoPago === "TRANSFERENCIA") {
         endpoint =
-        `${import.meta.env.VITE_URL_API2}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
+        `${apiUrl}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
 
         // Validar datos de transferencia
         if (

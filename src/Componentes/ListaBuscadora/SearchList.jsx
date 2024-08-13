@@ -35,11 +35,11 @@ const SearchList = () => {
   const perPage = 5;
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   const fetchUsers = async () => {
     try {
       const response = await axios.get(
-        ModelConfig.get().urlBase + `/Usuarios/GetAllUsuarios`
+        apiUrl + `/Usuarios/GetAllUsuarios`
       );
       // console.log("API response:", response.data);
       setUsers(response.data.usuarios);
@@ -83,7 +83,7 @@ const SearchList = () => {
     console.log("ID de usuario a eliminar:", userId);
     try {
       const response = await axios.delete(
-        ModelConfig.get().urlBase + `/Usuarios/DeleteUsuarioByCodigo?CodigoUsuario=${userId}`
+        apiUrl + `/Usuarios/DeleteUsuarioByCodigo?CodigoUsuario=${userId}`
       );
 
       if (

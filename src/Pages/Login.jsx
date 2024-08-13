@@ -15,7 +15,7 @@ import axios from "axios";
 import ModelConfig from "../Models/ModelConfig";
 
 const Login = ({ setUserData }) => {
-  const apiUrl = import.meta.env.VITE_URL_API2 ?? "https://www.easypos.somee.com/api";
+  const apiUrl = ModelConfig.get().urlBase ?? "https://www.easypos.somee.com/api";
 
   const [rutOrCode, setRutOrCode] = useState("");
   const [password, setPassword] = useState("");

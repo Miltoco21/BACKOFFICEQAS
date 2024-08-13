@@ -16,6 +16,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
+import ModelConfig from "../../Models/ModelConfig";
 
 const EditarProveedor = ({
   open,
@@ -25,7 +26,7 @@ const EditarProveedor = ({
   onEditSuccess,
 }) => {
 
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   const [editProveedor, setEditProveedor] = useState({
     codigoProveedor: "",
     razonSocial: "",
@@ -96,7 +97,7 @@ const EditarProveedor = ({
 
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_URL_API2}/Proveedores/UpdateProveedor`,
+        `${apiUrl}/Proveedores/UpdateProveedor`,
         editProveedor
       );
 

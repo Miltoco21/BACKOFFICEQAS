@@ -29,9 +29,10 @@ import SideBar from "../Componentes/NavBar/SideBar";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import ModelConfig from "../Models/ModelConfig";
 
 const RankingVentas = () => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -67,7 +68,7 @@ const RankingVentas = () => {
     setError(null);
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_URL_API2}/ReporteVentas/ReporteVentasPorTipoComprobanteYMetodoPagoGET`,
+        `${apiUrl}/ReporteVentas/ReporteVentasPorTipoComprobanteYMetodoPagoGET`,
         {
           params: {
             fechaDesde: startDate ? startDate.format("YYYY-MM-DD") : "",

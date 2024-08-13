@@ -40,11 +40,12 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import ModelConfig from "../../Models/ModelConfig";
 
 const ITEMS_PER_PAGE = 10;
 
 const SearchListProveedores = () => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchTermProveedores, setSearchTermProveedores] = useState(""); // Separate state for proveedores search
@@ -202,7 +203,7 @@ const SearchListProveedores = () => {
   const fetchComprasProvedeedor = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_URL_API2}/Proveedores/GetProveedorCompra`
+        `${apiUrl}/Proveedores/GetProveedorCompra`
       );
       const comprasConSeleccion =
         response.data.proveedorCompra.proveedorCompraCabeceras.map(
@@ -272,7 +273,7 @@ const SearchListProveedores = () => {
 
     axios
       .post(
-        `${import.meta.env.VITE_URL_API2}/Proveedores/AddProveedorCompraPagar `,
+        `${apiUrl}/Proveedores/AddProveedorCompraPagar `,
         pagoData
       )
       .then((response) => {
@@ -402,7 +403,7 @@ const SearchListProveedores = () => {
     try {
       const codigoProveedor = selectedProveedorToDelete.codigoProveedor;
       await axios.delete(
-        `${import.meta.env.VITE_URL_API2}/Proveedores/DeleteProveedorByCodigo?CodigoProveedor=${codigoProveedor}`
+        `${apiUrl}/Proveedores/DeleteProveedorByCodigo?CodigoProveedor=${codigoProveedor}`
       );
       setRefresh((prevRefresh) => !prevRefresh);
       fetchProveedores();
@@ -511,11 +512,11 @@ const SearchListProveedores = () => {
       setLoading(true);
   
       let endpoint =
-        `${import.meta.env.VITE_URL_API2}/Clientes/PostClientePagarDeudaByIdCliente`
+        `${apiUrl}/Clientes/PostClientePagarDeudaByIdCliente`
   
       if (metodoPago === "TRANSFERENCIA") {
         endpoint =
-        `${import.meta.env.VITE_URL_API2}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
+        `${apiUrl}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
   
         if (
           nombre === "" ||

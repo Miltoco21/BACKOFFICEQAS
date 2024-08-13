@@ -22,7 +22,7 @@ import ModelConfig from "../../Models/ModelConfig";
 
 const ITEMS_PER_PAGE = 10;
 const SearchListCategories = () => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
@@ -50,7 +50,7 @@ const SearchListCategories = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetAllCategorias`
+          apiUrl + `/NivelMercadoLogicos/GetAllCategorias`
         );
         console.log("API Response:", response.data.categorias);
         setCategories(response.data.categorias);
@@ -67,7 +67,7 @@ const SearchListCategories = () => {
     const updateCategories = async () => {
       try {
         const response = await axios.get(
-          ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetAllCategorias`
+          apiUrl + `/NivelMercadoLogicos/GetAllCategorias`
         );
         
         if (Array.isArray(response.data.categorias)) {

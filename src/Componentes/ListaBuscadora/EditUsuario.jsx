@@ -455,7 +455,7 @@ export default EditUsuario;
 // import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 // const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
-//   const apiUrl = import.meta.env.VITE_URL_API2;
+//   const apiUrl = ModelConfig.get().urlBase;
 
 //   const [nombres, setNombre] = useState("");
 //   const [apellidos, setApellido] = useState("");

@@ -27,9 +27,10 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import TablaPrecios from "./TablaPrecios";
 import TablaNivel from "./TablaNivel";
 import BoxBuscador from "./BoxBuscador";
+import ModelConfig from "../../Models/ModelConfig";
 
 export const defaultTheme = createTheme();
-const apiUrl = import.meta.env.VITE_URL_API2;
+const apiUrl = ModelConfig.get().urlBase;
 
 
 const PreciosGenerales = () => {
@@ -63,7 +64,7 @@ const PreciosGenerales = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_URL_API2}/Clientes/GetClientesProductoPrecioByIdCliente?codigoCliente=${codigoCliente}&codigoClienteSucursal=${codigoClienteSucursal}`
+          `${apiUrl}/Clientes/GetClientesProductoPrecioByIdCliente?codigoCliente=${codigoCliente}&codigoClienteSucursal=${codigoClienteSucursal}`
         );
         setProducts(response.data.productos);
         console.log(response.data.productos);

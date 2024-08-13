@@ -28,8 +28,9 @@ import {
   Alert,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import ModelConfig from "../../Models/ModelConfig";
 const IngresoCL = ({ handleCloseModalCL }) => {
-    const apiUrl = import.meta.env.VITE_URL_API2;
+    const apiUrl = ModelConfig.get().urlBase;
   const [razonSocial, setRazonSocial] = useState("");
   const [giro, setGiro] = useState("");
   const [email, setEmail] = useState("");
@@ -151,7 +152,7 @@ const IngresoCL = ({ handleCloseModalCL }) => {
 
   useEffect(() => {
     axios
-      .get( `${import.meta.env.VITE_URL_API2}/RegionComuna/GetAllRegiones`)
+      .get( `${apiUrl}/RegionComuna/GetAllRegiones`)
       .then((response) => {
         setRegiones(response.data.regiones);
       })
@@ -164,7 +165,7 @@ const IngresoCL = ({ handleCloseModalCL }) => {
     const fetchRegions = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_URL_API2}/RegionComuna/GetAllRegiones`
+          `${apiUrl}/RegionComuna/GetAllRegiones`
         );
         setRegionOptions(response.data.regiones);
       } catch (error) {
@@ -180,7 +181,7 @@ const IngresoCL = ({ handleCloseModalCL }) => {
       if (selectedRegion) {
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_URL_API2}/RegionComuna/GetComunaByIDRegion?IdRegion=${selectedRegion}`
+            `${apiUrl}/RegionComuna/GetComunaByIDRegion?IdRegion=${selectedRegion}`
           );
           setComunaOptions(
             response.data.comunas.map((comuna) => comuna.comunaNombre)
@@ -354,7 +355,7 @@ const IngresoCL = ({ handleCloseModalCL }) => {
 
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_URL_API2}Clientes/AddCliente`,
+          `${apiUrl}Clientes/AddCliente`,
           // "https://www.easypos.somee.com/api/Clientes/AddCliente",
           cliente
         );

@@ -24,9 +24,10 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SideBar from "../Componentes/NavBar/SideBar";
 import axios from "axios";
+import ModelConfig from "../Models/ModelConfig";
 
 const RankingLibroVentas = () => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);

@@ -38,7 +38,7 @@ const BoxBuscador = ({ onClosePreciosClientes }) => {
   const [preciosModificados, setPreciosModificados] = useState({});
   const [loadingProduct, setLoadingProduct] = useState(null); 
   const [selectedItem, setSelectedItem] = useState(null);
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   const codigoCliente = selectedClient ? selectedClient.codigoCliente : null;
   const codigoClienteSucursal = selectedClient
     ? selectedClient.codigoClienteSucursal

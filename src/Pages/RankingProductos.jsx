@@ -23,9 +23,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import SideBar from "../Componentes/NavBar/SideBar";
 import axios from "axios";
+import ModelConfig from "../Models/ModelConfig";
 
 const RankingProductos = () => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -53,7 +54,7 @@ const RankingProductos = () => {
     console.log("Iniciando fetchData con params:", params);
     
     try {
-      const url = `https://www.easypos.somee.com/api/ReporteVentas/ReporteVentasRankingProductoGET`;
+      const url = apiUrl + `/ReporteVentas/ReporteVentasRankingProductoGET`;
       console.log("URL being fetched:", url);
       
       const response = await axios.get(url, { params });

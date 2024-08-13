@@ -37,11 +37,12 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import ModelConfig from "../../Models/ModelConfig";
 
 const ITEMS_PER_PAGE = 10;
 
 const SearchListClientes = () => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [clientes, setClientes] = useState([]);
@@ -88,7 +89,7 @@ const SearchListClientes = () => {
       if (selectedClient) {
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_URL_API2}/Clientes/GetClientesDeudasByIdCliente?codigoClienteSucursal=${selectedClient.clienteSucursal}&codigoCliente=${selectedClient.codigoCliente}`
+            `${apiUrl}/Clientes/GetClientesDeudasByIdCliente?codigoClienteSucursal=${selectedClient.clienteSucursal}&codigoCliente=${selectedClient.codigoCliente}`
           );
           setDeudaData(response.data.clienteDeuda); // Actualiza el estado de deudaData
         } catch (error) {
@@ -148,7 +149,7 @@ const SearchListClientes = () => {
     async function fetchClientes() {
       try {
         const response = await axios.get(
-         `${import.meta.env.VITE_URL_API2}/Clientes/GetAllClientes`
+         `${apiUrl}/Clientes/GetAllClientes`
         );
         console.log("API response GetAllClientes:", response.data);
         setClientes(response.data.cliente);
@@ -317,11 +318,11 @@ const SearchListClientes = () => {
       setLoading(true);
   
       let endpoint =
-        `${import.meta.env.VITE_URL_API2}/Clientes/PostClientePagarDeudaByIdCliente`;
+        `${apiUrl}/Clientes/PostClientePagarDeudaByIdCliente`;
   
       if (metodoPago === "TRANSFERENCIA") {
         endpoint =
-          `${import.meta.env.VITE_URL_API2}//Clientes/PostClientePagarDeudaTransferenciaByIdCliente `;
+          `${apiUrl}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente `;
   
         if (
           nombre === "" ||
@@ -451,7 +452,7 @@ const SearchListClientes = () => {
       if (selectedClient) {
         const response = await axios.get(
           
-          `${import.meta.env.VITE_URL_API2}/Clientes/GetClientesDeudasByIdCliente?codigoClienteSucursal=${selectedClient.clienteSucursal}&codigoCliente=${selectedClient.codigoCliente}`
+          `${apiUrl}/Clientes/GetClientesDeudasByIdCliente?codigoClienteSucursal=${selectedClient.clienteSucursal}&codigoCliente=${selectedClient.codigoCliente}`
         );
         console.log("DeudaCLiente:", response.data.clienteDeuda);
 
@@ -490,7 +491,7 @@ const SearchListClientes = () => {
     try {
       const codigoCliente = selectedCliente.codigoCliente;
       await axios.delete(
-        `${import.meta.env.VITE_URL_API2}/Proveedores/DeleteProveedorByCodigo?CodigoProveedor=${codigoCliente}`
+        `${apiUrl}/Proveedores/DeleteProveedorByCodigo?CodigoProveedor=${codigoCliente}`
       );
       setRefresh((prevRefresh) => !prevRefresh);
       setOpenDeleteDialog(false);

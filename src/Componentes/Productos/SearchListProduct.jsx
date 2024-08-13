@@ -32,7 +32,7 @@ import ModelConfig from "../../Models/ModelConfig";
 
 const ITEMS_PER_PAGE = 10;
 const SearchListProducts = () => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   const [searchTerm, setSearchTerm] = useState("");
   const [product, setProduct] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -65,7 +65,7 @@ const SearchListProducts = () => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          ModelConfig.get().urlBase + `/ProductosTmp/GetProductos`
+          apiUrl + `/ProductosTmp/GetProductos`
         );
         console.log("API Response:", response.data);
         if (Array.isArray(response.data.productos)) {
@@ -86,7 +86,7 @@ const SearchListProducts = () => {
     const updateProducts = async () => {
       try {
         const response = await axios.get(
-          ModelConfig.get().urlBase + `/ProductosTmp/GetProductos`
+          apiUrl + `/ProductosTmp/GetProductos`
         );
         
         if (Array.isArray(response.data.productos)) {
@@ -165,7 +165,7 @@ const SearchListProducts = () => {
 
       // Llamada a la API para eliminar el producto
       const response = await axios.delete(
-        ModelConfig.get().urlBase + `/ProductosTmp/DeleteProducto?id=${id}`
+        apiUrl + `/ProductosTmp/DeleteProducto?id=${id}`
       );
 
       if (response.data.statusCode === 201) {

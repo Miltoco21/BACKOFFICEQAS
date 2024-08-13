@@ -31,6 +31,7 @@ import SideBar from "../Componentes/NavBar/SideBar";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import ModelConfig from "../Models/ModelConfig";
 
 const ReportesCtaCorrienteProv = () => {
   const [startDate, setStartDate] = useState(null);
@@ -46,7 +47,7 @@ const ReportesCtaCorrienteProv = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [hideZeroBalance, setHideZeroBalance] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   const handleBuscarClick = () => {
     if (!startDate) {
       setSnackbarMessage("Por favor, seleccione la fecha de inicio.");

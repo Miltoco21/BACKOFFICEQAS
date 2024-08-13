@@ -21,7 +21,7 @@ const EditarCategoria = ({ category, open, handleClose }) => {
     idCategoria: 0,
     descripcionCategoria: ""
   });
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");

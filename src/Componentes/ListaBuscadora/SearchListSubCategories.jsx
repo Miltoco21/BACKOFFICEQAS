@@ -14,7 +14,7 @@ import ModelConfig from "../../Models/ModelConfig";
 const ITEMS_PER_PAGE = 10;
 const SearchListSubCategories = () => {
 
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setCategories] = useState([]);
@@ -54,7 +54,7 @@ const SearchListSubCategories = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetAllCategorias`);
+        const response = await axios.get(apiUrl + `/NivelMercadoLogicos/GetAllCategorias`);
         setCategories(response.data.categorias);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -67,7 +67,7 @@ const SearchListSubCategories = () => {
   const fetchSubCategories = async () => {
     if (selectedCategoryId !== "") {
       try {
-        const response = await axios.get(ModelConfig.get().urlBase + `/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`);
+        const response = await axios.get(apiUrl + `/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`);
         console.log(`${apiUrl}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?$CategoriaID=${selectedCategoryId}`);
         console.log("Subcategories Response:", response.data.subCategorias);
         setSubCategories(response.data.subCategorias);

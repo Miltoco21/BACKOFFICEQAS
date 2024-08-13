@@ -36,9 +36,10 @@ import axios from "axios";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ModelConfig from "../Models/ModelConfig";
 
 const ReportesClientes = () => {
-  const apiUrl = import.meta.env.VITE_URL_API2; 
+  const apiUrl = ModelConfig.get().urlBase; 
   const [proveedores, setProveedores] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedProveedor, setSelectedProveedor] = useState([]);
@@ -102,7 +103,7 @@ const ReportesClientes = () => {
   const fetchClientes = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_URL_API2}/ReporteClientes/GetAllClientesDeudas`
+        `${apiUrl}/ReporteClientes/GetAllClientesDeudas`
       );
       // "https://www.easyposdev.somee.com/api/ReporteClientes/GetAllClientesDeudas"
       setProveedores(response.data.clienteDeudaAlls);
@@ -209,7 +210,7 @@ const ReportesClientes = () => {
       switch (metodoPago) {
         case "TRANSFERENCIA":
           endpoint =
-          `${import.meta.env.VITE_URL_API2}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
+          `${apiUrl}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
 
           // if (
           //   nombre === "" ||
@@ -297,7 +298,7 @@ const ReportesClientes = () => {
 
         case "CHEQUE":
           endpoint =
-            `${import.meta.env.VITE_URL_API2}Clientes/PostClientePagarDeudaChequeByIdCliente`;
+            `${apiUrl}Clientes/PostClientePagarDeudaChequeByIdCliente`;
 
           requestBody = {
             deudaIds: [
@@ -316,7 +317,7 @@ const ReportesClientes = () => {
 
         case "EFECTIVO":
           endpoint =
-          `${import.meta.env.VITE_URL_API2}/Clientes/PostClientePagarDeudaByIdCliente`;
+          `${apiUrl}/Clientes/PostClientePagarDeudaByIdCliente`;
 
           requestBody = {
             deudaIds: [
@@ -568,7 +569,7 @@ const ReportesClientes = () => {
         };
       } else if (metodoPago === "EFECTIVO") {
         endpoint =
-        `${import.meta.env.VITE_URL_API2}/Clientes/PostClientePagarDeudaEfectivoByIdCliente`;
+        `${apiUrl}/Clientes/PostClientePagarDeudaEfectivoByIdCliente`;
         requestBody = {
           montoPagado: montoAPagar,
           metodoPago: metodoPago,
@@ -661,11 +662,11 @@ const ReportesClientes = () => {
       setLoading(true);
   
       let endpoint =
-      `${import.meta.env.VITE_URL_API2}/Clientes/PostClientePagarDeudaByIdCliente`;
+      `${apiUrl}/Clientes/PostClientePagarDeudaByIdCliente`;
   
       if (metodoPago === "TRANSFERENCIA") {
         endpoint =
-        `${import.meta.env.VITE_URL_API2}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
+        `${apiUrl}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
   
         if (
           nombre === "" ||

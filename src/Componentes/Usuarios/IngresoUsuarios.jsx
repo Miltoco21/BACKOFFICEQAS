@@ -29,7 +29,7 @@ export const defaultTheme = createTheme();
 
 export default function IngresoUsuarios({ onClose}) {
 
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   const [nombres, setNombre] = useState("");
   const [apellidos, setApellido] = useState("");
@@ -68,15 +68,13 @@ export default function IngresoUsuarios({ onClose}) {
     event.preventDefault();
   };
 
-  const [config, setConfig] = useState(null);
 
 
   useEffect(() => {
     const fetchRegions = async () => {
       try {
-        setConfig(ModelConfig.getInstance().get())
         const response = await axios.get(
-          ModelConfig.get().urlBase + `/RegionComuna/GetAllRegionesx`
+          apiUrl + `/RegionComuna/GetAllRegiones`
         );
         setRegionOptions(response.data.regiones);
       } catch (error) {
@@ -92,7 +90,7 @@ export default function IngresoUsuarios({ onClose}) {
       if (selectedRegion) {
         try {
           const response = await axios.get(
-            ModelConfig.getInstance().get().urlBase + `/RegionComuna/GetComunaByIDRegion?IdRegion=${selectedRegion}`
+            apiUrl + `/RegionComuna/GetComunaByIDRegion?IdRegion=${selectedRegion}`
           );
           console.log("comunas:",response.data.comunas)
           setComunaOptions(
@@ -113,7 +111,7 @@ export default function IngresoUsuarios({ onClose}) {
     async function fetchRoles() {
       try {
         const response = await axios.get(
-          ModelConfig.getInstance().get().urlBase + `/Usuarios/GetAllRolUsuario`
+          apiUrl + `/Usuarios/GetAllRolUsuario`
         );
         setRolesOptions(response.data.usuarios);
         console.log("ROLES", response.data.usuarios);
@@ -254,8 +252,7 @@ export default function IngresoUsuarios({ onClose}) {
       try {
         setLoading(true);
         const response = await axios.post(
-          ModelConfig.getInstance().get().urlBase + 
-          `/Usuarios/AddUsuario`,
+          apiUrl + `/Usuarios/AddUsuario`,
           usuario
         );
         console.log("Respuesta de la solicitud:", response);

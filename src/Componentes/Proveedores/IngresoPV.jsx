@@ -28,8 +28,9 @@ import {
   Alert,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import ModelConfig from "../../Models/ModelConfig";
 const IngresoPV = ({ onClose }) => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   const [rut, setRut] = useState("");
   const [razonSocial, setRazonSocial] = useState("");
   const [giro, setGiro] = useState("");
@@ -147,7 +148,7 @@ const IngresoPV = ({ onClose }) => {
 
   useEffect(() => {
     axios
-      .get(`${apiUrl}/api/RegionComuna/GetAllRegiones`)
+      .get(`${apiUrl}/RegionComuna/GetAllRegiones`)
       .then((response) => {
         setRegiones(response.data.regiones);
       })

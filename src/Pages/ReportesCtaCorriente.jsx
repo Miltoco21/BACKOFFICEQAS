@@ -32,6 +32,7 @@ import SideBar from "../Componentes/NavBar/SideBar";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import ModelConfig from "../Models/ModelConfig";
 
 const ReportesCtaCorriente = () => {
   const [startDate, setStartDate] = useState(null);
@@ -68,15 +69,13 @@ const ReportesCtaCorriente = () => {
     fetchData();
   };
 
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get(
-        `${
-          import.meta.env.VITE_URL_API2
-        }/ReporteClientes/GetClientesDeudasByFecha`,
+        `${apiUrl}/ReporteClientes/GetClientesDeudasByFecha`,
         {
           params: {
             fechaDesde: startDate ? startDate.format("YYYY-MM-DD") : "",
@@ -545,7 +544,7 @@ export default ReportesCtaCorriente;
 //     fetchData();
 //   };
 
-//   const apiUrl = import.meta.env.VITE_URL_API2;
+//   const apiUrl = ModelConfig.get().urlBase;
 //   console.log("apiUrl",apiUrl);
 //   const fetchData = async () => {
 //     setLoading(true);

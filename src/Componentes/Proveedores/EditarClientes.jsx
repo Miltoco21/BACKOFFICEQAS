@@ -11,9 +11,10 @@ import {
   Grid,
 } from "@mui/material";
 import axios from "axios";
+import ModelConfig from "../../Models/ModelConfig";
 
 const EditarCliente = ({ open, handleClose, cliente, onEditSuccess }) => {
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
   const [editedCliente, setEditedCliente] = useState({});
   const [errors, setErrors] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -40,7 +41,7 @@ const EditarCliente = ({ open, handleClose, cliente, onEditSuccess }) => {
   useEffect(() => {
     // Obtener regiones
     axios
-      .get(`${apiUrl}/api/RegionComuna/GetAllRegiones`)
+      .get(`${apiUrl}/RegionComuna/GetAllRegiones`)
       .then((response) => {
         setRegiones(response.data.regiones);
       })
@@ -57,7 +58,7 @@ const EditarCliente = ({ open, handleClose, cliente, onEditSuccess }) => {
     // Obtener comunas para la región seleccionada
     axios
       .get(
-        `https://www.easyposdev.somee.com/api/RegionComuna/GetComunaByIDRegion?IdRegion=${selectedRegionId}`
+        apiUrl + `/RegionComuna/GetComunaByIDRegion?IdRegion=${selectedRegionId}`
       )
       .then((response) => {
         setComunas(response.data.comunas);
@@ -90,7 +91,7 @@ const EditarCliente = ({ open, handleClose, cliente, onEditSuccess }) => {
       console.log("Datos enviados antes de la solicitud:", updatedCliente);
 
       const response = await axios.put(
-        `${import.meta.env.VITE_URL_API2}/Clientes/PutClienteCliente`,
+        `${apiUrl}/Clientes/PutClienteCliente`,
         updatedCliente
       );
 

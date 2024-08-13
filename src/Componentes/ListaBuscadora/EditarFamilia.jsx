@@ -28,7 +28,7 @@ const EditarFamilia = ({ open, handleClose, family, fetchFamilies }) => {
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const apiUrl = import.meta.env.VITE_URL_API2;
+  const apiUrl = ModelConfig.get().urlBase;
 
   useEffect(() => {
     if (family) {
