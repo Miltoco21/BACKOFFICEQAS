@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
   Box,
@@ -21,10 +21,15 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import EditarSubFamilia from "./EditarSubFamilia"; // Make sure to provide the correct path
 import ModelConfig from "../../Models/ModelConfig";
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
 const ITEMS_PER_PAGE = 10;
 
 const SearchListSubFamilias = () => {
+  const {
+    showLoading,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
   const apiUrl = ModelConfig.get().urlBase;
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -75,13 +80,16 @@ const SearchListSubFamilias = () => {
 
   useEffect(() => {
     async function fetchCategories() {
+      showLoading("Cargando categorias...")
       try {
         const response = await axios.get(
           apiUrl + `/NivelMercadoLogicos/GetAllCategorias`
         );
         setCategories(response.data.categorias);
+        hideLoading()
       } catch (error) {
         console.log(error);
+        hideLoading()
       }
     }
 
@@ -91,13 +99,16 @@ const SearchListSubFamilias = () => {
   useEffect(() => {
     const fetchSubCategories = async () => {
       if (selectedCategoryId !== "") {
+        showLoading("Cargando subcategorias...")
         try {
           const response = await axios.get(
             apiUrl + `/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`
           );
           setSubCategories(response.data.subCategorias);
+          hideLoading()
         } catch (error) {
           console.error("Error fetching subcategories:", error);
+          hideLoading()
         }
       }
     };
@@ -108,13 +119,16 @@ const SearchListSubFamilias = () => {
   useEffect(() => {
     const fetchFamilies = async () => {
       if (selectedSubCategoryId !== "" && selectedCategoryId !== "") {
+        showLoading("Cargando familias...")
         try {
           const response = await axios.get(
             apiUrl + `/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}&CategoriaID=${selectedCategoryId}`
           );
           setFamilies(response.data.familias);
+          hideLoading()
         } catch (error) {
           console.error("Error fetching families:", error);
+          hideLoading()
         }
       }
     };
@@ -124,13 +138,16 @@ const SearchListSubFamilias = () => {
 
   const fetchSubFamilies = async () => {
     if (selectedFamilyId !== "" && selectedCategoryId !== "" && selectedSubCategoryId !== "") {
+      showLoading("Cargando subfamilias...")
       try {
         const response = await axios.get(
           apiUrl + `/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${selectedFamilyId}&SubCategoriaID=${selectedSubCategoryId}&CategoriaID=${selectedCategoryId}`
         );
         setSubFamilies(response.data.subFamilias);
+        hideLoading()
       } catch (error) {
         console.error("Error fetching subcategories:", error);
+        hideLoading()
       }
     }
   };

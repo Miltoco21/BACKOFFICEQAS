@@ -2,7 +2,7 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
   Box,
@@ -20,8 +20,18 @@ import EditIcon from "@mui/icons-material/Edit";
 import EditarCategoria from "./EditarCategoria";
 import ModelConfig from "../../Models/ModelConfig";
 
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+
+
 const ITEMS_PER_PAGE = 10;
 const SearchListCategories = () => {
+
+  const {
+    showLoading,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
+
+
   const apiUrl = ModelConfig.get().urlBase;
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setCategories] = useState([]);
@@ -48,6 +58,7 @@ const SearchListCategories = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      showLoading("Cargando categorias...")
       try {
         const response = await axios.get(
           apiUrl + `/NivelMercadoLogicos/GetAllCategorias`
@@ -55,8 +66,10 @@ const SearchListCategories = () => {
         console.log("API Response:", response.data.categorias);
         setCategories(response.data.categorias);
         setPageCount(response.data.categorias.length);
+        hideLoading()
       } catch (error) {
         console.error("Error fetching categories:", error);
+        hideLoading()
       }
     };
   

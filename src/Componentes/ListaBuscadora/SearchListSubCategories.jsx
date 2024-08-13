@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Box, TextField, Table,IconButton, TableBody,Pagination, TableCell, TableHead, TableRow,MenuItem } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -10,9 +10,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import EditarSubCategoria from "./EditarSubcategoria";
 import ModelConfig from "../../Models/ModelConfig";
 
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
 const ITEMS_PER_PAGE = 10;
 const SearchListSubCategories = () => {
+  const {
+    showLoading,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
 
   const apiUrl = ModelConfig.get().urlBase;
 
@@ -53,11 +58,14 @@ const SearchListSubCategories = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      showLoading("Cargando categorias...")
       try {
         const response = await axios.get(apiUrl + `/NivelMercadoLogicos/GetAllCategorias`);
         setCategories(response.data.categorias);
+        hideLoading()
       } catch (error) {
         console.error("Error fetching categories:", error);
+        hideLoading()
       }
     };
   
