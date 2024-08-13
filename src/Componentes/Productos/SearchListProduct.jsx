@@ -185,6 +185,7 @@ const SearchListProducts = () => {
   useEffect(() => {
     if (refresh) {
       setRefresh(false);
+      window.location.reload(1)
     }
   }, [refresh]);
   useEffect(() => {
