@@ -3,7 +3,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
   Box,
@@ -30,8 +30,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import Editp2 from "../Productos/Editp2";
 import ModelConfig from "../../Models/ModelConfig";
 
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+
+
 const ITEMS_PER_PAGE = 10;
 const SearchListProducts = () => {
+
+  const {
+    showLoading,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
+
   const apiUrl = ModelConfig.get().urlBase;
   const [searchTerm, setSearchTerm] = useState("");
   const [product, setProduct] = useState([]);
@@ -63,6 +72,7 @@ const SearchListProducts = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
+      showLoading("Cargando productos...")
       try {
         const response = await axios.get(
           apiUrl + `/ProductosTmp/GetProductos`
@@ -74,8 +84,10 @@ const SearchListProducts = () => {
           setPageCount(response.data.cantidadRegistros);
           setPageProduct(response.data.productos);
         }
+        hideLoading()
       } catch (error) {
         console.error("Error fetching product:", error);
+        hideLoading()
       }
     };
 

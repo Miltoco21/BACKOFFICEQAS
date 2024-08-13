@@ -31,12 +31,16 @@ import { Settings } from "@mui/icons-material";
 import ScreenDialogConfig from "../ScreenDialog/AdminConfig";
 import CONSTANTS from "../../definitions/Constants";
 
-
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
 const drawerWidth = 240;
 
 
 export default function PermanentDrawerLeft() {
+
+  const { GeneralElements } = useContext(SelectedOptionsContext);
+
+
   const [openSubMenu, setOpenSubMenu] = useState({});
   const [showScreenConfig, setShowScreenConfig] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
@@ -141,7 +145,7 @@ export default function PermanentDrawerLeft() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-
+      <GeneralElements/>
       <Drawer
         sx={{
           width: drawerWidth,

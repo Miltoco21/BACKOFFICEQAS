@@ -316,31 +316,6 @@ export const SelectedOptionsProvider = ({ children }) => {
   const GeneralElements = ()=>{
     return (
       <>
-      <TecladoAlfaNumerico
-        onEnter={()=>{
-          setBuscarCodigoProducto(true)
-
-        }}
-        showFlag={showTecladoBuscar}
-        varChanger={setTextSearchProducts}
-        varValue={textSearchProducts}
-      />
-      <div onClick={()=>{
-        setShowTecladoBuscar(false)
-        setOpenSnackbar(false)
-      }}
-      style={{
-        width:"100%",
-        height:"100%",
-        display: (showTecladoBuscar ? "block":"none"),
-        // backgroundColor:"red",
-        position:"fixed",
-        
-        top:0,
-        left:0
-      }}
-      ></div>
-    
       <Snackbar
         open={openSnackbar}
         message={snackMessage}
@@ -348,27 +323,6 @@ export const SelectedOptionsProvider = ({ children }) => {
         onClose={()=>{ setOpenSnackbar(false) }}
       />
       <LoadingDialog openDialog = {showLoadingDialog} text={loadingDialogText} />
-      <AsignarPrecio
-        openDialog={showAsignarPrecio}
-        setOpenDialog={setShowAsignarPrecio}
-        product={productoSinPrecio}
-        onAsignPrice={onAsignPrice}
-      />
-
-      <AsignarPeso
-        openDialog={showAsignarPeso}
-        setOpenDialog={setShowAsignarPeso}
-        product={productoSinPeso}
-        onAsignWeight={onAsignWeight}
-      />
-
-      <NuevoProductoExpress
-        openDialog={showNuevoExpress}
-        setOpenDialog={setShowNuevoExpress}
-        onComplete={handleGuardarNuevoProducto}
-        codigoIngresado={codigoNuevoExpress}
-      />
-
       <Confirm 
         openDialog={showConfirmDialog}
         setOpenDialog={setShowConfirmDialog}
