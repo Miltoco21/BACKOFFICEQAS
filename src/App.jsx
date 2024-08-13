@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Route, Routes } from 'react-router';
+import {
+  
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+ } from 'react-router-dom';
+
+ 
 import Home from './Pages/Home';
 import Registro from './Pages/Registro';
 import Login from './Pages/Login';
@@ -29,44 +37,50 @@ import RankingProductos from './Pages/RankingProductos';
 import RankingLibroVentas from './Pages/RankingLibroVentas';
 import RankingLibroCompras from './Pages/RankingLibroCompras';
 
+import { SelectedOptionsProvider } from "./Componentes/Context/SelectedOptionsProvider";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 function App() {
   const [userData, setUserData] = useState(null);
 
   return (
-    <Routes>
-      <Route path="/login" element={<Login setUserData={setUserData} />} />
-      <Route path="/registro" element={<Registro />} />
-      <Route
-        path="/home"
-        element={<ProtectedRoute element={<Home userData={userData} setUserData={setUserData} />} />}
-      />
-      <Route
-        path="/"
-        element={<ProtectedRoute element={<Home userData={userData} setUserData={setUserData} />} />}
-      />
-      <Route path="/usuarios" element={<ProtectedRoute element={<Usuarios />} />} />
-      <Route path="/precios" element={<ProtectedRoute element={<Precios />} />} />
-      <Route path="/proveedores" element={<ProtectedRoute element={<Proveedores />} />} />
-      <Route path="/clientes" element={<ProtectedRoute element={<Clientes />} />} />
-      <Route path="/clientes/reportes" element={<ProtectedRoute element={<ReportesClientes />} />} />
-      <Route path="/productos" element={<ProtectedRoute element={<Productos />} />} />
-      <Route path="/productos/categorias" element={<ProtectedRoute element={<Categorias />} />} />
-      <Route path="/productos/subcategorias" element={<ProtectedRoute element={<SubCategorias />} />} />
-      <Route path="/productos/familias" element={<ProtectedRoute element={<Familias />} />} />
-      <Route path="/productos/subfamilias" element={<ProtectedRoute element={<SubFamilias />} />} />
-      <Route path="/proveedores/ingresodocumento" element={<ProtectedRoute element={<IngresoDocumento />} />} />
-      <Route path="/proveedores/reportes" element={<ProtectedRoute element={<ReportesProv />} />} />
-      <Route path="reportes" element={<ProtectedRoute element={<Reportes />} />} />
-      <Route path="reportes/cuentacorrienteclientes" element={<ProtectedRoute element={<ReportesCtaCorriente />} />} />
-      <Route path="reportes/cuentacorrienteproveedores" element={<ProtectedRoute element={<ReportesCtaCorrienteProv />} />} />
-      <Route path="reportes/rankingventas" element={<ProtectedRoute element={<RankingVentas />} />} />
-      <Route path="reportes/rankingproductos" element={<ProtectedRoute element={<RankingProductos />} />} />
-      <Route path="reportes/rankinglibroventas" element={<ProtectedRoute element={<RankingLibroVentas />} />} />
-      <Route path="reportes/rankinglibrocompras" element={<ProtectedRoute element={<RankingLibroCompras />} />} />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <SelectedOptionsProvider>
+          <Routes>
+            <Route path="/login" element={<Login setUserData={setUserData} />} />
+            <Route path="/registro" element={<Registro />} />
+            <Route
+              path="/home"
+              element={<ProtectedRoute element={<Home userData={userData} setUserData={setUserData} />} />}
+            />
 
-
-    </Routes>
+            <Route
+              path="/"
+              element={<ProtectedRoute element={<Home userData={userData} setUserData={setUserData} />} />}
+            />
+            <Route path="/usuarios" element={<ProtectedRoute element={<Usuarios />} />} />
+            <Route path="/precios" element={<ProtectedRoute element={<Precios />} />} />
+            <Route path="/proveedores" element={<ProtectedRoute element={<Proveedores />} />} />
+            <Route path="/clientes" element={<ProtectedRoute element={<Clientes />} />} />
+            <Route path="/clientes/reportes" element={<ProtectedRoute element={<ReportesClientes />} />} />
+            <Route path="/productos" element={<ProtectedRoute element={<Productos />} />} />
+            <Route path="/productos/categorias" element={<ProtectedRoute element={<Categorias />} />} />
+            <Route path="/productos/subcategorias" element={<ProtectedRoute element={<SubCategorias />} />} />
+            <Route path="/productos/familias" element={<ProtectedRoute element={<Familias />} />} />
+            <Route path="/productos/subfamilias" element={<ProtectedRoute element={<SubFamilias />} />} />
+            <Route path="/proveedores/ingresodocumento" element={<ProtectedRoute element={<IngresoDocumento />} />} />
+            <Route path="/proveedores/reportes" element={<ProtectedRoute element={<ReportesProv />} />} />
+            <Route path="reportes" element={<ProtectedRoute element={<Reportes />} />} />
+            <Route path="reportes/cuentacorrienteclientes" element={<ProtectedRoute element={<ReportesCtaCorriente />} />} />
+            <Route path="reportes/cuentacorrienteproveedores" element={<ProtectedRoute element={<ReportesCtaCorrienteProv />} />} />
+            <Route path="reportes/rankingventas" element={<ProtectedRoute element={<RankingVentas />} />} />
+            <Route path="reportes/rankingproductos" element={<ProtectedRoute element={<RankingProductos />} />} />
+            <Route path="reportes/rankinglibroventas" element={<ProtectedRoute element={<RankingLibroVentas />} />} />
+            <Route path="reportes/rankinglibrocompras" element={<ProtectedRoute element={<RankingLibroCompras />} />} />
+          </Routes>
+        </SelectedOptionsProvider>
+      </LocalizationProvider>
   );
 }
 
