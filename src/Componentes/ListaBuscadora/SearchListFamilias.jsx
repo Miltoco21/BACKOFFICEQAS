@@ -107,7 +107,7 @@ const SearchListFamilias = () => {
     if (selectedSubCategoryId !== "" && selectedCategoryId !== "") {
       try {
         const response = await axios.get(
-          apiUrl + `/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}`
+          apiUrl + `/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}&CategoriaID=${selectedCategoryId}`
         );
         console.log("API Response:", response.data.familias);
         setFamilies(response.data.familias);
