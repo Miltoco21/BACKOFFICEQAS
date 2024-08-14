@@ -226,8 +226,9 @@ const SearchListProducts = () => {
   };
 
   const handleCloseEditModal = () => {
+    console.log("handleCloseEditModal")
     setOpenEditModal(false);
-    setRefresh((prevRefresh) => !prevRefresh);
+    // setRefresh((prevRefresh) => !prevRefresh);
   };
   const handleOpenDialog = (product) => {
     setProductToDelete(product);
