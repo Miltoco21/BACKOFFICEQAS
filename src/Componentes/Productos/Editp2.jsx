@@ -125,7 +125,7 @@ const Editp2 = ({ product, open, handleClose }) => {
         // console.log("idCategoriaFind", SubCategoriaFind)
 
         const response = await axios.get(
-          `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${SubCategoriaFind.idSubcategoria}`
+          `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${editedProduct.idsubCategoria}&CategoriaID=${editedProduct.idCategoria}`
         );
 
         console.log("familias")
@@ -166,7 +166,7 @@ const Editp2 = ({ product, open, handleClose }) => {
         // console.log("familiaFind", familiaFind)
 
         const response = await axios.get(
-          `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${familiaFind.idFamilia}`
+          `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${editedProduct.idFamilia}&SubCategoriaID=${editedProduct.idsubCategoria}&CategoriaID=${editedProduct.idCategoria}`
         );
 
         console.log("subFamilias:");
@@ -297,7 +297,7 @@ const Editp2 = ({ product, open, handleClose }) => {
   };
 
   const closeSuccessDialog = () => {
-    setSuccessDialogOpen(false);
+    setOpenErrorDialog(false);
   };
 
   const handleSave = async (event) => {
@@ -398,7 +398,9 @@ const Editp2 = ({ product, open, handleClose }) => {
     <Dialog open={open} onClose={handleClose} fullWidth>
       <DialogTitle>Editar Producto</DialogTitle>
       <DialogContent>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} sx={{
+          marginTop:"-10px"
+        }}>
           <Grid item xs={8}>
             <TextField
               name="nombre"

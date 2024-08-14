@@ -76,7 +76,7 @@ const SearchListProducts = () => {
         const response = await axios.get(
           apiUrl + "/ProductosTmp/GetProductosPaginados?pageNumber="  + currentPage + "&rowPage=10"
         );
-        console.log("API Response:", response.data);
+        // console.log("API Response:", response.data);
         if (Array.isArray(response.data.productos)) {
           setProduct(response.data.productos);
           setFilteredProducts(response.data.productos);
@@ -140,9 +140,6 @@ const SearchListProducts = () => {
     // const endIndex = startIndex + ITEMS_PER_PAGE;
     // const currentProducts = filteredProducts.slice(startIndex, endIndex);
     // setPageProduct(currentProducts);
-    console.log("currentPage")
-    console.log(currentPage)
-
     fetchProduct()
   }, [
     currentPage
