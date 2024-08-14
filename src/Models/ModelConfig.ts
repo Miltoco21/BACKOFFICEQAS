@@ -19,7 +19,12 @@ class ModelConfig {
     }
 
     static get(){
-        return ModelConfig.getInstance().sesion.cargar(1);
+        var rs = ModelConfig.getInstance().sesion.cargar(1)
+        if(!rs){
+            this.getInstance().sesion.guardar(BaseConfig);
+        }
+        var rs = ModelConfig.getInstance().sesion.cargar(1)
+        return rs;
     }
 
     static getValueOrDefault(name){

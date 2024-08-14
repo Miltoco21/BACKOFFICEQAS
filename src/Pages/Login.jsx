@@ -9,10 +9,13 @@ import {
   IconButton,
   InputAdornment,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Settings, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ModelConfig from "../Models/ModelConfig";
+import dayjs from "dayjs";
+import ScreenDialogConfig from "../Componentes/ScreenDialog/AdminConfig";
+import System from "../Helpers/System";
 
 const Login = ({ setUserData }) => {
   const apiUrl = ModelConfig.get().urlBase ?? "https://www.easypos.somee.com/api";
@@ -23,6 +26,17 @@ const Login = ({ setUserData }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [showScreenConfig, setShowScreenConfig] = useState(false);
+
+  const [footerTextSupport, setFooterTextSupport] = useState("Version 1.0.0");
+  
+  useEffect(() => {
+      var dateTimeNow = dayjs().format('DD/MM/YYYY - HH:mm:ss')
+      setFooterTextSupport(System.getInstance().getAppName() + " - " + dateTimeNow)
+  },[])
+
+
+
 
   useEffect(() => {
     ModelConfig.getInstance().getFirst()
@@ -144,6 +158,24 @@ const Login = ({ setUserData }) => {
               "Iniciar sesión"
             )}
           </Button>
+
+          <Typography component="h4" style={{
+            position:"fixed",
+            bottom:0
+          }}>
+          <p>
+            {footerTextSupport}
+            <IconButton
+            onClick={()=>{ setShowScreenConfig(true) }} 
+            edge="end"
+            >
+            <Settings />
+            </IconButton>
+          </p>
+
+          </Typography>
+
+          <ScreenDialogConfig openDialog={showScreenConfig} setOpenDialog={setShowScreenConfig} />
         </Box>
       </Box>
     </Container>

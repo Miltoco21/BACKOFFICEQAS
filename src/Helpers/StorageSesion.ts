@@ -52,6 +52,7 @@ class StorageSesion {
 
 
     cargar(objeto) {
+        if(!this.hasOne()) return null
         if(typeof(objeto) == "number") objeto = { id : objeto};
         return JSON.parse(this.cargarX(this.getNombre(objeto)));
     }
