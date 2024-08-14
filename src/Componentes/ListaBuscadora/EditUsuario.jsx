@@ -17,7 +17,7 @@ import axios from "axios";
 import ModelConfig from "../../Models/ModelConfig";
 
 const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
-  var apiUrl = null;
+  var apiUrl = ModelConfig.get().urlBase;
 
   const [nombres, setNombre] = useState("");
   const [apellidos, setApellido] = useState("");
@@ -47,6 +47,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
 
   useEffect(() => {
     console.log("algun cambio")
+    console.log("el rol es")
+    console.log(selectedUser.rol)
     if (selectedUser) {
       setNombre(selectedUser.nombres || "");
       setApellido(selectedUser.apellidos || "");
@@ -65,9 +67,6 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
     }
   }, [selectedUser]);
 
-  useEffect(() => {
-      apiUrl = ModelConfig.get().urlBase
-  },[])
 
   useEffect(() => {
     const fetchRegions = async () => {
@@ -100,6 +99,15 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
     };
     fetchComunas();
   }, [selectedRegion]);
+
+
+
+  useEffect(() => {
+      console.log("selectedRol")
+      console.log(selectedRol)
+  }, [selectedRol]);
+
+
 
   useEffect(() => {
     console.log("cambio selectedRegion")
@@ -397,11 +405,17 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               error={Boolean(errores.selectedRol)}
               helperText={errores.selectedRol}
             >
-              {rolesOptions.map((rol,ix) => (
-                <MenuItem key={ix} value={rol}>
-                  {rol}
+              {rolesOptions.map((rol,ix) => {
+                console.log("")
+                console.log("rol:")
+                console.log(rol)
+                return (
+                <MenuItem key={ix} value={rol.rol}>
+                  {rol.rol}
                 </MenuItem>
-              ))}
+              )
+              }
+              )}
             </TextField>
           </Box>
           </Grid>
