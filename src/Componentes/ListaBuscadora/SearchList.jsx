@@ -53,11 +53,12 @@ const SearchList = () => {
   }, [refresh]);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchUsers();
-    }, 3000); // Fetch users every 3 seconds
+    // const intervalId = setInterval(() => {
+    //   fetchUsers();
+    // }, 3000); // Fetch users every 3 seconds
 
-    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    // return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    fetchUsers()
   }, []);
 
   const handlePageChange = (pageNumber) => {
