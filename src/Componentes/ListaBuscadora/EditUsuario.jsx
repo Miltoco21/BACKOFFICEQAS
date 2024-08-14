@@ -11,6 +11,7 @@ import {
   MenuItem,
   Snackbar,
   TextField,
+  Grid
 } from "@mui/material";
 import axios from "axios";
 import ModelConfig from "../../Models/ModelConfig";
@@ -79,7 +80,7 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
       }
     };
     fetchRegions();
-  }, [apiUrl]);
+  },[]);
 
   useEffect(() => {
     const fetchComunas = async () => {
@@ -97,7 +98,7 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
       }
     };
     fetchComunas();
-  }, [selectedRegion, apiUrl]);
+  }, [selectedRegion]);
 
   useEffect(() => {
     async function fetchRoles() {
@@ -111,7 +112,7 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
       }
     }
     fetchRoles();
-  }, [apiUrl]);
+  }, []);
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -253,6 +254,9 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
       <DialogTitle>Editar Usuario</DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit}>
+
+        <Grid container spacing={2} sx={{ padding: "2%" }}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
             <TextField
               fullWidth
@@ -263,6 +267,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               helperText={errores.nombres}
             />
           </Box>
+        </Grid>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
             <TextField
               fullWidth
@@ -273,6 +279,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               helperText={errores.apellidos}
             />
           </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
             <TextField
               fullWidth
@@ -283,6 +291,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               helperText={errores.correo}
             />
           </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
             <TextField
               fullWidth
@@ -293,7 +303,10 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               helperText={errores.telefono}
             />
           </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
+          <InputLabel>Direccion</InputLabel>
             <TextField
               fullWidth
               label="Dirección"
@@ -303,6 +316,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               helperText={errores.direccion}
             />
           </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
             <InputLabel>Región</InputLabel>
             <TextField
@@ -320,6 +335,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               ))}
             </TextField>
           </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
             <InputLabel>Comuna</InputLabel>
             <TextField
@@ -337,7 +354,10 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               ))}
             </TextField>
           </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
+          <InputLabel>Codigo postal</InputLabel>
             <TextField
               fullWidth
               label="Código Postal"
@@ -347,16 +367,21 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               helperText={errores.codigoPostal}
             />
           </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
+          <InputLabel>RUT</InputLabel>
             <TextField
               fullWidth
-              label="RUT"
+              
               value={rut}
               onChange={(e) => setRut(e.target.value)}
               error={Boolean(errores.rut)}
               helperText={errores.rut}
             />
           </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
             <InputLabel>Rol</InputLabel>
             <TextField
@@ -374,6 +399,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               ))}
             </TextField>
           </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
             <TextField
               fullWidth
@@ -384,6 +411,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               helperText={errores.codigoUsuario}
             />
           </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
             <TextField
               fullWidth
@@ -394,6 +423,8 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               helperText={errores.clave}
             />
           </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
           <Box mb={2}>
             <TextField
               fullWidth
@@ -404,16 +435,20 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               helperText={errores.remuneracion}
             />
           </Box>
-          <Box mb={2}>
-            <TextField
-              fullWidth
-              label="Crédito"
-              value={credito}
-              onChange={(e) => setCredito(e.target.value)}
-              error={Boolean(errores.credito)}
-              helperText={errores.credito}
-            />
-          </Box>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
+            <Box mb={2}>
+              <TextField
+                fullWidth
+                label="Crédito"
+                value={credito}
+                onChange={(e) => setCredito(e.target.value)}
+                error={Boolean(errores.credito)}
+                helperText={errores.credito}
+              />
+            </Box>
+            </Grid>
+          </Grid>
           <DialogActions>
             <Button onClick={handleCloseEditModal}>Cancelar</Button>
             <Button type="submit" disabled={loading} variant="contained" color="primary">
