@@ -46,7 +46,7 @@ const SearchListProducts = () => {
   const [product, setProduct] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(1000);
   const [pageProduct, setPageProduct] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -70,12 +70,11 @@ const SearchListProducts = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchProduct = async () => {
+   const fetchProduct = async () => {
       showLoading("Cargando productos...")
       try {
         const response = await axios.get(
-          apiUrl + `/ProductosTmp/GetProductos`
+          apiUrl + "/ProductosTmp/GetProductosPaginados?pageNumber="  + currentPage + "&rowPage=10"
         );
         console.log("API Response:", response.data);
         if (Array.isArray(response.data.productos)) {
@@ -91,23 +90,27 @@ const SearchListProducts = () => {
       }
     };
 
-    fetchProduct();
+
+  useEffect(() => {
+   
+
+    // fetchProduct();
   }, [productToDelete,]);
  
   useEffect(() => {
-    const updateProducts = async () => {
-      try {
-        const response = await axios.get(
-          apiUrl + `/ProductosTmp/GetProductos`
-        );
+    // const updateProducts = async () => {
+    //   try {
+    //     const response = await axios.get(
+    //       apiUrl + `/ProductosTmp/GetProductos`
+    //     );
         
-        if (Array.isArray(response.data.productos)) {
-          setProduct(response.data.productos);
-        }
-      } catch (error) {
-        console.error("Error updating products:", error);
-      }
-    };
+    //     if (Array.isArray(response.data.productos)) {
+    //       setProduct(response.data.productos);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error updating products:", error);
+    //   }
+    // };
 
     // const intervalId = setInterval(updateProducts, 3000); // Actualizar cada 3 segundos
 
@@ -122,20 +125,29 @@ const SearchListProducts = () => {
         product.nombre.trim().toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredProducts(filtered);
-    setPageCount(filtered.length);
+    // setPageCount(filtered.length);
     setCurrentPage(1); // Reset to first page on search
-  }, [searchTerm, product]);
+  }, [searchTerm, 
+    // product
+  ]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
   useEffect(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const currentProducts = filteredProducts.slice(startIndex, endIndex);
-    setPageProduct(currentProducts);
-  }, [currentPage, filteredProducts, refresh]);
+    // const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    // const endIndex = startIndex + ITEMS_PER_PAGE;
+    // const currentProducts = filteredProducts.slice(startIndex, endIndex);
+    // setPageProduct(currentProducts);
+    console.log("currentPage")
+    console.log(currentPage)
+
+    fetchProduct()
+  }, [
+    currentPage
+    //, filteredProducts, refresh
+    ]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -321,7 +333,7 @@ const SearchListProducts = () => {
         </div>
       </div>
       <Pagination
-        count={totalPages}
+        count={currentPage + 1}
         page={currentPage}
         onChange={handlePageChange}
         showFirstButton
