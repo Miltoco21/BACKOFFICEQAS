@@ -18,12 +18,22 @@ class ModelConfig {
         return ModelConfig.instance;
     }
 
-    static get(){
+    static get(propName = ""){
         var rs = ModelConfig.getInstance().sesion.cargar(1)
         if(!rs){
             this.getInstance().sesion.guardar(BaseConfig);
         }
-        var rs = ModelConfig.getInstance().sesion.cargar(1)
+        rs = ModelConfig.getInstance().sesion.cargar(1)
+
+        if(propName != ""){
+            if( rs[propName] != undefined ){
+                return rs[propName]
+            }else{
+                rs[propName] = BaseConfig[propName]
+                this.getInstance().sesion.guardar(rs);
+                return rs[propName]
+            }
+        }
         return rs;
     }
 
