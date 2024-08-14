@@ -46,6 +46,7 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
   useEffect(() => {
+    console.log("algun cambio")
     if (selectedUser) {
       setNombre(selectedUser.nombres || "");
       setApellido(selectedUser.apellidos || "");
@@ -100,6 +101,10 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
     fetchComunas();
   }, [selectedRegion]);
 
+  useEffect(() => {
+    console.log("cambio selectedRegion")
+    console.log(selectedRegion)
+  },[selectedRegion])
   useEffect(() => {
     async function fetchRoles() {
       try {
@@ -329,7 +334,7 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               helperText={errores.selectedRegion}
             >
               {regionOptions.map((region,ix) => (
-                <MenuItem key={ix} value={region.regionID}>
+                <MenuItem key={ix} value={region.id}>
                   {region.regionNombre}
                 </MenuItem>
               ))}
