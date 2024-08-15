@@ -586,7 +586,7 @@ const Step3CC = ({ data, onNext, stepData }) => {
               <TextField
                 required
                 sx={{ width: "100%" }}
-                label="Stock Inicial"
+                label="Stock Actual"
                 fullWidth
                 value={stockInicial}
                 onChange={(event) => handleChange(event, "stockInicial")}
