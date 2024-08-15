@@ -37,6 +37,8 @@ import axios from "axios";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ModelConfig from "../Models/ModelConfig";
+import User from "../Models/User";
+
 
 const ReportesProv = () => {
   const apiUrl = ModelConfig.get().urlBase;
@@ -326,7 +328,7 @@ const ReportesProv = () => {
             ],
             montoPagado: montoAPagar,
             metodoPago: metodoPago,
-            idUsuario: 0,
+            idUsuario: User.getInstance().getFromSesion().codigoUsuario,
             transferencias: {
               idCuentaCorrientePago: selectedItem.id,
               nombre: nombre,
@@ -353,7 +355,7 @@ const ReportesProv = () => {
             ],
             montoPagado: montoAPagar,
             metodoPago: metodoPago,
-            idUsuario: 0,
+            idUsuario: User.getInstance().getFromSesion().codigoUsuario,
             // Add cheque-specific fields here if needed
           };
           break;
@@ -549,7 +551,7 @@ const ReportesProv = () => {
       setLoading(true);
 
       let endpoint =
-        apiUrl + "/Clientes/PostClientePagarDeudaByIdCliente";
+        apiUrl + "/Clientes/PostClientePagarDeudaBackOfficeByIdCliente  ";
 
       let requestBody = {};
 
@@ -582,7 +584,7 @@ const ReportesProv = () => {
         requestBody = {
           montoPagado: montoAPagar,
           metodoPago: metodoPago,
-          idUsuario: 0,
+          idUsuario: User.getInstance().getFromSesion().codigoUsuario,
           transferencias: {
             idCuentaCorrientePago: 0,
             nombre: nombre,
@@ -600,7 +602,7 @@ const ReportesProv = () => {
         requestBody = {
           montoPagado: montoAPagar,
           metodoPago: metodoPago,
-          idUsuario: 0,
+          idUsuario: User.getInstance().getFromSesion().codigoUsuario,
           cheque: {
             idCuentaCorrientePago: 0,
             nombre: nombre,
@@ -615,7 +617,7 @@ const ReportesProv = () => {
         requestBody = {
           montoPagado: montoAPagar,
           metodoPago: metodoPago,
-          idUsuario: 0,
+          idUsuario: User.getInstance().getFromSesion().codigoUsuario,
           efectivo: {
             idCuentaCorrientePago: 0,
             fecha: fecha,
@@ -630,7 +632,7 @@ const ReportesProv = () => {
         requestBody = {
           montoPagado: montoAPagar,
           metodoPago: metodoPago,
-          idUsuario: 0,
+          idUsuario: User.getInstance().getFromSesion().codigoUsuario,
         };
       }
 
@@ -702,8 +704,9 @@ const ReportesProv = () => {
 
       let endpoint = `${
         apiUrl
-      }/Clientes/PostClientePagarDeudaByIdCliente`;
+      }/Clientes/PostClientePagarDeudaBackOfficeByIdCliente `;
 
+      
       if (metodoPago === "TRANSFERENCIA") {
         endpoint = `${
           apiUrl
@@ -753,26 +756,27 @@ const ReportesProv = () => {
         total: deuda.total,
       }));
 
-      const requestBody = {
+      var requestBody = {
         deudaIds: deudaIds,
+        idUsuario: User.getInstance().getFromSesion().codigoUsuario,
         montoPagado: montoAPagar,
-        metodoPago: metodoPago,
-        idUsuario: 0,
-        transferencias:
-          metodoPago === "TRANSFERENCIA"
-            ? {
-                idCuentaCorrientePago:
-                  deudaIds.length > 0 ? deudaIds[0].idCuentaCorriente : 0,
-                nombre: nombre,
-                rut: rut,
-                banco: selectedBanco,
-                tipoCuenta: tipoCuenta,
-                nroCuenta: nroCuenta,
-                fecha: fecha,
-                nroOperacion: nroOperacion,
-              }
-            : null,
+        metodoPago: metodoPago
       };
+
+      if(metodoPago === "TRANSFERENCIA"){
+        requestBody.
+        transferencias  = {
+          idCuentaCorrientePago:
+            deudaIds.length > 0 ? deudaIds[0].idCuentaCorriente : 0,
+          nombre: nombre,
+          rut: rut,
+          banco: selectedBanco,
+          tipoCuenta: tipoCuenta,
+          nroCuenta: nroCuenta,
+          fecha: fecha,
+          nroOperacion: nroOperacion,
+        }
+      }
 
       console.log("Request Body:", requestBody);
 
@@ -1436,17 +1440,18 @@ const ReportesProv = () => {
                   }
                 }}
                 disabled={metodoPago !== "EFECTIVO"} // Deshabilitar la edición excepto para el método "EFECTIVO"
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                  maxLength: 9,
-                }}
+                // inputProps={{
+                //   inputMode: "numeric",
+                //   pattern: "[0-9]*",
+                //   maxLength: 9,
+                // }}
               />
               <TextField
                 margin="dense"
                 fullWidth
                 type="number"
-                label="Por pagar"
+                label="Faltara pagar"
+                disabled={true}
                 value={Math.max(0, montoAPagar - cantidadPagada).toLocaleString(
                   "es-CL"
                 )}
@@ -1588,7 +1593,8 @@ const ReportesProv = () => {
                 margin="dense"
                 fullWidth
                 label="Cantidad pagada"
-                value={cantidadPagada.toLocaleString("es-CL")}
+                // value={cantidadPagada.toLocaleString("es-CL")}
+                value={cantidadPagada}
                 onChange={(e) => {
                   const value = e.target.value;
                   if (!value.trim()) {
@@ -1608,7 +1614,8 @@ const ReportesProv = () => {
                 margin="dense"
                 fullWidth
                 type="number"
-                label="Por pagar"
+                label="Faltara pagar"
+                disabled={true}
                 value={Math.max(0, montoAPagar - cantidadPagada).toLocaleString(
                   "es-CL"
                 )}
@@ -1752,7 +1759,8 @@ const ReportesProv = () => {
                 margin="dense"
                 fullWidth
                 label="Cantidad pagada"
-                value={cantidadPagada.toLocaleString("es-CL")}
+                // value={cantidadPagada.toLocaleString("es-CL")}
+                value={cantidadPagada}
                 onChange={(e) => {
                   const value = e.target.value;
                   if (!value.trim()) {
@@ -1772,7 +1780,8 @@ const ReportesProv = () => {
                 margin="dense"
                 fullWidth
                 type="number"
-                label="Por pagar"
+                label="Faltara pagar"
+                disabled={true}
                 value={Math.max(0, montoAPagar - cantidadPagada).toLocaleString(
                   "es-CL"
                 )}
