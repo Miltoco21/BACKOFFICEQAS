@@ -549,13 +549,13 @@ const ReportesProv = () => {
       setLoading(true);
 
       let endpoint =
-        "https://www.easypos.somee.com/api/Clientes/PostClientePagarDeudaByIdCliente";
+        apiUrl + "/Clientes/PostClientePagarDeudaByIdCliente";
 
       let requestBody = {};
 
       if (metodoPago === "TRANSFERENCIA") {
         endpoint =
-          "https://www.easypos.somee.com/api/Clientes/PostClientePagarDeudaTransferenciaByIdCliente";
+          apiUrl + "/Clientes/PostClientePagarDeudaTransferenciaByIdCliente";
 
         if (
           nombre === "" ||
@@ -596,7 +596,7 @@ const ReportesProv = () => {
         };
       } else if (metodoPago === "CHEQUE") {
         endpoint =
-          "https://www.easyposdev.somee.com/api/Clientes/PostClientePagarDeudaChequeByIdCliente";
+          apiUrl + "/Clientes/PostClientePagarDeudaChequeByIdCliente";
         requestBody = {
           montoPagado: montoAPagar,
           metodoPago: metodoPago,
@@ -809,7 +809,7 @@ const ReportesProv = () => {
     const fetchProveedores = async () => {
       try {
         const response = await axios.get(
-          "https://www.easypos.somee.com/api/Proveedores/GetProveedorCompra"
+          apiUrl + "/Proveedores/GetProveedorCompra"
         );
         setProveedores(response.data.proveedorCompra.proveedorCompraCabeceras);
       } catch (error) {
@@ -997,14 +997,15 @@ const ReportesProv = () => {
                 <TableCell>Total</TableCell>
                 <TableCell></TableCell>
               </TableRow>
-            </TableHead>
-            <TableCell fullWidth>
+              <TableRow>
+            <TableCell>
               <strong>Total General:</strong>
             </TableCell>
-            <TableCell>
+            <TableCell colSpan={5}>
               <strong>${totalGeneral.toLocaleString("es-ES")}</strong>
             </TableCell>
-            <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
             <TableBody>
               {sortedGroupKeys.map((rut) => (
                 <React.Fragment key={rut}>
