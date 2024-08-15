@@ -44,6 +44,8 @@ const Step3Component = ({ data, onNext, stepData }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [product, setProduct] = useState([]);
+  
+  const [esPesable, setEsPesable] = useState(false);
 
   console.log("data:", data);
 
@@ -74,7 +76,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
     // Crear objeto con los datos del paso 1
     const step1Data = {
       respuestaSINO: "",
-      pesoSINO: "",
+      pesoSINO: (esPesable ? "SI" : "NO"),
       marca: data.marca,
       categoriaID: data.selectedCategoryId || 0, // Utilizamos 0 si el valor es undefined
       subCategoriaID: data.selectedSubCategoryId || 0,

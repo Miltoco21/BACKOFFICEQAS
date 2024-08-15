@@ -25,7 +25,7 @@ import {
 } from "@mui/material";
 
 import ModelConfig from "../../Models/ModelConfig";
-import { AttachMoney, DraftsOutlined, Money, Percent } from "@mui/icons-material";
+import { AttachMoney, CheckBox, DraftsOutlined, Money, Percent } from "@mui/icons-material";
 import Product from "../../Models/Product";
 
 
@@ -57,6 +57,8 @@ const Step3CC = ({ data, onNext, stepData }) => {
   const [loading, setLoading] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const [esPesable, setEsPesable] = useState( (data.esPesable == "SI") );
 
   const unidades = [
     { idUnidad: 0, descripcion: "Sin unidad" },
@@ -107,8 +109,7 @@ const Step3CC = ({ data, onNext, stepData }) => {
     // Crear objeto con los datos del paso 1
     const step1Data = {
       codBarra: data.codBarra,
-      respuestaSINO: "",
-      pesoSINO: "",
+      pesoSINO: (esPesable ? "SI" : "NO"),
       marca: data.marca,
       categoriaID: data.selectedCategoryId || 0, // Utilizamos 0 si el valor es undefined
       subCategoriaID: data.selectedSubCategoryId || 0,
@@ -360,6 +361,28 @@ const Step3CC = ({ data, onNext, stepData }) => {
   useEffect(()=>{
     logicaPrecios()
   },[precioCosto, precioVenta, margenGanancia, iva])
+
+
+  useEffect(()=>{
+    console.log("cambio unidad de venta")
+    console.log(selectedUnidadVentaId)
+    if(selectedUnidadVentaId == 1 || selectedUnidadVentaId == 5){
+      setEsPesable(true)
+    }else{
+      setEsPesable(false)
+    }
+  },[selectedUnidadVentaId])
+
+
+
+
+  const checkEsPesable = (e)=>{
+    
+    console.log("e")
+    console.log(e)
+
+    setEsPesable(!esPesable)
+  }
   return (
     <Paper
       elevation={3}
@@ -414,6 +437,28 @@ const Step3CC = ({ data, onNext, stepData }) => {
               </Select>
             </Grid>
           </Grid>
+
+
+          <Grid item xs={12} md={12}>
+            <Grid display="flex" alignItems="center">
+              <label onClick={checkEsPesable}
+               style={{
+                userSelect:"none"
+               }}>
+                Es Pesable
+                </label>
+              <input
+                type="checkbox"
+                checked={esPesable}
+                // onChange={checkEsPesable}
+                onClick={checkEsPesable}
+                style={{
+                  width:"50px",
+                  height:"20px"
+                }}
+                />
+              </Grid>
+            </Grid>
 
           <Grid item xs={12} md={6}>
             <Box>
