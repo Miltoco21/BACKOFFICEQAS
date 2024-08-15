@@ -1380,6 +1380,7 @@ const ReportesProv = () => {
                 <Button
                   variant="contained"
                   color="primary"
+                  disabled={ selectedTotal <= 0 }
                   onClick={() =>handleOpenGroupPaymentProcess()}
                 >
                   Pagar Total ${selectedTotal}
