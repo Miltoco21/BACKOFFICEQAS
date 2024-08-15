@@ -52,6 +52,8 @@ const Editp2 = ({ product, open, handleClose }) => {
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [esPesable, setEsPesable] = useState( false );
+
   const [successMessage, setSuccessMessage] = useState("");
   //INICIADOR DE DATOS
   useEffect(() => {
@@ -349,8 +351,8 @@ const Editp2 = ({ product, open, handleClose }) => {
         categoria: idCategoriaFil,
         subCategoria: idSubCategoriaFil,
         familia: idFamiliaFil,
-        subFamilia: idSubFamiliaFil
-
+        subFamilia: idSubFamiliaFil,
+        tipoVenta: (esPesable ? 2 : 1)
       };
       console.log("putnuevoobjeto", nuevoObjetoActualizado);
     }else{
@@ -392,6 +394,17 @@ const Editp2 = ({ product, open, handleClose }) => {
     console.log("Edited Product:", editedProduct);
     // Additional logic to update the product in the database can be added here
   };
+
+
+
+  const checkEsPesable = (e)=>{
+    
+    console.log("e")
+    console.log(e)
+
+    setEsPesable(!esPesable)
+  }
+
 
   return (
     //fullScreen
@@ -701,6 +714,29 @@ const Editp2 = ({ product, open, handleClose }) => {
               fullWidth
             />
           </Grid>
+
+
+          <Grid item xs={6} md={6}>
+            <Grid display="flex" alignItems="center">
+              <label onClick={checkEsPesable}
+               style={{
+                userSelect:"none"
+               }}>
+                Es Pesable
+                </label>
+              <input
+                type="checkbox"
+                checked={esPesable}
+                // onChange={checkEsPesable}
+                onClick={checkEsPesable}
+                style={{
+                  width:"50px",
+                  height:"20px"
+                }}
+                />
+              </Grid>
+            </Grid>
+
 
           <Grid item xs={12}>
             <Button variant="contained" color="primary" onClick={handleSave}>
