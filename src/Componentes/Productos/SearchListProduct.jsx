@@ -32,6 +32,7 @@ import ModelConfig from "../../Models/ModelConfig";
 
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import Product from "../../Models/Product";
+import SearchListProductItem from "./SearchListProductItem";
 
 
 const ITEMS_PER_PAGE = 10;
@@ -57,9 +58,10 @@ const SearchListProducts = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [hasResult, setHasResult] = useState(false);
 
   const handleTabChange = (event, newValue) => {
-    setSelectedTab(newValue);
+    // setSelectedTab(newValue);
   };
 
   const setPageCount = (productCount) => {
@@ -72,6 +74,7 @@ const SearchListProducts = () => {
   };
 
    const fetchProduct = async () => {
+      console.log("Cargando productos...")
       showLoading("Cargando productos...")
       try {
         const response = await axios.get(
@@ -83,22 +86,26 @@ const SearchListProducts = () => {
           setFilteredProducts(response.data.productos);
           setPageCount(response.data.cantidadRegistros);
           setPageProduct(response.data.productos);
+          setHasResult(response.data.productos.length>0)
         }
         hideLoading()
       } catch (error) {
         console.error("Error fetching product:", error);
+        setHasResult(false)
         hideLoading()
       }
     };
 
 
   useEffect(() => {
-   
+    console.log("cambio pageProduct")
+  }, [pageProduct,]);
 
+  // useEffect(() => {
     // fetchProduct();
-  }, [productToDelete,]);
+  // }, [productToDelete,]);
  
-  useEffect(() => {
+  // useEffect(() => {
     // const updateProducts = async () => {
     //   try {
     //     const response = await axios.get(
@@ -116,35 +123,65 @@ const SearchListProducts = () => {
     // const intervalId = setInterval(updateProducts, 3000); // Actualizar cada 3 segundos
 
     // return () => clearInterval(intervalId); // Limpiar intervalo cuando el componente se desmonta
-  }, []);
+  // }, []);
 
 
-  useEffect(() => {
+  const doSearch = ()=>{
+    if(searchTerm == "")return
+    console.log("hace busqueda")
+    showLoading("haciendo busqueda")
+      Product.getInstance().findByDescription({
+        description: searchTerm
+      }, (prods)=>{
+        // setFilteredProducts(prods);
+        // setProduct(prods);
+        // setFilteredProducts(prods);
+        // setPageCount(prods);
+        setPageProduct(prods);
+        
+        console.log("asigno productos")
+        console.log(prods)
+        hideLoading()
+        setHasResult(prods.length>0)
+      }, ()=>{
+        hideLoading()
+        setHasResult(false)
+      })
+
+      // setPageCount(filtered.length);
+      setCurrentPage(1); // Reset to first page on search
+      
+  }
+  // useEffect(() => {
     // const filtered = product.filter(
     //   (product) =>
     //     product.nombre &&
     //     product.nombre.trim().toLowerCase().includes(searchTerm.toLowerCase())
     // );
     // setFilteredProducts(filtered);
-  if(searchTerm == "")return
-    Product.getInstance().findByDescription({
-      description: searchTerm
-    }, (prods)=>{
-      // setFilteredProducts(prods);
-      setPageProduct(prods);
-    }, ()=>{
-
-    })
-
-    // setPageCount(filtered.length);
-    setCurrentPage(1); // Reset to first page on search
-  }, [searchTerm, 
+  
+  // }, [searchTerm, 
     // product
-  ]);
+  // ]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
+
+  useEffect(() => {
+    console.log("cambio searchTerm")
+  }, [
+    searchTerm
+    ]);
+  
+
+
+  useEffect(() => {
+    console.log("cambio hasResult")
+  }, [
+    hasResult
+    ]);
+  
 
   useEffect(() => {
     // const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -157,30 +194,6 @@ const SearchListProducts = () => {
     //, filteredProducts, refresh
     ]);
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  // const handleDelete = async (id) => {
-  //   try {
-  //     const response = await axios.delete(
-  //       `https://www.easyposdev.somee.com/api/ProductosTmp/DeleteProducto?id=${id}`
-  //     );
-  //     console.log(response)
-  //     if (response.status === 200) {
-
-  //       setSnackbarMessage("Producto eliminado correctamente");
-  //       setOpenSnackbar(true);
-  //       setRefresh((prevRefresh) => !prevRefresh);
-  //     } else {
-  //       setSnackbarMessage("Error al eliminar el producto");
-  //     }
-  //   } catch (error) {
-  //     setSnackbarMessage("Error al eliminar el producto");
-  //     console.error("Error deleting product:", error);
-  //   }
-  //   setOpenSnackbar(true);
-  // };
   useEffect(() => {
     if (openSnackbar) {
       setTimeout(() => {
@@ -220,6 +233,8 @@ const SearchListProducts = () => {
       window.location.reload(1)
     }
   }, [refresh]);
+
+
   useEffect(() => {
     let timeout;
     if (openSnackbar) {
@@ -229,6 +244,8 @@ const SearchListProducts = () => {
     }
     return () => clearTimeout(timeout);
   }, [openSnackbar]);
+
+
 
   const handleEdit = (product) => {
     console.log("Edit button pressed for product:", product);
@@ -258,20 +275,51 @@ const SearchListProducts = () => {
     }
   };
 
+
+  const checkEnterSearch = (e)=>{
+    if(e.keyCode == 13){
+      // console.log("apreto enter")
+      doSearch()
+    }
+  }
+
   return (
     <Box sx={{ p: 2, mb: 4 }}>
       <div>
-        <Tabs value={selectedTab} onChange={handleTabChange}>
+        {/* <Tabs value={selectedTab} onChange={handleTabChange}> */}
+        <Tabs value={0}>
           <Tab label="Productos sin codigos" />
           {/* <Tab label="Productos con codigos" /> */}
         </Tabs>
-        <div style={{ p: 2, mt: 4 }} role="tabpanel" hidden={selectedTab !== 0}>
+        {/* <div style={{ p: 2, mt: 4 }} role="tabpanel" hidden={selectedTab !== 0}> */}
+        <div style={{ p: 2, mt: 4 }} role="tabpanel">
           <TextField
+            sx={{
+              marginTop:"30px",
+              width:"250px",
+            }}
             margin="dense"
             label="Buscar productos..."
             value={searchTerm}
-            onChange={handleSearch}
+            onChange={(e)=>setSearchTerm(e.target.value)}
+            onKeyDown={(e)=>{
+              checkEnterSearch(e)
+            }}
           />
+          <Button sx={{
+              marginTop:"30px",
+              marginLeft:"10px",
+              height:"55px !important",
+              width:"150px",
+              color:"white",
+              backgroundColor:"midnightblue",
+              "&:hover": {
+              backgroundColor: "#1c1b17 ",
+              color: "white",
+            },
+            }}
+            onClick={()=>{doSearch()}}
+            >Buscar</Button>
           <Table>
             <TableHead>
               <TableRow>
@@ -287,55 +335,27 @@ const SearchListProducts = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {pageProduct.length === 0 ? (
+              {!hasResult ? (
                 <TableRow>
                   <TableCell colSpan={2}>No se encontraron productos</TableCell>
                 </TableRow>
               ) : (
-                pageProduct.map((product) => (
-                  <TableRow key={product.idProducto}>
-                    <TableCell>{product.idProducto}</TableCell>
-                    <TableCell>
-                      {product.nombre}
-                      <br />
-                      <span style={{ color: "purple" }}>Marca: </span>
-                      {product.marca} <br />
-                    </TableCell>
-                    <TableCell>
-                      <span style={{ color: "purple" }}>Categoría: </span>
-                      {product.categoria} <br />
-                      <span style={{ color: "purple" }}>SubCategoría: </span>
-                      {product.subCategoria} <br />
-                      <span style={{ color: "purple" }}>Familia: </span>
-                      {product.familia} <br />
-                      <span style={{ color: "purple" }}>SubFamilia: </span>
-                      {product.subFamilia} <br />
-                    </TableCell>
-                    <TableCell>
-                      <span style={{ color: "purple" }}>Precio Costo: </span>
-                      {product.precioCosto} <br />
-                      <span style={{ color: "purple" }}>Precio Venta: </span>
-                      {product.precioVenta} <br />
-                    </TableCell>
-                    <TableCell>
-                      <span style={{ color: "purple" }}>Stock Inical: </span>
-                      {product.stockInicial} <br />
-                      <span style={{ color: "purple" }}>Stock Crítico: </span>
-                      {product.stockCritico} <br />
-                    </TableCell>
-                    <TableCell>{product.impuesto}</TableCell>
-                    <TableCell>{product.bodega}</TableCell>
-                    <TableCell>{product.proveedor}</TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => handleEdit(product)}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton onClick={() => handleOpenDialog(product)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
+                pageProduct.map((product,index) => {
+                  // console.log("key:" + product.idProducto 
+                  //   + "////nombre: " + product.nombre
+                  //   + "////count: " + pageProduct.length
+                  // )
+                  return(
+                    <SearchListProductItem 
+                      product={product}
+                      key={index}
+                      index={index}
+                      onEditClick={(p) => handleEdit(p)}
+                      onDeleteClick={(p) => handleOpenDialog(p)}
+                    />
+                )
+                }
+                )
               )}
             </TableBody>
           </Table>
