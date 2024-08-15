@@ -165,6 +165,7 @@ const RankingLibroVentas = () => {
                   label="Fecha Inicio"
                   value={startDate}
                   onChange={(newValue) => setStartDate(newValue)}
+                  format="DD/MM/YYYY"
                   slotProps={{
                     textField: {
                       sx: { mb: 2 },
@@ -180,6 +181,7 @@ const RankingLibroVentas = () => {
                   label="Fecha Término"
                   value={endDate}
                   onChange={(newValue) => setEndDate(newValue)}
+                  format="DD/MM/YYYY"
                   slotProps={{
                     textField: {
                       sx: { mb: 2 },

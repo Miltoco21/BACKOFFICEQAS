@@ -171,6 +171,7 @@ const ReportesCtaCorriente = () => {
                 <DatePicker
                   label="Fecha Inicio"
                   value={startDate}
+                  format="DD/MM/YYYY"
                   onChange={(newValue) => setStartDate(newValue)}
                   slotProps={{
                     textField: {
@@ -187,6 +188,7 @@ const ReportesCtaCorriente = () => {
                   label="Fecha Término"
                   value={endDate}
                   onChange={(newValue) => setEndDate(newValue)}
+                  format="DD/MM/YYYY"
                   slotProps={{
                     textField: {
                       sx: { mb: 2 },
