@@ -56,7 +56,7 @@ const validateDateInput = (e) => {
 };
 
 const SearchListDocumento = () => {
-  const apiUrl = ModelConfig.get().urlBase;
+  const apiUrl = ModelConfig.get("urlBase")
 
   const [startDate, setStartDate] = useState(dayjs());
   const [endDate, setEndDate] = useState(dayjs());
@@ -499,6 +499,7 @@ const SearchListDocumento = () => {
                 label="Fecha Inicio"
                 value={startDate}
                 onChange={(newValue) => setStartDate(newValue)}
+                format="DD/MM/YYYY"
                 renderInput={(params) => (
                   <TextField {...params} sx={{ mb: 2 }} fullWidth />
                 )}
@@ -511,6 +512,7 @@ const SearchListDocumento = () => {
                 label="Fecha Término"
                 value={endDate}
                 onChange={(newValue) => setEndDate(newValue)}
+                format="DD/MM/YYYY"
                 renderInput={(params) => (
                   <TextField {...params} sx={{ mb: 2 }} fullWidth />
                 )}
