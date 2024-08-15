@@ -555,9 +555,9 @@ const Editp2 = ({ product, open, handleClose }) => {
             </Select>
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={6} md={6}>
             <InputLabel>Marca</InputLabel>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <TextField
                 name="marca"
                 label=""
@@ -573,6 +573,8 @@ const Editp2 = ({ product, open, handleClose }) => {
                 fullWidth
               />
             </Grid>
+
+            
 
 
 
@@ -605,7 +607,32 @@ const Editp2 = ({ product, open, handleClose }) => {
 
           </Grid>
 
-          <Grid item xs={6}>
+
+          <Grid item xs={6} md={6}>
+            <Grid display="flex" alignItems="center">
+              <label onClick={checkEsPesable}
+               style={{
+                marginTop:"40px",
+                userSelect:"none"
+               }}>
+                Es Pesable
+                </label>
+              <input
+                type="checkbox"
+                checked={esPesable}
+                // onChange={checkEsPesable}
+                onClick={checkEsPesable}
+                style={{
+                  marginTop:"40px",
+                  width:"50px",
+                  height:"20px"
+                }}
+                />
+              </Grid>
+            </Grid>
+
+
+          {/* <Grid item xs={6}>
             <InputLabel>Ingresa Proveedor</InputLabel>
             <Select
               fullWidth
@@ -630,40 +657,10 @@ const Editp2 = ({ product, open, handleClose }) => {
                 </MenuItem>
               ))}
             </Select>
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={6}>
-            <TextField
-              name="precioCosto"
-              label="Precio Costo"
-              value={editedProduct.precioCosto || ""}
-              onChange={(e) => {
-                // setSelectedCategoryId(e.target.value);
-                // // setEditedProduct.categoria=e.target.value;
-                setEditedProduct((prevProduct) => ({
-                  ...prevProduct,
-                  precioCosto: e.target.value,
-                }));
-              }}
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField
-              name="precioVenta"
-              label="Precio Venta"
-              value={editedProduct.precioVenta || ""}
-              onChange={(e) => {
-                setEditedProduct((prevProduct) => ({
-                  ...prevProduct,
-                  precioVenta: e.target.value,
-                }));
-              }}
-              fullWidth
-            />
-          </Grid>
-
+          <Grid item xs={12}>
+          <Grid container spacing={2}>
           <Grid item xs={4}>
             <TextField
               name="stockInicial"
@@ -714,28 +711,11 @@ const Editp2 = ({ product, open, handleClose }) => {
               fullWidth
             />
           </Grid>
+          </Grid>
+          </Grid>
 
 
-          <Grid item xs={6} md={6}>
-            <Grid display="flex" alignItems="center">
-              <label onClick={checkEsPesable}
-               style={{
-                userSelect:"none"
-               }}>
-                Es Pesable
-                </label>
-              <input
-                type="checkbox"
-                checked={esPesable}
-                // onChange={checkEsPesable}
-                onClick={checkEsPesable}
-                style={{
-                  width:"50px",
-                  height:"20px"
-                }}
-                />
-              </Grid>
-            </Grid>
+          
 
 
           <Grid item xs={12}>
