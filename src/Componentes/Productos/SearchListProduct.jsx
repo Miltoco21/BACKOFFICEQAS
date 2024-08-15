@@ -31,6 +31,7 @@ import Editp2 from "../Productos/Editp2";
 import ModelConfig from "../../Models/ModelConfig";
 
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import Product from "../../Models/Product";
 
 
 const ITEMS_PER_PAGE = 10;
@@ -119,12 +120,22 @@ const SearchListProducts = () => {
 
 
   useEffect(() => {
-    const filtered = product.filter(
-      (product) =>
-        product.nombre &&
-        product.nombre.trim().toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredProducts(filtered);
+    // const filtered = product.filter(
+    //   (product) =>
+    //     product.nombre &&
+    //     product.nombre.trim().toLowerCase().includes(searchTerm.toLowerCase())
+    // );
+    // setFilteredProducts(filtered);
+  if(searchTerm == "")return
+    Product.getInstance().findByDescription({
+      description: searchTerm
+    }, (prods)=>{
+      // setFilteredProducts(prods);
+      setPageProduct(prods);
+    }, ()=>{
+
+    })
+
     // setPageCount(filtered.length);
     setCurrentPage(1); // Reset to first page on search
   }, [searchTerm, 
