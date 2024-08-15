@@ -376,26 +376,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
               </Select>
             </Grid>
           </Grid>
-          <Grid item xs={6} md={6}>
-            <Grid display="flex" alignItems="center">
-              <label onClick={checkEsPesable}
-               style={{
-                userSelect:"none"
-               }}>
-                Es Pesable
-                </label>
-              <input
-                type="checkbox"
-                checked={esPesable}
-                // onChange={checkEsPesable}
-                onClick={checkEsPesable}
-                style={{
-                  width:"50px",
-                  height:"20px"
-                }}
-                />
-              </Grid>
-            </Grid>
+          
 
             <Grid item xs={6} md={6}>
             <Grid item xs={12} md={12}>
@@ -421,6 +402,29 @@ const Step3Component = ({ data, onNext, stepData }) => {
               </Grid>
             </Grid>
 
+            <Grid item xs={6} md={6}>
+            <Grid display="flex" alignItems="center">
+              <label onClick={checkEsPesable}
+               style={{
+                marginTop:"50px",
+                userSelect:"none"
+               }}>
+                Es Pesable
+                </label>
+              <input
+                type="checkbox"
+                checked={esPesable}
+                // onChange={checkEsPesable}
+                onClick={checkEsPesable}
+                style={{
+                  marginTop:"50px",
+                  width:"50px",
+                  height:"20px"
+                }}
+                />
+              </Grid>
+            </Grid>
+            
 
           <Grid item xs={12} md={6}>
             <Box>
