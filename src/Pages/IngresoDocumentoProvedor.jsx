@@ -81,6 +81,31 @@ const IngresoDocumentoProveedor = () => {
 
     setSelectedProducts(updatedProducts);
   };
+  
+  const handleCostoChange = (value, index) => {
+    const updatedProducts = [...selectedProducts];
+    console.log("updatedProduct")
+    console.log(updatedProducts[index])
+    // // Parse the input value to an integer
+    const parsedValue = parseInt(value);
+
+    // Check if the parsed value is NaN or less than zero
+    if (isNaN(parsedValue) || parsedValue < 0) {
+      // If it's NaN or less than zero, set quantity and total to zero
+      // updatedProducts[index].cantidad = 0;
+      updatedProducts[index].precioCosto = 0;
+      updatedProducts[index].precio = 0;
+      updatedProducts[index].total = 0;
+    } else {
+      // Otherwise, update quantity and calculate total
+      updatedProducts[index].precioCosto = parsedValue;
+      updatedProducts[index].precio = parsedValue;
+      updatedProducts[index].total =
+        parsedValue * updatedProducts[index].cantidad;
+    }
+
+    setSelectedProducts(updatedProducts);
+  };
 
   const handleAddProductToSales = (product) => {
     const existingProductIndex = selectedProducts.findIndex(
@@ -427,7 +452,7 @@ const IngresoDocumentoProveedor = () => {
               p: 4,
               overflow: "auto",
               maxHeight: "90vh",
-              maxWidth: "90vw",
+              maxWidth: "100vw",
             }}
           >
             {errorMessage && (
@@ -617,7 +642,19 @@ const IngresoDocumentoProveedor = () => {
                     {selectedProducts.map((product, index) => (
                       <TableRow key={index}>
                         <TableCell>{product.nombre}</TableCell>
-                        <TableCell>{product.precioCosto}</TableCell>
+                        <TableCell>
+                          {/* {product.precioCosto} */}
+
+                        <TextField
+                            value={product.precioCosto}
+                            onChange={(e) =>
+                              handleCostoChange(e.target.value, index)
+                            }
+                            InputProps={{
+                              maxLenght: 3,
+                            }}
+                            />
+                            </TableCell>
                         <TableCell>
                           <TextField
                             value={product.cantidad}
