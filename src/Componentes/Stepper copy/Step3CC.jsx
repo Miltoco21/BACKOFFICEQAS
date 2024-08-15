@@ -292,8 +292,10 @@ const Step3CC = ({ data, onNext, stepData }) => {
   };
 
   const logicaPrecios = ()=>{
+    console.log("logicaPrecios")
     if(ultimoFoco != "precioVenta" &&  precioCosto > 0){
-
+      
+      console.log("logicaPrecios 111")
       const tmpProduct = {}
       tmpProduct.precioVenta = 0
       tmpProduct.precioCosto = precioCosto
@@ -302,16 +304,16 @@ const Step3CC = ({ data, onNext, stepData }) => {
       tmpProduct.gananciaValor = 0
       tmpProduct.ivaValor = 0
       tmpProduct.precioNeto = 0
-
+      
       Product.logicaPrecios(tmpProduct)
-
+      
       setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
       setPrecioVenta(tmpProduct.precioVenta.toFixed(0))
       
       setValorIva(tmpProduct.ivaValor.toFixed(0))
       setValorMargenGanancia(tmpProduct.gananciaValor.toFixed(0))
-
     }else if(ultimoFoco != "precioCosto" && precioVenta>0){
+      console.log("logicaPrecios 22")
 
       const tmpProduct = {}
       tmpProduct.precioVenta = precioVenta
@@ -322,7 +324,8 @@ const Step3CC = ({ data, onNext, stepData }) => {
       tmpProduct.ivaValor = 0
       tmpProduct.precioNeto = 0
 
-      Product.logicaPrecios(tmpProduct)
+      Product.logicaPrecios(tmpProduct, "costo")
+
 
       setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
       setPrecioCosto(tmpProduct.precioCosto.toFixed(0))
