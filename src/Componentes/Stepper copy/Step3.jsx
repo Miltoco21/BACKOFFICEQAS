@@ -37,6 +37,8 @@ const Step3Component = ({ data, onNext, stepData }) => {
     data.selectedUnidadId || ""
   );
 
+  const [selectedUnidadVentaId, setSelectedUnidadVentaId] = useState(0);
+
   const [precioVenta, setPrecioVenta] = useState("");
   const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
   const [openDialog1, setOpenDialog1] = useState(false);
@@ -62,6 +64,23 @@ const Step3Component = ({ data, onNext, stepData }) => {
       console.error("Error fetching product:", error);
     }
   };
+
+
+  const handleUnidadVentaSelect = (selectedUnidadId) => {
+    setSelectedUnidadVentaId(selectedUnidadId === "" ? 0 : selectedUnidadId);
+    console.log("Unidad seleccionada:", selectedUnidadId);
+  };
+
+  useEffect(()=>{
+    console.log("cambio unidad de venta")
+    console.log(selectedUnidadVentaId)
+    if(selectedUnidadVentaId == 1 || selectedUnidadVentaId == 5){
+      setEsPesable(true)
+    }else{
+      setEsPesable(false)
+    }
+  },[selectedUnidadVentaId])
+
 
   const handleNext = async () => {
     const isValid = validateFields();
@@ -89,6 +108,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
     const step3Data = {
       unidad: selectedUnidadId, // Debes proporcionar un valor adecuado aquí
       precioCosto: parseFloat(precioCosto) || 0, // Convertir a número y usar 0 si no hay valor
+      unidadVenta: selectedUnidadVentaId, // Debes proporcionar un valor adecuado aquí
       stockInicial: parseInt(stockInicial) || 0, // Convertir a número entero y usar 0 si no hay valor
     };
 
@@ -198,6 +218,12 @@ const Step3Component = ({ data, onNext, stepData }) => {
       setEmptyFieldsMessage("Favor completar precio de venta.");
       return false;
     }
+
+    if (selectedUnidadVentaId === "") {
+      setEmptyFieldsMessage("Debe seleccionar una unidad de venta.");
+      return false;
+    }
+
     if (isNaN(parseFloat(precioVenta)) || parseFloat(precioVenta) === 0) {
       setEmptyFieldsMessage("El precio de venta no puede ser cero.");
       return false;
@@ -273,6 +299,14 @@ const Step3Component = ({ data, onNext, stepData }) => {
     }
   };
 
+  const checkEsPesable = (e)=>{
+    
+    console.log("e")
+    console.log(e)
+
+    setEsPesable(!esPesable)
+  }
+
   return (
     <Paper
       elevation={3}
@@ -305,6 +339,50 @@ const Step3Component = ({ data, onNext, stepData }) => {
               </Select>
             </Grid>
           </Grid>
+
+          <Grid item xs={12} md={6}>
+            <InputLabel sx={{ marginBottom: "2%" }}>
+              Unidad de venta
+            </InputLabel>
+            <Grid display="flex" alignItems="center">
+              <Select
+                required
+                fullWidth
+                sx={{ width: "100%" }}
+                value={selectedUnidadVentaId}
+                onChange={(e) => handleUnidadVentaSelect(e.target.value)}
+                label="Seleccionar Unidad"
+              >
+                {unidades.map((unidad) => (
+                  <MenuItem key={unidad.idUnidad} value={unidad.idUnidad}>
+                    {unidad.descripcion}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} md={12}>
+            <Grid display="flex" alignItems="center">
+              <label onClick={checkEsPesable}
+               style={{
+                userSelect:"none"
+               }}>
+                Es Pesable
+                </label>
+              <input
+                type="checkbox"
+                checked={esPesable}
+                // onChange={checkEsPesable}
+                onClick={checkEsPesable}
+                style={{
+                  width:"50px",
+                  height:"20px"
+                }}
+                />
+              </Grid>
+            </Grid>
+
+
           <Grid item xs={12} md={6}>
             <Box>
               <InputLabel sx={{ marginBottom: "4%" }}>
