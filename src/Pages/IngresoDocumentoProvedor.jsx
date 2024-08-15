@@ -30,8 +30,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchListDocumento from "../Componentes/SearchlistDocumento.jsx/SearchListDocumento";
+import ModelConfig from "../Models/ModelConfig";
 
 const IngresoDocumentoProveedor = () => {
+  const apiUrl = ModelConfig.get().urlBase;
+
   const [open, setOpen] = useState(false);
   const [tipoDocumento, setTipoDocumento] = useState("");
   const [folioDocumento, setFolioDocumento] = useState("");
@@ -119,7 +122,7 @@ const IngresoDocumentoProveedor = () => {
     const fetchProveedores = async () => {
       try {
         const response = await axios.get(
-          "https://www.easypos.somee.com/api/Proveedores/GetAllProveedores"
+          apiUrl + "/Proveedores/GetAllProveedores"
         );
         setProveedores(response.data.proveedores);
       } catch (error) {
@@ -190,7 +193,7 @@ const IngresoDocumentoProveedor = () => {
       if (isNumeric) {
         // Si el término de búsqueda es numérico, buscar en el endpoint de código
         const responseByCodigo = await axios.get(
-          `https://www.easypos.somee.com/api/ProductosTmp/GetProductosByCodigo?idproducto=${searchTermProd}&codigoCliente=${0}`
+          apiUrl + `/ProductosTmp/GetProductosByCodigoBarra?codbarra=${searchTermProd}&codigoCliente=${0}`
         );
 
         if (
@@ -201,7 +204,7 @@ const IngresoDocumentoProveedor = () => {
         } else {
           // Si no se encuentran resultados por código numérico, buscar por descripción
           const responseByDescripcion = await axios.get(
-            `https://www.easypos.somee.com/api/ProductosTmp/GetProductosByDescripcion?descripcion=${searchTermProd}&codigoCliente=${0}`
+            apiUrl + `/ProductosTmp/GetProductosByDescripcion?descripcion=${searchTermProd}&codigoCliente=${0}`
           );
 
           if (
@@ -223,7 +226,7 @@ const IngresoDocumentoProveedor = () => {
       } else {
         // Si el término de búsqueda no es numérico, buscar directamente por descripción
         const responseByDescripcion = await axios.get(
-          `https://www.easypos.somee.com/api/ProductosTmp/GetProductosByDescripcion?descripcion=${searchTermProd}&codigoCliente=${0}`
+          apiUrl + `/ProductosTmp/GetProductosByDescripcion?descripcion=${searchTermProd}&codigoCliente=${0}`
         );
 
         if (
@@ -339,7 +342,7 @@ const IngresoDocumentoProveedor = () => {
       console.log("Datos a enviar al servidor:", dataToSend);
 
       const response = await axios.post(
-        "https://www.easypos.somee.com/api/Proveedores/AddProveedorCompra",
+        apiUrl + "/Proveedores/AddProveedorCompra",
         dataToSend
       );
 

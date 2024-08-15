@@ -33,6 +33,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import axios from "axios";
 import EditDialog from "./EditDialog";
 import ProductDialog from "./ProductDialog";
+import ModelConfig from "../../Models/ModelConfig";
 
 const validateDateInput = (e) => {
   const allowedKeys = [
@@ -55,6 +56,8 @@ const validateDateInput = (e) => {
 };
 
 const SearchListDocumento = () => {
+  const apiUrl = ModelConfig.get().urlBase;
+
   const [startDate, setStartDate] = useState(dayjs());
   const [endDate, setEndDate] = useState(dayjs());
   const [data, setData] = useState([]);
@@ -101,7 +104,7 @@ const SearchListDocumento = () => {
     setError(null);
     try {
       const response = await axios.get(
-        `https://www.easyposdev.somee.com/api/Proveedores/GetProveedorCompraByFecha`,
+        apiUrl + `/Proveedores/GetProveedorCompraByFecha`,
         {
           params: {
             fechaDesde: startDate.format("YYYY-MM-DD"),
@@ -119,7 +122,7 @@ const SearchListDocumento = () => {
   const handleDelete = async () => {
     try {
       const response = await axios.delete(
-        `https://www.easyposdev.somee.com/api/Proveedores/DeleteProveedorCompra`,
+        apiUrl + `/Proveedores/DeleteProveedorCompra`,
         {
           params: {
             idCabeceraCompra: compraToDelete.idCabeceraCompra,
@@ -180,7 +183,7 @@ const SearchListDocumento = () => {
 
     try {
       const response = await axios.put(
-        `https://www.easyposdev.somee.com/api/Proveedores/PutProveedorCompra`,
+        apiUrl + `/Proveedores/PutProveedorCompra`,
         dataToSend
       );
 
