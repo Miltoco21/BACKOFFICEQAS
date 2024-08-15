@@ -22,7 +22,7 @@ import SubCategorias from './Pages/SubCategoria';
 import Familias from './Pages/Familias';
 import SubFamilias from './Pages/SubFamilias';
 import ProtectedRoute from './Componentes/ProtectedRoute';
-import ReportesProv from './Pages/ReportesProv';
+import ProveedoresDocumentosPorPagar from './Pages/ProveedoresDocumentosPorPagar';
 import Reportes from './Pages/Reportes';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fontsource/roboto/300.css';
@@ -70,7 +70,7 @@ function App() {
             <Route path="/productos/familias" element={<ProtectedRoute element={<Familias />} />} />
             <Route path="/productos/subfamilias" element={<ProtectedRoute element={<SubFamilias />} />} />
             <Route path="/proveedores/ingresodocumento" element={<ProtectedRoute element={<IngresoDocumento />} />} />
-            <Route path="/proveedores/reportes" element={<ProtectedRoute element={<ReportesProv />} />} />
+            <Route path="/proveedores/reportes" element={<ProtectedRoute element={<ProveedoresDocumentosPorPagar />} />} />
             <Route path="reportes" element={<ProtectedRoute element={<Reportes />} />} />
             <Route path="reportes/cuentacorrienteclientes" element={<ProtectedRoute element={<ReportesCtaCorriente />} />} />
             <Route path="reportes/cuentacorrienteproveedores" element={<ProtectedRoute element={<ReportesCtaCorrienteProv />} />} />
