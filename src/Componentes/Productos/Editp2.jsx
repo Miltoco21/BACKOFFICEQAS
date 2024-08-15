@@ -651,10 +651,10 @@ const Editp2 = ({ product, open, handleClose }) => {
             />
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <TextField
               name="stockInicial"
-              label="Stock actual"
+              label="Stock Inicial"
               value={editedProduct.stockInicial || ""}
               onChange={(e) => {
                 // setSelectedCategoryId(e.target.value);
@@ -668,10 +668,27 @@ const Editp2 = ({ product, open, handleClose }) => {
             />
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={4}>
+            <TextField
+              name="stockActual"
+              label="Stock actual"
+              value={editedProduct.stockActual || ""}
+              onChange={(e) => {
+                // setSelectedCategoryId(e.target.value);
+                // // setEditedProduct.categoria=e.target.value;
+                setEditedProduct((prevProduct) => ({
+                  ...prevProduct,
+                  stockActual: e.target.value,
+                }));
+              }}
+              fullWidth
+            />
+          </Grid>
+
+          <Grid item xs={4}>
             <TextField
               name="stockCritico"
-              label="Stock Crítico"
+              label="Stock Critico"
               value={editedProduct.stockCritico || ""}
               onChange={(e) => {
                 // setSelectedCategoryId(e.target.value);

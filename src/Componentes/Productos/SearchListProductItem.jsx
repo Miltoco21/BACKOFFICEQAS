@@ -73,8 +73,10 @@ const SearchListProductItem = ({
         {product.precioVenta} <br />
       </TableCell>
       <TableCell>
-        <span style={{ color: "purple" }}>Stock Actual: </span>
-        {product.stockInicial} <br />
+      <span style={{ color: "purple" }}>Stock Inicial: </span>
+      {product.stockInicial} <br />
+      <span style={{ color: "purple" }}>Stock Actual: </span>
+      {product.stockActual} <br />
         <span style={{ color: "purple" }}>Stock Crítico: </span>
         {product.stockCritico} <br />
       </TableCell>
