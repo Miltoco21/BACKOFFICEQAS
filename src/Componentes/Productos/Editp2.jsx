@@ -654,7 +654,7 @@ const Editp2 = ({ product, open, handleClose }) => {
           <Grid item xs={6}>
             <TextField
               name="stockInicial"
-              label="Stock Inicial"
+              label="Stock actual"
               value={editedProduct.stockInicial || ""}
               onChange={(e) => {
                 // setSelectedCategoryId(e.target.value);
