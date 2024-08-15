@@ -13,7 +13,7 @@ import SearchListProveedores from "../Componentes/Proveedores/SearchListProveedo
 const Proveedores = () => {
   const [open, setOpen] = useState(false);
   const [openCL, setOpenCL] = useState(false);
-  const text = "Proovedores";
+  const text = "Proveedores";
   const uppercaseText = text.toUpperCase();
 
   const handleOpenModal = () => {
