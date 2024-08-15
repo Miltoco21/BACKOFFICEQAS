@@ -145,9 +145,10 @@ const Step3CC = ({ data, onNext, stepData }) => {
       step4: step4Data,
       step5: {
         stockCritico: parseInt(stockCritico), // Debes proporcionar un valor adecuado aquí
-        impuesto: "", // Debes proporcionar un valor adecuado aquí
+        impuesto: (iva == 0 ? "EXENTO" : "IVA " + iva + "%"), // Debes proporcionar un valor adecuado aquí
         selectedFile: {}, // Debes proporcionar un valor adecuado aquí
         nota: "", // Debes proporcionar un valor adecuado aquí
+      
       },
     };
 

@@ -31,13 +31,20 @@ const Step3Component = ({ data, onNext, stepData }) => {
 ;
 
   const [newUnidad, setNewUnidad] = useState("");
+  const [stockCritico, setStockCritico] = useState("");
   const [stockInicial, setStockInicial] = useState("");
   const [precioCosto, setPrecioCosto] = useState("");
   const [selectedUnidadId, setSelectedUnidadId] = useState(
     data.selectedUnidadId || ""
   );
 
+  var ivas = [
+    { idUnidad: 0, descripcion: "Sin iva" },
+    { idUnidad: ModelConfig.get().iva, descripcion: ModelConfig.get().iva + "%" }
+  ];
+
   const [selectedUnidadVentaId, setSelectedUnidadVentaId] = useState(0);
+  const [iva, setIva] = useState(ModelConfig.get().iva)
 
   const [precioVenta, setPrecioVenta] = useState("");
   const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
@@ -129,8 +136,8 @@ const Step3Component = ({ data, onNext, stepData }) => {
       step3: step3Data,
       step4: step4Data,
       step5: {
-        stockCritico: 0, // Debes proporcionar un valor adecuado aquí
-        impuesto: "string", // Debes proporcionar un valor adecuado aquí
+        stockCritico: parseInt(stockCritico) || 0, // Convertir a número entero y usar 0 si no hay valor
+        impuesto: (iva == 0 ? "EXENTO" : "IVA " + iva + "%"), // Debes proporcionar un valor adecuado aquí
         selectedFile: {}, // Debes proporcionar un valor adecuado aquí
         nota: "string", // Debes proporcionar un valor adecuado aquí
       },
@@ -193,7 +200,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
       selectedUnidadId === "" &&
       precioCosto === "" &&
       precioVenta === "" &&
-      stockInicial === ""
+      stockCritico === ""
     ) {
       setEmptyFieldsMessage("Todos los campos son obligatorios.");
       return false;
@@ -235,11 +242,11 @@ const Step3Component = ({ data, onNext, stepData }) => {
       return false;
     }
 
-    if (stockInicial === "") {
+    if (stockCritico === "") {
       setEmptyFieldsMessage("Favor completar Stock Inicial.");
       return false;
     }
-    if (isNaN(parseFloat(stockInicial)) || parseFloat(stockInicial) === 0) {
+    if (isNaN(parseFloat(stockCritico)) || parseFloat(stockCritico) === 0) {
       setEmptyFieldsMessage("El stock inicial no puede ser cero.");
       return false;
     }
@@ -296,6 +303,8 @@ const Step3Component = ({ data, onNext, stepData }) => {
       setPrecioVenta(newValue);
     } else if (field === "stockInicial") {
       setStockInicial(newValue);
+    } else if (field === "stockCritico") {
+      setStockCritico(newValue);
     }
   };
 
@@ -306,6 +315,12 @@ const Step3Component = ({ data, onNext, stepData }) => {
 
     setEsPesable(!esPesable)
   }
+
+
+  const handleIvaSelect = (selectedUnidadId) => {
+    setIva(selectedUnidadId === "" ? 0 : selectedUnidadId);
+    console.log("Unidad seleccionada:", selectedUnidadId);
+  };
 
   return (
     <Paper
@@ -361,7 +376,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
               </Select>
             </Grid>
           </Grid>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={6} md={6}>
             <Grid display="flex" alignItems="center">
               <label onClick={checkEsPesable}
                style={{
@@ -379,6 +394,30 @@ const Step3Component = ({ data, onNext, stepData }) => {
                   height:"20px"
                 }}
                 />
+              </Grid>
+            </Grid>
+
+            <Grid item xs={6} md={6}>
+            <Grid item xs={12} md={12}>
+                <InputLabel sx={{ marginBottom: "4%" }}>
+                iva
+                </InputLabel>
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <Select
+                required
+                fullWidth
+                sx={{ width: "100%" }}
+                value={iva}
+                onChange={(e) => handleIvaSelect(e.target.value)}
+                label="Seleccionar iva"
+              >
+                {ivas.map((ivaItem) => (
+                  <MenuItem key={ivaItem.idUnidad} value={ivaItem.idUnidad}>
+                    {ivaItem.descripcion}
+                  </MenuItem>
+                ))}
+                </Select>
               </Grid>
             </Grid>
 
@@ -404,6 +443,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
               />
             </Box>
           </Grid>
+
           <Grid item xs={12} md={6}>
             <Box>
               <InputLabel sx={{ marginBottom: "4%" }}>
@@ -427,6 +467,11 @@ const Step3Component = ({ data, onNext, stepData }) => {
               />
             </Box>
           </Grid>
+
+          
+
+
+         
           <Grid item xs={12} md={6}>
             <Box>
               <InputLabel sx={{ marginBottom: "4%" }}>
@@ -447,6 +492,29 @@ const Step3Component = ({ data, onNext, stepData }) => {
               />
             </Box>
           </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Box>
+              <InputLabel sx={{ marginBottom: "4%" }}>
+                Ingresa Stock critico
+              </InputLabel>
+              <TextField
+                required
+                sx={{ width: "100%" }}
+                label="Stock Critico"
+                fullWidth
+                value={stockCritico}
+                onChange={(event) => handleChange(event, "stockCritico")}
+                onKeyDown={(event) => handleKeyDown(event, "stockCritico")}
+                inputProps={{
+                  inputMode: "numeric", // Establece el modo de entrada como numérico
+                  pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+                }}
+              />
+            </Box>
+          </Grid>
+
+
           <Grid item xs={12}>
             <Button
               fullWidth
