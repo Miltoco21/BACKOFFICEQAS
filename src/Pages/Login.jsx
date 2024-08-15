@@ -16,6 +16,7 @@ import ModelConfig from "../Models/ModelConfig";
 import dayjs from "dayjs";
 import ScreenDialogConfig from "../Componentes/ScreenDialog/AdminConfig";
 import System from "../Helpers/System";
+import User from "../Models/User";
 
 const Login = ({ setUserData }) => {
   const apiUrl = ModelConfig.get().urlBase ?? "https://www.easypos.somee.com/api";
@@ -64,13 +65,18 @@ const Login = ({ setUserData }) => {
       });
 
       if (response.data.responseUsuario && response.data.responseUsuario.codigoUsuario !== -1) {
-        setUserData(response.data.responseUsuario);
-        console.log(response.data.responseUsuario);
+        const userOk = response.data.responseUsuario
+        setUserData(userOk);
+        console.log(userOk);
         // Guardar datos en sessionStorage
+        const userOkStr = JSON.stringify(userOk)
         sessionStorage.setItem(
           "userData",
-          JSON.stringify(response.data.responseUsuario)
+          userOkStr
         );
+
+        User.getInstance().saveInSesion(userOk)
+
         navigate("/home");
       } else if (response.data.responseUsuario.codigoUsuario === -1) {
         setError("Usuario no encontrado. Verifica tus credenciales.");
