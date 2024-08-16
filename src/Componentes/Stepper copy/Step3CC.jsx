@@ -109,6 +109,7 @@ const Step3CC = ({ data, onNext, stepData }) => {
     // Crear objeto con los datos del paso 1
     const step1Data = {
       codBarra: data.codBarra,
+      respuestaSINO:"NO",
       pesoSINO: (esPesable ? "SI" : "NO"),
       marca: data.marca,
       categoriaID: data.selectedCategoryId || 0, // Utilizamos 0 si el valor es undefined
