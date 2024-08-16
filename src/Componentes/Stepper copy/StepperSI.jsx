@@ -26,7 +26,8 @@ const StepperSI = ({
   const [activeStep, setActiveStep] = useState(0);
   const [open, setOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
- 
+  
+  const [title, setTitle] = useState("Ingreso producto")
 
   const [stepData, setStepData] = useState({
     selectedCategoryId: "",
@@ -49,6 +50,10 @@ const StepperSI = ({
       const parsedData = JSON.parse(storedData);
       setStepData(parsedData.step1 || {});
       setStepData(parsedData.step3 || {});
+    }
+
+    if(conCodigo){
+      setTitle("Ingreso producto con código")
     }
   }, []);
 
@@ -143,7 +148,7 @@ const StepperSI = ({
       <Paper
         sx={{ display: "flex", justifyContent: "center", marginBottom: "5px" }}
       >
-        <Typography variant="h5"> Ingreso de Productos</Typography>
+        <Typography variant="h5">{title}</Typography>
       </Paper>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
