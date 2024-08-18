@@ -103,7 +103,6 @@ export const SelectedOptionsProvider = ({ children }) => {
   const clearSessionData = () => {
     User.getInstance().sesion.truncate();
     setUserData([])
-    setCliente(null)
     setUserData([])
   };
 
