@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Box,
-  Grid,
   Select,
   MenuItem,
   InputLabel,
@@ -15,7 +14,6 @@ import {
   DialogTitle,
   DialogContent,
   TextField,
-  Typography
   
 } from "@mui/material";
 
@@ -31,16 +29,11 @@ const Step2Component = ({ data, onNext }) => {
   const [openDialog1, setOpenDialog1] = useState(false);
   const [openDialog2, setOpenDialog2] = useState(false);
   const [openDialog3, setOpenDialog3] = useState(false);
-  const [emptyFieldsMessage,setEmptyFieldsMessage]= useState("");
   
   const [bodega, setBodega] = useState("");
  
 
   const handleNext = () => {
-    // if (!selectedBodegaId || !selectedProveedorId ) {
-    //   setEmptyFieldsMessage('Por favor, completa todos los campos antes de continuar.');
-    //   return;
-    // }
     const stepData = {
       selectedBodegaId,
       selectedProveedorId
@@ -147,55 +140,66 @@ const Step2Component = ({ data, onNext }) => {
   return (
     <Paper
       elevation={3}
-      sx={{
+      style={{
         padding: "16px",
-        width: "100%",
+        width: "830px",
       }}
     >
-     <Grid container spacing={2} item xs={12} md={12}  >
-      <Grid item xs={12} md={12} >
-      <InputLabel margin="dense" >Ingresa Bodega</InputLabel>
-        <Box display="flex" alignItems="center">
-          
-          <Select
-            sx={{ width: '70%', marginLeft: '16px' }}
-            value={selectedBodegaId}
-            onChange={(e) => handlebodegaSelect(e.target.value)}
-            label="Selecciona Bodega"
-          >
-            {listasbodegas.map((bodega) => (
-              <MenuItem key={bodega.id} value={bodega.nombre}>
-                {bodega.nombre}
-              </MenuItem>
-            ))}
-          </Select>
-          {/* <Button
+      <Box>
+        <Box >
+          <InputLabel>Ingresa Bodega</InputLabel>
+        <Select
+          sx={{width:'700px'}}
+          value={selectedBodegaId}
+          onChange={(e) => handlebodegaSelect(e.target.value)}
+          label="Selecciona Bodega"
+        >
+          {listasbodegas.map((bodega) => (
+            <MenuItem key={bodega.id} value={bodega.nombre}>
+              {bodega.nombre}
+            </MenuItem>
+          ))}
+          {/* {bodegas.map((bodega) => (
+            <MenuItem key={bodega.idBodega} value={bodega.idBodega}>
+              {bodega.descripcion}
+            </MenuItem>
+          ))} */}
+        </Select>
+        <Button
             size="large"
             variant="outlined"
             style={{ marginLeft: "18px", padding:"14px"}}
             onClick={handleOpenDialog1}
           >
             +
-          </Button> */}
+          </Button>
         </Box>
-      </Grid>
-      <Grid item xs={12}>
-      <InputLabel margin="dense" >Ingresa Proveedor</InputLabel>
-        <Box display="flex" alignItems="center">
-         
-          <Select
-            sx={{ width: '70%', marginLeft: '16px' }}
-            value={selectedProveedorId}
-            onChange={(e) => handleProveedorSelect(e.target.value)}
-            label="Selecciona Proveedor"
-          >
-            {listasproveedores.map((proveedor) => (
-              <MenuItem key={proveedor.id} value={proveedor.nombre}>
-                {proveedor.nombre}
-              </MenuItem>
-            ))}
-          </Select>
-          <Button
+        
+
+
+        <Box>
+          <InputLabel>Ingresa Proveedor</InputLabel>
+        <Select
+         sx={{width:'700px'}}
+          value={selectedProveedorId}
+          onChange={(e) => handleProveedorSelect(e.target.value)}
+          label="Selecciona Sub-Categoría"
+        > 
+           {listasproveedores.map((proveedor) => (
+            <MenuItem key={proveedor.id} value={proveedor.nombre}>
+              {proveedor.nombre}
+            </MenuItem>
+          ))}
+          {/* {proveedores.map((proveedor) => (
+            <MenuItem
+              key={proveedor.idProveedor}
+              value={proveedor.idProveedor}
+            >
+              {proveedor.descripcion}
+            </MenuItem>
+          ))} */}
+        </Select>
+        <Button
             size="large"
             variant="outlined"
             style={{ marginLeft: "18px", padding:"14px"}}
@@ -203,30 +207,23 @@ const Step2Component = ({ data, onNext }) => {
           >
             +
           </Button>
-        </Box>
-      </Grid>
-      <Grid item xs={12}>
-        <Button 
-          variant="contained"
-          color="secondary"
-          onClick={handleNext}
-          fullWidth
-        >
-          Guardar y continuar
-        </Button>
-      </Grid>
-      {/* Mensaje de validación */}
-      <Grid item xs={12} md={8}>
-        <Box mt={2}>
-          {(!selectedBodegaId || !selectedProveedorId ) && (
-            <Typography variant="body2" color="error">
-              {emptyFieldsMessage}
-            </Typography>
-          )}
-        </Box>
-      </Grid>
-    </Grid>
 
+
+        </Box>
+        <Box> 
+        <Button 
+        sx={{ marginLeft: "40px",marginTop: "5px",  marginBottom: "12px" }}
+        variant="contained"
+        color="secondary"
+        onClick={handleNext}>Guardar y continuar</Button>
+          
+        </Box>
+
+        
+
+        
+        
+      </Box>
 
       
 

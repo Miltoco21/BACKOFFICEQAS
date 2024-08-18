@@ -6,11 +6,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Add from "@mui/icons-material/Add";
 import Modal from "@mui/joy/Modal";
-import Stepperproductos from "../Componentes/Stepper/Stepperproductos";
-import Stepper2 from "../Componentes/Stepper/Stepper2";
-import { IconButton, Stepper } from "@mui/material";
-import StepperNO from "../Componentes/Stepper/StepperNo";
-import StepperSI from "../Componentes/Stepper copy/StepperSI";
+import StepperSI from "../Componentes/Stepper/StepperSI";
 import SearchListProducts from "../Componentes/Productos/SearchListProduct";
 import { HorizontalSplit } from "@mui/icons-material";
 

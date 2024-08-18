@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
+  Grid,
   Box,
   Select,
   MenuItem,
@@ -35,8 +36,14 @@ const Step5Component = ({ data, onNext }) => {
 
   const [openDialog1, setOpenDialog1] = useState(false);
   const [openDialog2, setOpenDialog2] = useState(false);
+  const [emptyFieldsMessage,setEmptyFieldsMessage]= useState("");
 
   const handleNext = () => {
+
+    //   if (!stockCritico || !selectedImpuestoId || !nota|| !selectedFile) {
+    //   setEmptyFieldsMessage('Por favor, completa todos los campos antes de continuar.');
+    //   return;
+    // }
     const stepData = {
       stockCritico,
       selectedImpuestoId,
@@ -45,9 +52,25 @@ const Step5Component = ({ data, onNext }) => {
     };
     console.log("Step 5 Data:", stepData); // Log the data for this step
     onNext(stepData);
+    
   };
 
-  const handleSubmit = () => {};
+  const handlePrevious = () => {
+    // Navigate to previous step
+    onNext(data); // Send the current data to the previous step
+  };
+  const handleSubmitAll = async () => {
+    try {
+      const allData = { ...data, step5: { stockCritico, selectedImpuestoId, selectedFile, nota } };
+      console.log("All Data:", allData); // Log all data before sending to server
+      const response = await axios.post( "https://www.easyposdev.somee.com/api/ProductosTmp/AddProducto", allData);
+      console.log("Server Response:", response.data);
+      // Optionally, reset the state or perform other actions upon successful submission
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle any errors
+    }
+  };
 
   const handleOpenDialog1 = () => {
     setOpenDialog1(true);
@@ -111,167 +134,163 @@ const Step5Component = ({ data, onNext }) => {
     { id: 3, tipo: "OTRO IMPUESTO" },
   ];
 
-  return (
-    <Paper
-      elevation={3}
-      style={{
-        padding: "16px",
-        width: "740px",
-      }}
-    >
-      <Box>
+ return (
+  <Paper
+    elevation={3}
+    sx={{
+      padding: "16px",
+      width: "100%",
+    }}
+  >
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
         <Box>
           <InputLabel>Ingresa Stock Crítico</InputLabel>
           <TextField
-            sx={{ marginTop: "7px", width: "500px", marginBottom: "11px" }}
+            sx={{ marginTop: "7px", width: "100%" }}
             label="Stock Crítico"
             fullWidth
             value={stockCritico}
             onChange={(e) => setStockCritico(e.target.value)}
           />
-          {/* <Button
-            size="large"
-            variant="outlined"
-            style={{
-              marginLeft: "16px",
-              marginTop: "7px",
-              padding: "14px",
-              width: "33px",
-            }}
-            onClick={handleOpenDialog1}
-          >
-            +
-          </Button> */}
         </Box>
-
-        <Box >
-          <InputLabel>Impuestos Adicionales</InputLabel>
-          <Select
-            sx={{ width: "500px" }}
-            value={selectedImpuestoId}
-            onChange={(e) => handleImpuestoSelect(e.target.value)}
-            label="Selecciona Impuesto adicional "
-          >
-            {impuestos.map((impuesto) => (
-              <MenuItem key={impuesto.id} value={impuesto.tipo}>
-                {impuesto.tipo}
-              </MenuItem>
-            ))}
-          </Select>
-          <Button
-            size="large"
-            variant="outlined"
-            style={{ marginLeft: "16px", marginTop: "1px", padding: "14px" }}
-            onClick={handleOpenDialog2}
-          >
-            +
-          </Button>
-        </Box>
-
-        {/* <Box>
-          <InputLabel>Ingresa Imagen producto</InputLabel>
-          <Input
-            sx={{ marginTop: "17px", width: "500px", marginBottom: "31px" }}
-            label="Ingresa Imagen"
-            type="file"
-            fullWidth
-            value={imagen}
-            onChange={(e) => setImagen(e.target.value)}
-          />
-          
-        </Box> */}
+      </Grid>
+      <Grid item xs={12}>
         <Box>
-        <InputLabel>Ingresa Imagen </InputLabel>
+          <InputLabel>Impuestos Adicionales</InputLabel>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={10}>
+              <Select
+                sx={{ width: "100%" }}
+                value={selectedImpuestoId}
+                onChange={(e) => handleImpuestoSelect(e.target.value)}
+                label="Selecciona Impuesto adicional"
+              >
+                {impuestos.map((impuesto) => (
+                  <MenuItem key={impuesto.id} value={impuesto.tipo}>
+                    {impuesto.tipo}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+            <Grid item xs={2}>
+              <Button
+                size="large"
+                variant="outlined"
+                onClick={handleOpenDialog2}
+                fullWidth
+              >
+                +
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box>
+          <InputLabel>Ingresa Imagen</InputLabel>
           <label htmlFor="file-input">
             <input
-            
               type="file"
               id="file-input"
               style={{ display: "none" }}
-              accept="image/*" // You can specify the accepted file types here
+              accept="image/*" // Puedes especificar los tipos de archivo aceptados aquí
               onChange={(e) => {
                 const file = e.target.files[0];
                 setSelectedFile(file);
-                // Handle the selected file directly here
+                // Maneja el archivo seleccionado directamente aquí
                 console.log("Selected File:", file);
               }}
             />
             <Button
-            sx={{ marginTop: "5px", width: "500px" }}
               variant="outlined"
               component="span"
               startIcon={<CloudUploadIcon />}
+              fullWidth
             >
               Seleccionar Imagen
             </Button>
           </label>
           {selectedFile && <p>Archivo: {selectedFile.name}</p>}
         </Box>
-
+      </Grid>
+      <Grid item xs={12}>
         <Box>
-          <InputLabel>Ingresa Nota </InputLabel>
+          <InputLabel>Ingresa Nota</InputLabel>
           <TextField
-            sx={{ marginTop: "5px", width: "570px" }}
-            label="Ingrese nota ... "
+            sx={{ marginTop: "5px", width: "100%" }}
+            label="Ingrese nota..."
             multiline
             rows={4}
             value={nota}
             onChange={(e) => setNota(e.target.value)}
           />
         </Box>
-        {/* <Button onClick={handleNext}>Next</Button> */}
+      </Grid>
+      <Grid item xs={12}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleSubmitAll}
+          fullWidth
+          sx={{ marginTop: "16px" }}
+        >
+          Guardar
+        </Button>
 
-        <Button 
-        sx={{ marginLeft: "40px",marginTop: "5px",  marginBottom: "12px" }}
-        variant="contained"
-        color="secondary"
-        onClick={handleNext}> Guardar </Button>
+        <Grid item xs={12} md={8}>
+        <Box mt={2}>
+          {(!stockCritico || !selectedImpuestoId || !nota|| !selectedFile) && (
+            <Typography variant="body2" color="error">
+              {emptyFieldsMessage}
+            </Typography>
+          )}
+        </Box>
+      </Grid>
+      </Grid>
+    </Grid>
 
-        
+    <Dialog open={openDialog1} onClose={handleCloseDialog1}>
+      <DialogTitle>Crear Impuesto</DialogTitle>
+      <DialogContent sx={{ marginTop: "9px" }}>
+        <TextField   
+          label="Ingresa Stock"
+          fullWidth
+          value={newStock}
+          onChange={(e) => setNewStock(e.target.value)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseDialog1} color="primary">
+          Cancelar
+        </Button>
+        <Button onClick={handleCreateStock} color="primary">
+          Crear
+        </Button>
+      </DialogActions>
+    </Dialog>
+    <Dialog open={openDialog2} onClose={handleCloseDialog2}>
+      <DialogTitle>Crear Impuesto Adicional</DialogTitle>
+      <DialogContent sx={{ marginTop: "9px" }}>
+        <TextField
+          label="Impuesto Adicional"
+          fullWidth
+          value={newImpuesto}
+          onChange={(e) => setNewImpuesto(e.target.value)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseDialog2} color="primary">
+          Cancelar
+        </Button>
+        <Button onClick={handleCreateImpuesto} color="primary">
+          Crear
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </Paper>
+);
 
-
-      </Box>
-
-      <Dialog open={openDialog1} onClose={handleCloseDialog1}>
-        <DialogTitle>Crear Impuesto</DialogTitle>
-        <DialogContent sx={{ marginTop: "9px" }}>
-          <TextField
-            label="Ingresa Stock"
-            fullWidth
-            value={newStock}
-            onChange={(e) => setNewStock(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog1} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleCreateStock} color="primary">
-            Crear
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={openDialog2} onClose={handleCloseDialog2}>
-        <DialogTitle>Crear Impuesto Adicional </DialogTitle>
-        <DialogContent sx={{ marginTop: "9px" }}>
-          <TextField
-            label="Impuesto Adicional "
-            fullWidth
-            value={newImpuesto}
-            onChange={(e) => setNewImpuesto(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog2} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleCreateImpuesto} color="primary">
-            Crear
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Paper>
-  );
 };
 
 export default Step5Component;
