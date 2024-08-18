@@ -50,12 +50,12 @@ function App() {
             <Route path="/registro" element={<Registro />} />
             <Route
               path="/home"
-              element={<ProtectedRoute element={<Home userData={userData}/>} />}
+              element={<ProtectedRoute element={<Home/>} />}
             />
 
             <Route
               path="/"
-              element={<ProtectedRoute element={<Home userData={userData}/>} />}
+              element={<ProtectedRoute element={<Home/>} />}
             />
             <Route path="/usuarios" element={<ProtectedRoute element={<Usuarios />} />} />
             <Route path="/precios" element={<ProtectedRoute element={<Precios />} />} />
