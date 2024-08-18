@@ -234,19 +234,27 @@ export default function PermanentDrawerLeft() {
         <Typography sx={{
           margin:"0 20px"
         }}>{CONSTANTS.appName + " - " + CONSTANTS.appVersion}</Typography>
-      <Button
-        variant="outlined"
-        color="error"
-        onClick={()=>{setOpenSessionDialog(true)}}
-        startIcon={<ExitToAppIcon />}
-        style={{
-          bottom:"10px",
-          left:"10px",
-          position:"absolute"
-        }}
-      >
-        Cerrar Sesión
-      </Button>
+      
+      <div style={{
+            width: "100%",
+            position: "relative",
+            left: "0",
+            bottom: "0",
+            margin: "30px 0 0 0",
+            padding: "10px"
+      }}>
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={()=>{setOpenSessionDialog(true)}}
+          startIcon={<ExitToAppIcon />}
+          style={{
+          }}
+          >
+          Cerrar Sesión
+        </Button>
+        </div>
+
       </Drawer>
       <ScreenDialogConfig openDialog={showScreenConfig} setOpenDialog={setShowScreenConfig} />
 
