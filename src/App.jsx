@@ -50,7 +50,7 @@ function App() {
             <Route path="/registro" element={<Registro />} />
             <Route
               path="/home"
-              element={<ProtectedRoute element={<Home/>} />}
+              element={<Home/>}
             />
 
             <Route

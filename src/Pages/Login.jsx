@@ -83,6 +83,8 @@ const Login = () => {
         User.getInstance().saveInSesion(userOk)
 
         navigate("/home");
+
+        console.log("despues del navigate")
       } else if (response.data.responseUsuario.codigoUsuario === -1) {
         setError("Usuario no encontrado. Verifica tus credenciales.");
       } else {
