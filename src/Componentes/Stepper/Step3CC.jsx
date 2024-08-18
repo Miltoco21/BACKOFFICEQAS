@@ -37,8 +37,8 @@ const Step3CC = ({ data, onNext, stepData }) => {
   const [stockInicial, setStockInicial] = useState(1);
   const [stockCritico, setStockCritico] = useState(1);
   const [precioCosto, setPrecioCosto] = useState(0);
-  const [selectedUnidadId, setSelectedUnidadId] = useState(data.selectedUnidadId || "");
-  const [selectedUnidadVentaId, setSelectedUnidadVentaId] = useState(data.selectedUnidadVentaId || ""  );
+  const [selectedUnidadId, setSelectedUnidadId] = useState(0);
+  const [selectedUnidadVentaId, setSelectedUnidadVentaId] = useState(0);
   
   const [precioVenta, setPrecioVenta] = useState(0);
   const [precioNeto, setPrecioNeto] = useState(0);
@@ -53,9 +53,7 @@ const Step3CC = ({ data, onNext, stepData }) => {
 
 
   const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
-  const [openDialog1, setOpenDialog1] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const [esPesable, setEsPesable] = useState( (data.esPesable == "SI") );
@@ -382,10 +380,6 @@ const Step3CC = ({ data, onNext, stepData }) => {
 
 
   const checkEsPesable = (e)=>{
-    
-    console.log("e")
-    console.log(e)
-
     setEsPesable(!esPesable)
   }
   return (
@@ -455,8 +449,8 @@ const Step3CC = ({ data, onNext, stepData }) => {
               <input
                 type="checkbox"
                 checked={esPesable}
-                // onChange={checkEsPesable}
                 onClick={checkEsPesable}
+                onChange={()=>{}}
                 style={{
                   width:"50px",
                   height:"20px"
@@ -665,11 +659,17 @@ const Step3CC = ({ data, onNext, stepData }) => {
 
           <Grid item xs={12}>
             <Button
-              fullWidth
+              // fullWidth
               variant="contained"
               color="secondary"
               onClick={handleNext}
               disabled={loading}
+
+              sx={{
+                width:"50%",
+                height:"55px",
+                margin: "0 25%"
+              }}
             >
               {loading ? "Guardando..." : "Guardar Producto"}
             </Button>
@@ -691,25 +691,6 @@ const Step3CC = ({ data, onNext, stepData }) => {
           message={emptyFieldsMessage}
         />
       </form>
-      <Dialog open={openDialog1} onClose={handleCloseDialog1}>
-        <DialogTitle>Crear Unidad de Compra</DialogTitle>
-        <DialogContent sx={{ marginTop: "9px" }}>
-          <TextField
-            label="Ingresa Unidad de Compra"
-            fullWidth
-            value={newUnidad}
-            onChange={(e) => setNewUnidad(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog1} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleCreateUnidad} color="primary">
-            Crear
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Paper>
   );
 };

@@ -141,8 +141,8 @@ class Product extends Model{
     async getAll(callbackOk, callbackWrong){
         try {
             const configs = ModelConfig.get()
-            var url = configs.urlBase + "/api/ProductosTmp/GetProductos"
-            url = url.replace("/api/api","/api")
+            var url = configs.urlBase + "/ProductosTmp/GetProductos"
+            url = url.replace("/api","/api")
 
             const response = await axios.get(url);
             if(
@@ -164,8 +164,8 @@ class Product extends Model{
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase +
-            "/api/ProductosTmp/GetProductosByDescripcion?descripcion=" + (description+"")
-            url = url.replace("/api/api","/api")
+            "/ProductosTmp/GetProductosByDescripcion?descripcion=" + (description+"")
+            url = url.replace("/api","/api")
             if(codigoCliente){
                 url += "&codigoCliente=" + codigoCliente
             }
@@ -189,7 +189,7 @@ class Product extends Model{
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase +
-            "/api/Ventas/PreVentaGET"
+            "/Ventas/PreVentaGET"
             const response = await axios.post(url,data);
             if(
                 response.data.statusCode == 200
@@ -210,7 +210,31 @@ class Product extends Model{
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase +
-            "/api/ProductosTmp/GetProductosByCodigo?idproducto=" + codigoProducto
+            "/ProductosTmp/GetProductosByCodigo?idproducto=" + codigoProducto
+            if(codigoCliente){
+                url += "&codigoCliente=" + codigoCliente
+            }
+            const response = await axios.get(url);
+            if(
+                response.data.statusCode == 200
+                || response.data.statusCode == 201
+
+            ){
+                callbackOk(response.data.productos, response);
+            }else{
+               callbackWrong("respuesta incorrecta del servidor") 
+            }
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            callbackWrong(error) 
+          }
+    }
+
+    async findByCodigoBarras({codigoProducto, codigoCliente},callbackOk, callbackWrong){
+        try {
+            const configs = ModelConfig.get()
+            var url = configs.urlBase +
+            "/ProductosTmp/GetProductosByCodigoBarra?codbarra=" + codigoProducto
             if(codigoCliente){
                 url += "&codigoCliente=" + codigoCliente
             }
@@ -236,7 +260,7 @@ class Product extends Model{
 
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/api/NivelMercadoLogicos/GetAllCategorias"
+            + "/NivelMercadoLogicos/GetAllCategorias"
             
           const response = await axios.get(
             url
@@ -261,7 +285,7 @@ class Product extends Model{
           try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/api/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=" + categoriaId
+            + "/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=" + categoriaId
 
             const response = await axios.get(
               url
@@ -284,11 +308,16 @@ class Product extends Model{
       
 
 
-    async getFamiliaBySubCat(subCatId, callbackOk, callbackWrong){
+    async getFamiliaBySubCat({
+        categoryId,
+        subcategoryId
+    }, callbackOk, callbackWrong){
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            +"/api/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=" + subCatId
+            +"/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?" +
+            "CategoriaID=" + categoryId +
+            "&SubCategoriaID=" + subcategoryId
             const response = await axios.get(
                 url
               );
@@ -306,11 +335,18 @@ class Product extends Model{
         }
     }
 
-    async getSubFamilia(famId, callbackOk, callbackWrong){
+    async getSubFamilia({
+        categoryId,
+        subcategoryId,
+        familyId
+    }, callbackOk, callbackWrong){
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            +"/api/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=" + famId
+            +"/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?" + 
+            "CategoriaID=" + categoryId +
+            "&SubCategoriaID=" + subcategoryId +
+            "&FamiliaID=" + familyId
 
             const response = await axios.get(
                 url
@@ -329,6 +365,7 @@ class Product extends Model{
         }
     }
 
+
     async getProductsNML({
         catId,
         subcatId,
@@ -342,7 +379,7 @@ class Product extends Model{
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/api/ProductosTmp/GetProductosByIdNML?idcategoria=" + catId
+            + "/ProductosTmp/GetProductosByIdNML?idcategoria=" + catId
             + "&idsubcategoria=" + subcatId
             + "&idfamilia=" + famId
             + "&idsubfamilia=" + subFamId
@@ -370,7 +407,7 @@ class Product extends Model{
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/api/ProductosTmp/ProductosVentaRapidaGet"
+            + "/ProductosTmp/ProductosVentaRapidaGet"
             
             const response = await axios.get(
                 url
@@ -394,7 +431,7 @@ class Product extends Model{
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/api/ProductosTmp/ProductosVentaRapidaPost"
+            + "/ProductosTmp/ProductosVentaRapidaPost"
             
             const response = await axios.post(
                 url
@@ -419,7 +456,7 @@ class Product extends Model{
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/api/ProductosTmp/ProductosVentaRapidaPut"
+            + "/ProductosTmp/ProductosVentaRapidaPut"
             
             const response = await axios.put(
                 url
@@ -443,7 +480,7 @@ class Product extends Model{
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/api/ProductosTmp/UpdateProductoPrecio"
+            + "/ProductosTmp/UpdateProductoPrecio"
 
             const response = await axios.put(
                 url
@@ -466,7 +503,7 @@ class Product extends Model{
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/api/ProductosTmp/AddProductoNoEncontrado"
+            + "/ProductosTmp/AddProductoNoEncontrado"
 
             const response = await axios.post(
                 url
@@ -492,7 +529,7 @@ class Product extends Model{
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/api/ProductosTmp/GetProductoTipos"
+            + "/ProductosTmp/GetProductoTipos"
 
             const response = await axios.get(
                 url

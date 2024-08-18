@@ -80,25 +80,29 @@ const Productos = () => {
           </Box>
         </Modal>
 
+      </Box>
         <Modal open={open2} onClose={handleCloseStepper2}>
           <Box
             sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
+              // position: "absolute",
+              // top: "50%",
+              // left: "50%",
+              // transform: "translate(-50%, -50%)",
               bgcolor: "background.paper",
               boxShadow: 24,
-              p: 4,
+              // p: 4,
               overflow: "auto", // Added scrollable feature
-              maxHeight: "100vh", // Adjust as needed
-              maxWidth: "180vw", // Adjust as needed
+              // maxHeight: "100vh", // Adjust as needed
+              // maxWidth: "180vw", // Adjust as needed
+              height:"90%",
+              paddingTop:"10px",
+              width:"55%",
+              margin:"2.5% auto"
             }}
           >
             <StepperSI conCodigo={true} />
           </Box>
         </Modal>
-      </Box>
     </div>
   );
 };
