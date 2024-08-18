@@ -78,13 +78,13 @@ const Login = () => {
         //   "userData",
         //   userOkStr
         // );
-        console.log("user loguado:")
-        console.log(userOk)
+        // console.log("user loguado:")
+        // console.log(userOk)
         User.getInstance().saveInSesion(userOk)
 
         navigate("/home");
 
-        console.log("despues del navigate")
+        // console.log("despues del navigate")
       } else if (response.data.responseUsuario.codigoUsuario === -1) {
         setError("Usuario no encontrado. Verifica tus credenciales.");
       } else {
