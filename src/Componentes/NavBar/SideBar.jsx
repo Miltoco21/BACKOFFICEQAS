@@ -246,7 +246,10 @@ export default function PermanentDrawerLeft() {
         <Button
           variant="outlined"
           color="error"
-          onClick={()=>{setOpenSessionDialog(true)}}
+          onClick={()=>{
+            console.log("apreta logout")
+            setOpenSessionDialog(true)
+          }}
           startIcon={<ExitToAppIcon />}
           style={{
           }}

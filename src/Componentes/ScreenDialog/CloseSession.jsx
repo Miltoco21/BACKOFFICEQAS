@@ -39,12 +39,14 @@ const SessionOptions = ({
 
 
   useEffect(()=>{
+    console.log("check login")
     if(!User.getInstance().sesion.hasOne()){
       console.log("no tiene sesion")
       console.log(User.getInstance())
       console.log(User.getInstance().getFromSesion())
       navigate('/login');
     }
+    console.log("fin check login")
   },[])
 
   return (
