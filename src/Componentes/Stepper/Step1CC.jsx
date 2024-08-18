@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
   Box,
@@ -23,9 +23,14 @@ import {
 } from "@mui/material";
  
 import ModelConfig from "../../Models/ModelConfig";
- 
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
 const Step1CC = ({ data, onNext, setStepData }) => {
+  const {
+    userData, 
+    showMessage
+  } = useContext(SelectedOptionsContext);
+
   const apiUrl = ModelConfig.get().urlBase;
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(
@@ -44,86 +49,66 @@ const Step1CC = ({ data, onNext, setStepData }) => {
   const [subcategories, setSubCategories] = useState([]);
   const [families, setFamilies] = useState([]);
   const [subfamilies, setSubFamilies] = useState([]);
-  const [respuestaSINO, setRespuestaSINO] = useState(data.respuestaSINO || "");
-  const [pesoSINO, setPesoSINO] = useState(data.pesoSINO || "");
   const [nombre, setNombre] = useState(data.nombre || "");
   const [marca, setMarca] = useState(data.marca || "");
   const [codigoBarras, setCodigoBarras] = useState(data.codBarra || "");
   const [descripcionCorta, setDescripcionCorta] = useState(data.DescCorta || "");
 
-  const [openDialog1, setOpenDialog1] = useState(false);
-  const [openDialog2, setOpenDialog2] = useState(false);
-  const [openDialog3, setOpenDialog3] = useState(false);
-  const [openDialog4, setOpenDialog4] = useState(false);
-  const [newCategory, setNewCategory] = useState("");
-  const [newSubCategory, setNewSubCategory] = useState("");
-  const [newFamily, setNewFamily] = useState("");
-  const [newSubFamily, setNewSubFamily] = useState("");
-  const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
-  const [selectionErrorMessage, setSelectionErrorMessage] = useState("");
-  const handleRespuesta = (e) => {
-    const value = e.target.value;
-    setRespuestaSINO(value);
-  };
-  const handlePeso = (e) => {
-    const value = e.target.value;
-    setPesoSINO(value);
-  };
   const validateFields = () => {
 
     if (codigoBarras==="") {
-      setEmptyFieldsMessage("Falta completar codigo.");
+      showMessage("Falta completar codigo.");
       return false;
     }
 
     if (selectedCategoryId === "") {
-      setEmptyFieldsMessage("Debe seleccionar una Categoría.");
+      showMessage("Debe seleccionar una Categoría.");
       return false;
     }
     if (selectedSubCategoryId === "") {
-      setEmptyFieldsMessage("Debe seleccionar una Subcategoría.");
+      showMessage("Debe seleccionar una Subcategoría.");
       return false;
     }
     if (selectedFamilyId === "") {
-      setEmptyFieldsMessage("Debe seleccionar una Familia.");
+      showMessage("Debe seleccionar una Familia.");
       return false;
     }
     if (selectedSubFamilyId === "") {
-      setEmptyFieldsMessage("Debe seleccionar una Subfamilia.");
+      showMessage("Debe seleccionar una Subfamilia.");
       return false;
     }
     if (nombre==="") {
-      setEmptyFieldsMessage("Falta completar la descricion.");
+      showMessage("Falta completar la descricion.");
       return false;
     }
 
     if (!/^[a-zA-Z0-9\s]*[a-zA-Z0-9][a-zA-Z0-9\s]*$/.test(nombre.trim()) || /^\s{1,}/.test(nombre)) {
-      setEmptyFieldsMessage("Ingresar nombre válido.");
+      showMessage("Ingresar nombre válido.");
       return false;
     }
     
     
         if (descripcionCorta==="") {
-          setEmptyFieldsMessage("Falta completar la descripcion corta.");
+          showMessage("Falta completar la descripcion corta.");
           return false;
         }
     
     if (marca==="") {
-      setEmptyFieldsMessage("Falta completar marca.");
+      showMessage("Falta completar marca.");
       return false;
     }
 
 
 
     if (!/^[a-zA-Z0-9\s]*[a-zA-Z0-9][a-zA-Z0-9\s]*$/.test(marca.trim()) || /^\s{1,}/.test(marca)) {
-      setEmptyFieldsMessage("Ingresar marca válida.");
+      showMessage("Ingresar marca válida.");
       return false;
     }
    
     
     // Si todos los campos están llenos y se ha seleccionado al menos una opción para cada nivel, limpiar los mensajes de error
     setSelectionErrorMessage("");
-    setEmptyFieldsMessage("");
+    showMessage("");
     return true;
   };
   
@@ -304,7 +289,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
           event.key !== " "
         ) {
           event.preventDefault();
-          setEmptyFieldsMessage("El nombre no puede consistir únicamente en espacios en blanco.");
+          showMessage("El nombre no puede consistir únicamente en espacios en blanco.");
           setSnackbarOpen(true);
         }
       }
@@ -316,7 +301,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
           event.key !== " "
         ) {
           event.preventDefault();
-          setEmptyFieldsMessage("La marca no puede consistir únicamente en espacios en blanco.");
+          showMessage("La marca no puede consistir únicamente en espacios en blanco.");
           setSnackbarOpen(true);
         }
       }
@@ -486,121 +471,8 @@ const Step1CC = ({ data, onNext, setStepData }) => {
             Continuar
           </Button>
         </Grid>
-
-        {/* Mensaje de validación */}
-        <Grid item xs={12} md={8}>
-          <Box mt={2}>
-            {(!selectedSubCategoryId ||
-              !selectedFamilyId ||
-              !selectedSubFamilyId | !nombre ||
-              !marca) && (
-              <Typography variant="body2" color="error">
-                {emptyFieldsMessage}
-              </Typography>
-            )}
-          </Box>
-        </Grid>
       </Grid>
 
-      <Dialog open={openDialog1} onClose={handleCloseDialog1}>
-        <DialogTitle>Crear Categoría</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Nueva Categoria"
-            fullWidth
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog1} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleCreateCategory} color="primary">
-            Crear
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={openDialog2} onClose={handleCloseDialog2}>
-        <DialogTitle>Crear Sub-Categoría</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Nueva Sub-Categoría"
-            fullWidth
-            value={newSubCategory}
-            onChange={(e) => setNewSubCategory(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog2} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleCreateCategory} color="primary">
-            Crear
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={openDialog2} onClose={handleCloseDialog2}>
-        <DialogTitle>Crear Sub-Categoría</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Nueva Sub-Categoría"
-            fullWidth
-            value={newSubCategory}
-            onChange={(e) => setNewSubCategory(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog3} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleCreateSubCategory} color="primary">
-            Crear
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={openDialog3} onClose={handleCloseDialog3}>
-        <DialogTitle>Crear Familia</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Nueva Familia"
-            fullWidth
-            value={newFamily}
-            onChange={(e) => setNewFamily(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog3} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleCreateFamily} color="primary">
-            Crear
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={openDialog4} onClose={handleCloseDialog4}>
-        <DialogTitle>Crear Sub-Familia</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Nueva Familia"
-            fullWidth
-            value={newSubFamily}
-            onChange={(e) => setNewSubFamily(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog4} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleCreateSubFamily} color="primary">
-            Crear
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Paper>
   );
 };
