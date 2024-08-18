@@ -378,6 +378,7 @@ export const SelectedOptionsProvider = ({ children }) => {
         description,
         setDescription,
         userData,
+        setUserData,
         updateUserData,
         getUserData,
         precioData,

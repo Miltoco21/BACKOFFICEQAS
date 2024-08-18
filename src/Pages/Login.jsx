@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   TextField,
   Button,
@@ -17,8 +17,11 @@ import dayjs from "dayjs";
 import ScreenDialogConfig from "../Componentes/ScreenDialog/AdminConfig";
 import System from "../Helpers/System";
 import User from "../Models/User";
+import { SelectedOptionsContext } from "../Componentes/Context/SelectedOptionsProvider";
 
-const Login = ({ setUserData }) => {
+const Login = () => {
+  const { setUserData } = useContext(SelectedOptionsContext);
+
   const apiUrl = ModelConfig.get().urlBase ?? "https://www.easypos.somee.com/api";
 
   const [rutOrCode, setRutOrCode] = useState("");
@@ -42,13 +45,14 @@ const Login = ({ setUserData }) => {
   useEffect(() => {
     ModelConfig.getInstance().getFirst()
   },[])
-  useEffect(() => {
-    // Verificar si hay datos en sessionStorage y redirigir a /home si existen
-    const userData = sessionStorage.getItem("userData");
-    if (userData) {
-      navigate("/home");
-    }
-  }, [navigate]);
+
+  // useEffect(() => {
+  //   // Verificar si hay datos en sessionStorage y redirigir a /home si existen
+  //   const userData = sessionStorage.getItem("userData");
+  //   if (userData) {
+  //     navigate("/home");
+  //   }
+  // }, [navigate]);
 
   const handleLogin = async () => {
     try {
@@ -67,13 +71,13 @@ const Login = ({ setUserData }) => {
       if (response.data.responseUsuario && response.data.responseUsuario.codigoUsuario !== -1) {
         const userOk = response.data.responseUsuario
         setUserData(userOk);
-        console.log(userOk);
+        // console.log(userOk);
         // Guardar datos en sessionStorage
-        const userOkStr = JSON.stringify(userOk)
-        sessionStorage.setItem(
-          "userData",
-          userOkStr
-        );
+        // const userOkStr = JSON.stringify(userOk)
+        // sessionStorage.setItem(
+        //   "userData",
+        //   userOkStr
+        // );
 
         User.getInstance().saveInSesion(userOk)
 

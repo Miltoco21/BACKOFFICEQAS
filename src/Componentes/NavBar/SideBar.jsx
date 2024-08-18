@@ -17,6 +17,7 @@ import PriceChangeIcon from "@mui/icons-material/PriceChange";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import CategoryIcon from "@mui/icons-material/Category";
 import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'; // Importar el icono
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import PolylineIcon from '@mui/icons-material/Polyline';
 import StackedBarChartIcon from '@mui/icons-material/StackedBarChart';
@@ -25,13 +26,14 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
-import { IconButton, Typography } from "@mui/material";
+import { Button, IconButton, Typography } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 
 import ScreenDialogConfig from "../ScreenDialog/AdminConfig";
 import CONSTANTS from "../../definitions/Constants";
 
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import CloseSession from '../ScreenDialog/CloseSession'
 
 const drawerWidth = 240;
 
@@ -47,6 +49,7 @@ export default function PermanentDrawerLeft() {
   const [currentUrl, setCurrentUrl] = useState("");
   const [subCurrentUrl, setSubCurrentUrl] = useState("");
 
+  const [openSessionDialog, setOpenSessionDialog] = useState(false);
 
   const handleSubMenuClick = (text) => {
     setOpenSubMenu((prevOpenSubMenu) => ({
@@ -143,7 +146,10 @@ export default function PermanentDrawerLeft() {
 
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ 
+      display: "flex",
+      position:"relative"
+      }}>
       <CssBaseline />
       <GeneralElements/>
       <Drawer
@@ -224,11 +230,26 @@ export default function PermanentDrawerLeft() {
         )}
 
         </List>
+        <CloseSession openDialog={openSessionDialog} setOpenDialog={setOpenSessionDialog}/>
         <Typography sx={{
           margin:"0 20px"
         }}>{CONSTANTS.appName + " - " + CONSTANTS.appVersion}</Typography>
+      <Button
+        variant="outlined"
+        color="error"
+        onClick={()=>{setOpenSessionDialog(true)}}
+        startIcon={<ExitToAppIcon />}
+        style={{
+          bottom:"10px",
+          left:"10px",
+          position:"absolute"
+        }}
+      >
+        Cerrar Sesión
+      </Button>
       </Drawer>
       <ScreenDialogConfig openDialog={showScreenConfig} setOpenDialog={setShowScreenConfig} />
+
     </Box>
   );
 }

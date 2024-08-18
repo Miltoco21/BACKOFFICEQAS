@@ -42,22 +42,20 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 function App() {
-  const [userData, setUserData] = useState(null);
-
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <SelectedOptionsProvider>
           <Routes>
-            <Route path="/login" element={<Login setUserData={setUserData} />} />
+            <Route path="/login" element={<Login/>} />
             <Route path="/registro" element={<Registro />} />
             <Route
               path="/home"
-              element={<ProtectedRoute element={<Home userData={userData} setUserData={setUserData} />} />}
+              element={<ProtectedRoute element={<Home/>} />}
             />
 
             <Route
               path="/"
-              element={<ProtectedRoute element={<Home userData={userData} setUserData={setUserData} />} />}
+              element={<ProtectedRoute element={<Home/>} />}
             />
             <Route path="/usuarios" element={<ProtectedRoute element={<Usuarios />} />} />
             <Route path="/precios" element={<ProtectedRoute element={<Precios />} />} />

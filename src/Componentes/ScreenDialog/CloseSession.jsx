@@ -12,8 +12,12 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import SmallButton from "../Elements/SmallButton";
 import ModelConfig from "../../Models/ModelConfig";
 import { useNavigate } from "react-router-dom";
+import User from "../../Models/User";
 
-const ScreenSessionOptions = ({openDialog,setOpenDialog}) => {
+const SessionOptions = ({
+  openDialog,
+  setOpenDialog
+}) => {
   const navigate = useNavigate();
   
   var prods = [];
@@ -27,10 +31,18 @@ const ScreenSessionOptions = ({openDialog,setOpenDialog}) => {
 
 
   const handleLogout = () => {
-    clearSessionData();
-    navigate("/login");
+    // setUserData(null);
+    // sessionStorage.clear(); // Limpiar sessionStorage
+    clearSessionData()
+    navigate('/login');
   };
 
+
+  useEffect(()=>{
+    if(!User.getInstance().sesion.hasOne()){
+      navigate('/login');
+    }
+  },[])
 
   return (
     <Dialog
@@ -55,4 +67,4 @@ const ScreenSessionOptions = ({openDialog,setOpenDialog}) => {
   );
 };
 
-export default ScreenSessionOptions;
+export default SessionOptions;
