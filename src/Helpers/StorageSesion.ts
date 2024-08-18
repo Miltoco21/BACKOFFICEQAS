@@ -10,9 +10,9 @@ class StorageSesion {
     }
     
     cargarX(nombre:string):string{
-        console.log("cargarx nombre:" + nombre)
-        console.log("devuelve:")
-        console.log(localStorage.getItem(nombre) || "")
+        // console.log("cargarx nombre:" + nombre)
+        // console.log("devuelve:")
+        // console.log(localStorage.getItem(nombre) || "")
         return localStorage.getItem(nombre) || "";
     }
     
