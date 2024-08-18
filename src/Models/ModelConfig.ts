@@ -7,7 +7,7 @@ class ModelConfig {
     sesion: StorageSesion;
 
     constructor(){
-        this.sesion = new StorageSesion("backconfig");
+        this.sesion = new StorageSesion("config");
     }
 
     static getInstance():ModelConfig{

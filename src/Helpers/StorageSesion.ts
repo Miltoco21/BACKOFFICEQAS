@@ -6,10 +6,13 @@ class StorageSesion {
     //BASICOS
     
     constructor(dataName){
-        this.nombreBasicoParaAlmacenado = dataName
+        this.nombreBasicoParaAlmacenado =  "backoffice" + dataName
     }
     
     cargarX(nombre:string):string{
+        console.log("cargarx nombre:" + nombre)
+        console.log("devuelve:")
+        console.log(localStorage.getItem(nombre) || "")
         return localStorage.getItem(nombre) || "";
     }
     
