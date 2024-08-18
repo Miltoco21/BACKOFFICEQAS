@@ -78,7 +78,8 @@ const Login = () => {
         //   "userData",
         //   userOkStr
         // );
-
+        console.log("user loguado:")
+        console.log(userOk)
         User.getInstance().saveInSesion(userOk)
 
         navigate("/home");
