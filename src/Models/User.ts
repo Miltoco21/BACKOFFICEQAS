@@ -13,7 +13,6 @@ class User extends Model{
     deudaIds: any
     idUsuario:number
 
-
     static instance: User | null = null;
 
     static getInstance():User{

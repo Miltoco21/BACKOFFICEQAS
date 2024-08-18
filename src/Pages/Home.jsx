@@ -27,7 +27,7 @@ const Home = ({}) => {
         <Box sx={{ flex: 1, p: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h5">
-              Bienvenido, {userData ? `${userData.nombres} ${userData.apellidos}` : 'Usuario'}
+              Bienvenido {userData ? `${userData.nombres} ${userData.apellidos}` : 'Usuario'}
             </Typography>
             
           </Box>
