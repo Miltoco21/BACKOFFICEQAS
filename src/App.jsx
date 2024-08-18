@@ -50,32 +50,32 @@ function App() {
             <Route path="/registro" element={<Registro />} />
             <Route
               path="/home"
-              element={<ProtectedRoute element={<Home/>} />}
+              element={<Home/>}
             />
 
             <Route
               path="/"
-              element={<ProtectedRoute element={<Home/>} />}
+              element={<Home/>}
             />
-            <Route path="/usuarios" element={<ProtectedRoute element={<Usuarios />} />} />
-            <Route path="/precios" element={<ProtectedRoute element={<Precios />} />} />
-            <Route path="/proveedores" element={<ProtectedRoute element={<Proveedores />} />} />
-            <Route path="/clientes" element={<ProtectedRoute element={<Clientes />} />} />
-            <Route path="/clientes/reportes" element={<ProtectedRoute element={<ReportesClientes />} />} />
-            <Route path="/productos" element={<ProtectedRoute element={<Productos />} />} />
-            <Route path="/productos/categorias" element={<ProtectedRoute element={<Categorias />} />} />
-            <Route path="/productos/subcategorias" element={<ProtectedRoute element={<SubCategorias />} />} />
-            <Route path="/productos/familias" element={<ProtectedRoute element={<Familias />} />} />
-            <Route path="/productos/subfamilias" element={<ProtectedRoute element={<SubFamilias />} />} />
-            <Route path="/proveedores/ingresodocumento" element={<ProtectedRoute element={<IngresoDocumento />} />} />
-            <Route path="/proveedores/reportes" element={<ProtectedRoute element={<ProveedoresDocumentosPorPagar />} />} />
-            <Route path="reportes" element={<ProtectedRoute element={<Reportes />} />} />
-            <Route path="reportes/cuentacorrienteclientes" element={<ProtectedRoute element={<ReportesCtaCorriente />} />} />
-            <Route path="reportes/cuentacorrienteproveedores" element={<ProtectedRoute element={<ReportesCtaCorrienteProv />} />} />
-            <Route path="reportes/rankingventas" element={<ProtectedRoute element={<RankingVentas />} />} />
-            <Route path="reportes/rankingproductos" element={<ProtectedRoute element={<RankingProductos />} />} />
-            <Route path="reportes/rankinglibroventas" element={<ProtectedRoute element={<RankingLibroVentas />} />} />
-            <Route path="reportes/rankinglibrocompras" element={<ProtectedRoute element={<RankingLibroCompras />} />} />
+            <Route path="/usuarios" element={<Usuarios />} />
+            <Route path="/precios" element={<Precios />} />
+            <Route path="/proveedores" element={<Proveedores />} />
+            <Route path="/clientes" element={<Clientes />} />
+            <Route path="/clientes/reportes" element={<ReportesClientes />} />
+            <Route path="/productos" element={<Productos />} />
+            <Route path="/productos/categorias" element={<Categorias />} />
+            <Route path="/productos/subcategorias" element={<SubCategorias />} />
+            <Route path="/productos/familias" element={<Familias />} />
+            <Route path="/productos/subfamilias" element={<SubFamilias />} />
+            <Route path="/proveedores/ingresodocumento" element={<IngresoDocumento />} />
+            <Route path="/proveedores/reportes" element={<ProveedoresDocumentosPorPagar />} />
+            <Route path="reportes" element={<Reportes />} />
+            <Route path="reportes/cuentacorrienteclientes" element={<ReportesCtaCorriente />} />
+            <Route path="reportes/cuentacorrienteproveedores" element={<ReportesCtaCorrienteProv />} />
+            <Route path="reportes/rankingventas" element={<RankingVentas />} />
+            <Route path="reportes/rankingproductos" element={<RankingProductos />} />
+            <Route path="reportes/rankinglibroventas" element={<RankingLibroVentas />} />
+            <Route path="reportes/rankinglibrocompras" element={<RankingLibroCompras />} />
           </Routes>
         </SelectedOptionsProvider>
       </LocalizationProvider>
