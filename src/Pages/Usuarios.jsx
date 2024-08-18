@@ -48,26 +48,8 @@ export default function Usuarios() {
         </Box>
       </Box>
 
-      <Dialog open={open} onClose={handleCloseModal}>
-        <Grid
-          sx={{
-          
-            top: "50%",
-            left: "50%",
-            
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            // overflow: "auto",
-           
-          }}
-        >
-            <Grid container justifyContent="center" alignItems="center" style={{ height: '90%' }}>
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <IngresoUsuarios onClose={handleCloseModal} />
-          </Grid>
-        </Grid>
-        </Grid>
+      <Dialog open={open} onClose={handleCloseModal} maxWidth={'md'}>
+        <IngresoUsuarios onClose={handleCloseModal} />
       </Dialog>
     </div>
   </ThemeProvider>

@@ -46,9 +46,9 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
   useEffect(() => {
-    console.log("algun cambio")
-    console.log("el rol es")
-    console.log(selectedUser.rol)
+    // console.log("algun cambio")
+    // console.log("el rol es")
+    // console.log(selectedUser.rol)
     if (selectedUser) {
       setNombre(selectedUser.nombres || "");
       setApellido(selectedUser.apellidos || "");
@@ -103,15 +103,15 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
 
 
   useEffect(() => {
-      console.log("selectedRol")
-      console.log(selectedRol)
+      // console.log("selectedRol")
+      // console.log(selectedRol)
   }, [selectedRol]);
 
 
 
   useEffect(() => {
-    console.log("cambio selectedRegion")
-    console.log(selectedRegion)
+    // console.log("cambio selectedRegion")
+    // console.log(selectedRegion)
   },[selectedRegion])
   useEffect(() => {
     async function fetchRoles() {
@@ -406,9 +406,6 @@ const EditUsuario = ({ selectedUser, open, handleCloseEditModal }) => {
               helperText={errores.selectedRol}
             >
               {rolesOptions.map((rol,ix) => {
-                console.log("")
-                console.log("rol:")
-                console.log(rol)
                 return (
                 <MenuItem key={ix} value={rol.rol}>
                   {rol.rol}

@@ -53,119 +53,18 @@ class User extends Model{
         return this.codigoUsuario;
     }
 
-    async doLoginInServer(callbackOk, callbackWrong){
-        try{
-            const configs = ModelConfig.get()
-            var url = configs.urlBase
-            +"/api/Usuarios/LoginUsuario"
-
-            const response = await axios.post(
-                url,
-                {
-                    codigoUsuario: this.codigoUsuario,
-                    rut: this.rut,
-                    clave: this.clave,
-                }
-            );
-
-            console.log("Respuesta del servidor:", response.data);
-            if (   response.data.responseUsuario 
-                && response.data.responseUsuario.codigoUsuario != -1) {
-                callbackOk(response.data);
-            }else{
-                callbackWrong(response.data.descripcion);
-            }
-            
-        }catch(error){
-
-            if (error.response) {
-                callbackWrong(
-                  "Credenciales incorrectas. Por favor, verifica tu nombre de usuario y contraseña." +
-                    error.message
-                );
-              } else if (error.response && error.response.status === 500) {
-                callbackWrong(
-                  "Error interno del servidor. Por favor, inténtalo de nuevo más tarde."
-                );
-              } else {
-                callbackWrong(
-                  "Error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde."
-                );
-              }
-        }
-    }
-
-    async getAllFromServer(callbackOk, callbackWrong){
-        try{
-            const configs = ModelConfig.get()
-            var url = configs.urlBase
-            +"/api/Usuarios/GetAllUsuarios"
-
-            const response = await axios.get(
-                url
-            );
-
-            console.log("Respuesta del servidor:", response.data);
-            if (
-                response.data.statusCode == 200
-                || response.data.statusCode == 201
-
-            ) {
-                callbackOk(response.data.usuarios);
-            }else{
-                callbackWrong(response.data.descripcion);
-            }
-            
-        }catch(error){
-            callbackWrong(error);
-        }
-    }
-
-
-    async getUsuariosDeudas(callbackOk, callbackWrong){
-        try{
-            const configs = ModelConfig.get()
-            var url = configs.urlBase
-            +"/api/Usuarios/GetUsuariosDeudas"
-            const response = await axios.get(
-                url
-            );
-
-            console.log("Respuesta del servidor:", response.data);
-            if (
-                response.data.statusCode == 200
-                || response.data.statusCode == 201
-
-            ) {
-                callbackOk(response.data.usuarioDeudas);
-            }else{
-                callbackWrong(response.data.descripcion);
-            }
-            
-        }catch(error){
-            callbackWrong(error);
-        }
-    }
-
-    async pargarDeudas(callbackOk, callbackWrong){
-        const data = this.getFillables()
-        if(data.idUsuario == undefined){ console.log("falta completar idUsuario");return }
-        if(data.montoPagado == undefined){ console.log("faltan completar montoPagado");return }
-        if(data.metodoPago == undefined){ console.log("faltan completar metodoPago");return }
-        if(this.deudaIds == undefined){ console.log("faltan completar deudaIds");return }
-        
-        data.deudaIds = this.deudaIds
+    async existRut({rut},callbackOk, callbackWrong){
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            +"/api/Usuarios/PostUsuarioPagarDeudaByIdUsuario"
-            const response = await axios.post(url,data);
+            + "/Usuarios/GetUsuarioByRut?rutUsuario=" + rut
+            const response = await axios.get(url);
             if (
             response.data.statusCode === 200
             || response.data.statusCode === 201
             ) {
             // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
-            callbackOk(response.data)
+            callbackOk(response.data.usuarios, response)
             } else {
             callbackWrong("Respuesta desconocida del servidor")
             }
@@ -173,8 +72,6 @@ class User extends Model{
             callbackWrong(error)
         }
     }
-    
-
 };
 
 export default User;

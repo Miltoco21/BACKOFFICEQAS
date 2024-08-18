@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import {
   Grid,
@@ -23,11 +23,18 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ModelConfig from "../../Models/ModelConfig";
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import { Check, Dangerous, Percent } from "@mui/icons-material";
 
-
+import User  from "./../../Models/User";
 export const defaultTheme = createTheme();
 
 export default function IngresoUsuarios({ onClose}) {
+  const {
+    userData, 
+    showMessage
+  } = useContext(SelectedOptionsContext);
+
 
   const apiUrl = ModelConfig.get().urlBase;
 
@@ -43,18 +50,14 @@ export default function IngresoUsuarios({ onClose}) {
   const [remuneracion, setRemuneracion] = useState("");
   const [credito, setCredito] = useState("");
   const [loading, setLoading] = useState(false);
-  const [errores, setErrores] = useState({});
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState({});
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedComuna, setSelectedComuna] = useState("");
   const [regionOptions, setRegionOptions] = useState([]);
   const [comunaOptions, setComunaOptions] = useState([]);
   const [rolesOptions, setRolesOptions] = useState([]);
   const [selectedRol, setSelectedRol] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [userId, setUserId] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [rutOk, setRutOk] = useState(null);
 
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -114,7 +117,7 @@ export default function IngresoUsuarios({ onClose}) {
           apiUrl + `/Usuarios/GetAllRolUsuario`
         );
         setRolesOptions(response.data.usuarios);
-        console.log("ROLES", response.data.usuarios);
+        // console.log("ROLES", response.data.usuarios);
       } catch (error) {
         console.log(error);
       }
@@ -172,60 +175,100 @@ export default function IngresoUsuarios({ onClose}) {
     //Validaciones
     if (!rut) {
       errors.rut = "Favor completar rut ";
+      showMessage("Favor completar rut ")
+      return false
     } else if (!validarRutChileno(rut)) {
       errors.rut = "El RUT ingresado NO es válido.";
+      showMessage("El RUT ingresado NO es válido.")
+      return false
     }
 
     if (!nombres) {
       errors.nombres = "Favor completar nombres ";
+      showMessage("Favor completar nombres ")
+      return false
     }
     if (!apellidos) {
       errors.apellidos = "Favor completar apellidos ";
+      showMessage("Favor completar apellidos ")
+      return false
     }
     if (!correo) {
       errors.correo = "Favor completar email ";
+      showMessage("Favor completar email ")
+      return false
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
       errors.correo = "Formato de correo no es válido";
+      showMessage("Formato de correo no es válido")
+      return false
     }
    
     if (!telefono) {
       errors.telefono = "Favor completar telefono ";
+      showMessage("Favor completar telefono ")
+      return false
     } 
     if (!codigoUsuario) {
       errors.codigoUsuario = "Favor completar código de Usuario ";
+      showMessage("Favor completar código de Usuario ")
+      return false
     } 
     if (!direccion) {
       errors.direccion = "Favor completar dirección ";
+      showMessage("Favor completar dirección ")
+      return false
     }
     if (!selectedComuna || selectedComuna.length === 0) {
       errors.comuna = "Favor completar comuna ";
+      showMessage("Favor completar comuna ")
+      return false
     }
     if (!selectedRegion) {
       errors.selectedRegion = "Favor completar región ";
+      showMessage("Favor completar región ")
+      return false
     }
     if (!codigoPostal) {
       errors.codigoPostal = "Favor completar codigo postal ";
+      showMessage("Favor completar codigo postal ")
+      return false
     }
     if (!rut) {
       errors.rut = "Favor completar rut ";
+      showMessage("Favor completar rut ")
+      showMessage("Favor completar rut ")
+      return false
     }
     if (!validarRutChileno(rut)) {
       errors.rut = "El RUT ingresado NO es válido.";
+      showMessage("El RUT ingresado NO es válido.")
+      showMessage("El RUT ingresado NO es válido.")
+      return false
     }
     if (!selectedRol) {
       errors.selectedRol = "Favor completar rol";
+      showMessage("Favor completar rol")
+      return false
     }
     if (!codigoUsuario) {
       errors.codigoUsuario = "Favor completar código usuario ";
+      showMessage("Favor completar código usuario ")
+      return false
     }
     if (!clave) {
       errors.clave = "Favor completar clave ";
+      showMessage("Favor completar clave ")
+      return false
     }
     if (!remuneracion) {
       errors.remuneracion = "Favor completar remuneración ";
+      showMessage("Favor completar remuneración ")
+      return false
     }
     if (!credito) {
       errors.credito = "Favor completar crédito ";
+      showMessage("Favor completar crédito ")
+      return false
     }
 
     if (Object.keys(errors).length > 0) {
@@ -386,7 +429,8 @@ export default function IngresoUsuarios({ onClose}) {
      !isNaN(key) || // números
       key === 'Backspace' || // backspace
       key === 'Delete' || // delete
-      (key === '-' && !input.includes('-')) // guion y no hay guion previamente
+      (key === '-' && !input.includes('-')) ||// guion y no hay guion previamente
+      (key === 'k' && !input.includes('k')) // guion y no hay guion previamente
     ) {
       // Permitir la tecla
     } else {
@@ -422,25 +466,56 @@ export default function IngresoUsuarios({ onClose}) {
       event.preventDefault();
     }
   };
+
+
+  useEffect(()=>{
+    console.log("cambio rutOk")
+    console.log(rutOk)
+
+  },[rutOk])
+  
+  
+  const checkRut = ()=>{
+    // console.log("checkRut")
+    if(rut === "") return
+
+    User.getInstance().existRut({
+      rut
+    },(usuarios)=>{
+      // console.log(usuarios)
+      if(usuarios.length>0){
+        showMessage("Ya existe el rut ingresado")
+        setRutOk(false)
+      }else{
+        showMessage("Rut disponible")
+        setRutOk(true)
+      }
+    }, (err)=>{
+      console.log(err)
+      if(err.response.status == 404){
+        showMessage("Rut disponible")
+        setRutOk(true)
+      }
+    })
+  }
   return (
     <div style={{ overflow: "auto" }}>
-      <Grid item xs={12} container>
         <Paper elevation={16} square>
           <Grid container spacing={2} sx={{ padding: "2%" }}>
             <Grid item xs={12}>
-              <h2>Ingreso Usuarios</h2>
+              <h2>Ingreso Usuario</h2>
             </Grid>
-            <Grid item xs={12} md={12}>
-              {Object.keys(errores).length > 0 && (
+            {/* <Grid item xs={12} md={12}> */}
+              {/* {Object.keys(errores).length > 0 && (
                 <div
                   style={{ color: "red", marginBottom: "1%", marginTop: "1%" }}
                 >
                   <ul>{Object.values(errores)[0]}</ul>
                 </div>
-              )}
-            </Grid>
+              )} */}
+            {/* </Grid> */}
 
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%", }}>
                 Ingresa rut sin puntos y con guión
               </InputLabel>
@@ -451,14 +526,34 @@ export default function IngresoUsuarios({ onClose}) {
                 id="rut"
                 label="ej: 11111111-1"
                 name="rut"
-                autoComplete="rut"
                 autoFocus
+                autoComplete="rut"
                 value={rut}
                 onChange={(e) => setRut(e.target.value)}
                 onKeyDown={handleRUTKeyDown}
+                onBlur={checkRut}
+
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="end">
+                      <Check sx={{
+                        color:"#06AD16",
+                        display: (rutOk && rut!="" ? "flex" : "none"),
+                        marginRight:"10px"
+                      }} />
+      
+                      <Dangerous sx={{
+                        color:"#CD0606",
+                        display: ( ( rutOk === false ) ? "flex" : "none")
+                      }} />
+                    </InputAdornment>
+                  ),
+                }}
+
+
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Ingresa Nombre
               </InputLabel>
@@ -471,13 +566,12 @@ export default function IngresoUsuarios({ onClose}) {
                 label="Nombres"
                 name="nombres"
                 autoComplete="nombres"
-                autoFocus
                 value={nombres}
                 onChange={(e) => setNombre(e.target.value)}
                 onKeyDown={handleTextOnlyKeyDown}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Ingresa Apellidos
               </InputLabel>
@@ -490,14 +584,13 @@ export default function IngresoUsuarios({ onClose}) {
                 label="Apellidos"
                 name="apellidos"
                 autoComplete="apellidos"
-                autoFocus
                 value={apellidos}
                 onChange={(e) => setApellido(e.target.value)}
                 onKeyDown={handleTextOnlyKeyDown}
 
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Ingresa Correo Electrónico
               </InputLabel>
@@ -510,14 +603,13 @@ export default function IngresoUsuarios({ onClose}) {
                 label="Correo Electrónico"
                 name="correo"
                 autoComplete="correo"
-                autoFocus
                 value={correo}
                 onChange={handleEmailChange}
                 onKeyDown={handleEmailKeyDown}
 
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Ingresa Teléfono
               </InputLabel>
@@ -530,7 +622,6 @@ export default function IngresoUsuarios({ onClose}) {
                 label="Teléfono"
                 name="telefono"
                 autoComplete="telefono"
-                autoFocus
                 value={telefono}
                 onChange={(e) => setTelefono(e.target.value)}
                 onKeyDown={handleNumericKeyDown}
@@ -540,7 +631,7 @@ export default function IngresoUsuarios({ onClose}) {
 
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Ingresa Código Usuario
               </InputLabel>
@@ -553,7 +644,6 @@ export default function IngresoUsuarios({ onClose}) {
                 label="Ingrese valor numérico"
                 name="Código Cliente"
                 autoComplete="Código Cliente"
-                autoFocus
                 value={codigoUsuario}
                 onChange={(e) => setCodigoUsuario(e.target.value)}
                 onKeyDown={handleNumericKeyDown}
@@ -562,7 +652,7 @@ export default function IngresoUsuarios({ onClose}) {
                 
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Ingresa Dirección
               </InputLabel>
@@ -574,12 +664,11 @@ export default function IngresoUsuarios({ onClose}) {
                 label="Dirección"
                 name="direccion"
                 autoComplete="direccion"
-                autoFocus
                 value={direccion}
                 onChange={(e) => setDireccion(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Selecciona Región
               </InputLabel>
@@ -602,7 +691,7 @@ export default function IngresoUsuarios({ onClose}) {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Selecciona Comuna
               </InputLabel>
@@ -626,7 +715,7 @@ export default function IngresoUsuarios({ onClose}) {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Selecciona Rol
               </InputLabel>
@@ -648,7 +737,7 @@ export default function IngresoUsuarios({ onClose}) {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Ingresa Código Postal
               </InputLabel>
@@ -661,45 +750,43 @@ export default function IngresoUsuarios({ onClose}) {
                 label="Ingrese valor numérico"
                 name="codigoPostal"
                 autoComplete="codigoPostal"
-                autoFocus
                 value={codigoPostal}
                 onChange={(e) => setCodigoPostal(e.target.value)}
                 onKeyDown={handleNumericKeyDown}
 
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>Ingresa Clave</InputLabel>
               <TextField
-      fullWidth
-      margin="normal"
-     
-      id="clave"
-      label="Ingrese valor alfanumérico"
-      name="clave"
-      type={showPassword ? 'text' : 'password'}
-      autoComplete="new-password"
-      autoFocus
-      value={clave}
-      onChange={(e) => setClave(e.target.value)}
-      onKeyDown={handleTextKeyDown}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton
-              aria-label="toggle password visibility"
-              onClick={handleClickShowPassword}
-              onMouseDown={handleMouseDownPassword}
-              edge="end"
-            >
-              {showPassword ? <VisibilityOff fontSize="small"  /> : <Visibility fontSize="small"  />}
-            </IconButton>
-          </InputAdornment>
-        ),
-      }}
-    />
+                fullWidth
+                margin="normal"
+              
+                id="clave"
+                label="Ingrese valor alfanumérico"
+                name="clave"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                value={clave}
+                onChange={(e) => setClave(e.target.value)}
+                onKeyDown={handleTextKeyDown}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff fontSize="small"  /> : <Visibility fontSize="small"  />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Ingresa Remuneración
               </InputLabel>
@@ -712,7 +799,6 @@ export default function IngresoUsuarios({ onClose}) {
                 label="Remuneración"
                 name="remuneracion"
                 autoComplete="remuneracion"
-                autoFocus
                 value={remuneracion}
                 onChange={(e) => setRemuneracion(e.target.value)}
                 onKeyDown={handleTextOnlyKeyDown}
@@ -723,7 +809,7 @@ export default function IngresoUsuarios({ onClose}) {
                 <MenuItem value="Mensual">Mensual</MenuItem>
               </TextField>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Ingresa Crédito
               </InputLabel>
@@ -733,25 +819,27 @@ export default function IngresoUsuarios({ onClose}) {
                 required
                 id="credito"
                 label="Ingrese valor numérico"
-                
                 name="credito"
                 autoComplete="credito"
-                autoFocus
                 value={credito}
                 onChange={(e) => setCredito(e.target.value)}
                 onKeyDown={handleNumericKeyDown}
 
               />
             </Grid>
-          </Grid>
           <Grid item xs={12}>
             <Button
-              type="submit"
-              fullWidth
+              // fullWidth
               variant="contained"
-              disabled={loading}
+              color="secondary"
               onClick={handleSubmit}
-              sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
+
+              sx={{
+                width:"50%",
+                height:"55px",
+                margin: "0 25%"
+              }}
             >
               {loading ? (
                 <>
@@ -761,9 +849,10 @@ export default function IngresoUsuarios({ onClose}) {
                 "Registrar usuario"
               )}
             </Button>
+
+          </Grid>
           </Grid>
         </Paper>
-      </Grid>
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
