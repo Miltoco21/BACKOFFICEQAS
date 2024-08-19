@@ -443,6 +443,11 @@ const IngresoPV = ({ onClose }) => {
     const key = event.key;
     const input = event.target.value;
   
+    if(event.key == "Tab"){
+      // TabControl.nextFocus()
+      return
+    }
+
     // Verifica si el carácter es un número, backspace o delete
     if (
     !/\d/.test(key) && // números
@@ -464,6 +469,11 @@ const IngresoPV = ({ onClose }) => {
   const handleTextKeyDown = (event) => {
     const key = event.key;
     const input = event.target.value;
+
+    if(event.key == "Tab"){
+      // TabControl.nextFocus()
+      return
+    }
   
     // Verifica si el carácter es alfanumérico o uno de los caracteres permitidos
     if (
@@ -484,6 +494,12 @@ const IngresoPV = ({ onClose }) => {
     }
   };
   const handleEmailKeyDown = (event) => {
+
+    if(event.key == "Tab"){
+      // TabControl.nextFocus()
+      return
+    }
+
     const charCode = event.which ? event.which : event.keyCode;
   
     // Prevenir espacios en cualquier parte del correo
@@ -492,10 +508,14 @@ const IngresoPV = ({ onClose }) => {
     }
   };
   const handleRUTKeyDown = (event) => {
+    if(event.key == "Tab"){
+      // TabControl.nextFocus()
+      return
+    }
     const key = event.key;
     const input = event.target.value;
   
-    // Permitir números (0-9), guion (-), backspace y delete
+    
     if (
      !isNaN(key) || // números
       key === 'Backspace' || // backspace
@@ -516,6 +536,11 @@ const IngresoPV = ({ onClose }) => {
   };
 
   const handleTextOnlyKeyDown = (event) => {
+    if(event.key == "Tab"){
+      // TabControl.nextFocus()
+      return
+    }
+
     const key = event.key;
     const input = event.target.value;
   
@@ -537,13 +562,6 @@ const IngresoPV = ({ onClose }) => {
       event.preventDefault();
     }
   };
-  
-
-  useEffect(()=>{
-    console.log("cambio rutOk")
-    console.log(rutOk)
-
-  },[rutOk])
   
   const checkRut = ()=>{
     // console.log("checkRut")
@@ -610,12 +628,11 @@ const IngresoPV = ({ onClose }) => {
                 )}
               </Grid>
               <Grid item xs={12} sm={12} md={12}>
-                {" "}
                 {camposVacios && (
                   <p style={{ color: "red" }}> {camposVacios}</p>
                 )}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%", }}>
                   Ingresa rut sin puntos y con guión
                 </InputLabel>
@@ -631,7 +648,7 @@ const IngresoPV = ({ onClose }) => {
                   onChange={(e) => setRut(e.target.value)}
                   onKeyDown={handleRUTKeyDown}
                   onBlur={checkRut}
-                  
+
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="end">
@@ -650,7 +667,7 @@ const IngresoPV = ({ onClose }) => {
                   }}
                   />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%", }}>
                   Ingresa Razón social
                 </InputLabel>
@@ -664,7 +681,7 @@ const IngresoPV = ({ onClose }) => {
                   onKeyDown={handleTextKeyDown}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%", }}>
                   Ingresa Giro
                 </InputLabel>
@@ -678,7 +695,7 @@ const IngresoPV = ({ onClose }) => {
                   onKeyDown={handleTextOnlyKeyDown}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%",  }}>
                   Ingresa Correo Electrónico
                 </InputLabel>
@@ -692,7 +709,7 @@ const IngresoPV = ({ onClose }) => {
                   // helperText={errors.email}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%" }}>
                   Ingresa Teléfono
                 </InputLabel>
@@ -703,7 +720,7 @@ const IngresoPV = ({ onClose }) => {
                   label="Teléfono"
                   name="telefono"
                   autoComplete="telefono"
-                  autoFocus
+                  
                   value={telefono}
                   onKeyDown={handleNumericKeyDown}
                   onChange={(e) => setTelefono(e.target.value)}
@@ -712,7 +729,7 @@ const IngresoPV = ({ onClose }) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%" }}>
                   Ingresa Dirección
                 </InputLabel>
@@ -724,7 +741,7 @@ const IngresoPV = ({ onClose }) => {
                   onKeyDown={handleTextKeyDown}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%" }}>
                   Selecciona Región
                 </InputLabel>
@@ -746,7 +763,7 @@ const IngresoPV = ({ onClose }) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%" }}>
                   Selecciona Comuna
                 </InputLabel>
@@ -769,7 +786,7 @@ const IngresoPV = ({ onClose }) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%" }}>
                   Ingresa Sucursal
                 </InputLabel>
@@ -781,7 +798,7 @@ const IngresoPV = ({ onClose }) => {
                   onKeyDown={handleTextKeyDown}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%" }}>
                   Ingresa Página Web
                 </InputLabel>
@@ -792,7 +809,7 @@ const IngresoPV = ({ onClose }) => {
                   onChange={(e) => setUlrPagina(e.target.value)}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%" }}>
                   Ingresa Forma de Pago
                 </InputLabel>
@@ -805,7 +822,7 @@ const IngresoPV = ({ onClose }) => {
                   onKeyDown={handleTextOnlyKeyDown}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%" }}>
                   Ingresa Nombre del Responsable
                 </InputLabel>
@@ -817,7 +834,7 @@ const IngresoPV = ({ onClose }) => {
                   onKeyDown={handleTextOnlyKeyDown}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%" }}>
                   Ingresa Correo Electrónico del Responsable
                 </InputLabel>
@@ -829,7 +846,7 @@ const IngresoPV = ({ onClose }) => {
                   label="Correo Electrónico"
                   name="correo"
                   autoComplete="correo"
-                  autoFocus
+                  
                   value={correoResponsable}
                   onChange={(e) => setcorreoResponsable(e.target.value)}
                   onKeyDown={handleEmailKeyDown}
@@ -843,7 +860,7 @@ const IngresoPV = ({ onClose }) => {
                   helperText={errors.correoResponsable}
                 /> */}
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <InputLabel sx={{ marginBottom: "2%" }}>
                   Ingresa Teléfono del Responsable
                 </InputLabel>
@@ -859,7 +876,14 @@ const IngresoPV = ({ onClose }) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <Button type="submit" disabled={loading} variant="contained">
+                <Button type="submit" disabled={loading} variant="contained"
+                  sx={{
+                    height:"50px",
+                    width:"50%",
+                    minWidth:"100px",
+                    margin:"0 25%"
+                  }}
+                >
                   {loading ? (
                     <>
                       Guardando... <CircularProgress size={24} />
