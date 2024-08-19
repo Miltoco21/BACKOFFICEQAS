@@ -444,7 +444,6 @@ const IngresoPV = ({ onClose }) => {
     const input = event.target.value;
   
     if(event.key == "Tab"){
-      // TabControl.nextFocus()
       return
     }
 
@@ -471,7 +470,6 @@ const IngresoPV = ({ onClose }) => {
     const input = event.target.value;
 
     if(event.key == "Tab"){
-      // TabControl.nextFocus()
       return
     }
   
@@ -496,7 +494,6 @@ const IngresoPV = ({ onClose }) => {
   const handleEmailKeyDown = (event) => {
 
     if(event.key == "Tab"){
-      // TabControl.nextFocus()
       return
     }
 
@@ -509,7 +506,6 @@ const IngresoPV = ({ onClose }) => {
   };
   const handleRUTKeyDown = (event) => {
     if(event.key == "Tab"){
-      // TabControl.nextFocus()
       return
     }
     const key = event.key;
@@ -537,7 +533,6 @@ const IngresoPV = ({ onClose }) => {
 
   const handleTextOnlyKeyDown = (event) => {
     if(event.key == "Tab"){
-      // TabControl.nextFocus()
       return
     }
 
