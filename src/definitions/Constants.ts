@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 
 const CONSTANTS =  {
     appName: "EasyPOSLite",
-    appVersion: "1.0.47",
+    appVersion: "1.0.48",
 };
 
 export default CONSTANTS;

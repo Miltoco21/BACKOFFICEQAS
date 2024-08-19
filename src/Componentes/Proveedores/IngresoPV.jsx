@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import InputAdornment from "@mui/material/InputAdornment";
 
@@ -29,9 +29,17 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ModelConfig from "../../Models/ModelConfig";
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import User from "../../Models/User";
+import Proveedor from "../../Models/Proveedor";
+import { Check, Dangerous } from "@mui/icons-material";
+
 const IngresoPV = ({ onClose }) => {
   const apiUrl = ModelConfig.get().urlBase;
+  
   const [rut, setRut] = useState("");
+  const [rutOk, setRutOk] = useState(null);
+
   const [razonSocial, setRazonSocial] = useState("");
   const [giro, setGiro] = useState("");
   const [email, setEmail] = useState("");
@@ -60,6 +68,11 @@ const IngresoPV = ({ onClose }) => {
 
   const [regionOptions, setRegionOptions] = useState([]);
   const [comunaOptions, setComunaOptions] = useState([]);
+
+  const {
+    userData, 
+    showMessage
+  } = useContext(SelectedOptionsContext);
 
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -487,7 +500,8 @@ const IngresoPV = ({ onClose }) => {
      !isNaN(key) || // números
       key === 'Backspace' || // backspace
       key === 'Delete' || // delete
-      (key === '-' && !input.includes('-')) // guion y no hay guion previamente
+      (key === '-' && !input.includes('-')) ||// guion y no hay guion previamente
+      (key === 'k' && !input.includes('k')) // guion y no hay guion previamente
     ) {
       // Permitir la tecla
     } else {
@@ -524,6 +538,36 @@ const IngresoPV = ({ onClose }) => {
     }
   };
   
+
+  useEffect(()=>{
+    console.log("cambio rutOk")
+    console.log(rutOk)
+
+  },[rutOk])
+  
+  const checkRut = ()=>{
+    // console.log("checkRut")
+    if(rut === "") return
+
+    Proveedor.getInstance().existRut({
+      rut
+    },(proveedores)=>{
+      // console.log(proveedores)
+      if(proveedores.length>0){
+        showMessage("Ya existe el rut ingresado")
+        setRutOk(false)
+      }else{
+        showMessage("Rut disponible")
+        setRutOk(true)
+      }
+    }, (err)=>{
+      console.log(err)
+      if(err.response.status == 404){
+        showMessage("Rut disponible")
+        setRutOk(true)
+      }
+    })
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -585,7 +629,26 @@ const IngresoPV = ({ onClose }) => {
                   autoFocus
                   value={rut}
                   onChange={(e) => setRut(e.target.value)}
-                  onKeyDown={handleRUTKeyDown}                />
+                  onKeyDown={handleRUTKeyDown}
+                  onBlur={checkRut}
+                  
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="end">
+                        <Check sx={{
+                          color:"#06AD16",
+                          display: (rutOk && rut!="" ? "flex" : "none"),
+                          marginRight:"10px"
+                        }} />
+        
+                        <Dangerous sx={{
+                          color:"#CD0606",
+                          display: ( ( rutOk === false ) ? "flex" : "none")
+                        }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <InputLabel sx={{ marginBottom: "2%", }}>
