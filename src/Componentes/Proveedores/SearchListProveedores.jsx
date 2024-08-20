@@ -52,7 +52,7 @@ const SearchListProveedores = () => {
   const [proveedores, setProveedores] = useState([]);
   const [filteredProveedores, setFilteredProveedores] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [editProveedorData, setEditProveedorData] = useState({});
+  const [editProveedorData, setEditProveedorData] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageProveedores, setPageProveedores] = useState([]);
@@ -157,6 +157,8 @@ const SearchListProveedores = () => {
 
   useEffect(() => {
     if (proveedores) {
+      console.log("proveedores")
+      console.log(proveedores)
       const filtered = proveedores.filter((proveedor) =>
         proveedor.nombreResponsable.toLowerCase().includes(searchTermProveedores.toLowerCase()) ||
         proveedor.rut.toLowerCase().includes(searchTermProveedores.toLowerCase())
@@ -668,7 +670,7 @@ const SearchListProveedores = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {pageProveedores?.map((proveedor) => (
+              {pageProveedores?.map((proveedor, index) => (
                 <TableRow key={proveedor.codigoProveedor}>
                   <TableCell>{proveedor.codigoProveedor}</TableCell>
                   <TableCell>
@@ -699,13 +701,14 @@ const SearchListProveedores = () => {
                   <TableCell>{proveedor.pagina}</TableCell>
 
                   <TableCell>
-                    <IconButton onClick={() => handleEdit(proveedor)}>
+                    <IconButton onClick={() => {
+                      proveedor.index = index
+                      handleEdit(proveedor)
+                      }}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton>
-                      <DeleteIcon
-                        onClick={() => handleDeleteDialogOpen(proveedor)}
-                      />
+                    <IconButton onClick={() => handleDeleteDialogOpen(proveedor)}>
+                      <DeleteIcon/>
                     </IconButton>
                     <IconButton
                       onClick={() => handleOpenPaymentDialog(proveedor)}
@@ -734,7 +737,12 @@ const SearchListProveedores = () => {
         handleClose={handleCloseEditModal}
         proveedor={editProveedorData}
         fetchProveedores={setProveedores}
-        onEditSuccess={() => setIsEditSuccessful(true)} // New addition
+        onEditSuccess={() => {
+          fetchProveedores()
+
+          setIsEditSuccessful(true)
+        }
+        } // New addition
       />
       <Snackbar
         open={snackbarOpen}

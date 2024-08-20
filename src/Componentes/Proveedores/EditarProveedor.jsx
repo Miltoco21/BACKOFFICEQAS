@@ -15,63 +15,76 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import ModelConfig from "../../Models/ModelConfig";
+import Comuna from "../../Models/Comuna";
+import Region from "../../Models/Region";
+import Proveedor from "../../Models/Proveedor";
 
 const EditarProveedor = ({
   open,
   handleClose,
-  proveedor,
+  proveedor = null,
   fetchProveedores,
   onEditSuccess,
 }) => {
 
   const apiUrl = ModelConfig.get().urlBase;
-  const [editProveedor, setEditProveedor] = useState({
-    codigoProveedor: "",
-    razonSocial: "",
-    giro: "",
-    rut: "",
-    email: "",
-    telefono: "",
-    direccion: "",
-    comuna: "",
-    region: "",
-    pagina: "",
-    formaPago: "",
-    nombreResponsable: "",
-    correoResponsable: "",
-    telefonoResponsable: "",
-    sucursal: "",
-  });
+  const [editProveedor, setEditProveedor] = useState(null);
 
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isEditSuccessful, setIsEditSuccessful] = useState(false);
+  const [comunas, setComunas] = useState([]);
+  const [regions, setRegions] = useState([]);
 
+
+  const findComuns = (regionId)=>{
+    Comuna.getInstance().findByRegion( regionId, (comunasx)=>{
+      setComunas(comunasx)
+    },(err)=>{
+    })
+
+
+  }
   useEffect(() => {
+    if(!open) return 
     if (proveedor) {
-      setEditProveedor({
-        codigoProveedor: proveedor.codigoProveedor || "",
-        razonSocial: proveedor.razonSocial || "",
-        giro: proveedor.giro || "",
-        rut: proveedor.rut || "",
-        email: proveedor.email || "",
-        telefono: proveedor.telefono || "",
-        direccion: proveedor.direccion || "",
-        comuna: proveedor.comuna || "",
-        region: proveedor.region || "",
-        pagina: proveedor.pagina || "",
-        formaPago: proveedor.formaPago || "",
-        nombreResponsable: proveedor.nombreResponsable || "",
-        correoResponsable: proveedor.correoResponsable || "",
-        telefonoResponsable: proveedor.telefonoResponsable || "",
-        sucursal: proveedor.sucursal || "",
-      });
-    }
-  }, [proveedor]);
+      const proveedorEditar = proveedor
 
+      Region.getInstance().getAll((regionsx)=>{
+        setRegions(regionsx)
+      },(err)=>{
+      })
+
+      findComuns(parseInt(proveedorEditar.region))
+      setEditProveedor(proveedorEditar);
+      console.log("proveedorEditar")
+      console.log(proveedorEditar)
+    }
+  }, [open]);
+
+  useEffect(()=>{
+
+    if(comunas.length>0 && Number.isNaN(parseInt(editProveedor.comuna))){
+      var finded = 0
+      comunas.forEach((com)=>{
+        if(com.comunaNombre == editProveedor.comuna){
+          finded = com.id
+        }
+      })
+      if(finded!=0){
+        editProveedor.comuna = finded
+        setEditProveedor(editProveedor);
+      }
+    }
+
+
+  }, [comunas]);
+  
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setEditProveedor((prevEditProveedor) => ({
@@ -82,6 +95,7 @@ const EditarProveedor = ({
   const closeSuccessDialog = () => {
     setSuccessDialogOpen(false);
     handleClose();
+    onEditSuccess()
   };
 
   const closeErrorDialog = () => {
@@ -95,28 +109,35 @@ const EditarProveedor = ({
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    try {
-      const response = await axios.put(
-        `${apiUrl}/Proveedores/UpdateProveedor`,
-        editProveedor
-      );
+    Proveedor.getInstance().update(editProveedor,(resp)=>{
+      console.log("Proveedor updated successfully:", resp.data);
+      setIsEditSuccessful(true)
+      setSuccessDialogOpen(true)
+      
 
-      if (response.status === 200) {
-        console.log("Proveedor updated successfully:", response.data);
-        setIsEditSuccessful(true)
-
-      } setSuccessDialogOpen(true)
-    } catch (error) {
+    
+      // fetchProveedores((prevProduct) => {
+      //   if(!prevProduct)return
+      //   console.log("prevProduct")
+      //   console.log(prevProduct)
+      //   var ls = [
+      //     ...prevProduct
+      //   ]
+      //   ls[editProveedor.index] = editProveedor
+      //   return(ls)
+      // });
+    },(error)=>{
       console.error("Error updating proveedor:", error);
       setErrorMessage(error.message);
       setOpenErrorDialog(true);
-    }
+    })
   };
 
   
 
 
-  return (
+  return editProveedor!= null ?(
+
     <Modal
       open={open}
       onClose={handleClose}
@@ -203,22 +224,57 @@ const EditarProveedor = ({
               />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <TextField
-                label="Comuna"
-                name="comuna"
-                value={editProveedor.comuna}
-                onChange={handleInputChange}
+            <Select
                 fullWidth
-              />
+                value={editProveedor.region + ""}
+                onChange={(e) => {
+
+                  setEditProveedor((prevProduct) => ({
+                    ...prevProduct,
+                    region: e.target.value + "",
+                    comuna: "0",
+                  }));
+
+                  findComuns(e.target.value)
+
+                }}
+                label="Selecciona Region"
+              >
+                {regions.map((region) => (
+                  <MenuItem 
+                  key={region.id} 
+                  value={region.id}>
+                    {region.regionNombre}
+                  </MenuItem>
+                ))}
+              </Select>
+
+            
+
+
             </Grid>
             <Grid item xs={12} sm={3}>
-              <TextField
-                label="Región"
-                name="region"
-                value={editProveedor.region}
-                onChange={handleInputChange}
-                fullWidth
-              />
+              
+            <Select
+              fullWidth
+              value={editProveedor.comuna + ""}
+              onChange={(e) => {
+                setEditProveedor((prevProduct) => ({
+                  ...prevProduct,
+                  comuna: e.target.value + "",
+                }));
+              }}
+              label="Selecciona Comuna"
+            >
+              {comunas.map((comuna) => (
+                <MenuItem 
+                key={comuna.id} 
+                value={comuna.id}>
+                  {comuna.comunaNombre}
+                </MenuItem>
+              ))}
+            </Select>
+
             </Grid>
             <Grid item xs={12} sm={3}>
               <TextField
@@ -304,6 +360,8 @@ const EditarProveedor = ({
         </Dialog>
       </Box>
     </Modal>
+  ):(
+    <></>
   );
 };
 

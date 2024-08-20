@@ -55,6 +55,22 @@ class Proveedor extends Model{
           callbackWrong(error)
       }
   }
+
+  async update(data,callbackOk, callbackWrong){
+    try {
+        const response = await axios.put(
+            ModelConfig.get("urlBase") 
+            + `/Proveedores/UpdateProveedor`,
+          data
+        );
+  
+        if (response.status === 200) {
+          callbackOk(response)
+        } 
+      } catch (error) {
+        callbackWrong(error)
+      }
+  }
 };
 
 export default Proveedor;
