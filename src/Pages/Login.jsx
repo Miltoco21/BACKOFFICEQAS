@@ -62,11 +62,19 @@ const Login = () => {
       }
       setLoading(true);
 
-      const response = await axios.post(`${apiUrl}/Usuarios/LoginUsuario`, {
+      const data = {
         codigoUsuario: 0,
-        rut: rutOrCode,
+        rut: "",
         clave: password,
-      });
+      }
+
+      if(rutOrCode.indexOf("-")>-1){
+        data.rut = rutOrCode
+      }else{
+        data.codigoUsuario = parseInt(rutOrCode)
+      }
+
+      const response = await axios.post(`${apiUrl}/Usuarios/LoginUsuario`, data);
 
       if (response.data.responseUsuario && response.data.responseUsuario.codigoUsuario !== -1) {
         const userOk = response.data.responseUsuario
