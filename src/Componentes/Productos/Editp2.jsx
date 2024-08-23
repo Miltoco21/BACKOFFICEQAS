@@ -121,13 +121,10 @@ const Editp2 = ({ product, open, handleClose }) => {
 
     if (selectedSubCategoryId !== "" && selectedCategoryId !== "" && subcategories.length>0) {
       try {
-        // console.log("selectedSubCategoryId", selectedSubCategoryId)
-        // console.log("subcategories", subcategories)
-        const SubCategoriaFind = subcategories.find(sc=> sc.descripcion === selectedSubCategoryId);
-        // console.log("idCategoriaFind", SubCategoriaFind)
-
+        const categoriaCoincide = categories.find(categoria=> categoria.descripcion ===selectedCategoryId);
+        const subcategoriaCoincide = subcategories.find(sub=> sub.descripcion ===selectedSubCategoryId);
         const response = await axios.get(
-          `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${editedProduct.idsubCategoria}&CategoriaID=${editedProduct.idCategoria}`
+          `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${subcategoriaCoincide.idSubcategoria}&CategoriaID=${categoriaCoincide.idCategoria}`
         );
 
         console.log("familias")
@@ -162,13 +159,12 @@ const Editp2 = ({ product, open, handleClose }) => {
       families.length>0
     ) {
       try {
-        // console.log("selectedFamilyId", selectedFamilyId)
-        // console.log("families", families)
-        const familiaFind = families.find(f=> f.descripcion === selectedFamilyId)
-        // console.log("familiaFind", familiaFind)
+        const categoriaCoincide = categories.find(categoria=> categoria.descripcion ===selectedCategoryId);
+        const subcategoriaCoincide = subcategories.find(sub=> sub.descripcion ===selectedSubCategoryId);
+        const famcoincide = families.find(fam=> fam.descripcion ===selectedFamilyId);
 
         const response = await axios.get(
-          `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${editedProduct.idFamilia}&SubCategoriaID=${editedProduct.idsubCategoria}&CategoriaID=${editedProduct.idCategoria}`
+          `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${famcoincide.idFamilia}&SubCategoriaID=${subcategoriaCoincide.idSubcategoria}&CategoriaID=${categoriaCoincide.idCategoria}`
         );
 
         console.log("subFamilias:");
@@ -361,7 +357,7 @@ const Editp2 = ({ product, open, handleClose }) => {
       };
     }
 
-    
+    nuevoObjetoActualizado.stockActual = parseInt(nuevoObjetoActualizado.stockActual)
 
     try {
       const response = await axios.put(
