@@ -129,7 +129,9 @@ const SearchListProducts = () => {
   const doSearch = ()=>{
     if(searchTerm == "")return
     console.log("hace busqueda")
-    showLoading("haciendo busqueda")
+    showLoading("haciendo busqueda por descripcion")
+      
+    
       Product.getInstance().findByDescription({
         description: searchTerm
       }, (prods)=>{
@@ -137,12 +139,30 @@ const SearchListProducts = () => {
         // setProduct(prods);
         // setFilteredProducts(prods);
         // setPageCount(prods);
-        setPageProduct(prods);
-        
-        console.log("asigno productos")
-        console.log(prods)
-        hideLoading()
-        setHasResult(prods.length>0)
+
+        if(prods.length<1){
+          showLoading("haciendo busqueda por codigo")
+          Product.getInstance().findByCodigoBarras({
+            codigoProducto: searchTerm
+          }, (prods)=>{
+            // setFilteredProducts(prods);
+            // setProduct(prods);
+            // setFilteredProducts(prods);
+            // setPageCount(prods);
+            setPageProduct(prods);
+            
+            console.log("asigno productos")
+            console.log(prods)
+            hideLoading()
+            setHasResult(prods.length>0)
+          }, ()=>{
+            hideLoading()
+            setHasResult(false)
+          })
+        }else{
+          hideLoading()
+          setHasResult(prods.length>0)
+        }
       }, ()=>{
         hideLoading()
         setHasResult(false)
