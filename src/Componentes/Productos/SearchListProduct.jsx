@@ -160,6 +160,7 @@ const SearchListProducts = () => {
             setHasResult(false)
           })
         }else{
+          setPageProduct(prods);
           hideLoading()
           setHasResult(prods.length>0)
         }
