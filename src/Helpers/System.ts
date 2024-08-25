@@ -97,6 +97,10 @@ class System {
         }
     }
 
+    static clone(obj){
+        return JSON.parse(JSON.stringify(obj) )
+    }
+
 }
 
 

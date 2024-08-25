@@ -254,6 +254,28 @@ class Product extends Model{
           }
     }
 
+    async update(data,callbackOk, callbackWrong){
+        try {
+            const configs = ModelConfig.get()
+            var url = configs.urlBase +
+            "/ProductosTmp/UpdateProducto"
+           
+            const response = await axios.put(url,data);
+            if(
+                response.data.statusCode == 200
+                || response.data.statusCode == 201
+
+            ){
+                callbackOk(response.data, response);
+            }else{
+               callbackWrong("respuesta incorrecta del servidor") 
+            }
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            callbackWrong(error) 
+          }
+    }
+
 
     async getCategories(callbackOk, callbackWrong) {
         try {

@@ -22,31 +22,18 @@ import {
   Typography,
 } from "@mui/material";
 import ModelConfig from "../../Models/ModelConfig";
+import Product from "../../Models/Product";
+import System from "../../Helpers/System";
 
 const Editp2 = ({ product, open, handleClose }) => {
   const apiUrl = ModelConfig.get().urlBase;
 
   const [editedProduct, setEditedProduct] = useState({});
-  const [refresh, setRefresh] = useState(false);
-
+  
   const [categories, setCategories] = useState([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState("");
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState("");
-  const [selectedFamilyId, setSelectedFamilyId] = useState("");
-  const [selectedSubFamilyId, setSelectedSubFamilyId] = useState("");
   const [subcategories, setSubCategories] = useState([]);
   const [families, setFamilies] = useState([]);
   const [subfamilies, setSubFamilies] = useState([]);
-
-  const [marcas, setMarcas] = useState([]);
-  const [selectedBodegaId, setSelectedBodegaId] = useState("");
-  const [selectedProveedorId, setSelectedProveedorId] = useState("");
-
-  const [bodegas, setBodegas] = useState([]);
-  const [proveedor, setProveedor] = useState([]);
-  const [proveedores, setProveedores] = useState([]);
-
-  const [selectedMarcaId, setSelectedMarcaId] = useState("");
 
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
@@ -55,244 +42,185 @@ const Editp2 = ({ product, open, handleClose }) => {
   const [esPesable, setEsPesable] = useState( false );
 
   const [successMessage, setSuccessMessage] = useState("");
+
+  const [changesNML,setchangesNML] = useState({
+    "idCategoria" : 0,
+    "idSubCategoria" : 0,
+    "idFamilia" : 0,
+    "idSubFamilia" : 0,
+  })
+
   //INICIADOR DE DATOS
+  
   useEffect(() => {
-    // Initialize editedProduct when the component mounts
     setEditedProduct(product);
   }, []);
+    
 
-  const fetchCategories = async() =>{
-    console.log("fetchCategories")
-    try {
-      const response = await axios.get(
-      `${apiUrl}/NivelMercadoLogicos/GetAllCategorias`
-      );
-      console.log("categorias"); // Add this line
-      console.log(response.data); // Add this line
-      setCategories(response.data.categorias);
-    } catch (error) {
-      console.log(error);
+  const checkChangeNML = ()=>{
+    // console.log("checkChangeNML")
+    // console.log("Valores NML:", JSON.parse(JSON.stringify(changesNML)))
+    // console.log("editedProduct:", JSON.parse(JSON.stringify(editedProduct)))
+    if(changesNML.idCategoria != editedProduct.idCategoria){
+      return "idCategoria"
+    }
+
+    if(changesNML.idSubCategoria != editedProduct.idSubCategoria){
+      return "idSubCategoria"
+    }
+
+    if(changesNML.idFamilia != editedProduct.idFamilia){
+      return "idFamilia"
+    }
+
+    if(changesNML.idSubFamilia != editedProduct.idSubFamilia){
+      return "idSubFamilia"
+    }
+    return ""
+  }
+
+  
+  const cargarCategorias = ()=>{
+    // console.log("cargarCategorias")
+    Product.getInstance().getCategories((categorias)=>{
+      setCategories(categorias);
+      // console.log("las categorias son:",categorias);
+      if(editedProduct.idCategoria!=0){
+        changesNML.idCategoria = editedProduct.idCategoria
+        // console.log("Valores NML:", JSON.parse(JSON.stringify(changesNML)))
+        // console.log("tiene idCategoria:" + editedProduct.idCategoria + "..cargamos subcategorias")
+        cargarSubCategorias()
+      }else{
+        setSubCategories([])
+        setFamilies([])
+        setSubFamilies([])
+      }
+    }, (err)=>{ })
+
+  }
+
+  const cargarSubCategorias = ()=>{
+    // console.log("cargarSubCategorias")
+    if(editedProduct.idCategoria != 0){
+      Product.getInstance().getSubCategories(editedProduct.idCategoria,(subcategorias)=>{
+        setSubCategories(subcategorias);
+        // console.log("las subcategorias son:",subcategorias);
+        if(editedProduct.idSubCategoria!=0){
+          changesNML.idSubCategoria = editedProduct.idSubCategoria
+          // console.log("Valores NML:", JSON.parse(JSON.stringify(changesNML)))
+          // console.log("tiene idSubCategoria:" + editedProduct.idSubCategoria + "..cargamos familias")
+          cargarFamilias()
+        }else{
+          setFamilies([])
+          setSubFamilies([])
+        }
+      },()=>{})
+    }
+  }
+
+    const cargarFamilias = ()=>{
+      // console.log("cargarFamilias")
+      if (
+        editedProduct.idCategoria != 0
+        && editedProduct.idSubCategoria != 0
+      ) {
+        Product.getInstance().getFamiliaBySubCat({
+          categoryId:editedProduct.idCategoria,
+          subcategoryId:editedProduct.idSubCategoria,
+        },(familias)=>{
+          setFamilies(familias);
+          // console.log("las familias son:",familias);
+          if(editedProduct.idFamilia!=0){
+            changesNML.idFamilia = editedProduct.idFamilia
+            // console.log("Valores NML:", JSON.parse(JSON.stringify(changesNML)))
+            // console.log("tiene idFamilia:" + editedProduct.idFamilia + "..cargamos subfamilias")
+            cargarSubFamilias()
+          }else{
+            setSubFamilies([])
+          }
+        },()=>{})
+      }
+    }
+
+    const cargarSubFamilias = ()=>{
+      // console.log("cargarSubFamilias")
+
+      if (
+        editedProduct.idCategoria != 0
+        && editedProduct.idSubCategoria != 0
+        && editedProduct.idFamilia != 0
+      ) {
+        Product.getInstance().getSubFamilia({
+          categoryId: editedProduct.idCategoria,
+          subcategoryId:editedProduct.idSubCategoria,
+          familyId:editedProduct.idFamilia
+        },(subfamilias)=>{
+          setSubFamilies(subfamilias);
+          // console.log("las subfamilias son:",subfamilias);
+          if(editedProduct.idSubFamilia!=0){
+            changesNML.idSubFamilia = editedProduct.idSubFamilia
+            // console.log("Valores NML:", JSON.parse(JSON.stringify(changesNML)))
+            // console.log("tiene idSubFamilia:" + editedProduct.idSubFamilia)
+          }
+        },()=>{})
+      }
+  }
+
+  // setEditedProduct({
+  //   ...editedProduct,
+  //   idSubCategoria:0,
+  //   idFamilia:0,
+  //   idSubFamilia:0,
+  // })
+
+  const checkCambiosNML = ()=>{
+    // console.log("Valores NML:", JSON.parse(JSON.stringify(changesNML)))
+    const someChangesNML = checkChangeNML()
+
+
+    // console.log("someChangesNML:",someChangesNML)
+    if(someChangesNML!= ""){
+      switch(someChangesNML){
+        case "idCategoria":
+          cargarSubCategorias();
+        break;
+        case "idSubCategoria":
+          cargarFamilias();
+        break;
+        case "idFamilia":
+          cargarSubFamilias();
+        break;
+        default:
+          console.log("no cambio nada")
+          return
+        break
+      }
+
+      changesNML[someChangesNML] = editedProduct[someChangesNML]
+      // console.log("actualizando valor " + someChangesNML + " en NML:", changesNML)
     }
   }
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    if(Object.keys(editedProduct).length<1) return
+    console.log("cambio editedProduct")
+    console.log(editedProduct)
 
-
-  const fetchSubCategories = async () => {
-    console.log("fetchSubCategories")
-
-    if (selectedCategoryId && categories.length>0 ) {
-      try {
-        const categoriaCoincide = categories.find(categoria=> categoria.descripcion ===selectedCategoryId);
-        // console.log("categoriaCoincide:")
-        // console.log(categoriaCoincide)
-        const response = await axios.get(
-          `${apiUrl}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${categoriaCoincide.idCategoria}`
-        );
-        
-        console.log("subCategorias");
-        console.log(response.data.subCategorias);
-        setSubCategories(response.data.subCategorias);
-      } catch (error) {
-        console.error("Error fetching subcategories:", error);
-      }
-    // }else{
-    //   setTimeout(() => {
-    //     fetchSubCategories()
-    //   }, 100);
+    if(categories.length<1) {
+      cargarCategorias()
+    }else{
+      checkCambiosNML()
     }
-  };
-
-  useEffect(() => {
-
-    console.log("cambio selectedCategoryId")
-    console.log(selectedCategoryId)
-
-
-
-    fetchSubCategories();
-  }, [selectedCategoryId]);
-
-
-  const fetchFamilies = async () => {
-    console.log("fetchFamilies")
-
-    if (selectedSubCategoryId !== "" && selectedCategoryId !== "" && subcategories.length>0) {
-      try {
-        const categoriaCoincide = categories.find(categoria=> categoria.descripcion ===selectedCategoryId);
-        const subcategoriaCoincide = subcategories.find(sub=> sub.descripcion ===selectedSubCategoryId);
-        const response = await axios.get(
-          `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${subcategoriaCoincide.idSubcategoria}&CategoriaID=${categoriaCoincide.idCategoria}`
-        );
-
-        console.log("familias")
-        console.log(response.data.familias);
-        setFamilies(response.data.familias);
-      } catch (error) {
-        console.error("Error fetching Families:", error);
-      }
-    // }else{
-    //   setTimeout(() => {
-    //     fetchFamilies()
-    //   }, 100);
-    }
-  };
-
-  useEffect(() => {
-    console.log("cambio selectedSubCategoryId")
-    console.log(selectedSubCategoryId)
-
-
-
-    fetchFamilies();
-  }, [selectedSubCategoryId]);
-
-  const fetchSubFamilies = async () => {
-    console.log("fetchSubFamilies")
-
-    if (
-      selectedFamilyId !== "" &&
-      selectedCategoryId !== "" &&
-      selectedSubCategoryId !== "" &&
-      families.length>0
-    ) {
-      try {
-        const categoriaCoincide = categories.find(categoria=> categoria.descripcion ===selectedCategoryId);
-        const subcategoriaCoincide = subcategories.find(sub=> sub.descripcion ===selectedSubCategoryId);
-        const famcoincide = families.find(fam=> fam.descripcion ===selectedFamilyId);
-
-        const response = await axios.get(
-          `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${famcoincide.idFamilia}&SubCategoriaID=${subcategoriaCoincide.idSubcategoria}&CategoriaID=${categoriaCoincide.idCategoria}`
-        );
-
-        console.log("subFamilias:");
-        console.log(response.data.subFamilias);
-        setSubFamilies(response.data.subFamilias);
-      } catch (error) {
-        console.error("Error fetching SubFamilies:", error);
-      }
-    // }else{
-    //   setTimeout(() => {
-    //     fetchSubFamilies()
-    //   }, 100);
-    }
-  };
-
-  useEffect(() => {
-
-    console.log("cambio selectedFamilyId")
-    console.log(selectedFamilyId)
-
-
-    fetchSubFamilies();
-  }, [selectedFamilyId]);
-
-  // useEffect(() => {
-  //   const fetchProveedores = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         "https://www.easyposdev.somee.com/api/Proveedores/GetAllProveedores"
-  //       );
-  //       console.log("API response:", response.data.proveedores);
-  //       setProveedores(response.data.proveedores);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   fetchProveedores();
-  // }, []);
-
-  // useEffect(() => {
-  //   const fetchMarcas = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         "https://www.easyposdev.somee.com/api/Marcas/GetAllMarcas"
-  //       );
-  //       setMarcas(response.data.marcas);
-  //       console.log(response.data.marcas);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   fetchMarcas();
-  // }, [refresh]);
-
-  ////Datos iniciales de edicion
-
-  // useEffect(() => {
-  //   setSelectedMarcaId(editedProduct.marca || "");
-  // }, [editedProduct]);
-
-  // useEffect(() => {
-  //   setSelectedProveedorId(editedProduct.proveedor || "");
-  // }, [editedProduct]);
-
-  useEffect(() => {
-    // console.log("cambio editedproducto o categories.length")
     
-    if(categories.length>0 && Object.keys(editedProduct).length>0){
-      setSelectedCategoryId(editedProduct.categoria || "");
-    }
-
-    if(subcategories.length>0 && Object.keys(editedProduct).length>0){
-      setSelectedSubCategoryId(editedProduct.subCategoria || "");
-      // setSelectedFamilyId(editedProduct.familia || "");
-      // setSelectedSubFamilyId(editedProduct.subFamilia || "");
-        // console.log("cambio producto")
-        // console.log(editedProduct)
-        
-        // console.log("categories:")
-        // console.log(categories)
-    }
-
-    if(families.length>0 && Object.keys(editedProduct).length>0){
-      setSelectedFamilyId(editedProduct.familia || "");
-    }
-
-    if(subfamilies.length>0 && Object.keys(editedProduct).length>0){
-      setSelectedSubFamilyId(editedProduct.subFamilia || "");
-    }
-
   }, [
-    editedProduct, categories.length,
-    subcategories.length,
-    families.length,
-    subfamilies.length,
-
-
+    editedProduct,
+    // categories.length,
+    // subcategories.length,
+    // families.length,
+    // subfamilies.length,
   ]);
 
-
-
-  // useEffect(() => {
-  //   setSelectedSubCategoryId(editedProduct.subCategoria || "");
-  // }, [editedProduct]);
-
-  // useEffect(() => {
-  //   setSelectedFamilyId(editedProduct.familia || "");
-  // }, [editedProduct]);
-
-  // useEffect(() => {
-  //   setSelectedSubFamilyId(editedProduct.subFamilia || "");
-  // }, [editedProduct]);
-
   
- 
-  
- 
-
-  const handleFieldChange = (e) => {
-    // Update the edited product state on field change
-    const { name, value } = e.target;
-    setEditedProduct((prevProduct) => ({
-      ...prevProduct,
-      [name]: value,
-    }));
-  };
 
   const closeSuccessDialog = () => {
     setOpenErrorDialog(false);
@@ -302,102 +230,35 @@ const Editp2 = ({ product, open, handleClose }) => {
 
     
     event.preventDefault();
-    console.log("editedProduct")
-    console.log(editedProduct)    
+    
+    var nuevoObjetoActualizado = {
+      ...editedProduct,
+      tipoVenta: (esPesable ? 2 : 1)
+    };
 
-    console.log("categories")
-    console.log(categories)    
-
-
-    console.log("subcategories")
-    console.log(subcategories)    
-
-
-    console.log("families")
-    console.log(families)    
-
-
-    console.log("subfamilies")
-    console.log(subfamilies)    
-
-    if(categories.length<1 ||
-      subcategories.length<1 ||
-      families.length<1 ||
-      subfamilies.length<1 ){
-        alert("Completar las familias")
-        return
-    }
-
-    const idCategoria = categories.find(categoria=> categoria.descripcion ===editedProduct.categoria);
-    const idSubCategoriaFind = subcategories.find(scategoria=> scategoria.descripcion === editedProduct.subCategoria);
-    const idFamiliaFind = families.find(fam=> fam.descripcion === editedProduct.familia);
-    const idSubFamiliaFind = subfamilies.find(sf=> sf.descripcion === editedProduct.subFamilia)
-    console.log("idSubFamiliaFind")
-    console.log(idSubFamiliaFind)
-
-    if(idCategoria){
-      const idCategoriaFil = idCategoria.idCategoria;
-      const idSubCategoriaFil = idSubCategoriaFind.idSubcategoria;
-      const idFamiliaFil = idFamiliaFind.idFamilia;
-      const idSubFamiliaFil = idSubFamiliaFind.idSubFamilia;
-
-
-      var nuevoObjetoActualizado = {
-        ...editedProduct,
-        categoria: idCategoriaFil,
-        subCategoria: idSubCategoriaFil,
-        familia: idFamiliaFil,
-        subFamilia: idSubFamiliaFil,
-        tipoVenta: (esPesable ? 2 : 1)
-      };
-      console.log("putnuevoobjeto", nuevoObjetoActualizado);
-    }else{
-      var nuevoObjetoActualizado = {
-        ...editedProduct,
-      };
-    }
 
     nuevoObjetoActualizado.stockActual = parseInt(nuevoObjetoActualizado.stockActual)
-
-    try {
-      const response = await axios.put(
-      `${apiUrl}/ProductosTmp/UpdateProducto`, nuevoObjetoActualizado
-      );
-      console.log("API Response:", response.data);
-
-      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
-        console.log("Producto updated successfully:", response.data);
-        // setIsEditSuccessful(true);
-        setSuccessDialogOpen(true);
-        setSuccessMessage(response.data.message);
-        setRefresh((prevRefresh) => !prevRefresh);
-        handleClose();
-        window.location.reload(1)
-      }
-    } catch (error) {
-      console.error("Error updating producto:", error);
-      console.log("Full error object:", error);
-      console.log("Validation Errors:", error.response.data.errors);
-
-      if (error.response) {
-        console.log("Server Response:", error.response.data);
-      }
-
-      setErrorMessage(error.message);
+    
+    delete nuevoObjetoActualizado.categoria
+    delete nuevoObjetoActualizado.subCategoria
+    delete nuevoObjetoActualizado.familia
+    delete nuevoObjetoActualizado.subFamilia
+    
+    console.log("para enviar:", nuevoObjetoActualizado)
+    Product.getInstance().update(nuevoObjetoActualizado,(res)=>{
+      setSuccessDialogOpen(true);
+      setSuccessMessage(res.message);
+      handleClose();
+      window.location.reload(1)
+    },(err)=>{
+      setErrorMessage(err.message);
       setOpenErrorDialog(true);
-    }
-
-    console.log("Edited Product:", editedProduct);
-    // Additional logic to update the product in the database can be added here
+    })
   };
 
-
-
   const checkEsPesable = (e)=>{
-    
-    console.log("e")
-    console.log(e)
-
+    // console.log("e")
+    // console.log(e)
     setEsPesable(!esPesable)
   }
 
@@ -418,10 +279,10 @@ const Editp2 = ({ product, open, handleClose }) => {
               onChange={(e) => {
                 // setSelectedCategoryId(e.target.value);
                 // // setEditedProduct.categoria=e.target.value;
-                setEditedProduct((prevProduct) => ({
-                  ...prevProduct,
-                  nombre: e.target.value,
-                }));
+                // setEditedProduct((prevProduct) => ({
+                //   ...prevProduct,
+                //   nombre: e.target.value,
+                // }));
               }}
               fullWidth
             />
@@ -431,30 +292,34 @@ const Editp2 = ({ product, open, handleClose }) => {
             <InputLabel>Selecciona Categoría</InputLabel>
             <Select
               fullWidth
-              value={selectedCategoryId}
-              key={selectedCategoryId}
+              value={categories.length>0 ? editedProduct.idCategoria : 0}
               
               onChange={(e) => {
-                setEditedProduct((prevProduct) => ({
-                  ...prevProduct,
-                 
-                  categoria: e.target.value,
-                  // categoriaDes: e.target.name, // Update the categoria property
-                }));
+                console.log("antes de cambiar categoria el prod esta asi:", JSON.parse(JSON.stringify(editedProduct) ) )
+                setEditedProduct({
+                  ...editedProduct,
+                  // categoria: e.target.value,
+                  idCategoria: e.target.value,
+                  idSubCategoria: 0,
+                  idFamilia: 0,
+                  idSubFamilia: 0,
+                });
+                changesNML.idSubCategoria = 0
+                changesNML.idFamilia = 0
+                changesNML.idSubFamilia = 0
               }}
               label="Selecciona Categoría"
             >
               <MenuItem
-                  key={selectedCategoryId}
-                  value={editedProduct.categoria || ""}
-                  name={editedProduct.categoria}
-              >
-                {editedProduct.categoria}
-              </MenuItem>
-              {categories.map((category) => (
+                  key={0}
+                  value={0}
+                >
+                  SELECCIONAR CATEGORIA
+                </MenuItem>
+              {categories.map((category,ix) => (
                 <MenuItem
-                  key={category.idCategoria}
-                  value={category.descripcion}
+                  key={ix}
+                  value={category.idCategoria}
                 >
                   {category.descripcion}
                 </MenuItem>
@@ -466,25 +331,32 @@ const Editp2 = ({ product, open, handleClose }) => {
             <InputLabel>Selecciona Sub-Categoría</InputLabel>
             <Select
               fullWidth
-              value={editedProduct.subCategoria || ""}
+              // value={subcategories.length > 0 ? editedProduct.idSubCategoria : ""}
+              value={subcategories.length > 0 ? editedProduct.idSubCategoria : 0}
               onChange={(e) => {
-                setEditedProduct((prevProduct) => ({
-                  ...prevProduct,
-                  subCategoria: e.target.value,
-                }));
+                setEditedProduct({
+                  ...editedProduct,
+                  // categoria: e.target.value,
+                  idSubCategoria: e.target.value,
+                  idFamilia: 0,
+                  idSubFamilia: 0,
+                });
+
+                changesNML.idFamilia = 0
+                changesNML.idSubFamilia = 0
               }}
               label="Selecciona Sub-Categoría"
             >
               <MenuItem
-                key={editedProduct.id}
-                value={editedProduct.subCategoria || ""}
-              >
-                {editedProduct.subCategoria}
-              </MenuItem>
+                  key={0}
+                  value={0}
+                >
+                  SELECCIONAR SUBCATEGORIA
+                </MenuItem>
               {subcategories.map((subcategory) => (
                 <MenuItem
                   key={subcategory.idSubcategoria}
-                  value={subcategory.descripcion}
+                  value={subcategory.idSubcategoria}
                 >
                   {subcategory.descripcion}
                 </MenuItem>
@@ -496,25 +368,29 @@ const Editp2 = ({ product, open, handleClose }) => {
             <InputLabel>Selecciona Familia</InputLabel>
             <Select
               fullWidth
-              value={selectedFamilyId}
+              value={families.length>0 ? editedProduct.idFamilia : 0}
               onChange={(e) => {
-                setEditedProduct((prevProduct) => ({
-                  ...prevProduct,
-                  familia: e.target.value,
-                }));
+                setEditedProduct({
+                  ...editedProduct,
+                  // categoria: e.target.value,
+                  idFamilia: e.target.value,
+                  idSubFamilia: 0,
+                });
+                changesNML.idSubFamilia = 0
               }}
               label="Selecciona Familia"
             >
               <MenuItem
-                key={editedProduct.id}
-                value={editedProduct.familia || ""}
-              >
-                {editedProduct.familia}
-              </MenuItem>
+                  key={0}
+                  value={0}
+                >
+                  SELECCIONAR FAMILIA
+                </MenuItem>
+
               {families.map((family) => (
                 <MenuItem 
                 key={family.idFamilia} 
-                value={family.descripcion}>
+                value={family.idFamilia}>
                   {family.descripcion}
                 </MenuItem>
               ))}
@@ -525,25 +401,28 @@ const Editp2 = ({ product, open, handleClose }) => {
             <InputLabel>Selecciona Sub Familia</InputLabel>
             <Select
               fullWidth
-              value={selectedSubFamilyId}
+              value={subfamilies.length>0 ? editedProduct.idSubFamilia : 0}
               onChange={(e) => {
-                setEditedProduct((prevProduct) => ({
-                  ...prevProduct,
-                  subFamilia: e.target.value,
-                }));
+                console.log("antes de cambiar subfamilia el prod esta asi:", JSON.parse(JSON.stringify(editedProduct) ) )
+                setEditedProduct({
+                  ...editedProduct,
+                  // categoria: e.target.value,
+                  idSubFamilia: e.target.value,
+                });
               }}
               label="Selecciona SubFamilia"
             >
-              <MenuItem
-                key={editedProduct.id}
-                value={editedProduct.subFamilia || ""}
-              >
-                {editedProduct.subFamilia}
-              </MenuItem>
+
+                <MenuItem
+                  key={0}
+                  value={0}
+                >
+                  SELECCIONAR SUBFAMILIA
+                </MenuItem>
               {subfamilies.map((subfamily) => (
                 <MenuItem
                   key={subfamily.idSubFamilia}
-                  value={subfamily.descripcion}
+                  value={subfamily.idSubFamilia}
                 >
                   {subfamily.descripcion}
                 </MenuItem>
@@ -616,7 +495,9 @@ const Editp2 = ({ product, open, handleClose }) => {
               <input
                 type="checkbox"
                 checked={esPesable}
-                // onChange={checkEsPesable}
+
+                onChange={()=>{ } }
+
                 onClick={checkEsPesable}
                 style={{
                   marginTop:"40px",
