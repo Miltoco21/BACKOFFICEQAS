@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 
 const BaseConfig =  {
     shopName:'EasyPOSLite',
-    urlBase : "https://www.easyposdev.somee.com/api",//sin la ultima /
+    urlBase : (import.meta.env.VITE_URL_BASE),
     sesionStart: dayjs().format('DD/MM/YYYY-HH:mm:ss'),
     sesionExprire: 2 * 60 * 1000, //en milisegundos
     margenGanancia: 30, //en %
