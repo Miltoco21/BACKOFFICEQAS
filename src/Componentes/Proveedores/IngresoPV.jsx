@@ -34,7 +34,10 @@ import User from "../../Models/User";
 import Proveedor from "../../Models/Proveedor";
 import { Check, Dangerous } from "@mui/icons-material";
 
-const IngresoPV = ({ onClose }) => {
+const IngresoPV = ({ 
+  onClose,
+  onFinish
+ }) => {
   const apiUrl = ModelConfig.get().urlBase;
   
   const [rut, setRut] = useState("");
@@ -429,6 +432,8 @@ const IngresoPV = ({ onClose }) => {
           setTimeout(() => {
             onClose(); ////Cierre Modal al finalizar
           }, 2000);
+
+          onFinish()
         }
       } catch (error) {
         console.error(error);

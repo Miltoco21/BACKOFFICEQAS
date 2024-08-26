@@ -44,7 +44,9 @@ import ModelConfig from "../../Models/ModelConfig";
 
 const ITEMS_PER_PAGE = 10;
 
-const SearchListProveedores = () => {
+const SearchListProveedores = ({
+  doReload
+}) => {
   const apiUrl = ModelConfig.get().urlBase;
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -185,6 +187,10 @@ const SearchListProveedores = () => {
       console.log(error);
     }
   }
+
+  useEffect(() => {
+    fetchProveedores();
+  }, [doReload]);
 
   useEffect(() => {
     fetchProveedores();

@@ -15,7 +15,8 @@ const Proveedores = () => {
   const [openCL, setOpenCL] = useState(false);
   const text = "Proveedores";
   const uppercaseText = text.toUpperCase();
-
+  const [reloadProvs, setReloadProvs] = useState(false);
+  
   const handleOpenModal = () => {
     setOpen(true);
   };
@@ -31,6 +32,10 @@ const Proveedores = () => {
   const handleCloseModalCL = () => {
     setOpenCL(false);
   };
+
+  const addSuccess = ()=>{
+    setReloadProvs(!reloadProvs)
+  }
 
   return (
     <div style={{ display: "flex" }}>
@@ -62,7 +67,7 @@ const Proveedores = () => {
           CLIENTES
         </Button> */}
 
-        <SearchListProveedores />
+        <SearchListProveedores doReload={reloadProvs}/>
 
         <Box />
 
@@ -82,7 +87,7 @@ const Proveedores = () => {
               maxWidth: "180vw",
             }}
           >
-            <IngresoPV onClose={handleCloseModal} />
+            <IngresoPV onClose={handleCloseModal} onFinish={addSuccess} />
           </Box>
         </Modal>
 
