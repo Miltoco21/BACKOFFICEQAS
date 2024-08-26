@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
   Box,
@@ -25,10 +25,19 @@ import ModelConfig from "../../Models/ModelConfig";
 import { AttachMoney, Percent } from "@mui/icons-material";
 import PreciosGeneralesProducItem from "./PreciosGeneralesProducItem";
 import Product from "../../Models/Product";
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
 export const defaultTheme = createTheme();
 
 const PreciosGenerales = ({ onClose }) => {
+
+
+  const {
+    showLoading,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
+
+
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState([]);
   
@@ -57,17 +66,67 @@ const PreciosGenerales = ({ onClose }) => {
       return;
     }
 
+
+
+    // Product.getInstance().findByDescription({
+    //   description: searchTerm
+    // },(prods)=>{
+    //   setProducts(prods);
+    // },(error)=>{
+    //   console.error("Error al buscar el producto:", error);
+    //   setErrorMessage("Error al buscar el producto");
+    //   setOpenSnackbar(true);
+    // })
+
+
+
+
+
+    showLoading("haciendo busqueda por descripcion")
     Product.getInstance().findByDescription({
       description: searchTerm
-    },(prods)=>{
-      setProducts(prods);
-    },(error)=>{
+    }, (prods)=>{
+      if(prods.length<1){
+        showLoading("haciendo busqueda por codigo")
+        Product.getInstance().findByCodigoBarras({
+          codigoProducto: searchTerm
+        }, (prods)=>{
+          // setFilteredProducts(prods);
+          // setProduct(prods);
+          // setFilteredProducts(prods);
+          // setPageCount(prods);
+          setProducts(prods);
+          hideLoading()
+        }, (error)=>{
+          hideLoading()
+
+          console.error("Error al buscar el producto:", error);
+          setErrorMessage("Error al buscar el producto");
+          setOpenSnackbar(true);
+
+
+        })
+      }else{
+        setProducts(prods);
+        hideLoading()
+      }
+    }, (error)=>{
+
+      hideLoading()
       console.error("Error al buscar el producto:", error);
       setErrorMessage("Error al buscar el producto");
       setOpenSnackbar(true);
     })
 
   };
+
+  const checkEnterSearch = (e)=>{
+    if(e.keyCode == 13){
+      // console.log("apreto enter")
+      handleSearchButtonClick()
+    }
+  }
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -120,6 +179,9 @@ const PreciosGenerales = ({ onClose }) => {
                   placeholder="Ingresa Búsqueda"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e)=>{
+                    checkEnterSearch(e)
+                  }}
                 />
                 <Button
                   sx={{

@@ -101,6 +101,17 @@ class System {
         return JSON.parse(JSON.stringify(obj) )
     }
 
+    static getUrlVars(){
+        var allStr = window.location.href
+        var [location,allLast] = allStr.split("?")
+        var vars = {}
+        allLast.split("&").forEach((nameValue)=>{
+            const [name, value] = nameValue.split("=")
+            vars[name] = value
+        })
+        return vars
+    }
+
 }
 
 

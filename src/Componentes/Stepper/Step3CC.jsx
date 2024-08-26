@@ -110,10 +110,10 @@ const Step3CC = ({ data, onNext, stepData }) => {
       respuestaSINO:"NO",
       pesoSINO: (esPesable ? "SI" : "NO"),
       marca: data.marca,
-      categoriaID: data.selectedCategoryId || 0, // Utilizamos 0 si el valor es undefined
-      subCategoriaID: data.selectedSubCategoryId || 0,
-      familiaID: data.selectedFamilyId || 0,
-      subFamilia: data.selectedSubFamilyId || 0,
+      categoriaID: data.categoryId || 0, // Utilizamos 0 si el valor es undefined
+      subCategoriaID: data.subCategoryId || 0,
+      familiaID: data.familyId || 0,
+      subFamilia: data.subFamilyId || 0,
       nombre: data.nombre, // Debes proporcionar un valor adecuado aquí
     };
 

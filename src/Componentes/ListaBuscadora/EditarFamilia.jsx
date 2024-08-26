@@ -18,10 +18,7 @@ import {
 import ModelConfig from "../../Models/ModelConfig";
 
 const EditarFamilia = ({ open, handleClose, family, fetchFamilies }) => {
-  const [editFamily, setEditFamily] = useState({
-    idFamilia: "",
-    descripcion: "", // Use the same property name as in the family object
-  });
+  const [editFamily, setEditFamily] = useState({});
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -31,8 +28,15 @@ const EditarFamilia = ({ open, handleClose, family, fetchFamilies }) => {
   const apiUrl = ModelConfig.get().urlBase;
 
   useEffect(() => {
+
+    console.log("llega asi")
+    console.log(family)
+
+
     if (family) {
       setEditFamily({
+        idCategoria: family.idCategoria || 0,
+        idSubcategoria: family.idSubcategoria || 0,
         idFamilia: family.idFamilia || 0,
         descripcion: family.descripcion || "", // Use the same property name as in the family object
       });
@@ -49,15 +53,16 @@ const EditarFamilia = ({ open, handleClose, family, fetchFamilies }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    const toSend = {
+      idCategoria: editFamily.idCategoria || 0,
+      idSubcategoria: editFamily.idSubcategoria || 0,
+      idFamilia: editFamily.idFamilia,
+      descripcionFamilia: editFamily.descripcion,
+    }
+    console.log("para enviar:", toSend)
     try {
       const response = await axios.put(
-        ModelConfig.get().urlBase + `/NivelMercadoLogicos/UpdateFamilia`,
-        {
-          idFamilia: editFamily.idFamilia,
-          descripcionFamilia: editFamily.descripcion,
-        }
-      );
+        ModelConfig.get().urlBase + `/NivelMercadoLogicos/UpdateFamilia`,toSend);
 
       if (response.status === 200) {
         console.log("Familia updated successfully:", response.data);
@@ -110,12 +115,6 @@ const EditarFamilia = ({ open, handleClose, family, fetchFamilies }) => {
         >
           <h2 id="modal-modal-title">Editar Familia</h2>
           <form onSubmit={handleSubmit}>
-            {/* <TextField
-              label="ID Familia"
-              name="idFamilia"
-              value={editFamily.idFamilia}
-              InputProps={{ readOnly: true }}
-            /> */}
             <TextField
               label="Descripcion"
               name="descripcion"

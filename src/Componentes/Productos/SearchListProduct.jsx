@@ -33,6 +33,7 @@ import ModelConfig from "../../Models/ModelConfig";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import Product from "../../Models/Product";
 import SearchListProductItem from "./SearchListProductItem";
+import System from "../../Helpers/System";
 
 
 const ITEMS_PER_PAGE = 10;
@@ -76,6 +77,14 @@ const SearchListProducts = () => {
    const fetchProduct = async () => {
       console.log("Cargando productos...")
       showLoading("Cargando productos...")
+
+      // console.log("vars:", System.getUrlVars())
+      var urlVars = System.getUrlVars()
+      if(urlVars.search != ""){
+        doSearch(urlVars.search)
+        return
+      }
+
       try {
         const response = await axios.get(
           apiUrl + "/ProductosTmp/GetProductosPaginados?pageNumber="  + currentPage + "&rowPage=10"
@@ -126,14 +135,24 @@ const SearchListProducts = () => {
   // }, []);
 
 
-  const doSearch = ()=>{
-    if(searchTerm == "")return
+  const doSearch = (replaceSearch = "")=>{
+    if(searchTerm == "" && replaceSearch == "")return
+
+    
+    var txtSearch = searchTerm
+    if(txtSearch == "") {
+      txtSearch = replaceSearch
+      setSearchTerm(replaceSearch)
+    }
+
+
     console.log("hace busqueda")
     showLoading("haciendo busqueda por descripcion")
+    
       
     
-      Product.getInstance().findByDescription({
-        description: searchTerm
+      Product.getInstance().findByDescriptionPaginado({
+        description: txtSearch,canPorPagina: 10,pagina:currentPage
       }, (prods)=>{
         // setFilteredProducts(prods);
         // setProduct(prods);
@@ -143,7 +162,7 @@ const SearchListProducts = () => {
         if(prods.length<1){
           showLoading("haciendo busqueda por codigo")
           Product.getInstance().findByCodigoBarras({
-            codigoProducto: searchTerm
+            codigoProducto: txtSearch
           }, (prods)=>{
             // setFilteredProducts(prods);
             // setProduct(prods);
@@ -168,10 +187,6 @@ const SearchListProducts = () => {
         hideLoading()
         setHasResult(false)
       })
-
-      // setPageCount(filtered.length);
-      setCurrentPage(1); // Reset to first page on search
-      
   }
   // useEffect(() => {
     // const filtered = product.filter(
@@ -209,19 +224,19 @@ const SearchListProducts = () => {
     // const endIndex = startIndex + ITEMS_PER_PAGE;
     // const currentProducts = filteredProducts.slice(startIndex, endIndex);
     // setPageProduct(currentProducts);
-    fetchProduct()
+    if(searchTerm.trim() == ""){
+      fetchProduct()
+    }else{
+      console.log("tiene algo para buscar")
+      doSearch()
+    }
+
+    console.log("cambio de pagina")
   }, [
     currentPage
-    //, filteredProducts, refresh
     ]);
 
-  useEffect(() => {
-    if (openSnackbar) {
-      setTimeout(() => {
-        setOpenSnackbar(false);
-      }, 3000); // Cierra el Snackbar después de 3 segundos
-    }
-  }, [openSnackbar]);
+
 
   const handleDelete = async (id) => {
     try {
@@ -238,6 +253,7 @@ const SearchListProducts = () => {
         setSnackbarMessage("Producto eliminado correctamente");
         setOpenSnackbar(true); // Establecer openSnackbar en true
         setRefresh((prevRefresh) => !prevRefresh); // Actualizar la lista después de la eliminación
+        window.location.reload(1)
       } else {
         setSnackbarMessage("Error al eliminar el producto");
       }
@@ -256,17 +272,15 @@ const SearchListProducts = () => {
   }, [refresh]);
 
 
+
+    
   useEffect(() => {
-    let timeout;
     if (openSnackbar) {
-      timeout = setTimeout(() => {
+      setTimeout(() => {
         setOpenSnackbar(false);
-      }, 3000);
+      }, 3000); // Cierra el Snackbar después de 3 segundos
     }
-    return () => clearTimeout(timeout);
   }, [openSnackbar]);
-
-
 
   const handleEdit = (product) => {
     console.log("Edit button pressed for product:", product);
@@ -389,6 +403,7 @@ const SearchListProducts = () => {
         showFirstButton
         showLastButton
       />
+
       {openEditModal && selectedProduct && (
         <Editp2
           product={selectedProduct}

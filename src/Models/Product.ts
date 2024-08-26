@@ -185,18 +185,28 @@ class Product extends Model{
           }
     }
 
-    async findPreVenta(data,callbackOk, callbackWrong){
+    async findByDescriptionPaginado({
+        description,
+        codigoCliente,
+        canPorPagina = 10,
+        pagina = 1
+    },callbackOk, callbackWrong){
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase +
-            "/Ventas/PreVentaGET"
-            const response = await axios.post(url,data);
+            "/ProductosTmp/GetProductosByDescripcionPaginado?descripcion=" + (description+"")
+            if(codigoCliente){
+                url += "&codigoCliente=" + codigoCliente
+            }
+            url += "&pageNumber=" + pagina
+            url += "&rowPage=" + canPorPagina
+            const response = await axios.get(url);
             if(
                 response.data.statusCode == 200
                 || response.data.statusCode == 201
 
             ){
-                callbackOk(response.data.preventa[0].products, response.data);
+                callbackOk(response.data.productos, response);
             }else{
                callbackWrong("respuesta incorrecta del servidor") 
             }

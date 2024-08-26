@@ -33,8 +33,13 @@ const EditarSubFamilia = ({
   const apiUrl = ModelConfig.get().urlBase;
 
   useEffect(() => {
+    console.log("subfamily:")
+    console.log(subfamily)
     if (subfamily) {
       setEditSubFamily({
+        idCategoria: subfamily.idCategoria || 0,
+        idSubcategoria: subfamily.idSubcategoria || 0,
+        idFamilia: subfamily.idFamilia || 0,
         idSubFamilia: subfamily.idSubFamilia || 0,
         descripcion: subfamily.descripcion || "",
       });
@@ -56,6 +61,9 @@ const EditarSubFamilia = ({
       const response = await axios.put(
         `${apiUrl}/NivelMercadoLogicos/UpdateSubFamilia`,
         {
+          idCategoria: editSubFamily.idCategoria,
+          idSubcategoria: editSubFamily.idSubcategoria,
+          idFamilia: editSubFamily.idFamilia,
           idSubFamilia: editSubFamily.idSubFamilia,
           descripcionSubFamilia: editSubFamily.descripcion,
         }

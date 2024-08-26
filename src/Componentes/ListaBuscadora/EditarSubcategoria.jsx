@@ -22,23 +22,25 @@ const EditarSubCategoria = ({
   handleClose,
   fetchSubcategories,
 }) => {
-  const [editSubCategory, setEditSubCategory] = useState({
-    idSubCategoria: "",
-    descripcionSubCategoria: "",
-  });
+  const [editSubCategory, setEditSubCategory] = useState({});
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [refresh, setRefresh] = useState(false);
   const apiUrl = ModelConfig.get().urlBase;
   useEffect(() => {
+    console.log("trae")
+    console.log(subcategory)
+
     if (subcategory) {
       console.log("Subcategory:", subcategory);
       setEditSubCategory({
-        idSubCategoria: subcategory.idCategoria || 0,
+        idCategoria: subcategory.idCategoria || 0,
+        idSubCategoria: subcategory.idSubcategoria || 0,
         descripcionSubCategoria: subcategory.descripcion || "",
       });
     }
+
   }, [subcategory]);
 
   useEffect(() => {
@@ -58,13 +60,8 @@ const EditarSubCategoria = ({
   const handleSubmit = async (event) => {
     event.preventDefault();
   
-    const dataToSend = {
-      idSubCategoria: editSubCategory.idSubCategoria,
-      descripcionSubCategoria: editSubCategory.descripcionSubCategoria,
-    };
-  
+    const dataToSend = editSubCategory
     console.log("Datos que se enviarán al servidor:", dataToSend);
-  
     try {
       const response = await axios.put(
         `${apiUrl}/NivelMercadoLogicos/UpdateSubCategoria`,
@@ -110,13 +107,6 @@ const EditarSubCategoria = ({
         >
           <h2 id="modal-modal-title">Editar Sub-Categoria</h2>
           <form onSubmit={handleSubmit}>
-            <TextField
-            sx={{display:"none"}}
-              label="ID SubCategoria"
-              name="idSubCategoria"
-              value={editSubCategory.idSubCategoria}
-              InputProps={{ readOnly: true }}
-            />
             <TextField
               label="Descripcion"
               name="descripcionSubCategoria"
