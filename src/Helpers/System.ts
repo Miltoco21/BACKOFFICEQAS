@@ -103,6 +103,9 @@ class System {
 
     static getUrlVars(){
         var allStr = window.location.href
+        if(allStr.indexOf("?") == -1){
+            return {}
+        }
         var [location,allLast] = allStr.split("?")
         var vars = {}
         allLast.split("&").forEach((nameValue)=>{

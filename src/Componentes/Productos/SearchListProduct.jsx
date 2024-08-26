@@ -75,16 +75,16 @@ const SearchListProducts = () => {
   };
 
    const fetchProduct = async () => {
+     // console.log("vars:", System.getUrlVars())
+     var urlVars = System.getUrlVars()
+     if(urlVars.search != undefined){
+       console.log("cae aca")
+       doSearch(urlVars.search)
+       return
+      }
+      
       console.log("Cargando productos...")
       showLoading("Cargando productos...")
-
-      // console.log("vars:", System.getUrlVars())
-      var urlVars = System.getUrlVars()
-      if(urlVars.search != ""){
-        doSearch(urlVars.search)
-        return
-      }
-
       try {
         const response = await axios.get(
           apiUrl + "/ProductosTmp/GetProductosPaginados?pageNumber="  + currentPage + "&rowPage=10"

@@ -24,9 +24,9 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ModelConfig from "../../Models/ModelConfig";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
-import { Check, Dangerous, Percent } from "@mui/icons-material";
 
-import User  from "./../../Models/User";
+import InputRutUsuario from "../Elements/Compuestos/InputRutUsuario";
+import Validator from "../../Helpers/Validator";
 export const defaultTheme = createTheme();
 
 export default function IngresoUsuarios({ onClose}) {
@@ -44,7 +44,6 @@ export default function IngresoUsuarios({ onClose}) {
   const [telefono, setTelefono] = useState("");
   const [direccion, setDireccion] = useState("");
   const [codigoPostal, setCodigoPostal] = useState("");
-  const [rut, setRut] = useState("");
   const [codigoUsuario, setCodigoUsuario] = useState("");
   const [clave, setClave] = useState("");
   const [remuneracion, setRemuneracion] = useState("");
@@ -57,8 +56,8 @@ export default function IngresoUsuarios({ onClose}) {
   const [rolesOptions, setRolesOptions] = useState([]);
   const [selectedRol, setSelectedRol] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rutOk, setRutOk] = useState(null);
-
+  
+  const stateRut = useState("")
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -70,8 +69,6 @@ export default function IngresoUsuarios({ onClose}) {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-
-
 
   useEffect(() => {
     const fetchRegions = async () => {
@@ -144,40 +141,20 @@ export default function IngresoUsuarios({ onClose}) {
     }));
   };
 
-  const validarRutChileno = (rut) => {
-    if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rut)) {
-      return false;
-    }
-
-    const partesRut = rut.split("-");
-    const digitoVerificador = partesRut[1].toUpperCase();
-    const numeroRut = partesRut[0];
-    if (numeroRut.length < 7) {
-      return false;
-    }
-
-    const calcularDigitoVerificador = (T) => {
-      let M = 0;
-      let S = 1;
-      for (; T; T = Math.floor(T / 10)) {
-        S = (S + (T % 10) * (9 - (M++ % 6))) % 11;
-      }
-      return S ? String(S - 1) : "K";
-    };
-
-    return calcularDigitoVerificador(numeroRut) === digitoVerificador;
-  };
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const errors = [];
+
+    const [rut] = stateRut
 
     //Validaciones
     if (!rut) {
       errors.rut = "Favor completar rut ";
       showMessage("Favor completar rut ")
       return false
-    } else if (!validarRutChileno(rut)) {
+    } else if (!Validator.isRutChileno(rut)) {
       errors.rut = "El RUT ingresado NO es válido.";
       showMessage("El RUT ingresado NO es válido.")
       return false
@@ -233,18 +210,7 @@ export default function IngresoUsuarios({ onClose}) {
       showMessage("Favor completar codigo postal ")
       return false
     }
-    if (!rut) {
-      errors.rut = "Favor completar rut ";
-      showMessage("Favor completar rut ")
-      showMessage("Favor completar rut ")
-      return false
-    }
-    if (!validarRutChileno(rut)) {
-      errors.rut = "El RUT ingresado NO es válido.";
-      showMessage("El RUT ingresado NO es válido.")
-      showMessage("El RUT ingresado NO es válido.")
-      return false
-    }
+
     if (!selectedRol) {
       errors.selectedRol = "Favor completar rol";
       showMessage("Favor completar rol")
@@ -346,28 +312,6 @@ export default function IngresoUsuarios({ onClose}) {
     setSnackbarMessage("");
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
-    setModalContent("");
-    setNombre("");
-    setApellido("");
-    setCorreo("");
-    setTelefono("");
-    setDireccion("");
-    setSelectedRegion("");
-    setSelectedComuna("");
-    setSelectedRol("");
-    setCodigoPostal("");
-    setRut("");
-    setCodigoUsuario("");
-    setClave("");
-    setRemuneracion("");
-    setCredito("");
-    setErrores({});
-    setIsEditing(false);
-    setUserId(null);
-  };
-
   const handleNumericKeyDown = (event) => {
     if(event.key == "Tab"){
       return
@@ -426,32 +370,7 @@ export default function IngresoUsuarios({ onClose}) {
       event.preventDefault();
     }
   };
-  const handleRUTKeyDown = (event) => {
-    if(event.key == "Tab"){
-      return
-    }
-    const key = event.key;
-    const input = event.target.value;
   
-    // Permitir números (0-9), guion (-), backspace y delete
-    if (
-     !isNaN(key) || // números
-      key === 'Backspace' || // backspace
-      key === 'Delete' || // delete
-      (key === '-' && !input.includes('-')) ||// guion y no hay guion previamente
-      (key === 'k' && !input.includes('k')) // guion y no hay guion previamente
-    ) {
-      // Permitir la tecla
-    } else {
-      // Prevenir cualquier otra tecla
-      event.preventDefault();
-    }
-  
-    // Prevenir espacios iniciales y asegurar que el cursor no esté en la posición inicial
-    if (key === ' ' && (input.length === 0 || event.target.selectionStart === 0)) {
-      event.preventDefault();
-    }
-  };
 
   const handleTextOnlyKeyDown = (event) => {
     if(event.key == "Tab"){
@@ -479,37 +398,6 @@ export default function IngresoUsuarios({ onClose}) {
     }
   };
 
-
-  useEffect(()=>{
-    console.log("cambio rutOk")
-    console.log(rutOk)
-
-  },[rutOk])
-  
-  
-  const checkRut = ()=>{
-    // console.log("checkRut")
-    if(rut === "") return
-
-    User.getInstance().existRut({
-      rut
-    },(usuarios)=>{
-      // console.log(usuarios)
-      if(usuarios.length>0){
-        showMessage("Ya existe el rut ingresado")
-        setRutOk(false)
-      }else{
-        showMessage("Rut disponible")
-        setRutOk(true)
-      }
-    }, (err)=>{
-      console.log(err)
-      if(err.response.status == 404){
-        showMessage("Rut disponible")
-        setRutOk(true)
-      }
-    })
-  }
   return (
     <div style={{ overflow: "auto" }}>
         <Paper elevation={16} square>
@@ -528,42 +416,10 @@ export default function IngresoUsuarios({ onClose}) {
             {/* </Grid> */}
 
             <Grid item xs={12} md={4}>
-              <InputLabel sx={{ marginBottom: "2%", }}>
-                Ingresa rut sin puntos y con guión
-              </InputLabel>
-              <TextField
-                fullWidth
-                margin="normal"
-                required
-                id="rut"
-                label="ej: 11111111-1"
-                name="rut"
-                autoFocus
-                autoComplete="rut"
-                value={rut}
-                onChange={(e) => setRut(e.target.value)}
-                onKeyDown={handleRUTKeyDown}
-                onBlur={checkRut}
-
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="end">
-                      <Check sx={{
-                        color:"#06AD16",
-                        display: (rutOk && rut!="" ? "flex" : "none"),
-                        marginRight:"10px"
-                      }} />
-      
-                      <Dangerous sx={{
-                        color:"#CD0606",
-                        display: ( ( rutOk === false ) ? "flex" : "none")
-                      }} />
-                    </InputAdornment>
-                  ),
-                }}
-
-
+              <InputRutUsuario 
+                rutStateControl={stateRut}
               />
+              
             </Grid>
             <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
