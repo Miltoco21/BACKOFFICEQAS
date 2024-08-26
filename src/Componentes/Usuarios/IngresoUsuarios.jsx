@@ -369,6 +369,9 @@ export default function IngresoUsuarios({ onClose}) {
   };
 
   const handleNumericKeyDown = (event) => {
+    if(event.key == "Tab"){
+      return
+    }
     const key = event.key;
     const input = event.target.value;
   
@@ -391,6 +394,9 @@ export default function IngresoUsuarios({ onClose}) {
   };
   
   const handleTextKeyDown = (event) => {
+    if(event.key == "Tab"){
+      return
+    }
     const key = event.key;
     const input = event.target.value;
   
@@ -421,6 +427,9 @@ export default function IngresoUsuarios({ onClose}) {
     }
   };
   const handleRUTKeyDown = (event) => {
+    if(event.key == "Tab"){
+      return
+    }
     const key = event.key;
     const input = event.target.value;
   
@@ -445,6 +454,9 @@ export default function IngresoUsuarios({ onClose}) {
   };
 
   const handleTextOnlyKeyDown = (event) => {
+    if(event.key == "Tab"){
+      return
+    }
     const key = event.key;
     const input = event.target.value;
   
