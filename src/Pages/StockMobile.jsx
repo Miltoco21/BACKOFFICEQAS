@@ -23,6 +23,11 @@ const StockMobile = () => {
 
   const [open, setOpen] = useState(false);
   const [openAdd, setopenAdd] = useState(false);
+  const [openEdit, setopenEdit] = useState(false);
+
+  const [productoEdit, setProductEdit] = useState(null);
+
+
 
   const [open2, setOpen2] = useState(false);
 
@@ -58,9 +63,13 @@ const StockMobile = () => {
           Product.getInstance().findByCodigoBarras({
             codigoProducto: txtSearch
           }, (res)=>{
-
+            console.log("res", res)
             if(res.cantidadRegistros>0){
               showMessage("existe el producto")
+
+              setProductEdit(res.productos[0])
+              setopenEdit(true)
+
             }else{
               showMessage("no existe el producto")
               setopenAdd(true)
@@ -95,7 +104,7 @@ const StockMobile = () => {
               width:"250px",
             }}
             margin="dense"
-            label="Buscar productos..."
+            label="Buscar codigo"
             value={searchTerm}
             onChange={(e)=>setSearchTerm(e.target.value)}
             onKeyDown={(e)=>{
@@ -121,16 +130,20 @@ const StockMobile = () => {
         <Modal open={open} onClose={handleCloseStepper}>
           <Box
             sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
+              // position: "absolute",
+              // top: "50%",
+              // left: "50%",
+              // transform: "translate(-50%, -50%)",
               bgcolor: "background.paper",
               boxShadow: 24,
-              p: 4,
+              // p: 4,
               overflow: "auto", // Added scrollable feature
-              maxHeight: "100vh", // Adjust as needed
-              maxWidth: "180vw", // Adjust as needed
+              // maxHeight: "100vh", // Adjust as needed
+              // maxWidth: "180vw", // Adjust as needed
+              height:"40%",
+              paddingTop:"10px",
+              width:"85%",
+              margin:"2.5% auto"
             }}
           >
            <StepperSI/> 
@@ -151,9 +164,9 @@ const StockMobile = () => {
               overflow: "auto", // Added scrollable feature
               // maxHeight: "100vh", // Adjust as needed
               // maxWidth: "180vw", // Adjust as needed
-              height:"90%",
+              height:"40%",
               paddingTop:"10px",
-              width:"55%",
+              width:"85%",
               margin:"2.5% auto"
             }}
           >
@@ -174,9 +187,9 @@ const StockMobile = () => {
               overflow: "auto", // Added scrollable feature
               // maxHeight: "100vh", // Adjust as needed
               // maxWidth: "180vw", // Adjust as needed
-              height:"90%",
+              height:"40%",
               paddingTop:"10px",
-              width:"55%",
+              width:"85%",
               margin:"2.5% auto"
             }}
           >
@@ -208,6 +221,36 @@ const StockMobile = () => {
 
           </Box>
         </Modal>
+
+        <Modal open={openEdit} onClose={()=>{ setopenEdit(false)}}>
+          <Box
+            sx={{
+              // position: "absolute",
+              // top: "50%",
+              // left: "50%",
+              // transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              // p: 4,
+              overflow: "auto", // Added scrollable feature
+              // maxHeight: "100vh", // Adjust as needed
+              // maxWidth: "180vw", // Adjust as needed
+              height:"40%",
+              paddingTop:"10px",
+              width:"85%",
+              margin:"2.5% auto"
+            }}
+          >
+            <Editp2
+              product={productoEdit}
+              open={openEdit}
+              handleClose={()=>{
+                setopenEdit(false)
+              }}
+            />
+          </Box>
+        </Modal>
+
     </div>
   );
 };
