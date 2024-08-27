@@ -277,12 +277,10 @@ const Editp2 = ({ product, open, handleClose }) => {
               label="Nombre Producto"
               value={editedProduct.nombre || ""}
               onChange={(e) => {
-                // setSelectedCategoryId(e.target.value);
-                // // setEditedProduct.categoria=e.target.value;
-                // setEditedProduct((prevProduct) => ({
-                //   ...prevProduct,
-                //   nombre: e.target.value,
-                // }));
+                setEditedProduct({
+                  ...editedProduct,
+                  nombre: e.target.value,
+                });
               }}
               fullWidth
             />
