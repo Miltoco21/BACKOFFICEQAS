@@ -11,7 +11,7 @@ import StepperSI from "../Componentes/Stepper/StepperSI";
 import { HorizontalSplit } from "@mui/icons-material";
 import Product from "../Models/Product";
 import { TextField } from "@mui/material";
-import Editp2 from "../Productos/Editp2";
+import Editp2 from "./../Componentes/Productos/Editp2";
 
 const StockMobile = () => {
 
