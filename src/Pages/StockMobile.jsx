@@ -223,13 +223,15 @@ const StockMobile = () => {
           </Box>
         </Modal>
 
-        <Editp2
-          product={productoEdit}
-          open={openEdit}
-          handleClose={()=>{
-            setopenEdit(false)
-          }}
-        />
+          {(productoEdit && (
+            <Editp2
+            product={productoEdit}
+            open={openEdit}
+            handleClose={()=>{
+              setopenEdit(false)
+            }}
+            />
+          ))}
           
     </div>
   );
