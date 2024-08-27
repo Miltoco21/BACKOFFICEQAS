@@ -141,7 +141,7 @@ const StockMobile = () => {
               overflow: "auto", // Added scrollable feature
               // maxHeight: "100vh", // Adjust as needed
               // maxWidth: "180vw", // Adjust as needed
-              height:"40%",
+              height:"80%",
               paddingTop:"10px",
               width:"85%",
               margin:"2.5% auto"
@@ -165,7 +165,7 @@ const StockMobile = () => {
               overflow: "auto", // Added scrollable feature
               // maxHeight: "100vh", // Adjust as needed
               // maxWidth: "180vw", // Adjust as needed
-              height:"40%",
+              height:"80%",
               paddingTop:"10px",
               width:"85%",
               margin:"2.5% auto"
@@ -223,35 +223,14 @@ const StockMobile = () => {
           </Box>
         </Modal>
 
-        <Modal open={openEdit} onClose={()=>{ setopenEdit(false)}}>
-          <Box
-            sx={{
-              // position: "absolute",
-              // top: "50%",
-              // left: "50%",
-              // transform: "translate(-50%, -50%)",
-              bgcolor: "background.paper",
-              boxShadow: 24,
-              // p: 4,
-              overflow: "auto", // Added scrollable feature
-              // maxHeight: "100vh", // Adjust as needed
-              // maxWidth: "180vw", // Adjust as needed
-              height:"40%",
-              paddingTop:"10px",
-              width:"85%",
-              margin:"2.5% auto"
-            }}
-          >
-            <Editp2
-              product={productoEdit}
-              open={openEdit}
-              handleClose={()=>{
-                setopenEdit(false)
-              }}
-            />
-          </Box>
-        </Modal>
-
+        <Editp2
+          product={productoEdit}
+          open={openEdit}
+          handleClose={()=>{
+            setopenEdit(false)
+          }}
+        />
+          
     </div>
   );
 };
