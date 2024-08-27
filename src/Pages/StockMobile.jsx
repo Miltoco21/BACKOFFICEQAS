@@ -63,7 +63,8 @@ const StockMobile = () => {
           showLoading("haciendo busqueda por codigo")
           Product.getInstance().findByCodigoBarras({
             codigoProducto: txtSearch
-          }, (res)=>{
+          }, (prods,resp)=>{
+            const res = resp.data
             console.log("res", res)
             if(res.cantidadRegistros>0){
               showMessage("existe el producto")
