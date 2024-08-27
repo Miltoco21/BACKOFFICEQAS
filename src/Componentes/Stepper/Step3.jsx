@@ -138,6 +138,9 @@ const Step3Component = ({ data, onNext, stepData }) => {
     const step4Data = {
       formatoVenta: 0, // Debes proporcionar un valor adecuado aquí
       precioVenta: parseFloat(precioVenta) || 0, // Convertir a número y usar 0 si no hay valor
+      precioNeto: parseFloat(precioNeto) || 0, // Convertir a número y usar 0 si no hay valor
+      margen: parseFloat(margenGanancia)
+
     };
 
     // Combinar todos los pasos en un solo objeto
