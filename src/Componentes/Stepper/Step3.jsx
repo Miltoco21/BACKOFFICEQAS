@@ -416,10 +416,16 @@ const Step3Component = ({ data, onNext, stepData }) => {
   }
 
   const checkFijarCosto = (e)=>{
+    if(!fijarCosto && fijarVenta){
+      setFijarVenta(false)
+    }
     setFijarCosto(!fijarCosto)
   }
 
   const checkFijarVenta = (e)=>{
+    if(!fijarVenta && fijarCosto){
+      setFijarCosto(false)
+    }
     setFijarVenta(!fijarVenta)
   }
 
