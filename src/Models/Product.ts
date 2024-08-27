@@ -138,6 +138,55 @@ class Product extends Model{
         // console.log(product)
     }
 
+    static calcularMargen(product){
+// console.log("calculando sin precio de costo y con precio de venta")
+        
+            // console.log("product.precioCosto")
+            // console.log(product.precioCosto)
+            // console.log("product.gananciaPorcentaje")
+            // console.log(product.gananciaPorcentaje)
+            // console.log("product.ivaPorcentaje")
+            // console.log(product.ivaPorcentaje)
+            
+            const neto = parseFloat(product.precioVenta) / (1  + (parseInt(product.ivaPorcentaje) / 100) )
+            // console.log("neto")
+        const sumGan = neto - product.precioCosto
+        const porMar = ((neto - product.precioCosto) * 100) / product.precioCosto
+
+        var sumIva = product.precioVenta - neto
+        product.ivaValor = sumIva
+        product.gananciaPorcentaje = porMar
+        product.precioNeto = neto
+        product.gananciaValor = sumGan
+    }
+    
+    static calcularMargenPorVenta(product){
+    // console.log("calculando sin precio de costo y con precio de venta")
+        
+            // console.log("product.precioCosto")
+            // console.log(product.precioCosto)
+            // console.log("product.gananciaPorcentaje")
+            // console.log(product.gananciaPorcentaje)
+            // console.log("product.ivaPorcentaje")
+            // console.log(product.ivaPorcentaje)
+            
+            const sumGan = (product.precioCosto) * ( (product.gananciaPorcentaje) / 100)
+            // console.log("sumGan")
+            // console.log(sumGan)
+            
+            const neto = parseFloat(product.precioCosto) + sumGan
+
+            // console.log("neto")
+        const dsumGan = neto - product.precioCosto
+        const porMar = ((neto - product.precioCosto) * 100) / product.precioCosto
+
+        var sumIva = product.precioVenta - neto
+        product.ivaValor = sumIva
+        product.gananciaPorcentaje = porMar
+        product.precioNeto = neto
+        product.gananciaValor = sumGan
+    }
+
     async getAll(callbackOk, callbackWrong){
         try {
             const configs = ModelConfig.get()
