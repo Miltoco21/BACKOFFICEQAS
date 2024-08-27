@@ -165,7 +165,7 @@ const StockMobile = () => {
               overflow: "auto", // Added scrollable feature
               // maxHeight: "100vh", // Adjust as needed
               // maxWidth: "180vw", // Adjust as needed
-              height:"80%",
+              height:"90%",
               paddingTop:"10px",
               width:"85%",
               margin:"2.5% auto"
