@@ -40,6 +40,7 @@ import RankingLibroCompras from './Pages/RankingLibroCompras';
 import { SelectedOptionsProvider } from "./Componentes/Context/SelectedOptionsProvider";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import StockMobile from './Pages/StockMobile';
 
 function App() {
   return (
@@ -76,6 +77,7 @@ function App() {
             <Route path="reportes/rankingproductos" element={<RankingProductos />} />
             <Route path="reportes/rankinglibroventas" element={<RankingLibroVentas />} />
             <Route path="reportes/rankinglibrocompras" element={<RankingLibroCompras />} />
+            <Route path="stockmobile" element={<StockMobile />} />
           </Routes>
         </SelectedOptionsProvider>
       </LocalizationProvider>
