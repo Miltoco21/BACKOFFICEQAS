@@ -57,6 +57,8 @@ const Step3CC = ({ data, onNext, stepData }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const [esPesable, setEsPesable] = useState( (data.esPesable == "SI") );
+  const [fijarCosto, setFijarCosto] = useState(false);
+  const [fijarVenta, setFijarVenta] = useState(false);
 
   const unidades = [
     { idUnidad: 0, descripcion: "Sin unidad" },
@@ -293,8 +295,21 @@ const Step3CC = ({ data, onNext, stepData }) => {
   const logicaPrecios = ()=>{
     console.log("logicaPrecios")
     if(ultimoFoco != "precioVenta" &&  precioCosto > 0){
-      
-      console.log("logicaPrecios 111")
+
+      if(fijarVenta || fijarCosto){
+        const tmpProduct = {}
+        tmpProduct.ivaPorcentaje = iva
+        tmpProduct.precioVenta = parseFloat(precioVenta)
+        tmpProduct.precioCosto = parseFloat(precioCosto)
+
+        Product.calcularMargen(tmpProduct)
+        setValorIva(tmpProduct.ivaValor.toFixed(0))
+        setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
+        setValorMargenGanancia(tmpProduct.gananciaValor.toFixed(0))
+        setMargenGanancia((tmpProduct.gananciaPorcentaje).toFixed(0))
+        return
+      }
+
       const tmpProduct = {}
       tmpProduct.precioVenta = 0
       tmpProduct.precioCosto = precioCosto
@@ -312,7 +327,20 @@ const Step3CC = ({ data, onNext, stepData }) => {
       setValorIva(tmpProduct.ivaValor.toFixed(0))
       setValorMargenGanancia(tmpProduct.gananciaValor.toFixed(0))
     }else if(ultimoFoco != "precioCosto" && precioVenta>0){
-      console.log("logicaPrecios 22")
+
+      if(fijarVenta || fijarCosto){
+        const tmpProduct = {}
+        tmpProduct.ivaPorcentaje = iva
+        tmpProduct.precioVenta = parseFloat(precioVenta)
+        tmpProduct.precioCosto = parseFloat(precioCosto)
+
+        Product.calcularMargen(tmpProduct)
+        setValorIva(tmpProduct.ivaValor.toFixed(0))
+        setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
+        setValorMargenGanancia(tmpProduct.gananciaValor.toFixed(0))
+        setMargenGanancia((tmpProduct.gananciaPorcentaje).toFixed(0))
+        return
+      }
 
       const tmpProduct = {}
       tmpProduct.precioVenta = precioVenta
@@ -382,6 +410,21 @@ const Step3CC = ({ data, onNext, stepData }) => {
   const checkEsPesable = (e)=>{
     setEsPesable(!esPesable)
   }
+
+  const checkFijarCosto = (e)=>{
+    if(!fijarCosto && fijarVenta){
+      setFijarVenta(false)
+    }
+    setFijarCosto(!fijarCosto)
+  }
+
+  const checkFijarVenta = (e)=>{
+    if(!fijarVenta && fijarCosto){
+      setFijarCosto(false)
+    }
+    setFijarVenta(!fijarVenta)
+  }
+
   return (
     <Paper
       elevation={3}
@@ -550,7 +593,8 @@ const Step3CC = ({ data, onNext, stepData }) => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          
+          <Grid item xs={12} md={3}>
             <Box>
               <TextField
                 required
@@ -571,8 +615,25 @@ const Step3CC = ({ data, onNext, stepData }) => {
                   ),
                 }}
               />
+
             </Box>
           </Grid>
+          <Grid item xs={12} md={1}>
+            <Box>
+              
+              <input 
+                type="checkbox"
+                checked={fijarCosto}
+                onChange={()=>{}}
+                onClick={checkFijarCosto}
+                style={{
+                  marginTop:"15px",
+                  width:"30px",
+                  height:"20px"
+                }}
+                />
+            </Box>
+            </Grid>
 
           <Grid item xs={12} md={4}>
             <Box>
@@ -598,7 +659,7 @@ const Step3CC = ({ data, onNext, stepData }) => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <Box>
               <TextField
                 required
@@ -623,6 +684,24 @@ const Step3CC = ({ data, onNext, stepData }) => {
               />
             </Box>
           </Grid>
+
+          <Grid item xs={12} md={1}>
+            <Box>
+              
+              <input 
+                type="checkbox"
+                checked={fijarVenta}
+                onChange={()=>{}}
+                onClick={checkFijarVenta}
+                style={{
+                  marginTop:"15px",
+                  width:"30px",
+                  height:"20px"
+                }}
+                />
+            </Box>
+            </Grid>
+
           
 
           <Grid item xs={12} md={6}>
