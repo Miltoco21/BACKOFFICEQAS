@@ -609,13 +609,14 @@ const Step3Component = ({ data, onNext, stepData }) => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={8} sm={8} md={3} lg={3}>
             <Box>
               <TextField
                 required
                 sx={{ width: "100%" }}
                 label="Precio Costo"
                 name="precioCosto"
+                type="number"
                 fullWidth
                 value={precioCosto}
                 onChange={(event) => handleChange(event, "precioCosto")}
@@ -633,7 +634,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
 
             </Box>
           </Grid>
-          <Grid item xs={12} md={1}>
+          <Grid item xs={4} sm={4} md={1} lg={1}>
             <Box>
               
               <input 
@@ -674,7 +675,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={8} sm={8} md={3} lg={3}>
             <Box>
               <TextField
                 required
@@ -683,6 +684,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
                 }}
                 label="Precio Venta publico"
                 fullWidth
+                type="number"
                 value={precioVenta}
                 onClick={()=>{ setFocus("precioVenta") }}
                 onChange={(event) => handleChange(event, "precioVenta")}
@@ -700,7 +702,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={1}>
+          <Grid item xs={4} sm={4} md={1} lg={1}>
             <Box>
               
               <input 

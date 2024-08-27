@@ -542,6 +542,7 @@ const Editp2 = ({ product, open, handleClose }) => {
             <TextField
               name="stockInicial"
               label="Stock Inicial"
+              type="number"
               value={editedProduct.stockInicial || ""}
               onChange={(e) => {
                 // setSelectedCategoryId(e.target.value);
@@ -559,6 +560,7 @@ const Editp2 = ({ product, open, handleClose }) => {
             <TextField
               name="stockActual"
               label="Stock actual"
+              type="number"
               value={editedProduct.stockActual || ""}
               onChange={(e) => {
                 // setSelectedCategoryId(e.target.value);
@@ -576,6 +578,7 @@ const Editp2 = ({ product, open, handleClose }) => {
             <TextField
               name="stockCritico"
               label="Stock Critico"
+              type="number"
               value={editedProduct.stockCritico || ""}
               onChange={(e) => {
                 // setSelectedCategoryId(e.target.value);

@@ -99,7 +99,7 @@ const StockMobile = () => {
       <Box sx={{ flexGrow: 1, p: 3 }}>
         
 
-      <TextField
+          <TextField
             sx={{
               marginTop:"30px",
               width:"250px",
