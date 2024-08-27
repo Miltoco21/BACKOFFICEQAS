@@ -95,7 +95,6 @@ const StockMobile = () => {
 
   return (
     <div style={{ display: "flex" }}>
-      <SideBar />
 
       <Box sx={{ flexGrow: 1, p: 3 }}>
         
