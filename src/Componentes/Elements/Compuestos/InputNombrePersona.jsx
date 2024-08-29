@@ -17,8 +17,8 @@ const InputNombrePersona = ({
     validationState,
     withLabel = true,
     autoFocus = false,
-    label = "Nombre",
     fieldName="nombre",
+    label = fieldName[0].toUpperCase() + fieldName.substr(1),
     minLength = null,
     maxLength = null,
     required = false
@@ -32,8 +32,7 @@ const InputNombrePersona = ({
     const [validation, setValidation] = validationState
 
   const validate = ()=>{
-    console.log("validate de:" + fieldName)
-
+    // console.log("validate de:" + fieldName)
     const len = nombre.length
     const reqOk = (!required || (required && len > 0))
     var badMinlength = false
@@ -65,8 +64,7 @@ const InputNombrePersona = ({
       "allOk" : (reqOk && !badMinlength && !badMaxlength),
       "message" : message
     }
-
-    console.log("vale:", vl)
+    // console.log("vale:", vl)
     setValidation(vl)
   }
   

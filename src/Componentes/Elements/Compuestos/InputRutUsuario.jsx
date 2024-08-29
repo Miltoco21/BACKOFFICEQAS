@@ -58,7 +58,7 @@ const InputRut = ({
   },[rut])
 
   const validate = ()=>{
-    console.log("validate de:" + fieldName)
+    // console.log("validate de:" + fieldName)
     const len = rut.trim().length
     const reqOk = ( !required  || (required && len > 0))
     const uniqueOk = rutOk === true
@@ -98,7 +98,7 @@ const InputRut = ({
       "allOk" : (reqOk && uniqueOk && badMinlength && badMaxlength && formatOk),
       "message" : message
     }
-    console.log("vale:", vl)
+    // console.log("vle:", vl)
     setValidation(vl)
   }
   const checkUnique = ()=>{

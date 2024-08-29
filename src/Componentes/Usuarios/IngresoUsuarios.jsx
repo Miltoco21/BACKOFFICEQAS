@@ -9,11 +9,6 @@ import {
   CircularProgress,
   MenuItem,
   InputLabel,
-  CssBaseline,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Snackbar,
   IconButton,
   InputAdornment 
@@ -59,11 +54,14 @@ export default function IngresoUsuarios({ onClose}) {
   const [showPassword, setShowPassword] = useState(false);
   
   const stateRut = useState("")
-  const stateRutValidation = useState(null)
-
   const stateNombre = useState("")
-  const stateNombreValidation = useState(null)
+  const stateApellido = useState("")
   
+  var validators = {
+    stateRutValidation: useState(null),
+    stateNombreValidation : useState(null),
+    stateApellidoValidation : useState(null)
+  }
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -137,44 +135,41 @@ export default function IngresoUsuarios({ onClose}) {
   const handleEmailChange = (e) => {
     const inputEmail = e.target.value;
     setCorreo(inputEmail);
-    setErrores((prevErrores) => ({
-      ...prevErrores,
-      correo: !inputEmail
-        ? "Favor completar email"
-        : !validateEmail(inputEmail)
-        ? "Formato de correo no es válido"
-        : "",
-    }));
+    // setErrores((prevErrores) => ({
+    //   ...prevErrores,
+    //   correo: !inputEmail
+    //     ? "Favor completar email"
+    //     : !validateEmail(inputEmail)
+    //     ? "Formato de correo no es válido"
+    //     : "",
+    // }));
   };
 
   
+  const allValidationOk = ()=>{
+    var allOk = true
+    Object.values(validators).forEach((validation)=>{
+      // console.log("cada validation:", validation)
+      if(validation[0].message !="" && allOk){
+        showMessage(validation[0].message)
+        allOk = false
+      }
+    })
+    return allOk
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const errors = [];
 
-    const [rutValidation] = stateRutValidation
-    const [nombreValidation] = stateNombreValidation
-
     //Validaciones
-    if(rutValidation.message!=""){
-      showMessage(rutValidation.message)
-      return
-    }
-
-    if(nombreValidation.message!=""){
-      showMessage(nombreValidation.message)
-      return
-    }
-
-    console.log(rutValidation)
-    console.log(nombreValidation)
-    
-    if (!apellidos) {
-      errors.apellidos = "Favor completar apellidos ";
-      showMessage("Favor completar apellidos ")
+    if(!allValidationOk()){
       return false
     }
+    // console.log(rutValidation)
+    // console.log(nombreValidation)
+    console.log("all ok")
+
     if (!correo) {
       errors.correo = "Favor completar email ";
       showMessage("Favor completar email ")
@@ -242,19 +237,16 @@ export default function IngresoUsuarios({ onClose}) {
       return false
     }
 
-    if (Object.keys(errors).length > 0) {
-      setErrores(errors);
-    } else {
       const usuario = {
-        nombres: nombre,
-        apellidos: apellidos,
+        nombres: stateNombre[0],
+        apellidos: stateApellido[0],
         correo: correo,
         direccion: direccion,
         telefono: telefono,
         region: selectedRegion.toString(),
         comuna: selectedComuna,
         codigoPostal: codigoPostal,
-        rut: rut,
+        rut: stateRut[0],
     
         codigoUsuario: codigoUsuario,
         clave: clave,
@@ -286,21 +278,21 @@ export default function IngresoUsuarios({ onClose}) {
       } finally {
         setLoading(false);
         console.log("Datos después de enviar:", usuario);
-        setNombre("");
-        setApellido("");
-        setCorreo("");
-        setTelefono("");
-        setDireccion("");
-        setSelectedRegion("");
-        setSelectedComuna("");
-        setSelectedRol("");
-        setCodigoPostal("");
-        setRut("");
-        setCodigoUsuario("");
-        setClave("");
-        setRemuneracion("");
-        setCredito("");
-        setErrores({});
+        // setNombre("");
+        // setApellido("");
+        // setCorreo("");
+        // setTelefono("");
+        // setDireccion("");
+        // setSelectedRegion("");
+        // setSelectedComuna("");
+        // setSelectedRol("");
+        // setCodigoPostal("");
+        // setRut("");
+        // setCodigoUsuario("");
+        // setClave("");
+        // setRemuneracion("");
+        // setCredito("");
+        // setErrores({});
        
         setUserId(null);
 
@@ -309,7 +301,6 @@ export default function IngresoUsuarios({ onClose}) {
         }, 3000);
        
       }
-    }
   };
 
   const handleCloseSnackbar = () => {
@@ -423,7 +414,7 @@ export default function IngresoUsuarios({ onClose}) {
             <Grid item xs={12} md={4}>
               <InputRutUsuario 
                 rutStateControl={stateRut}
-                validationState={stateRutValidation}
+                validationState={validators.stateRutValidation}
                 required={true}
                 autoFocus={true}
               />
@@ -433,28 +424,19 @@ export default function IngresoUsuarios({ onClose}) {
               <InputNombrePersona
                 nombreState={stateNombre}
                 required={true}
-                validationState={stateNombreValidation}
+                validationState={validators.stateNombreValidation}
               />
 
             </Grid>
             <Grid item xs={12} md={4}>
-              <InputLabel sx={{ marginBottom: "2%" }}>
-                Ingresa Apellidos
-              </InputLabel>
-              <TextField
-                type="text"
-                fullWidth
-                margin="normal"
-                required
-                id="apellidos"
-                label="Apellidos"
-                name="apellidos"
-                autoComplete="apellidos"
-                value={apellidos}
-                onChange={(e) => setApellido(e.target.value)}
-                onKeyDown={handleTextOnlyKeyDown}
 
-              />
+            <InputNombrePersona
+              nombreState={stateApellido}
+              required={true}
+              fieldName="apellido"
+              validationState={validators.stateApellidoValidation}
+            />
+
             </Grid>
             <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
