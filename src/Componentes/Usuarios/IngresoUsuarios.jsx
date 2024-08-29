@@ -27,6 +27,7 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
 import InputRutUsuario from "../Elements/Compuestos/InputRutUsuario";
 import Validator from "../../Helpers/Validator";
+import InputNombrePersona from "../Elements/Compuestos/InputNombrePersona";
 export const defaultTheme = createTheme();
 
 export default function IngresoUsuarios({ onClose}) {
@@ -58,6 +59,11 @@ export default function IngresoUsuarios({ onClose}) {
   const [showPassword, setShowPassword] = useState(false);
   
   const stateRut = useState("")
+  const stateRutValidation = useState(null)
+
+  const stateNombre = useState("")
+  const stateNombreValidation = useState(null)
+  
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -147,24 +153,23 @@ export default function IngresoUsuarios({ onClose}) {
     event.preventDefault();
     const errors = [];
 
-    const [rut] = stateRut
+    const [rutValidation] = stateRutValidation
+    const [nombreValidation] = stateNombreValidation
 
     //Validaciones
-    if (!rut) {
-      errors.rut = "Favor completar rut ";
-      showMessage("Favor completar rut ")
-      return false
-    } else if (!Validator.isRutChileno(rut)) {
-      errors.rut = "El RUT ingresado NO es válido.";
-      showMessage("El RUT ingresado NO es válido.")
-      return false
+    if(rutValidation.message!=""){
+      showMessage(rutValidation.message)
+      return
     }
 
-    if (!nombres) {
-      errors.nombres = "Favor completar nombres ";
-      showMessage("Favor completar nombres ")
-      return false
+    if(nombreValidation.message!=""){
+      showMessage(nombreValidation.message)
+      return
     }
+
+    console.log(rutValidation)
+    console.log(nombreValidation)
+    
     if (!apellidos) {
       errors.apellidos = "Favor completar apellidos ";
       showMessage("Favor completar apellidos ")
@@ -241,7 +246,7 @@ export default function IngresoUsuarios({ onClose}) {
       setErrores(errors);
     } else {
       const usuario = {
-        nombres: nombres,
+        nombres: nombre,
         apellidos: apellidos,
         correo: correo,
         direccion: direccion,
@@ -418,26 +423,19 @@ export default function IngresoUsuarios({ onClose}) {
             <Grid item xs={12} md={4}>
               <InputRutUsuario 
                 rutStateControl={stateRut}
+                validationState={stateRutValidation}
+                required={true}
+                autoFocus={true}
               />
               
             </Grid>
             <Grid item xs={12} md={4}>
-              <InputLabel sx={{ marginBottom: "2%" }}>
-                Ingresa Nombre
-              </InputLabel>
-              <TextField
-                fullWidth
-                margin="normal"
-                required
-                type="text"
-                id="nombres"
-                label="Nombres"
-                name="nombres"
-                autoComplete="nombres"
-                value={nombres}
-                onChange={(e) => setNombre(e.target.value)}
-                onKeyDown={handleTextOnlyKeyDown}
+              <InputNombrePersona
+                nombreState={stateNombre}
+                required={true}
+                validationState={stateNombreValidation}
               />
+
             </Grid>
             <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>

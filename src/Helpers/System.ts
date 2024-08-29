@@ -115,6 +115,14 @@ class System {
         return vars
     }
 
+    static addInObj(obj,name,value){
+        const obj2 = {
+            ...obj
+        }
+        obj2[name] = value
+        return obj2
+    }
+
 }
 
 

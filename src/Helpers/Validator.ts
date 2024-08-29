@@ -31,8 +31,13 @@ class Validator {
 
     static isNombre(newValuex){
         var newValue = newValuex+""
-        if(!newValue)return true//caracter especial, ej: borrar, supr,etc
-        var rex = /^[A-Za-z\s\-]+$/g
+        
+        if(!newValue){
+            console.log("es tecla especial??")
+            return true//caracter especial, ej: borrar, supr,etc
+        }
+        // var rex = /^[A-Za-z\s\-]+$/g
+        var rex = rex = /^[A-Za-z0-9\s\-]+$/g
         return newValue.match(rex)
     }
     
@@ -175,6 +180,22 @@ class Validator {
         if(newValue.indexOf("-")>=0)return false
         if(newValue.indexOf(".")>=0)return false
         return Validator.isNumeric(newValue) && newValue.length<=5
+    }
+
+    static isTeclaControl(event){
+        var key = event.key
+        
+        switch (key){
+            case "Tab":
+            case "Backspace":
+            case "Delete":
+                return true
+            break;
+            
+            default:
+                return false
+            break;
+        }
     }
     
     
