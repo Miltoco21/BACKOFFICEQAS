@@ -37,6 +37,9 @@ const PreciosGeneralesProducItem = ({
  }) => {
 
   const [ultimoFoco, setUltimoFoco] = useState("")
+  const [fijarCosto, setFijarCosto] = useState(false);
+  const [fijarVenta, setFijarVenta] = useState(false);
+
 
   useEffect(()=>{
     init()
@@ -47,6 +50,23 @@ const PreciosGeneralesProducItem = ({
     // console.log(product)
 
     if(ultimoFoco == "precioCosto" || ultimoFoco == "gananciaPorcentaje"){
+
+      if(fijarVenta || fijarCosto){
+        if(product.precioVenta<= product.precioCosto){
+          setUltimoFoco("")
+          return
+        }
+        console.log("algo fijo")
+        Product.calcularMargen(product)
+        changePriceValue("gananciaValor",product.gananciaValor)
+        changePriceValue("precioNeto",product.precioNeto)
+        changePriceValue("ivaValor",product.ivaValor)
+        changePercentValue("ivaPorcentaje",product.ivaPorcentaje)
+        changePercentValue("gananciaPorcentaje",product.gananciaPorcentaje)
+        setUltimoFoco("")
+        return
+      }
+
       // setTimeout(() => {
         Product.logicaPrecios(product,"final")
         changePriceValue("gananciaValor",product.gananciaValor)
@@ -59,6 +79,21 @@ const PreciosGeneralesProducItem = ({
     }
 
     if(ultimoFoco == "precioVenta"){
+      if(fijarVenta || fijarCosto){
+        if(product.precioVenta<= product.precioCosto){
+          setUltimoFoco("")
+          return
+        }
+        console.log("algo fijo")
+        Product.calcularMargen(product)
+        changePriceValue("gananciaValor",product.gananciaValor)
+        changePriceValue("precioNeto",product.precioNeto)
+        changePriceValue("ivaValor",product.ivaValor)
+        changePercentValue("ivaPorcentaje",product.ivaPorcentaje)
+        changePercentValue("gananciaPorcentaje",product.gananciaPorcentaje)
+        setUltimoFoco("")
+        return
+      }
       // setTimeout(() => {
         Product.logicaPrecios(product,"costo")
         changePriceValue("gananciaValor",product.gananciaValor)
@@ -137,6 +172,20 @@ const PreciosGeneralesProducItem = ({
 
 
 
+  const checkFijarCosto = (e)=>{
+    if(!fijarCosto && fijarVenta){
+      setFijarVenta(false)
+    }
+    setFijarCosto(!fijarCosto)
+  }
+
+  const checkFijarVenta = (e)=>{
+    if(!fijarVenta && fijarCosto){
+      setFijarCosto(false)
+    }
+    setFijarVenta(!fijarVenta)
+  }
+
 
 
   const handleGuardarClick = async () => {
@@ -153,7 +202,12 @@ const PreciosGeneralesProducItem = ({
         subCategoria: product.idsubCategoria,
         familia: product.idFamilia,
         subFamilia: product.idSubFamilia,
+        margen: product.gananciaPorcentaje
       };
+
+      console.log(product)
+      console.log(editedProduct)
+      return 
       const response = await axios.put(
         ModelConfig.get().urlBase + 
         `/ProductosTmp/UpdateProducto`,
@@ -188,6 +242,18 @@ const PreciosGeneralesProducItem = ({
                 <AttachMoney />
               </InputAdornment>
             ),
+          }}
+        />
+        
+        <input 
+          type="checkbox"
+          checked={fijarCosto}
+          onChange={()=>{}}
+          onClick={checkFijarCosto}
+          style={{
+            marginTop:"15px",
+            width:"30px",
+            height:"20px"
           }}
         />
       </TableCell>
@@ -282,6 +348,19 @@ const PreciosGeneralesProducItem = ({
             ),
           }}
         />
+
+          <input 
+            type="checkbox"
+            checked={fijarVenta}
+            onChange={()=>{}}
+            onClick={checkFijarVenta}
+            style={{
+              marginTop:"15px",
+              width:"30px",
+              height:"20px"
+            }}
+            />
+
       </TableCell>
 
       <TableCell>
