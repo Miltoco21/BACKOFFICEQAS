@@ -245,17 +245,27 @@ const PreciosGeneralesProducItem = ({
           }}
         />
         
+        <label style={{
+          userSelect:"none",
+          width:"100%",
+          textAlign:"center",
+          fontSize:"15px"
+        }}>
+          Fijar
         <input 
           type="checkbox"
           checked={fijarCosto}
           onChange={()=>{}}
           onClick={checkFijarCosto}
           style={{
+            position:"relative",
+            top:"5px",
             marginTop:"15px",
             width:"30px",
             height:"20px"
           }}
-        />
+          />
+          </label>
       </TableCell>
 
 
@@ -349,17 +359,27 @@ const PreciosGeneralesProducItem = ({
           }}
         />
 
-          <input 
+        <label style={{
+          userSelect:"none",
+          width:"100%",
+          textAlign:"center",
+          fontSize:"15px"
+        }}>
+          Fijar
+        <input 
             type="checkbox"
             checked={fijarVenta}
             onChange={()=>{}}
             onClick={checkFijarVenta}
             style={{
+              position:"relative",
+              top:"5px",
               marginTop:"15px",
               width:"30px",
               height:"20px"
             }}
             />
+            </label>
 
       </TableCell>
 
