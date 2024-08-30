@@ -154,6 +154,20 @@ class Validator {
             || newValue.match(rex)
     }
 
+    static isPhone(newValuex){
+        var newValue = newValuex+""
+        var rex = /^[0-9\-]+$/g
+        return !newValue //caracter especial, ej: borrar, supr,etc
+            || newValue.match(rex)
+    }
+
+    static isPassword(newValuex){
+        var newValue = newValuex+""
+        var rex = /^[A-Za-z0-9\-\s\#\-!\%\&\*\$\^\|]+$/g
+        return !newValue //caracter especial, ej: borrar, supr,etc
+            || newValue.match(rex)
+    }
+
     static isPeso(newValuex){
         var newValue = newValuex+""
         if(newValue.indexOf("e")>=0)return false
@@ -189,6 +203,10 @@ class Validator {
             case "Tab":
             case "Backspace":
             case "Delete":
+            case "ArrowLeft":
+            case "ArrowRight":
+            case "ArrowUp":
+            case "ArrowDown":
                 return true
             break;
             
@@ -196,6 +214,63 @@ class Validator {
                 return false
             break;
         }
+    }
+
+    static isKeyEmail(event){
+        var key = event.key
+        var all = event.target.value
+
+        if(
+            Validator.isTeclaControl(event)
+            || Validator.isNumericOAlpha(key)
+            || (key=="_" && all.length>0)
+            || (key=="@" && all.indexOf("@") === -1)
+            || key=="."
+        ){
+            return true
+        }
+
+        return false
+    }
+
+    static isKeyPhone(event){
+        var key = event.key
+        var all = event.target.value
+
+        const len = all.length
+        const cGuion = Validator.getCount("-", all)
+        if(Validator.isTeclaControl(event)) return true
+
+        if(
+            (
+                Validator.isNumeric(key)
+                || (key=="-" && all.length>0 && (cGuion == 0 || cGuion == 1) )
+            )
+            && len < 15
+        ){
+            return true
+        }
+
+        return false
+    }
+
+    static isKeyPassword(event){
+        var key = event.key
+        var all = event.target.value
+
+        const len = all.length
+        const cGuion = Validator.getCount("-", all)
+        if(Validator.isTeclaControl(event)) return true
+
+        if(
+            (
+                Validator.isPassword(key)
+            )
+        ){
+            return true
+        }
+
+        return false
     }
     
     

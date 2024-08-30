@@ -22,7 +22,13 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
 import InputRutUsuario from "../Elements/Compuestos/InputRutUsuario";
 import Validator from "../../Helpers/Validator";
-import InputNombrePersona from "../Elements/Compuestos/InputNombrePersona";
+import InputName from "../Elements/Compuestos/InputName";
+import InputEmail from "../Elements/Compuestos/InputEmail";
+import InputPhone from "../Elements/Compuestos/InputPhone";
+import InputNumber from "../Elements/Compuestos/InputNumber";
+import InputPassword from "../Elements/Compuestos/InputPassword";
+import InputSelect from "../Elements/Compuestos/SelectList";
+import SelectList from "../Elements/Compuestos/SelectList";
 export const defaultTheme = createTheme();
 
 export default function IngresoUsuarios({ onClose}) {
@@ -56,17 +62,36 @@ export default function IngresoUsuarios({ onClose}) {
   const stateRut = useState("")
   const stateNombre = useState("")
   const stateApellido = useState("")
+  const stateCorreo = useState("")
+  const statePhone = useState("")
+  const stateUserCode = useState("")
+  const stateDireccion = useState("")
+  const statePostalCode = useState("")
+  const stateCredit = useState("")
+  const stateClave = useState("")
+  const stateRemuneracionTipo = useState("")
+  
+
+
   
   var validators = {
     stateRutValidation: useState(null),
     stateNombreValidation : useState(null),
-    stateApellidoValidation : useState(null)
+    stateApellidoValidation : useState(null),
+    stateCorreoValidation : useState(null),
+    statePhoneValidation : useState(null),
+    stateUserCodeValidation : useState(null),
+    stateDireccionValidation : useState(null),
+    statePostalCodeValidation : useState(null),
+    stateCreditValidation : useState(null),
+    stateClaveValidation : useState(null),
+    stateRemuneracionTipoValidation : useState(null),
   }
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
-  const handleClickShowPassword = () => {
+  const stateRemuneracionTipoValidation = () => {
     setShowPassword(!showPassword);
   };
 
@@ -127,29 +152,14 @@ export default function IngresoUsuarios({ onClose}) {
     fetchRoles();
   }, []);
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const handleEmailChange = (e) => {
-    const inputEmail = e.target.value;
-    setCorreo(inputEmail);
-    // setErrores((prevErrores) => ({
-    //   ...prevErrores,
-    //   correo: !inputEmail
-    //     ? "Favor completar email"
-    //     : !validateEmail(inputEmail)
-    //     ? "Formato de correo no es válido"
-    //     : "",
-    // }));
-  };
-
   
   const allValidationOk = ()=>{
     var allOk = true
-    Object.values(validators).forEach((validation)=>{
-      // console.log("cada validation:", validation)
+
+    const keys = Object.keys(validators)
+
+    Object.values(validators).forEach((validation,ix)=>{
+      console.log("validation de  " + keys[ix] + " :", validation)
       if(validation[0].message !="" && allOk){
         showMessage(validation[0].message)
         allOk = false
@@ -170,31 +180,6 @@ export default function IngresoUsuarios({ onClose}) {
     // console.log(nombreValidation)
     console.log("all ok")
 
-    if (!correo) {
-      errors.correo = "Favor completar email ";
-      showMessage("Favor completar email ")
-      return false
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
-      errors.correo = "Formato de correo no es válido";
-      showMessage("Formato de correo no es válido")
-      return false
-    }
-   
-    if (!telefono) {
-      errors.telefono = "Favor completar telefono ";
-      showMessage("Favor completar telefono ")
-      return false
-    } 
-    if (!codigoUsuario) {
-      errors.codigoUsuario = "Favor completar código de Usuario ";
-      showMessage("Favor completar código de Usuario ")
-      return false
-    } 
-    if (!direccion) {
-      errors.direccion = "Favor completar dirección ";
-      showMessage("Favor completar dirección ")
-      return false
-    }
     if (!selectedComuna || selectedComuna.length === 0) {
       errors.comuna = "Favor completar comuna ";
       showMessage("Favor completar comuna ")
@@ -413,7 +398,7 @@ export default function IngresoUsuarios({ onClose}) {
 
             <Grid item xs={12} md={4}>
               <InputRutUsuario 
-                rutStateControl={stateRut}
+                inputState={stateRut}
                 validationState={validators.stateRutValidation}
                 required={true}
                 autoFocus={true}
@@ -421,8 +406,9 @@ export default function IngresoUsuarios({ onClose}) {
               
             </Grid>
             <Grid item xs={12} md={4}>
-              <InputNombrePersona
-                nombreState={stateNombre}
+              <InputName
+                inputState={stateNombre}
+                fieldName="nombre"
                 required={true}
                 validationState={validators.stateNombreValidation}
               />
@@ -430,8 +416,8 @@ export default function IngresoUsuarios({ onClose}) {
             </Grid>
             <Grid item xs={12} md={4}>
 
-            <InputNombrePersona
-              nombreState={stateApellido}
+            <InputName
+              inputState={stateApellido}
               required={true}
               fieldName="apellido"
               validationState={validators.stateApellidoValidation}
@@ -439,84 +425,53 @@ export default function IngresoUsuarios({ onClose}) {
 
             </Grid>
             <Grid item xs={12} md={4}>
-              <InputLabel sx={{ marginBottom: "2%" }}>
-                Ingresa Correo Electrónico
-              </InputLabel>
-              <TextField
-                fullWidth
-                margin="normal"
-                required
-                type="email"
-                id="correo"
-                label="Correo Electrónico"
-                name="correo"
-                autoComplete="correo"
-                value={correo}
-                onChange={handleEmailChange}
-                onKeyDown={handleEmailKeyDown}
 
-              />
+
+            <InputEmail
+              inputState={stateCorreo}
+              required={true}
+              fieldName="correo"
+              validationState={validators.stateCorreoValidation}
+            />
+
             </Grid>
             <Grid item xs={12} md={4}>
-              <InputLabel sx={{ marginBottom: "2%" }}>
-                Ingresa Teléfono
-              </InputLabel>
-              <TextField
-                fullWidth
-            
-                margin="normal"
-                required
-                id="telefono"
-                label="Teléfono"
-                name="telefono"
-                autoComplete="telefono"
-                value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
-                onKeyDown={handleNumericKeyDown}
-                   inputProps={{
-                    maxLength: 12,
-                  }}
+            <InputPhone
+              inputState={statePhone}
+              required={true}
+              fieldName="telefono"
+              validationState={validators.statePhoneValidation}
+            />
 
-              />
+
+              
             </Grid>
             <Grid item xs={12} md={4}>
-              <InputLabel sx={{ marginBottom: "2%" }}>
-                Ingresa Código Usuario
-              </InputLabel>
-              <TextField
-                fullWidth
-             
-                margin="normal"
-                required
-                id="Código Cliente"
-                label="Ingrese valor numérico"
-                name="Código Cliente"
-                autoComplete="Código Cliente"
-                value={codigoUsuario}
-                onChange={(e) => setCodigoUsuario(e.target.value)}
-                onKeyDown={handleNumericKeyDown}
 
+            <InputNumber
+              inputState={stateUserCode}
+              required={true}
+              fieldName="codigoUsuario"
+              label="Codigo usuario"
+              validationState={validators.stateUserCodeValidation}
+            />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <InputName
+                inputState={stateDireccion}
+                fieldName="direccion"
+                required={true}
+                maxLength={30}
+                validationState={validators.stateDireccionValidation}
+              />
 
+            </Grid>
+            <Grid item xs={12} md={4}>
+
+        
                 
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <InputLabel sx={{ marginBottom: "2%" }}>
-                Ingresa Dirección
-              </InputLabel>
-              <TextField
-                fullWidth
-                margin="normal"
-                required
-                id="direccion"
-                label="Dirección"
-                name="direccion"
-                autoComplete="direccion"
-                value={direccion}
-                onChange={(e) => setDireccion(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
+
+
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Selecciona Región
               </InputLabel>
@@ -564,6 +519,8 @@ export default function IngresoUsuarios({ onClose}) {
               </TextField>
             </Grid>
             <Grid item xs={12} md={4}>
+
+              
               <InputLabel sx={{ marginBottom: "2%" }}>
                 Selecciona Rol
               </InputLabel>
@@ -586,53 +543,24 @@ export default function IngresoUsuarios({ onClose}) {
               </TextField>
             </Grid>
             <Grid item xs={12} md={4}>
-              <InputLabel sx={{ marginBottom: "2%" }}>
-                Ingresa Código Postal
-              </InputLabel>
-              <TextField
-                fullWidth
-                margin="normal"
-                required
-              
-                id="codigoPostal"
-                label="Ingrese valor numérico"
-                name="codigoPostal"
-                autoComplete="codigoPostal"
-                value={codigoPostal}
-                onChange={(e) => setCodigoPostal(e.target.value)}
-                onKeyDown={handleNumericKeyDown}
-
+              <InputNumber
+                inputState={statePostalCode}
+                required={true}
+                fieldName="codigoPostal"
+                label="Codigo Postal"
+                validationState={validators.statePostalCodeValidation}
               />
             </Grid>
             <Grid item xs={12} md={4}>
-              <InputLabel sx={{ marginBottom: "2%" }}>Ingresa Clave</InputLabel>
-              <TextField
-                fullWidth
-                margin="normal"
-              
-                id="clave"
-                label="Ingrese valor alfanumérico"
-                name="clave"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="new-password"
-                value={clave}
-                onChange={(e) => setClave(e.target.value)}
-                onKeyDown={handleTextKeyDown}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff fontSize="small"  /> : <Visibility fontSize="small"  />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
+              <InputPassword
+                inputState={stateClave}
+                fieldName="clave"
+                required={true}
+                maxLength={30}
+                validationState={validators.stateClaveValidation}
               />
+
+              
             </Grid>
             <Grid item xs={12} md={4}>
               <InputLabel sx={{ marginBottom: "2%" }}>
@@ -656,23 +584,28 @@ export default function IngresoUsuarios({ onClose}) {
                 <MenuItem value="Semanal">Semanal</MenuItem>
                 <MenuItem value="Mensual">Mensual</MenuItem>
               </TextField>
+
+              <SelectList
+                inputState={stateRemuneracionTipo}
+                selectItems={[
+                  "Diario",
+                  "Semanal",
+                  "Mensual",
+                ]}
+                fieldName="remuneracion"
+                required={true}
+                validationState={validators.stateRemuneracionTipoValidation}
+              />
+
+
+
             </Grid>
             <Grid item xs={12} md={4}>
-              <InputLabel sx={{ marginBottom: "2%" }}>
-                Ingresa Crédito
-              </InputLabel>
-              <TextField
-                fullWidth
-                margin="normal"
-                required
-                id="credito"
-                label="Ingrese valor numérico"
-                name="credito"
-                autoComplete="credito"
-                value={credito}
-                onChange={(e) => setCredito(e.target.value)}
-                onKeyDown={handleNumericKeyDown}
-
+              <InputNumber
+                inputState={stateCredit}
+                required={true}
+                fieldName="credito"
+                validationState={validators.stateCreditValidation}
               />
             </Grid>
           <Grid item xs={12}>

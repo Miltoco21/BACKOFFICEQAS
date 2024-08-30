@@ -14,7 +14,7 @@ import System from "../../../Helpers/System";
 
 
 const InputRut = ({
-    rutStateControl,
+    inputState,
     validationState,
     withLabel = true,
     autoFocus = false,
@@ -30,7 +30,7 @@ const InputRut = ({
     showMessage
   } = useContext(SelectedOptionsContext);
   
-  const [rut, setRut] = rutStateControl
+  const [rut, setRut] = inputState
   const [validation, setValidation] = validationState
 
   const [rutOk, setRutOk] = useState(null);
@@ -67,11 +67,11 @@ const InputRut = ({
     var badMinlength = false
     var badMaxlength = false
 
-    if(minLength && minLength < len){
+    if(minLength && len < minLength){
       badMinlength = true
     }
 
-    if(maxLength && maxLength > len){
+    if(maxLength && len > maxLength){
       badMaxlength = true
     }
 
@@ -81,7 +81,7 @@ const InputRut = ({
     }else if(badMinlength){
       message = fieldName + ": debe tener " + minLength + " caracteres o mas."
     }else if(badMaxlength){
-      message = fieldName + ": debe tener " + minLength + " caracteres o menos."
+      message = fieldName + ": debe tener " + maxLength + " caracteres o menos."
     }else if(!uniqueOk){
       message = fieldName + ": Ya existe. Ingrese otro."
     }else if(!formatOk){

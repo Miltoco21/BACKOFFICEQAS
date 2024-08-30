@@ -3,24 +3,25 @@ import React, { useState, useContext, useEffect } from "react";
 import {
   TextField,
   InputAdornment,
-  InputLabel
+  InputLabel,
+  IconButton
 } from "@mui/material";
 import { SelectedOptionsContext } from "../../Context/SelectedOptionsProvider";
 import ModelConfig from "../../../Models/ModelConfig";
-import { Check, Dangerous } from "@mui/icons-material";
+import { Check, Dangerous, Visibility, VisibilityOff } from "@mui/icons-material";
 import User from "../../../Models/User";
 import Validator from "../../../Helpers/Validator";
 
 
-const InputNombrePersona = ({
-    nombreState,
+const InputPassword = ({
+    inputState,
     validationState,
     withLabel = true,
     autoFocus = false,
-    fieldName="nombre",
+    fieldName="password",
     label = fieldName[0].toUpperCase() + fieldName.substr(1),
     minLength = null,
-    maxLength = null,
+    maxLength = 20,
     required = false
   }) => {
 
@@ -28,21 +29,23 @@ const InputNombrePersona = ({
       showMessage
     } = useContext(SelectedOptionsContext);
     
-    const [nombre, setNombre] = nombreState
+    const [password, setPassword] = inputState
+    const [showPassword, setShowPassword] = useState(false)
     const [validation, setValidation] = validationState
 
   const validate = ()=>{
     // console.log("validate de:" + fieldName)
-    const len = nombre.length
+    const len = password.length
+    // console.log("len:", len)
     const reqOk = (!required || (required && len > 0))
     var badMinlength = false
     var badMaxlength = false
 
-    if(minLength && minLength < len){
+    if(minLength && len < minLength){
       badMinlength = true
     }
 
-    if(maxLength && maxLength > len){
+    if(maxLength && len > maxLength){
       badMaxlength = true
     }
 
@@ -52,11 +55,10 @@ const InputNombrePersona = ({
     }else if(badMinlength){
       message = fieldName + ": debe tener " + minLength + " caracteres o mas."
     }else if(badMaxlength){
-      message = fieldName + ": debe tener " + minLength + " caracteres o menos."
+      message = fieldName + ": debe tener " + maxLength + " caracteres o menos."
     }
 
     const vl = {
-      "empty": len == 0,
       "badMinlength": badMinlength,
       "badMaxlength": badMaxlength,
       "require": !reqOk,
@@ -69,8 +71,9 @@ const InputNombrePersona = ({
   }
   
   const checkKeyDown = (event)=>{
-    if(event.key == "Enter"){
-
+    if(!Validator.isKeyPassword(event)){
+      event.preventDefault();
+      return false
     }
   }
 
@@ -80,9 +83,9 @@ const InputNombrePersona = ({
       showMessage("Valor erroneo")
       return false
     }
-    if(Validator.isNombre(value)){
-      console.log(value + " es valido")
-      setNombre(value);
+    if(Validator.isPassword(value)){
+      // console.log(value + " es valido")
+      setPassword(value);
     }else{
       // console.log("es incorrecta")
       showMessage("Valor erroneo")
@@ -90,23 +93,14 @@ const InputNombrePersona = ({
   }
   
   const checkChangeBlur = (event)=>{
-    if(nombre.substr(-1) == " "){
-      setNombre(nombre.trim())
-    }
+    validate()
   }
 
   useEffect(()=>{
-    // console.log("cambio nombreState")
-    // console.log(nombreState)
+    // console.log("cambio inputState")
+    // console.log(inputState)
     validate()
   },[])
-
-
-  useEffect(()=>{
-    // console.log("cambio nombre")
-    // console.log(nombre)
-    validate()
-  },[nombre])
 
   return (
     <>
@@ -115,21 +109,37 @@ const InputNombrePersona = ({
         {label}
       </InputLabel>
       )}
+
       <TextField
         fullWidth
-        autoFocus={autoFocus}
         margin="normal"
+        autoFocus={autoFocus}
         required={required}
-        type="text"
         label={label}
-        autoComplete={false}
-        value={nombre}
+        password="clave"
+        type={showPassword ? 'text' : 'password'}
+        value={password}
         onChange={checkChange}
         onBlur={checkChangeBlur}
         onKeyDown={checkKeyDown}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={()=>{setShowPassword( !showPassword )}}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff fontSize="small"  /> : <Visibility fontSize="small"  />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
+
+
     </>
   );
 };
 
-export default InputNombrePersona;
+export default InputPassword;
