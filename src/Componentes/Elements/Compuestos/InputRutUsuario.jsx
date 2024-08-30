@@ -159,8 +159,7 @@ const InputRut = ({
       onBlur={checkUnique}
       onKeyDown={checkKeyDown}
 
-      InputProps={
-        rut.length>0 && {
+      InputProps={{
         startAdornment: (
           <InputAdornment position="end">
             <Check sx={{
@@ -175,7 +174,6 @@ const InputRut = ({
             }} />
           </InputAdornment>
         ),
-      
       }}
     />
     </>
