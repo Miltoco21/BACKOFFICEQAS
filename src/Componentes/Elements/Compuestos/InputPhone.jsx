@@ -21,6 +21,7 @@ const InputPhone = ({
     label = fieldName[0].toUpperCase() + fieldName.substr(1),
     minLength = null,
     maxLength = 12,
+    canAutoComplete = false,
     required = false
   }) => {
 
@@ -30,6 +31,7 @@ const InputPhone = ({
     
     const [phone, setPhone] = inputState
     const [validation, setValidation] = validationState
+    const [keyPressed, setKeyPressed] = useState(false)
 
   const validate = ()=>{
     // console.log("validate de:" + fieldName)
@@ -74,6 +76,13 @@ const InputPhone = ({
   }
   
   const checkKeyDown = (event)=>{
+    if(!canAutoComplete && event.key == "Unidentified"){
+      event.preventDefault();
+      return false
+    }else{
+      setKeyPressed(true)
+    }
+    
     if(!Validator.isKeyPhone(event)){
       console.log(event.key,": incorrecta")
       event.preventDefault();
@@ -84,6 +93,9 @@ const InputPhone = ({
   }
 
   const checkChange = (event)=>{
+    if(!canAutoComplete && !keyPressed){
+      return
+    }
     setPhone(event.target.value)
   }
   

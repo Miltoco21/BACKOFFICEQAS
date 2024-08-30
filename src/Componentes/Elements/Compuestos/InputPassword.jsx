@@ -22,6 +22,7 @@ const InputPassword = ({
     label = fieldName[0].toUpperCase() + fieldName.substr(1),
     minLength = null,
     maxLength = 20,
+    canAutoComplete = false,
     required = false
   }) => {
 
@@ -32,6 +33,7 @@ const InputPassword = ({
     const [password, setPassword] = inputState
     const [showPassword, setShowPassword] = useState(false)
     const [validation, setValidation] = validationState
+    const [keyPressed, setKeyPressed] = useState(false)
 
   const validate = ()=>{
     // console.log("validate de:" + fieldName)
@@ -71,6 +73,12 @@ const InputPassword = ({
   }
   
   const checkKeyDown = (event)=>{
+    if(!canAutoComplete && event.key == "Unidentified"){
+      event.preventDefault();
+      return false
+    }else{
+      setKeyPressed(true)
+    }
     if(!Validator.isKeyPassword(event)){
       event.preventDefault();
       return false
@@ -78,9 +86,13 @@ const InputPassword = ({
   }
 
   const checkChange = (event)=>{
+    if(!canAutoComplete && !keyPressed){
+      return
+    }
     const value = event.target.value
     if(value == " "){
-      showMessage("Valor erroneo")
+      showMessage(fieldName + ":Valor erroneo")
+
       return false
     }
     if(Validator.isPassword(value)){
@@ -88,7 +100,8 @@ const InputPassword = ({
       setPassword(value);
     }else{
       // console.log("es incorrecta")
-      showMessage("Valor erroneo")
+      showMessage(fieldName + ":Valor erroneo")
+
     }
   }
   

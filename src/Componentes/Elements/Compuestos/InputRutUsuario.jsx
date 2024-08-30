@@ -20,6 +20,7 @@ const InputRut = ({
     autoFocus = false,
     minLength = null,
     maxLength = null,
+    canAutoComplete = false,
     label = "Rut",
     fieldName="rut",
     required = false
@@ -32,10 +33,23 @@ const InputRut = ({
   
   const [rut, setRut] = inputState
   const [validation, setValidation] = validationState
+  const [keyPressed, setKeyPressed] = useState(false)
 
   const [rutOk, setRutOk] = useState(null);
 
+  const checkKeyDown = (event)=>{
+    if(!canAutoComplete && event.key == "Unidentified"){
+      event.preventDefault();
+      return false
+    }else{
+      setKeyPressed(true)
+    }
+  }
+
   const validateRut = (event) => {
+    if(!canAutoComplete && !keyPressed){
+      return
+    }
     if(!Validator.isRut(event.target.value)){
       console.log("no es valido")
       return false
@@ -143,6 +157,7 @@ const InputRut = ({
       required={required}
       onChange={validateRut}
       onBlur={checkUnique}
+      onKeyDown={checkKeyDown}
 
       InputProps={
         rut.length>0 && {

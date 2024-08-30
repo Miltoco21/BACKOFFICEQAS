@@ -20,6 +20,7 @@ const InputName = ({
     fieldName="name",
     label = fieldName[0].toUpperCase() + fieldName.substr(1),
     minLength = null,
+    canAutoComplete = false,
     maxLength = 20,
     required = false
   }) => {
@@ -30,6 +31,7 @@ const InputName = ({
     
     const [name, setName] = inputState
     const [validation, setValidation] = validationState
+    const [keyPressed, setKeyPressed] = useState(false)
 
   const validate = ()=>{
     // console.log("validate de:" + fieldName)
@@ -67,14 +69,19 @@ const InputName = ({
     // console.log("vale:", vl)
     setValidation(vl)
   }
-  
   const checkKeyDown = (event)=>{
-    if(event.key == "Enter"){
-
+    if(!canAutoComplete && event.key == "Unidentified"){
+      event.preventDefault();
+      return false
+    }else{
+      setKeyPressed(true)
     }
   }
 
   const checkChange = (event)=>{
+    if(!canAutoComplete && !keyPressed){
+      return
+    }
     const value = event.target.value
     if(value == " "){
       showMessage("Valor erroneo")
@@ -86,6 +93,7 @@ const InputName = ({
     }else{
       // console.log("es incorrecta")
       showMessage("Valor erroneo")
+      
     }
   }
   

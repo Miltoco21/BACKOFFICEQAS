@@ -20,6 +20,7 @@ const InputNumber = ({
     fieldName="number",
     label = fieldName[0].toUpperCase() + fieldName.substr(1),
     minLength = null,
+    canAutoComplete = false,
     maxLength = 20,
     required = false
   }) => {
@@ -30,6 +31,7 @@ const InputNumber = ({
     
     const [number, setNumber] = inputState
     const [validation, setValidation] = validationState
+    const [keyPressed, setKeyPressed] = useState(false)
 
   const validate = ()=>{
     // console.log("validate de:" + fieldName)
@@ -68,24 +70,38 @@ const InputNumber = ({
   }
   
   const checkKeyDown = (event)=>{
+    if(!canAutoComplete && event.key == "Unidentified"){
+      event.preventDefault();
+      return false
+    }else{
+      setKeyPressed(true)
+    }
     if(!Validator.isNumeric(event.target.value)){
       return false
     }
   }
 
   const checkChange = (event)=>{
+    if(!canAutoComplete && !keyPressed){
+      return
+    }
+    console.log("checkChange", event)
     const value = event.target.value
     if(value == " "){
-      showMessage("Valor erroneo")
+      showMessage(":Valor erroneo")
+
       return false
     }
-    if(Validator.isNumeric(value)){
-      console.log(value + " es valido")
-      setNumber(value);
-    }else{
-      // console.log("es incorrecta")
-      showMessage("Valor erroneo")
-    }
+    console.log("value de "+fieldName + ": " + value)
+    setNumber(value);
+    // if(value == "" || Validator.isNumeric(value)){
+    //   console.log(value + " es valido")
+    //   setNumber(value);
+    // }else{
+    //   // console.log("es incorrecta")
+    //   showMessage("Valor erroneo")
+
+    // }
   }
   
   const checkChangeBlur = (event)=>{

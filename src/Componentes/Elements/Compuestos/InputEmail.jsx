@@ -21,6 +21,7 @@ const InputEmail = ({
     label = fieldName[0].toUpperCase() + fieldName.substr(1),
     minLength = null,
     maxLength = null,
+    canAutoComplete = false,
     required = false
   }) => {
 
@@ -30,6 +31,7 @@ const InputEmail = ({
     
     const [email, setEmail] = inputState
     const [validation, setValidation] = validationState
+    const [keyPressed, setKeyPressed] = useState(false)
 
   const validate = ()=>{
     // console.log("validate de:" + fieldName)
@@ -73,6 +75,12 @@ const InputEmail = ({
   }
   
   const checkKeyDown = (event)=>{
+    if(!canAutoComplete && event.key == "Unidentified"){
+      event.preventDefault();
+      return false
+    }else{
+      setKeyPressed(true)
+    }
     if(!Validator.isKeyEmail(event)){
       console.log(event.key,": incorrecta")
       event.preventDefault();
@@ -83,6 +91,9 @@ const InputEmail = ({
   }
 
   const checkChange = (event)=>{
+    if(!canAutoComplete && !keyPressed){
+      return
+    }
     setEmail(event.target.value)
   }
   
