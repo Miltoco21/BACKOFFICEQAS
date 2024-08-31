@@ -12,12 +12,15 @@ import ModelConfig from "../../../Models/ModelConfig";
 import { Check, Dangerous } from "@mui/icons-material";
 import User from "../../../Models/User";
 import Validator from "../../../Helpers/Validator";
+import axios from "axios";
+import Region from "../../../Models/Region";
+import Comuna from "../../../Models/Comuna";
 
 
-const SelectList = ({
+const SelectComuna = ({
     inputState,
+    inputRegionState,
     validationState,
-    selectItems,
     withLabel = true,
     autoFocus = false,
     fieldName="select",
@@ -28,9 +31,10 @@ const SelectList = ({
     const {
       showMessage
     } = useContext(SelectedOptionsContext);
-    
-    const [selectList, setSelectList] = useState(selectItems)
+
+    const [selectList, setSelectList] = useState([])
     const [selected, setSelected] = inputState
+    const [selectedRegion, setSelectedRegion] = inputRegionState
     const [validation, setValidation] = validationState
 
   const validate = ()=>{
@@ -38,7 +42,7 @@ const SelectList = ({
     // const len = selected.length
     // console.log("len:", len)
     // const reqOk = (!required || (required && len > 0))
-    const empty = (selected === "" || selected === null || selected ===-1)
+    const empty = (selected == "" || selected == null || selected ==-1)
     const reqOk = !required || (required && !empty)
     
 
@@ -65,14 +69,29 @@ const SelectList = ({
     
   }
 
+  const loadList = async()=>{
+    if(selectedRegion <1)return
+    console.log("loadList comuna")
+    Comuna.getInstance().findByRegion(selectedRegion,(comunas)=>{
+      setSelectList(comunas)
+    },(error)=>{
+      console.log(error)
+    })
+    
+  }
+
   useEffect(()=>{
     validate()
     setSelected(-1)
   },[])
-
+  
+  useEffect(()=>{
+    // console.log("selectedregion es:", selectedRegion)
+    loadList()
+  },[selectedRegion])
+  
   useEffect(()=>{
     validate()
-    // console.log("selected es:", selected)
   },[selected])
 
   return (
@@ -105,9 +124,9 @@ const SelectList = ({
         {selectList.map((selectOption,ix) => (
           <MenuItem
             key={ix}
-            value={ix}
+            value={selectOption.id}
           >
-            {selectOption}
+            {selectOption.comunaNombre}
           </MenuItem>
         ))}
       </Select>
@@ -115,4 +134,4 @@ const SelectList = ({
   );
 };
 
-export default SelectList;
+export default SelectComuna;

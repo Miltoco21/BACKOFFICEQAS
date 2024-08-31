@@ -12,12 +12,13 @@ import ModelConfig from "../../../Models/ModelConfig";
 import { Check, Dangerous } from "@mui/icons-material";
 import User from "../../../Models/User";
 import Validator from "../../../Helpers/Validator";
+import axios from "axios";
+import Region from "../../../Models/Region";
 
 
-const SelectList = ({
+const SelectRegion = ({
     inputState,
     validationState,
-    selectItems,
     withLabel = true,
     autoFocus = false,
     fieldName="select",
@@ -28,8 +29,10 @@ const SelectList = ({
     const {
       showMessage
     } = useContext(SelectedOptionsContext);
+
+    const apiUrl = ModelConfig.get().urlBase;
     
-    const [selectList, setSelectList] = useState(selectItems)
+    const [selectList, setSelectList] = useState([])
     const [selected, setSelected] = inputState
     const [validation, setValidation] = validationState
 
@@ -38,7 +41,7 @@ const SelectList = ({
     // const len = selected.length
     // console.log("len:", len)
     // const reqOk = (!required || (required && len > 0))
-    const empty = (selected === "" || selected === null || selected ===-1)
+    const empty = (selected == "" || selected == null || selected ==-1)
     const reqOk = !required || (required && !empty)
     
 
@@ -65,13 +68,24 @@ const SelectList = ({
     
   }
 
+  const loadList = async()=>{
+    Region.getInstance().getAll((regiones)=>{
+      setSelectList(regiones)
+    },(error)=>{
+      console.log(error)
+    })
+    
+  }
+
   useEffect(()=>{
     validate()
     setSelected(-1)
+    loadList()
   },[])
 
   useEffect(()=>{
     validate()
+    
     // console.log("selected es:", selected)
   },[selected])
 
@@ -105,9 +119,9 @@ const SelectList = ({
         {selectList.map((selectOption,ix) => (
           <MenuItem
             key={ix}
-            value={ix}
+            value={selectOption.id}
           >
-            {selectOption}
+            {selectOption.regionNombre}
           </MenuItem>
         ))}
       </Select>
@@ -115,4 +129,4 @@ const SelectList = ({
   );
 };
 
-export default SelectList;
+export default SelectRegion;
