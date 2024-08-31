@@ -31,7 +31,7 @@ const SelectUserRoles = ({
 
     const apiUrl = ModelConfig.get().urlBase;
     
-    const [selectList, setSelectUserRoles] = useState([])
+    const [selectList, setSelectList] = useState([])
     const [selected, setSelected] = inputState
     const [validation, setValidation] = validationState
 
@@ -67,12 +67,12 @@ const SelectUserRoles = ({
     
   }
 
-  const loadRoles = async()=>{
+  const loadList = async()=>{
     try {
       const response = await axios.get(
         apiUrl + `/Usuarios/GetAllRolUsuario`
       );
-      setSelectUserRoles(response.data.usuarios);
+      setSelectList(response.data.usuarios);
       // console.log("ROLES", response.data.usuarios);
     } catch (error) {
       console.log(error);
@@ -82,7 +82,7 @@ const SelectUserRoles = ({
   useEffect(()=>{
     validate()
     setSelected(-1)
-    loadRoles()
+    loadList()
   },[])
 
   useEffect(()=>{
