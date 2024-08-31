@@ -76,23 +76,31 @@ const InputNumber = ({
     }else{
       setKeyPressed(true)
     }
-    if(!Validator.isNumeric(event.target.value)){
+    if(Validator.isTeclaControl(event)){
+      // console.log("es control")
+      return 
+    }
+    if(!Validator.isNumeric(event.key)){
+      // console.log("es correcta")
+      event.preventDefault();
       return false
     }
+
+    // console.log("es correcta")
   }
 
   const checkChange = (event)=>{
     if(!canAutoComplete && !keyPressed){
       return
     }
-    console.log("checkChange", event)
+    // console.log("checkChange", event)
     const value = event.target.value
     if(value == " "){
       showMessage(":Valor erroneo")
 
       return false
     }
-    console.log("value de "+fieldName + ": " + value)
+    // console.log("value de "+fieldName + ": " + value)
     setNumber(value);
     // if(value == "" || Validator.isNumeric(value)){
     //   console.log(value + " es valido")

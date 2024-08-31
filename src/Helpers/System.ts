@@ -123,6 +123,20 @@ class System {
         return obj2
     }
 
+    static allValidationOk = (validators,showMessageFunction)=>{
+        // console.log("allValidationOk:", validators)
+        var allOk = true
+        // const keys = Object.keys(validators)
+        Object.values(validators).forEach((validation:any,ix)=>{
+          // console.log("validation de  " + keys[ix] + " :", validation)
+          if(validation[0].message !="" && allOk){
+            showMessageFunction(validation[0].message)
+            allOk = false
+          }
+        })
+        return allOk
+      }
+
 }
 
 

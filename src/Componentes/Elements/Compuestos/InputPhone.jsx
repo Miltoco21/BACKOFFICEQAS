@@ -20,7 +20,7 @@ const InputPhone = ({
     fieldName="phone",
     label = fieldName[0].toUpperCase() + fieldName.substr(1),
     minLength = null,
-    maxLength = 12,
+    maxLength = 13,
     canAutoComplete = false,
     required = false
   }) => {
@@ -84,7 +84,7 @@ const InputPhone = ({
     }
     
     if(!Validator.isKeyPhone(event)){
-      console.log(event.key,": incorrecta")
+      // console.log(event.key,": incorrecta")
       event.preventDefault();
       return false
     }

@@ -71,7 +71,7 @@ const SelectComuna = ({
 
   const loadList = async()=>{
     if(selectedRegion <1)return
-    console.log("loadList comuna")
+    // console.log("loadList comuna")
     Comuna.getInstance().findByRegion(selectedRegion,(comunas)=>{
       setSelectList(comunas)
     },(error)=>{

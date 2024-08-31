@@ -88,7 +88,7 @@ const InputName = ({
       return false
     }
     if(Validator.isNombre(value)){
-      console.log(value + " es valido")
+      // console.log(value + " es valido")
       setName(value);
     }else{
       // console.log("es incorrecta")
