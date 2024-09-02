@@ -115,6 +115,10 @@ const InputPassword = ({
     validate()
   },[])
 
+  useEffect(()=>{
+    validate()
+  },[password])
+
   return (
     <>
       {withLabel && (

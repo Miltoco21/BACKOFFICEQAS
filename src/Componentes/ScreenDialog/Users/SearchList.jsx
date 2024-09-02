@@ -18,10 +18,10 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditUsuario from "./EditUsuario";
+import EditUsuario from "./Edit";
 import PaymentsIcon from "@mui/icons-material/Payments";
-import SideBar from "../NavBar/SideBar"
-import ModelConfig from "../../Models/ModelConfig";
+import SideBar from "../../NavBar/SideBar"
+import ModelConfig from "../../../Models/ModelConfig";
 
 const SearchList = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -233,11 +233,17 @@ const SearchList = () => {
         </Box>
        
       </Box>
-      <EditUsuario
-        selectedUser={selectedUser}
-        open={modalEditOpen}
-        handleCloseEditModal={handleCloseEditModal}
-      />
+
+      {modalEditOpen ? (
+        <EditUsuario
+          selectedUser={selectedUser}
+          openDialog={modalEditOpen}
+          setOpenDialog={setModalOpen}
+          onClose={handleCloseEditModal}
+        />
+      ) : (
+        <></>
+      )}
 
       {/* Delete Confirmation Dialog */}
       <Dialog

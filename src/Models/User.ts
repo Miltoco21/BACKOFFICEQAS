@@ -80,11 +80,37 @@ class User extends Model{
             + "/Usuarios/AddUsuario"
             const response = await axios.post(url,data);
             if (
+            response.status === 200
+            || response.status === 201
+            ) {
+            // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
+            callbackOk(response.data.usuarios, response)
+            } else {
+            callbackWrong("Respuesta desconocida del servidor")
+            }
+        } catch (error) {
+            if (error.response && error.response.status && error.response.status === 409) {
+                callbackWrong(error.response.descripcion)
+            } else {
+                callbackWrong(error.message)
+              }
+
+
+        }
+    }
+
+    async edit(data,callbackOk, callbackWrong){
+        try {
+            const configs = ModelConfig.get()
+            var url = configs.urlBase
+            + "/Usuarios/UpdateUsuario"
+            const response = await axios.put(url,data);
+            if (
             response.data.statusCode === 200
             || response.data.statusCode === 201
             ) {
             // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
-            callbackOk(response.data.usuarios, response)
+            callbackOk(response.data, response)
             } else {
             callbackWrong("Respuesta desconocida del servidor")
             }

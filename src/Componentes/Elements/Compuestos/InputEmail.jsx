@@ -102,10 +102,12 @@ const InputEmail = ({
   }
 
   useEffect(()=>{
-    // console.log("cambio inputState")
-    // console.log(inputState)
     validate()
   },[])
+
+  useEffect(()=>{
+    validate()
+  },[email])
 
   return (
     <>

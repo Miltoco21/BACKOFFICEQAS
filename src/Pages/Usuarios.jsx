@@ -5,14 +5,11 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Button,Dialog,Grid, Typography } from "@mui/material";
-import Modal from "@mui/material/Modal";
-import IngresoUsuarios from "../Componentes/Usuarios/IngresoUsuarios";
+import IngresoUsuarios from "../Componentes/ScreenDialog/Users/Create";
 import Add from "@mui/icons-material/Add";
 
 import SideBar from "../Componentes/NavBar/SideBar";
-import SearchList from "../Componentes/ListaBuscadora/SearchList";
-
-//
+import SearchList from "../Componentes/ScreenDialog/Users/SearchList";
 
 export const defaultTheme = createTheme();
 
@@ -29,7 +26,6 @@ export default function Usuarios() {
   return (
     <ThemeProvider theme={defaultTheme}>
     <CssBaseline />
-    <div>
       <Box sx={{ display: "flex" }}>
         <SideBar  />
         <Box sx={{  flex: 1 }}>
@@ -48,10 +44,20 @@ export default function Usuarios() {
         </Box>
       </Box>
 
-      <Dialog open={open} onClose={handleCloseModal} maxWidth={'md'}>
-        <IngresoUsuarios onClose={handleCloseModal} />
-      </Dialog>
-    </div>
+      {open ? (
+        <IngresoUsuarios
+        openDialog={open}
+        setOpendialog={setOpen}
+        onClose={handleCloseModal}
+      />
+      ) : (
+        <></>
+      )}
+
+
+
+      
+
   </ThemeProvider>
 
   );

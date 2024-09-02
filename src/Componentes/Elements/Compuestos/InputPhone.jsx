@@ -109,6 +109,10 @@ const InputPhone = ({
     validate()
   },[])
 
+  useEffect(()=>{
+    validate()
+  },[phone])
+
   return (
     <>
       {withLabel && (

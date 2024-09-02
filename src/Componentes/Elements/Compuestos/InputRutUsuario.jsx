@@ -23,8 +23,8 @@ const InputRut = ({
     canAutoComplete = false,
     label = "Rut",
     fieldName="rut",
-    required = false
-
+    required = false,
+    isEdit = false,
   }) => {
 
   const {
@@ -64,10 +64,17 @@ const InputRut = ({
 
 
   useEffect(()=>{
-    validate()
+
+    if(rut != "" && rutOk === null){
+      // console.log("cambio algo.. hago check unique")
+      checkUnique()
+    }else{
+      validate()
+    }
   },[rutOk, rut])
 
   useEffect(()=>{
+    // console.log("cambio rut")
     setRutOk(null)
   },[rut])
 
@@ -123,11 +130,15 @@ const InputRut = ({
       rut
     },(usuarios)=>{
       // console.log(usuarios)
-      if(usuarios.length>0){
+      if(
+        (!isEdit && usuarios.length>0)
+        ||
+        (isEdit && usuarios.length>1)
+      ){
         showMessage("Ya existe el rut ingresado")
         setRutOk(false)
       }else{
-        showMessage("Rut disponible")
+        if(!isEdit) showMessage("Rut disponible")
         setRutOk(true)
       }
     }, (err)=>{
@@ -160,7 +171,7 @@ const InputRut = ({
       onKeyDown={checkKeyDown}
 
       InputProps={{
-        startAdornment: (
+        endAdornment: (
           <InputAdornment position="end">
             <Check sx={{
               color:"#06AD16",
@@ -171,6 +182,12 @@ const InputRut = ({
             <Dangerous sx={{
               color:"#CD0606",
               display: ( ( rutOk === false ) ? "flex" : "none")
+            }} />
+
+            <Check sx={{
+              color:"transparent",
+              display: (rutOk === null ? "flex" : "none"),
+              marginRight:"10px"
             }} />
           </InputAdornment>
         ),

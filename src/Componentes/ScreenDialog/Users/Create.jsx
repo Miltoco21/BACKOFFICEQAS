@@ -3,42 +3,27 @@ import React, { useState, useEffect, useContext } from "react";
 import {
   Grid,
   Paper,
-  Box,
-  TextField,
-  Button,
-  CircularProgress,
-  MenuItem,
-  InputLabel,
-  Snackbar,
-  IconButton,
-  InputAdornment, 
   Dialog
 } from "@mui/material";
-import axios from "axios";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import ModelConfig from "../../Models/ModelConfig";
-import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import { SelectedOptionsContext } from "../../Context/SelectedOptionsProvider";
 
-import InputRutUsuario from "../Elements/Compuestos/InputRutUsuario";
-import Validator from "../../Helpers/Validator";
-import InputName from "../Elements/Compuestos/InputName";
-import InputEmail from "../Elements/Compuestos/InputEmail";
-import InputPhone from "../Elements/Compuestos/InputPhone";
-import InputNumber from "../Elements/Compuestos/InputNumber";
-import InputPassword from "../Elements/Compuestos/InputPassword";
-import SelectList from "../Elements/Compuestos/SelectList";
-import SelectUserRoles from "../Elements/Compuestos/SelectUserRoles";
-import SelectRegion from "../Elements/Compuestos/SelectRegion";
-import SelectComuna from "../Elements/Compuestos/SelectComuna";
-import SendingButton from "../Elements/SendingButton";
-import { margin } from "@mui/system";
-import User from "../../Models/User";
-import System from "../../Helpers/System";
+import InputRutUsuario from "../../Elements/Compuestos/InputRutUsuario";
+import InputName from "../../Elements/Compuestos/InputName";
+import InputEmail from "../../Elements/Compuestos/InputEmail";
+import InputPhone from "../../Elements/Compuestos/InputPhone";
+import InputNumber from "../../Elements/Compuestos/InputNumber";
+import InputPassword from "../../Elements/Compuestos/InputPassword";
+import SelectList from "../../Elements/Compuestos/SelectList";
+import SelectUserRoles from "../../Elements/Compuestos/SelectUserRoles";
+import SelectRegion from "../../Elements/Compuestos/SelectRegion";
+import SelectComuna from "../../Elements/Compuestos/SelectComuna";
+import SendingButton from "../../Elements/SendingButton";
+import User from "../../../Models/User";
+import System from "../../../Helpers/System";
 export const defaultTheme = createTheme();
 
-export default function IngresoUsuarios({ 
+export default function Ingreso({ 
   onClose,
   openDialog,
   setOpendialog
@@ -47,7 +32,6 @@ export default function IngresoUsuarios({
     showLoading,
     hideLoading,
     showLoadingDialog,
-    userData, 
     showMessage
   } = useContext(SelectedOptionsContext);
 
@@ -104,12 +88,12 @@ export default function IngresoUsuarios({
       telefono: states.phone[0],
       codigoUsuario: states.userCode[0],
       direccion: states.direccion[0],
-      rol: states.rol[0],
       codigoPostal: states.postalCode[0],
       clave: states.clave[0],
       remuneracion: states.remuneracionTipo[0],
-      region: states.region[0],
-      comuna: states.comuna[0],
+      rol: states.rol[0] + "",
+      region: states.region[0] + "",
+      comuna: states.comuna[0] + "",
       credito: states.credit[0],
     }
       
@@ -148,7 +132,6 @@ export default function IngresoUsuarios({
                 required={true}
                 autoFocus={true}
               />
-              
             </Grid>
             <Grid item xs={12} md={4}>
               <InputName
@@ -157,7 +140,6 @@ export default function IngresoUsuarios({
                 required={true}
                 validationState={validatorStates.nombre}
               />
-
             </Grid>
             <Grid item xs={12} md={4}>
 

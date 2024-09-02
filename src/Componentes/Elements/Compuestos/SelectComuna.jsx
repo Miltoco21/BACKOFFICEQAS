@@ -15,6 +15,7 @@ import Validator from "../../../Helpers/Validator";
 import axios from "axios";
 import Region from "../../../Models/Region";
 import Comuna from "../../../Models/Comuna";
+import System from "../../../Helpers/System";
 
 
 const SelectComuna = ({
@@ -33,7 +34,8 @@ const SelectComuna = ({
     } = useContext(SelectedOptionsContext);
 
     const [selectList, setSelectList] = useState([])
-    const [selected, setSelected] = inputState
+    const [selected, setSelected] = useState(-1)
+    const [selectedOriginal, setSelectedOriginal] = inputState
     const [selectedRegion, setSelectedRegion] = inputRegionState
     const [validation, setValidation] = validationState
 
@@ -63,6 +65,7 @@ const SelectComuna = ({
   
   const checkChange = (event)=>{
     setSelected(event.target.value)
+    setSelectedOriginal(event.target.value)
   }
   
   const checkChangeBlur = (event)=>{
@@ -70,9 +73,14 @@ const SelectComuna = ({
   }
 
   const loadList = async()=>{
-    if(selectedRegion <1)return
+    if(selectedRegion <1){
+      // console.log("sale por que region es incorrecto")
+      return
+    }
     // console.log("loadList comuna")
     Comuna.getInstance().findByRegion(selectedRegion,(comunas)=>{
+      // console.log("selectedRegion",selectedRegion)
+      // console.log("comunas",comunas)
       setSelectList(comunas)
     },(error)=>{
       console.log(error)
@@ -80,19 +88,58 @@ const SelectComuna = ({
     
   }
 
+  const setByString = (valueString)=>{
+    var finded = false
+    selectList.forEach((comuna)=>{
+      if(comuna.comunaNombre == valueString){
+        setSelected(comuna.id)
+        setSelectedOriginal(comuna.id)
+        finded = true
+      }
+    })
+
+    // console.log( (finded ? "Se" : "No se" ) + " encontro")
+  }
+
   useEffect(()=>{
+    // console.log("")
+
     validate()
     setSelected(-1)
+    // console.log(inputRegionState)
+    // console.log("carga inicial comuna")
   },[])
   
   useEffect(()=>{
-    // console.log("selectedregion es:", selectedRegion)
+    // console.log("")
+    // console.log("selectedregion es:", (selectedRegion + ""))
+    setSelected(-1)
+    setSelectList([])
     loadList()
   },[selectedRegion])
+
   
   useEffect(()=>{
-    validate()
-  },[selected])
+    // console.log("")
+    // console.log("cambio algo en comuna")
+    if(selected ===-1 && selectList.length ===0){
+      // console.log("debe cargar")
+      loadList()
+    }
+    if(selectList.length>0 && selectedOriginal !== "" && selected === -1){
+      if(Validator.isNumeric(selectedOriginal)){
+        // console.log("todo numero..")
+        setSelected(selectedOriginal)
+      }else{
+        // console.log("no es todo numero..")
+        // console.log("carga original",selectedOriginal)
+        setByString(selectedOriginal)
+      }
+    }else{
+      validate()
+    }
+    // console.log("selected es:", selected)
+  },[selected, selectList.length])
 
   return (
     <>

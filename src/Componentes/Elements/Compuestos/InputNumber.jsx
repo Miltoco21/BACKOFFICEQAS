@@ -35,7 +35,7 @@ const InputNumber = ({
 
   const validate = ()=>{
     // console.log("validate de:" + fieldName)
-    const len = number.length
+    const len = (number + "").length
     const reqOk = (!required || (required && len > 0))
     var badMinlength = false
     var badMaxlength = false
@@ -113,7 +113,7 @@ const InputNumber = ({
   }
   
   const checkChangeBlur = (event)=>{
-    if(number.substr(-1) == " "){
+    if(typeof(number) == "string" && number.substr(-1) == " "){
       setNumber(number.trim())
     }
   }

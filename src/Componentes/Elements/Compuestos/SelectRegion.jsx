@@ -30,10 +30,9 @@ const SelectRegion = ({
       showMessage
     } = useContext(SelectedOptionsContext);
 
-    const apiUrl = ModelConfig.get().urlBase;
-    
     const [selectList, setSelectList] = useState([])
-    const [selected, setSelected] = inputState
+    const [selected, setSelected] = useState(-1)
+    const [selectedOriginal, setSelectedOriginal] = inputState
     const [validation, setValidation] = validationState
 
   const validate = ()=>{
@@ -61,7 +60,9 @@ const SelectRegion = ({
   }
   
   const checkChange = (event)=>{
+    // console.log("cambia region a:", event.target.value)
     setSelected(event.target.value)
+    setSelectedOriginal(event.target.value)
   }
   
   const checkChangeBlur = (event)=>{
@@ -79,15 +80,19 @@ const SelectRegion = ({
 
   useEffect(()=>{
     validate()
-    setSelected(-1)
     loadList()
+    // console.log("cargo region", selected)
   },[])
 
   useEffect(()=>{
-    validate()
-    
-    // console.log("selected es:", selected)
-  },[selected])
+    if(selectList.length>0 && selectedOriginal !== "" && selected === -1){
+      setSelected( parseInt(selectedOriginal + "") )
+      setSelectedOriginal( parseInt(selectedOriginal + "") )
+    }else{
+      validate()
+    }
+    // console.log("region selected es:", selected)
+  },[selected, selectList.length])
 
   return (
     <>

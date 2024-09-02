@@ -32,7 +32,8 @@ const SelectUserRoles = ({
     const apiUrl = ModelConfig.get().urlBase;
     
     const [selectList, setSelectList] = useState([])
-    const [selected, setSelected] = inputState
+    const [selected, setSelected] = useState(-1)
+    const [selectedOriginal, setSelectedOriginal] = inputState
     const [validation, setValidation] = validationState
 
   const validate = ()=>{
@@ -61,6 +62,7 @@ const SelectUserRoles = ({
   
   const checkChange = (event)=>{
     setSelected(event.target.value)
+    setSelectedOriginal(event.target.value)
   }
   
   const checkChangeBlur = (event)=>{
@@ -79,6 +81,15 @@ const SelectUserRoles = ({
     }
   }
 
+  const setByString = (valueString)=>{
+    selectList.forEach((item)=>{
+      if(item.rol == valueString){
+        setSelected(item.idRol)
+        setSelectedOriginal(item.idRol)
+      }
+    })
+  }
+
   useEffect(()=>{
     validate()
     setSelected(-1)
@@ -86,10 +97,22 @@ const SelectUserRoles = ({
   },[])
 
   useEffect(()=>{
-    validate()
-    
+    // console.log("cambio algo en roles")
+    if(selectList.length>0 && selectedOriginal !== "" && selected === -1){
+      if(Validator.isNumeric(selectedOriginal)){
+        // console.log("todo numero..")
+        setSelected(selectedOriginal)
+      }else{
+        // console.log("no es todo numero..")
+        setByString(selectedOriginal)
+      }
+    }else{
+      validate()
+    }
     // console.log("selected es:", selected)
-  },[selected])
+  },[selected, selectList.length])
+
+
 
   return (
     <>
