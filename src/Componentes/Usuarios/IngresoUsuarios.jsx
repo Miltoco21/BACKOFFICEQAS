@@ -46,9 +46,6 @@ export default function IngresoUsuarios({ onClose}) {
     showMessage
   } = useContext(SelectedOptionsContext);
 
-
-  const [reset,setReset] = useState(false)
-
   var states = {
     rut: useState(""),
     nombre: useState(""),
