@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Button,
@@ -25,6 +25,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SideBar from "../Componentes/NavBar/SideBar";
 import axios from "axios";
 import ModelConfig from "../Models/ModelConfig";
+import dayjs from "dayjs";
 
 const RankingLibroVentas = () => {
   const apiUrl = ModelConfig.get().urlBase;
@@ -52,7 +53,6 @@ const RankingLibroVentas = () => {
       fechahasta: endDate ? endDate.format("YYYY-MM-DD") : "",
       tipoComprobante: tipo.join(","),
     };
-
     console.log("Iniciando fetchData con params:", params);
 
     try {
@@ -151,6 +151,14 @@ const RankingLibroVentas = () => {
     );
   };
 
+
+  useEffect(()=>{
+    setStartDate(dayjs())
+    setEndDate(dayjs())
+    setTipo([
+      0,1,2
+    ])
+  },[])
   return (
     <div style={{ display: "flex" }}>
       <SideBar />
