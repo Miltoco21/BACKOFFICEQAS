@@ -214,7 +214,6 @@ class Product extends Model{
             const configs = ModelConfig.get()
             var url = configs.urlBase +
             "/ProductosTmp/GetProductosByDescripcion?descripcion=" + (description+"")
-            url = url.replace("/api","/api")
             if(codigoCliente){
                 url += "&codigoCliente=" + codigoCliente
             }
