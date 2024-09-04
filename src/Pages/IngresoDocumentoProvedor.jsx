@@ -569,13 +569,25 @@ const IngresoDocumentoProveedor = () => {
               backgroundColor:"#f0f0f0",
               borderRadius:"3px",
               position:"relative",
+              border:"1px solid #b9b5b5",
               padding:"20px"
             }}>
           <Grid container spacing={2}>
               <Button sx={{
                 position:"absolute",
                 bottom: 0,
-                right:"10px"
+                color:"#fff",
+                right:"10px",
+                backgroundColor:"#b9b5b5",
+                padding:"4px 10px",
+
+                borderRadius:(showPanel ? "20px 0 0 0" : "0 0 0 20px"),
+                top:(showPanel ? "" : "0px"),
+                marginRight:"-10px",
+                "&:hover": {
+                  backgroundColor: "#000 ",
+                  color: "white",
+                },
               }} onClick={()=>{
                 setShowPanel(!showPanel)
               }}
