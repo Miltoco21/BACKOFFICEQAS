@@ -807,7 +807,7 @@ const IngresoDocumentoProveedor = () => {
                 style={{ overflowX: "auto", maxHeight: 200 }}
               >
                 <Table>
-                  <TableBody>
+                  <TableBody key={123132}>
                     {searchedProducts.map((product) => (
                       <TableRow key={product.id}>
                         <TableCell sx={{ width: "21%" }}>
