@@ -56,6 +56,20 @@ class Proveedor extends Model{
       }
   }
 
+  async getAll(callbackOk, callbackWrong){
+    try {
+      const response = await axios.get(
+          ModelConfig.get("urlBase") 
+          + `/Proveedores/GetAllProveedores`);
+
+      if (response.status === 200) {
+        callbackOk(response.data.proveedores)
+      } 
+    } catch (error) {
+      callbackWrong(error)
+    }
+  }
+
   async update(data,callbackOk, callbackWrong){
     try {
         const response = await axios.put(
@@ -71,6 +85,81 @@ class Proveedor extends Model{
         callbackWrong(error)
       }
   }
+
+  async findProductsByCodigo({
+    codigoBuscar, 
+    codigoProveedor,
+  },callbackOk, callbackWrong){
+    try {
+        const configs = ModelConfig.get()
+        var url = configs.urlBase +
+        "/ProductosTmp/GetProductosByCodigoSegunProveedor?codigoSProveedor=" + codigoBuscar
+        url += "&codigoProveedor=" + codigoProveedor
+        const response = await axios.get(url);
+        if(
+            response.data.statusCode == 200
+            || response.data.statusCode == 201
+
+        ){
+            callbackOk(response.data.productos, response);
+        }else{
+           callbackWrong("respuesta incorrecta del servidor") 
+        }
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        callbackWrong(error) 
+      }
+  }
+
+  async findProductsByDescription({
+    description,
+    codigoProveedor
+  },
+    callbackOk, callbackWrong){
+    try {
+        const configs = ModelConfig.get()
+        var url = configs.urlBase +
+        "/ProductosTmp/GetProductosByDescripcionSegunProveedor?"
+        url += "DescripcionSProveedor=" + (description+"")
+        url += "&codigoProveedor=" + codigoProveedor
+        const response = await axios.get(url);
+        if(
+            response.data.statusCode == 200
+            || response.data.statusCode == 201
+
+        ){
+            callbackOk(response.data.productos, response);
+        }else{
+           callbackWrong("respuesta incorrecta del servidor") 
+        }
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        callbackWrong(error) 
+      }
+  }
+  
+  async asociateProduct(data,callbackOk, callbackWrong){
+    try {
+        const configs = ModelConfig.get()
+        var url = configs.urlBase +
+        "/ProductosTmp/PostProductosByCodigoSegunProveedor"
+        const response = await axios.post(url, data);
+        if(
+            response.data.statusCode == 200
+            || response.data.statusCode == 201
+
+        ){
+            // callbackOk(response.data.productos, response);
+            callbackOk(response);
+        }else{
+           callbackWrong("respuesta incorrecta del servidor") 
+        }
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        callbackWrong(error) 
+      }
+  }
+
 };
 
 export default Proveedor;

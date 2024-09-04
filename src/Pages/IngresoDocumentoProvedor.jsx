@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Paper,
   Grid,
@@ -19,6 +19,9 @@ import {
   Alert,
   Snackbar,
   IconButton,
+  Dialog,
+  DialogContent,
+  Typography,
 } from "@mui/material";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -29,10 +32,24 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SearchListDocumento from "../Componentes/SearchlistDocumento.jsx/SearchListDocumento";
+import SearchListDocumento from "./../Componentes/SearchlistDocumento/SearchListDocumento";
 import ModelConfig from "../Models/ModelConfig";
+import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
+import Product from "../Models/Product";
+import Proveedor from "../Models/Proveedor";
+import { SelectedOptionsContext } from "./../Componentes/Context/SelectedOptionsProvider";
+import Validator from "../Helpers/Validator";
+import BoxSelectTipo from "../Componentes/Proveedores/BoxSelectTipo";
 
 const IngresoDocumentoProveedor = () => {
+
+  const {
+    showLoading,
+    hideLoading,
+    showMessage,
+    showConfirm
+  } = useContext(SelectedOptionsContext);
+
   const apiUrl = ModelConfig.get().urlBase;
 
   const [open, setOpen] = useState(false);
@@ -40,7 +57,7 @@ const IngresoDocumentoProveedor = () => {
   const [folioDocumento, setFolioDocumento] = useState("");
   const [fecha, setFecha] = useState(dayjs());
   const [searchText, setSearchText] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [proveedoresFiltrados, setProveedoresFiltrados] = useState([]);
   const [proveedores, setProveedores] = useState([]);
   const [descripcion, setDescripcion] = useState("");
   const [cantidad, setCantidad] = useState("");
@@ -54,9 +71,23 @@ const IngresoDocumentoProveedor = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [searchTermProd, setSearchTermProd] = useState("");
+  const [searchCodProv, setSearchCodProv] = useState("");
+  const [searchDescProv, setSearchDescProv] = useState("");
   const [searchedProducts, setSearchedProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
-  console.log("selectedProveedor", selectedProveedor);
+  
+  const [showPanel, setShowPanel] = useState(true);
+  const [tipoBuscar, setTipoBuscar] = useState(0);
+  const TIPOS_BUSCAR = {
+    CODIGO_SEGUN_PROVEEDOR : 0,
+    DESCRIPCION_SEGUN_PROVEEDOR : 1,
+    CODIGO_BARRAS : 2,
+    DESCRIPCION : 3,
+  }
+  const [associating, setAssociating] = useState(null)
+  const [countPackage, setCountPackage] = useState(0);
+
+  // console.log("selectedProveedor", selectedProveedor);
 
   const setOpenSnackbar = (value) => {
     setSnackbarOpen(value);
@@ -107,6 +138,32 @@ const IngresoDocumentoProveedor = () => {
     setSelectedProducts(updatedProducts);
   };
 
+  const handleAsocAndAddProductToSales = (product) => {
+    if(countPackage<1){
+      showMessage("Ingresar la cantidad de cada paquete")
+      return
+    }
+    // console.log("producto:", product)
+    // console.log("searchCodProv:", searchCodProv)
+    // console.log("searchDescProv:", searchDescProv)
+    const data = [{
+      codigoProveedor: selectedProveedor.codigoProveedor,
+      codigoSegunProveedor: "",
+      descripcionSegunProveedor: "",
+      codBarra: product.idProducto,
+      cantidadProveedor: parseInt(countPackage + ""),
+      cantidadProducto: 1,
+    }]
+    data[0].codigoSegunProveedor = searchCodProv
+    data[0].descripcionSegunProveedor = searchDescProv
+    console.log("datos para asociar:", data)
+    Proveedor.getInstance().asociateProduct(data, (res)=>{
+      handleAddProductToSales(product)
+    },()=>{
+      showMessage("No se pudo asociar")
+    })
+  }
+
   const handleAddProductToSales = (product) => {
     const existingProductIndex = selectedProducts.findIndex(
       (p) => p.id === product.idProducto
@@ -140,30 +197,22 @@ const IngresoDocumentoProveedor = () => {
     }
 
     setSearchedProducts([]);
+    setAssociating(false)
     setErrorMessage("");
   };
 
   useEffect(() => {
-    const fetchProveedores = async () => {
-      try {
-        const response = await axios.get(
-          apiUrl + "/Proveedores/GetAllProveedores"
-        );
-        setProveedores(response.data.proveedores);
-      } catch (error) {
-        console.error("Error fetching proveedores:", error);
-      }
-    };
-
-    fetchProveedores();
+    Proveedor.getInstance().getAll((provs)=>{
+      setProveedores(provs);
+    },()=>{})
   }, []);
 
-  const handleOpenModal = () => {
+  const abrirModalIngresoDocumento = () => {
     setOpen(true);
     setSelectedProveedor("");
   };
 
-  const handleCloseModal = () => {
+  const cerrarModalIngresoDocumento = () => {
     setOpen(false);
   };
 
@@ -172,7 +221,7 @@ const IngresoDocumentoProveedor = () => {
     setSnackbarOpen200(false);
   };
 
-  const handleSearch = () => {
+  const buscarProveedor = () => {
     setSelectedProveedor("");
     if (searchText.trim() === "") {
       setSnackbarMessage("Campo vacío, ingresa proveedor ...");
@@ -183,7 +232,7 @@ const IngresoDocumentoProveedor = () => {
         proveedor.razonSocial.toLowerCase().includes(searchText.toLowerCase()) ||
         proveedor.rut.toLowerCase().includes(searchText.toLowerCase())
       );
-      setSearchResults(filteredResults);
+      setProveedoresFiltrados(filteredResults);
   
       if (filteredResults.length === 0) {
         setSearchSnackbarOpen(true);
@@ -193,16 +242,79 @@ const IngresoDocumentoProveedor = () => {
     }
   };
 
-  const handleChipClick = (result) => {
+  const clickEnProveedor = (result) => {
     setSelectedProveedor(result);
-    setSearchResults([]);
+    setProveedoresFiltrados([]);
     setSearchText("");
   };
 
   const hoy = dayjs();
   const inicioRango = dayjs().subtract(1, "week");
 
-  const handleSearchButtonClick = async () => {
+  const buscarProductosGeneralesPorCodigoBarras = (callbackFail)=>{
+    Product.getInstance().findByCodigoBarras({codigoProducto:searchTermProd},(prods,res)=>{
+      if(res.data.cantidadRegistros>0){
+        handleSearchSuccess(res, "PLU");
+      }else{
+        callbackFail()
+      }
+    },()=>{})
+  }
+
+  const buscarProductosGeneralesPorDescripcion = (callbackFail)=>{
+    Product.getInstance().findByDescription({description:searchTermProd},(prods,res2)=>{
+      if(res2.data.cantidadRegistros>0){
+        handleSearchSuccess(res2, "Descripción");
+      }else{
+      callbackFail()
+    }
+    },()=>{})
+  }
+
+  const buscarProductosGeneral = (callbackFail = ()=>{})=>{
+    buscarProductosGeneralesPorCodigoBarras(()=>{
+      buscarProductosGeneralesPorDescripcion(()=>{
+        setSnackbarMessage(
+          `No se encontraron resultados para "${searchTermProd}"`
+        );
+        setOpenSnackbar(true);
+        setTimeout(() => {
+          setOpenSnackbar(false);
+        }, 3000);
+
+        callbackFail()
+      })
+    })
+  }
+
+
+  const buscarProductosProvPorCodigo = (callbackFail)=>{
+    Proveedor.getInstance().findProductsByCodigo({
+      codigoBuscar:searchTermProd,
+      codigoProveedor:selectedProveedor.codigoProveedor
+    },(prods,res)=>{
+      if(res.data.cantidadRegistros>0){
+        handleSearchSuccess(res, "PLU");
+      }else{
+        callbackFail()
+      }
+    },()=>{})
+  }
+
+  const buscarProductosProvPorDescripcion = (callbackFail)=>{
+    Proveedor.getInstance().findProductsByDescription({
+      description:searchTermProd,
+      codigoProveedor:selectedProveedor.codigoProveedor
+    },(prods,res)=>{
+      if(res.data.cantidadRegistros>0){
+        handleSearchSuccess(res, "PLU");
+      }else{
+        callbackFail()
+      }
+    },()=>{})
+  }
+
+  const buscarProductos = async () => {
     if (searchTermProd.trim() === "") {
       setSearchedProducts([]);
       setSnackbarMessage("El campo de búsqueda está vacío");
@@ -210,75 +322,85 @@ const IngresoDocumentoProveedor = () => {
       return;
     }
 
-    // Verificar si el término de búsqueda es numérico
-    const isNumeric =
-      !isNaN(parseFloat(searchTermProd)) && isFinite(searchTermProd);
+    switch(tipoBuscar){
+      case TIPOS_BUSCAR.CODIGO_SEGUN_PROVEEDOR:
+        setSearchCodProv(searchTermProd)
+        setSearchDescProv("")
+        buscarProductosProvPorCodigo(()=>{
+          showConfirm("Quiere asociar el codigo " + searchTermProd + " con algun producto a este proveedor?",
+            ()=>{
+              setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
+              setSearchTermProd("")
+              setCountPackage(0)
+              setSearchedProducts([])
+              setAssociating(true)
+            },()=>{
+              setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
+              setSearchTermProd("")
+              setAssociating(false)
+          })
+        })
+      break
 
-    try {
-      if (isNumeric) {
-        // Si el término de búsqueda es numérico, buscar en el endpoint de código
-        const responseByCodigo = await axios.get(
-          apiUrl + `/ProductosTmp/GetProductosByCodigoBarra?codbarra=${searchTermProd}&codigoCliente=${0}`
-        );
-
-        if (
-          responseByCodigo.data &&
-          responseByCodigo.data.cantidadRegistros > 0
-        ) {
-          handleSearchSuccess(responseByCodigo, "PLU");
-        } else {
-          // Si no se encuentran resultados por código numérico, buscar por descripción
-          const responseByDescripcion = await axios.get(
-            apiUrl + `/ProductosTmp/GetProductosByDescripcion?descripcion=${searchTermProd}&codigoCliente=${0}`
-          );
-
-          if (
-            responseByDescripcion.data &&
-            responseByDescripcion.data.cantidadRegistros > 0
-          ) {
-            handleSearchSuccess(responseByDescripcion, "Descripción");
-          } else {
-            // Si no hay resultados para la búsqueda por descripción, mostrar mensaje de error
-            setSnackbarMessage(
-              `No se encontraron resultados para "${searchTermProd}"`
-            );
-            setOpenSnackbar(true);
-            setTimeout(() => {
-              setOpenSnackbar(false);
-            }, 3000);
-          }
-        }
-      } else {
-        // Si el término de búsqueda no es numérico, buscar directamente por descripción
-        const responseByDescripcion = await axios.get(
-          apiUrl + `/ProductosTmp/GetProductosByDescripcion?descripcion=${searchTermProd}&codigoCliente=${0}`
-        );
-
-        if (
-          responseByDescripcion.data &&
-          responseByDescripcion.data.cantidadRegistros > 0
-        ) {
-          handleSearchSuccess(responseByDescripcion, "Descripción");
-        } else {
-          // Si no hay resultados para la búsqueda por descripción, mostrar mensaje de error
+      case TIPOS_BUSCAR.DESCRIPCION_SEGUN_PROVEEDOR:
+        setSearchCodProv("")
+        setSearchDescProv(searchTermProd)
+        buscarProductosProvPorDescripcion(()=>{
+          showConfirm("Quiere asociar la descripcion " + searchTermProd + " con algun producto a este proveedor?",
+            ()=>{
+              setSearchTermProd("")
+              setAssociating(true)
+              setCountPackage(0)
+              setSearchedProducts([])
+              setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
+            },()=>{
+              setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
+              setSearchTermProd("")
+              setAssociating(false)
+          })
+        })
+      break
+      case TIPOS_BUSCAR.CODIGO_BARRAS:
+        buscarProductosGeneralesPorCodigoBarras(()=>{
           setSnackbarMessage(
-            `No se encontraron resultados para "${searchTermProd}"`
+            `No se encontraron resultados por codigo de barras`
           );
           setOpenSnackbar(true);
           setTimeout(() => {
             setOpenSnackbar(false);
           }, 3000);
-        }
-      }
-    } catch (error) {
-      console.error("Error al buscar el producto:", error);
-      setSnackbarMessage("Error al buscar el producto");
-      setOpenSnackbar(true);
+        })
 
-      setTimeout(() => {
-        setOpenSnackbar(false);
-      }, 3000);
+      break
+      case TIPOS_BUSCAR.DESCRIPCION:
+        buscarProductosGeneralesPorDescripcion(()=>{
+          setSnackbarMessage(
+            `No se encontraron resultados descripcion`
+          );
+          setOpenSnackbar(true);
+          setTimeout(() => {
+            setOpenSnackbar(false);
+          }, 3000);
+
+          callbackFail()
+        })
+
+      break
+
+      default:
+        showConfirm("Quiere asociar algun producto a este proveedor?",
+          ()=>{
+            setAssociating(true)
+            buscarProductosGeneral()
+          },()=>{
+            setAssociating(false)
+            buscarProductosGeneral()
+        })
+      break
     }
+
+    
+    
   };
 
   const handleSearchSuccess = (response, searchType) => {
@@ -385,11 +507,11 @@ const IngresoDocumentoProveedor = () => {
       setDescripcion("");
       setCantidad("");
       setSelectedProducts([]);
-      setSearchResults([]);
+      setProveedoresFiltrados([]);
 
       setErrorMessage("");
       setTimeout(() => {
-        handleCloseModal();
+        cerrarModalIngresoDocumento();
       }, "2000");
     } catch (error) {
       console.error("Error al guardar los datos:", error);
@@ -434,27 +556,36 @@ const IngresoDocumentoProveedor = () => {
           color="primary"
           sx={{ my: 1, mx: 2 }}
           startIcon={<Add />}
-          onClick={handleOpenModal}
+          onClick={abrirModalIngresoDocumento}
         >
           Ingresa Documento de Compra
         </Button>
 
         <SearchListDocumento></SearchListDocumento>
-        <Modal open={open} onClose={handleCloseModal}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              bgcolor: "background.paper",
-              boxShadow: 24,
-              p: 4,
-              overflow: "auto",
-              maxHeight: "90vh",
-              maxWidth: "100vw",
-            }}
-          >
+        <Dialog open={open} onClose={cerrarModalIngresoDocumento} maxWidth={"md"}>
+            
+          <DialogContent>
+            <Box sx={{
+              backgroundColor:"#f0f0f0",
+              borderRadius:"3px",
+              position:"relative",
+              padding:"20px"
+            }}>
+          <Grid container spacing={2}>
+              <Button sx={{
+                position:"absolute",
+                bottom: 0,
+                right:"10px"
+              }} onClick={()=>{
+                setShowPanel(!showPanel)
+              }}
+              endIcon={ showPanel ? (<ArrowUpward />) : (<ArrowDownward/>)}>
+              { showPanel ? "Ocultar panel" : "Ver panel"}
+              </Button>
+            { showPanel && 
+            (<>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
+          
             {errorMessage && (
               <Alert severity="error" sx={{ mb: 2 }}>
                 {errorMessage}
@@ -473,6 +604,11 @@ const IngresoDocumentoProveedor = () => {
               <MenuItem value="Ticket">Ticket</MenuItem>
               <MenuItem value="Ingreso Interno">Ingreso Interno</MenuItem>
             </TextField>
+
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
+            
+
             <TextField
               name="folioDocumento"
               label="Folio documento"
@@ -482,6 +618,9 @@ const IngresoDocumentoProveedor = () => {
               fullWidth
               sx={{ mb: 2 }}
             />
+
+            </Grid>
+            <Grid item xs={12} sm={12} md={3} lg={3}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Fecha de ingreso"
@@ -493,33 +632,60 @@ const IngresoDocumentoProveedor = () => {
                 format="DD/MM/YYYY"
                 minDate={inicioRango}
                 maxDate={hoy}
-                sx={{ mb: 2 }}
+                sx={{ 
+                  width:"100%"
+                }}
               />
             </LocalizationProvider>
+              </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
+
             <TextField
               fullWidth
               sx={{ mb: 2 }}
-              placeholder="Buscar proveedor por nombre"
+              placeholder="Nombre o RUT de Proveedor"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
+              onKeyDown={(e) => {
+              if(e.key == "Enter"){
+                buscarProveedor()
+              }
+              }}
             />
-            <Button onClick={handleSearch} variant="contained" sx={{ mb: 2 }}>
+            </Grid>
+            <Grid item xs={12} sm={12} md={3} lg={3}>
+              
+            <Button onClick={buscarProveedor} variant="contained" sx={{
+              width:"100%",
+              height:"55px"
+            }}>
               Buscar
             </Button>
-            <Box
-              sx={{ display: "flex", flexWrap: "nowrap", overflowX: "auto" }}
-            >
-              {searchResults.map((result) => (
+
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              {proveedoresFiltrados.map((result) => (
                 <Chip
                   key={result.codigoProveedor}
                   label={`${result.razonSocial} ${result.rut}`}
-                  onClick={() => handleChipClick(result)}
+                  onClick={() => clickEnProveedor(result)}
                   sx={{
                     backgroundColor: "#2196f3",
                     margin: "5px",
                   }}
                 />
               ))}
+              </Grid>
+              </>
+            )}
+            </Grid>
+            </Box>
+
+            <Grid container>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+            <Box
+              sx={{ display: "flex", flexWrap: "nowrap", overflowX: "auto" }}
+            >
               {selectedProveedor && (
                 <ListItem key={selectedProveedor.codigoCliente}>
                   <Chip
@@ -530,8 +696,27 @@ const IngresoDocumentoProveedor = () => {
                       margin: "5px",
                     }}
                   />
+
+                {associating && (
+                  <Chip
+                  label={"Asociando"}
+                  icon={<CheckCircleIcon />}
+                  sx={{
+                    backgroundColor: (associating ? "#1DB8FF" : "#fff"),
+                    margin: "5px",
+                  }}
+
+                  onClick={()=>{
+
+                    showConfirm("Cancelar asociacion?",()=>{
+                      setAssociating(false)
+                    },()=>{})
+                  }}
+                  />
+                )}
                 </ListItem>
               )}
+
             </Box>
 
             <div style={{ alignItems: "center" }}>
@@ -554,7 +739,13 @@ const IngresoDocumentoProveedor = () => {
                 >
                   Buscador de productos
                 </InputLabel>
+                <BoxSelectTipo
+                tipoElegido={tipoBuscar}
+                setTipoElegido={setTipoBuscar}
+                />
               </Grid>
+
+
               <Grid
                 item
                 xs={12}
@@ -573,18 +764,38 @@ const IngresoDocumentoProveedor = () => {
                   }}
                   fullWidth
                   focused
-                  placeholder="Ingresa Código"
+                  placeholder={(tipoBuscar == 0 || tipoBuscar ==2) ? "Ingresa Código" : "Ingresar Descripción"}
                   value={searchTermProd}
                   onChange={(e) => setSearchTermProd(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      handleSearchButtonClick();
+                      buscarProductos();
                     }
                   }}
                 />
+                {(tipoBuscar == 0 || tipoBuscar == 1 || associating) &&(
+
+                  <TextField
+                  sx={{
+                    backgroundColor: "white",
+                    margin:"0 5px",
+                    borderRadius: "5px",
+                  }}
+                  focused
+                  type="number"
+                  label= "Cant cada paquete"
+                  value={countPackage}
+                  onChange={(e) => setCountPackage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "e") {
+                      e.preventDefault()
+                    }
+                  }}
+                  />
+                )}
                 <Button
                   variant="outlined"
-                  onClick={handleSearchButtonClick}
+                  onClick={buscarProductos}
                   sx={{ mx: 1 }}
                 >
                   Buscar
@@ -609,13 +820,25 @@ const IngresoDocumentoProveedor = () => {
                           Precio Costo: {product.precioCosto}
                         </TableCell>
                         <TableCell>
-                          <Button
+                          {associating ? (
+                            <Button
+                            onClick={() => handleAsocAndAddProductToSales(product)}
+                            variant="contained"
+                            color="primary"
+                            >
+                            Asociar y Agregar
+                            </Button>
+                          ) : (
+                            <Button
                             onClick={() => handleAddProductToSales(product)}
                             variant="contained"
                             color="secondary"
-                          >
+                            >
                             Agregar
-                          </Button>
+                            </Button>
+                          )} 
+
+
                         </TableCell>
                       </TableRow>
                     ))}
@@ -628,17 +851,20 @@ const IngresoDocumentoProveedor = () => {
                 component={Paper}
                 style={{ overflowX: "auto", maxHeight: 200 }}
               >
-                <Table>
+                <Table stickyHeader aria-label="sticky table">
                   <TableHead>
                     <TableRow>
                       <TableCell sx={{ width: "23%" }}>Descripción</TableCell>
                       <TableCell sx={{ width: "23%" }}>Precio Costo</TableCell>
                       <TableCell sx={{ width: "23%" }}>Cantidad</TableCell>
-                      <TableCell sx={{ width: "23%" }}>Total</TableCell>
+                      <TableCell colSpan={2} sx={{ width: "23%" }}>Total</TableCell>
                       <TableCell sx={{ width: "20%" }}>Eliminar</TableCell>
                     </TableRow>
                   </TableHead>
-                  <TableBody>
+                  <TableBody sx={{
+                    minHeight:"250px",
+                    overflow:"scroll"
+                  }}>
                     {selectedProducts.map((product, index) => (
                       <TableRow key={index}>
                         <TableCell>{product.nombre}</TableCell>
@@ -650,7 +876,7 @@ const IngresoDocumentoProveedor = () => {
                             onChange={(e) =>
                               handleCostoChange(e.target.value, index)
                             }
-                            InputProps={{
+                            inputProps={{
                               maxLenght: 3,
                             }}
                             />
@@ -668,6 +894,17 @@ const IngresoDocumentoProveedor = () => {
                         </TableCell>
                         <TableCell>{product.total}</TableCell>
                         <TableCell>
+                        <Button
+                            onClick={() => {
+
+                            }}
+                            variant="contained"
+                            color="error"
+                          >
+                            Ajuste precios
+                          </Button>
+                        </TableCell>
+                        <TableCell>
                           <IconButton
                             
                             onClick={() => handleDeleteProduct(index)}
@@ -675,6 +912,7 @@ const IngresoDocumentoProveedor = () => {
                             <DeleteIcon />
                           </IconButton>
                         </TableCell>
+                        
                       </TableRow>
                     ))}
                   </TableBody>
@@ -698,8 +936,10 @@ const IngresoDocumentoProveedor = () => {
             >
               Guardar
             </Button>
-          </Box>
-        </Modal>
+          </Grid>
+          </Grid>
+          </DialogContent>
+        </Dialog>
 
         <Snackbar
           open={snackbarOpen}
