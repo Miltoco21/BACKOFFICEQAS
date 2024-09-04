@@ -118,7 +118,7 @@ const SearchListDocumento = () => {
     }
     setLoading(false);
   };
-  console.log("DAtos fechas", data);
+  // console.log("DAtos fechas", data);
   const handleDelete = async () => {
     try {
       const response = await axios.delete(
@@ -485,7 +485,7 @@ const SearchListDocumento = () => {
   };
 
 
-  console.log("selectedProducts", selectedProducts);
+  // console.log("selectedProducts", selectedProducts);
   return (
     <Box sx={{ p: 2, mb: 4 }}>
       <Tabs value={selectedTab} onChange={handleTabChange}>
