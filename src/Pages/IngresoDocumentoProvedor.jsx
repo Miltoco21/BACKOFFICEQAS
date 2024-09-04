@@ -562,7 +562,12 @@ const IngresoDocumentoProveedor = () => {
         </Button>
 
         <SearchListDocumento></SearchListDocumento>
-        <Dialog open={open} onClose={cerrarModalIngresoDocumento} maxWidth={"md"}>
+        <Dialog open={open} onClose={cerrarModalIngresoDocumento} fullWidth minHeight={"lg"} maxWidth={"md"}
+          PaperProps={{
+            sx: {
+              height: "90%"
+            }
+          }}>
             
           <DialogContent>
             <Box sx={{
@@ -696,10 +701,21 @@ const IngresoDocumentoProveedor = () => {
             <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12}>
             <Box
-              sx={{ display: "flex", flexWrap: "nowrap", overflowX: "auto" }}
+              sx={{ 
+                flexWrap: "nowrap", 
+                overflowX: "auto",
+
+                position:"relative",
+                top: "-50px",
+                display:"inline-block",
+                marginBottom:"-40px"
+              }}
             >
               {selectedProveedor && (
-                <ListItem key={selectedProveedor.codigoCliente}>
+                <ListItem key={selectedProveedor.codigoCliente}
+                sx={{
+                  
+                }}>
                   <Chip
                     label={`${selectedProveedor.razonSocial} ${selectedProveedor.rut}`}
                     icon={<CheckCircleIcon />}
@@ -731,14 +747,17 @@ const IngresoDocumentoProveedor = () => {
 
             </Box>
 
-            <div style={{ alignItems: "center" }}>
+            <div style={{ 
+              alignItems: "center", 
+              marginTop:"-20px"
+              }}>
               <Grid
                 item
                 xs={12}
                 sm={12}
                 md={12}
                 lg={12}
-                sx={{ display: "flex", margin: 1 }}
+                sx={{ display: "flex", margin: "15px 0" }}
               >
                 <InputLabel
                   sx={{
@@ -764,9 +783,9 @@ const IngresoDocumentoProveedor = () => {
                 md={12}
                 lg={12}
                 sx={{
-                  margin: 1,
+                  margin: "15px 0",
                   display: "flex",
-                  justifyContent: { xs: "flex-start", md: "flex-end" },
+                  // justifyContent: { xs: "flex-start", md: "flex-end" },
                 }}
               >
                 <TextField
@@ -793,7 +812,6 @@ const IngresoDocumentoProveedor = () => {
                     margin:"0 5px",
                     borderRadius: "5px",
                   }}
-                  focused
                   type="number"
                   label= "Cant cada paquete"
                   value={countPackage}
@@ -806,9 +824,11 @@ const IngresoDocumentoProveedor = () => {
                   />
                 )}
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   onClick={buscarProductos}
-                  sx={{ mx: 1 }}
+                  sx={{
+                    minWidth:"200px"
+                  }}
                 >
                   Buscar
                 </Button>
@@ -816,13 +836,13 @@ const IngresoDocumentoProveedor = () => {
               {/* Agregar el bloque de código para los resultados de la búsqueda de productos */}
               <TableContainer
                 component={Paper}
-                style={{ overflowX: "auto", maxHeight: 200 }}
+                style={{ overflowX: "auto", maxHeight: 200, marginBottom:10 }}
               >
                 <Table>
                   <TableBody key={123132}>
                     {searchedProducts.map((product) => (
                       <TableRow key={product.id}>
-                        <TableCell sx={{ width: "21%" }}>
+                        <TableCell sx={{ width: "33%" }}>
                           {product.nombre}
                         </TableCell>
                         <TableCell sx={{ width: "21%" }}>
@@ -861,7 +881,7 @@ const IngresoDocumentoProveedor = () => {
               {/* Fin del bloque de código para los resultados de la búsqueda de productos */}
               <TableContainer
                 component={Paper}
-                style={{ overflowX: "auto", maxHeight: 200 }}
+                style={{ overflowX: "auto", height: 250 }}
               >
                 <Table stickyHeader aria-label="sticky table">
                   <TableHead>
