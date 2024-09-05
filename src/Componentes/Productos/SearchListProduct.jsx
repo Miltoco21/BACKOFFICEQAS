@@ -85,11 +85,10 @@ const SearchListProducts = () => {
       
       console.log("Cargando productos...")
       showLoading("Cargando productos...")
-      try {
-        const response = await axios.get(
-          apiUrl + "/ProductosTmp/GetProductosPaginados?pageNumber="  + currentPage + "&rowPage=10"
-        );
-        // console.log("API Response:", response.data);
+
+      Product.getInstance().getAllPaginate({
+        pageNumber:currentPage
+      },(prods,response)=>{
         if (Array.isArray(response.data.productos)) {
           setProduct(response.data.productos);
           setFilteredProducts(response.data.productos);
@@ -98,11 +97,11 @@ const SearchListProducts = () => {
           setHasResult(response.data.productos.length>0)
         }
         hideLoading()
-      } catch (error) {
+      },(error)=>{
         console.error("Error fetching product:", error);
         setHasResult(false)
         hideLoading()
-      }
+      })
     };
 
 
