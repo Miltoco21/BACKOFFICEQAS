@@ -115,12 +115,25 @@ class System {
         return vars
     }
 
-    static addInObj(obj,name,value){
-        const obj2 = {
-            ...obj
-        }
-        obj2[name] = value
-        return obj2
+    static addInObj(setFunction,fieldName,fieldValue){
+        setFunction((oldProduct) => {
+            const newProduct = {...oldProduct};
+            newProduct[fieldName] = fieldValue
+            return newProduct;
+        });
+    }
+
+    static addAllInObj(setFunction,objValues){
+        setFunction((oldProduct) => {
+            const newProduct = {...oldProduct,...objValues};
+            return newProduct;
+        });
+    }
+
+    static addAllInArr(setFunction,arrayOriginal,index,objValues){
+        const newArr = [...arrayOriginal]
+        newArr[index] = objValues
+        setFunction(newArr)
     }
 
     static allValidationOk = (validators,showMessageFunction)=>{

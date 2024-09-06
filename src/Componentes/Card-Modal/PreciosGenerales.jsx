@@ -26,6 +26,8 @@ import { AttachMoney, Percent } from "@mui/icons-material";
 import PreciosGeneralesProducItem from "./PreciosGeneralesProducItem";
 import Product from "../../Models/Product";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import dayjs from "dayjs";
+import PreciosGenerales2 from "./PreciosGenerales2";
 
 export const defaultTheme = createTheme();
 
@@ -47,8 +49,10 @@ const PreciosGenerales = ({ onClose }) => {
   
   useEffect(() => {
     const fetchProducts = async () => {
-      Product.getInstance().getAll((prods)=>{
-        setProducts(prods.slice(0, 10));
+      Product.getInstance().getAllPaginate({
+        rowPage:1
+      },(prods)=>{
+        setProducts(prods);
       },(error)=>{
         setErrorMessage("Error al buscar el producto por descripción");
         setOpenSnackbar(true);
@@ -56,6 +60,7 @@ const PreciosGenerales = ({ onClose }) => {
     };
 
     fetchProducts();
+
   }, []);
 
   const handleSearchButtonClick = async () => {
@@ -81,9 +86,9 @@ const PreciosGenerales = ({ onClose }) => {
 
 
 
-
+    setProducts([])    
     showLoading("haciendo busqueda por descripcion")
-    Product.getInstance().findByDescription({
+    Product.getInstance().findByDescriptionPaginado({
       description: searchTerm
     }, (prods)=>{
       if(prods.length<1){
@@ -201,35 +206,11 @@ const PreciosGenerales = ({ onClose }) => {
               </Grid>
             </div>
 
-            <TableContainer
-              component={Paper}
-              style={{ overflowX: "auto"}}
-            >
-              <Table>
-                <TableBody key={1}>
-                  {products.map((product, index) => (
-                    <PreciosGeneralesProducItem 
-                    key={product.id} 
-                    product={product} 
-                    index={index} 
-                    setProducts={setProducts}
-                    onUpdatedOk={()=>{
-                      setSuccessMessage("Precio editado exitosamente");
-                      setOpenSnackbar(true);
-                      setTimeout(() => {
-                        // onClose();
-                      }, 2000);
-                    }}
-                    onUpdatedWrong={(error)=>{
-                      console.error("Error al actualizar el producto:", error);
-                      setErrorMessage("Error al actualizar el producto");
-                      setOpenSnackbar(true);
-                    }}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <PreciosGenerales2 
+            products={products}
+            setProducts={setProducts}
+            />
+            
           </Paper>
         </Grid>
       </Grid>

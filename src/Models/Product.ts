@@ -3,6 +3,7 @@ import Model from './Model.ts';
 import BaseConfig from "../definitions/BaseConfig.ts";
 import axios from 'axios';
 import ModelConfig from './ModelConfig.ts';
+import System from '../Helpers/System.ts';
 
 
 class Product extends Model{
@@ -21,171 +22,137 @@ class Product extends Model{
         return Product.instance;
     }
 
-    static initLogica(product){
+    static calcularImpuestos(producto){
+        var impIva = producto.impuesto.toLowerCase()
 
-        product.ivaPorcentaje = ModelConfig.get().iva
+        impIva = impIva.replace("iva", "")
+        impIva = impIva.replace("%", "")
+        impIva = impIva.trim()
+        impIva = parseInt(impIva)
 
-        // if(!product.ivaPorcentaje) {
-        //     // console.log("no tiene valor product.ivaPorcentaje")
-        //     product.ivaPorcentaje = 19
-        // }
-            if(!product.ivaValor) {
-            // console.log("no tiene valor product.ivaValor")
+        return impIva
+    }
+
+    static iniciarLogicaPrecios(product){
+        if(!product.gananciaPorcentaje){
+            if(product.precioNeto>0 && product.precioCosto>0){
+                product.gananciaPorcentaje = this.getGanPorByCostoYNeto(product.precioCosto,product.precioNeto)
+            }else{
+                product.gananciaPorcentaje = 30
+            }
+        }
+    
+        if(!product.ivaPorcentaje){
+            product.ivaPorcentaje = 19
+        }
+    
+        if(!product.precioNeto && product.precioCosto>0){
+            product.precioNeto = Product.getNetoByCostoGanPor(product.precioCosto, product.gananciaPorcentaje)
+        }
+    
+        if(!product.gananciaValor && product.precioNeto>0 && product.precioCosto>0){
+            product.gananciaValor = product.precioNeto - product.precioCosto
+        }
+    
+        if(!product.ivaValor && product.precioNeto>0 && product.precioVenta>0){
+            product.ivaValor = product.precioVenta - product.precioNeto
+        }
+    
+        if(!product.precioCosto && !product.precioVenta){
             product.ivaValor = 0
-        }
-            if(!product.gananciaPorcentaje) {
-            // console.log("no tiene valor product.gananciaPorcentaje")
-            product.gananciaPorcentaje = 30
-        }
-            if(!product.gananciaValor) {
-            // console.log("no tiene valor product.gananciaValor")
             product.gananciaValor = 0
         }
 
-        // if(product.precioNeto>0 && product.precioVenta>0){
-        //     product.ivaValor = product.precioVenta - product.precioNeto
-        //     product.ivaPorcentaje = product.ivaValor * 100 / product.precioNeto
-        // }
-
-        if(product.precioNeto>0 && product.precioCosto>0){
-            product.gananciaValor = product.precioNeto - product.precioCosto
-            product.gananciaPorcentaje = product.gananciaValor * 100 / product.precioCosto
-            product.gananciaPorcentaje = parseInt(product.gananciaPorcentaje)
-        }
-
-
+        return product
     }
     
     //direccion indica si se calcula para el lado del costo o del precio final
     static logicaPrecios(product, direccion = "final"){
-        // console.log("logicaPrecios " + direccion + " para ")
-        // console.log(product)
-        if(!product.gananciaPorcentaje) Product.initLogica(product)
+        console.log("logicaPrecios " + direccion + " para ")
+        console.log("entra con:",System.clone(product))
+        if(!product.gananciaPorcentaje) product.gananciaPorcentaje = 30
         if(product.ivaPorcentaje) product.ivaPorcentaje = ModelConfig.get().iva
         // if(product.precioVenta <= 0 && product.precioCosto > 0){
         if( direccion == 'final' ){
-            // console.log("calculando sin precio de venta y con precio de costo")
-        
-            // console.log("product.precioCosto")
-            // console.log(product.precioCosto)
-            // console.log("product.gananciaPorcentaje")
-            // console.log(product.gananciaPorcentaje)
-            // console.log("product.ivaPorcentaje")
-            // console.log(product.ivaPorcentaje)
-        
             const sumGan = (product.precioCosto) * ( (product.gananciaPorcentaje) / 100)
-            // console.log("sumGan")
-            // console.log(sumGan)
-            
             const neto = parseFloat(product.precioCosto) + sumGan
-            
-            
-            // console.log("neto")
-            // console.log(neto)
-            
             const sumIva = (neto) * ((product.ivaPorcentaje) / 100)
-            
-            // console.log("sumIva")
-            // console.log(sumIva)
-            
-            
-            
             const final = ((neto + sumIva))
-            
-            // console.log("final")
-            // console.log(final)
-            
-            product.precioVenta = final
-            product.precioNeto = neto
-            product.gananciaValor = sumGan
-            product.ivaValor = sumIva
-        
-        // }else if(product.precioVenta >0 && product.precioCosto <= 0){
+
+            product.precioVenta = this.redondeo_precioVenta(final)
+            product.precioNeto = this.redondeo_precioNeto(neto)
+            product.gananciaValor = this.redondeo_gananciaValor(sumGan)
+            product.ivaValor = this.redondeo_ivaValor(sumIva)
         }else if(direccion == "costo"){
-        
-            // console.log("calculando sin precio de costo y con precio de venta")
-        
-            // console.log("product.precioCosto")
-            // console.log(product.precioCosto)
-            // console.log("product.gananciaPorcentaje")
-            // console.log(product.gananciaPorcentaje)
-            // console.log("product.ivaPorcentaje")
-            // console.log(product.ivaPorcentaje)
-            
-            const neto = parseFloat(product.precioVenta) / (1  + (parseInt(product.ivaPorcentaje) / 100) )
-            // console.log("neto")
-            // console.log(neto)
+            const neto = parseFloat(product.precioVenta) / 
+                        (1  + (parseInt(product.ivaPorcentaje) / 100) )
             const costo = neto / (1 + parseInt(product.gananciaPorcentaje) / 100)
-        
-            // console.log("costo")
-            // console.log(costo)
-            
             var sumGan = neto - costo
-            // console.log("sumGan")
-            // console.log(sumGan)
             var sumIva = product.precioVenta - neto
-            // console.log("sumIva")
-            // console.log(sumIva)
 
-            product.precioCosto = costo
-            product.precioNeto = neto
-            product.gananciaValor = sumGan
-            product.ivaValor = sumIva
-
-
-            }
-        
-        // console.log(product)
+            product.precioCosto = this.redondeo_precioCosto(costo)
+            product.precioNeto = this.redondeo_precioNeto(neto)
+            product.gananciaValor = this.redondeo_gananciaValor(sumGan)
+            product.ivaValor = this.redondeo_ivaValor(sumIva)
+        }
+        console.log("sale con:",System.clone(product))
+        return product
     }
 
     static calcularMargen(product){
-// console.log("calculando sin precio de costo y con precio de venta")
-        
-            // console.log("product.precioCosto")
-            // console.log(product.precioCosto)
-            // console.log("product.gananciaPorcentaje")
-            // console.log(product.gananciaPorcentaje)
-            // console.log("product.ivaPorcentaje")
-            // console.log(product.ivaPorcentaje)
-            
-            const neto = parseFloat(product.precioVenta) / (1  + (parseInt(product.ivaPorcentaje) / 100) )
-            // console.log("neto")
+        const neto = parseFloat(product.precioVenta) / (1  + (parseInt(product.ivaPorcentaje) / 100) )
         const sumGan = neto - product.precioCosto
         const porMar = ((neto - product.precioCosto) * 100) / product.precioCosto
 
         var sumIva = product.precioVenta - neto
-        product.ivaValor = sumIva
-        product.gananciaPorcentaje = porMar
-        product.precioNeto = neto
-        product.gananciaValor = sumGan
+        product.ivaValor = this.redondeo_ivaValor(sumIva)
+        product.gananciaPorcentaje = this.redondeo_gananciaPorcentaje(porMar)
+        product.precioNeto = this.redondeo_precioNeto(neto)
+        product.gananciaValor = this.redondeo_gananciaValor(sumGan)
+
+        return product
     }
     
-    static calcularMargenPorVenta(product){
-    // console.log("calculando sin precio de costo y con precio de venta")
-        
-            // console.log("product.precioCosto")
-            // console.log(product.precioCosto)
-            // console.log("product.gananciaPorcentaje")
-            // console.log(product.gananciaPorcentaje)
-            // console.log("product.ivaPorcentaje")
-            // console.log(product.ivaPorcentaje)
-            
-            const sumGan = (product.precioCosto) * ( (product.gananciaPorcentaje) / 100)
-            // console.log("sumGan")
-            // console.log(sumGan)
-            
-            const neto = parseFloat(product.precioCosto) + sumGan
-
-            // console.log("neto")
-        const dsumGan = neto - product.precioCosto
-        const porMar = ((neto - product.precioCosto) * 100) / product.precioCosto
-
-        var sumIva = product.precioVenta - neto
-        product.ivaValor = sumIva
-        product.gananciaPorcentaje = porMar
-        product.precioNeto = neto
-        product.gananciaValor = sumGan
+    static getNetoByCostoGanPor(costo,gananciaPorcentaje){
+        const sumGan = (costo) * ( (gananciaPorcentaje) / 100)
+        return this.redondeo_precioNeto(parseFloat(costo) + sumGan)
     }
+
+    static getGanPorByCostoYNeto(costo,neto){
+        return this.redondeo_gananciaPorcentaje(((neto - costo) * 100) / costo)
+    }
+
+    // REDONDEOS
+    static redondeo_precioCosto(precio){
+        return parseInt(parseFloat(precio).toFixed(0))
+    }
+
+    static redondeo_gananciaPorcentaje(precio){
+        return parseInt(parseFloat(precio).toFixed(0))
+    }
+    
+    static redondeo_gananciaValor(precio){
+        return parseInt(parseFloat(precio).toFixed(0))
+    }
+    
+    static redondeo_ivaPorcentaje(precio){
+        return parseInt(parseFloat(precio).toFixed(0))
+    }
+
+    static redondeo_ivaValor(precio){
+        return parseInt(parseFloat(precio).toFixed(0))
+    }
+
+    static redondeo_precioNeto(precio){
+        return parseInt(parseFloat(precio).toFixed(0))
+    }
+
+    static redondeo_precioVenta(precio){
+        return parseInt(parseFloat(precio).toFixed(0))
+    }
+
+
+    // SERVICIOS
 
     async getAll(callbackOk, callbackWrong){
         try {
@@ -206,7 +173,36 @@ class Product extends Model{
         } catch (error) {
             console.error("Error fetching products:", error);
             callbackWrong(error) 
-          }
+        }
+    }
+
+    async getAllPaginate({
+        pageNumber = 1,
+        rowPage = 10
+    },callbackOk,callbackWrong){
+        try {
+            const configs = ModelConfig.get()
+            var url = configs.urlBase + "/ProductosTmp/GetProductosPaginados"
+            url += "?pageNumber="  + pageNumber
+            url += "&rowPage="  + rowPage
+
+            const response = await axios.get(url);
+            // console.log("API Response:", response.data);
+
+            if(
+                response.data.statusCode == 200
+                || response.data.statusCode == 201
+
+            ){
+                callbackOk(response.data.productos, response);
+            }else{
+               callbackWrong("respuesta incorrecta del servidor") 
+            }
+            
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            callbackWrong(error) 
+        }
     }
 
     async findByDescription({description, codigoCliente},callbackOk, callbackWrong){

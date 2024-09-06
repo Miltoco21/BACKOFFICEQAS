@@ -22,6 +22,7 @@ import {
   Dialog,
   DialogContent,
   Typography,
+  DialogActions,
 } from "@mui/material";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -40,6 +41,9 @@ import Proveedor from "../Models/Proveedor";
 import { SelectedOptionsContext } from "./../Componentes/Context/SelectedOptionsProvider";
 import Validator from "../Helpers/Validator";
 import BoxSelectTipo from "../Componentes/Proveedores/BoxSelectTipo";
+import PreciosGeneralesProducItem from "../Componentes/Card-Modal/PreciosGeneralesProducItem";
+import AjustePrecios from "../Componentes/ScreenDialog/AjustePrecios";
+import System from "../Helpers/System";
 
 const IngresoDocumentoProveedor = () => {
 
@@ -86,7 +90,16 @@ const IngresoDocumentoProveedor = () => {
   }
   const [associating, setAssociating] = useState(null)
   const [countPackage, setCountPackage] = useState(0);
+  
+  const [showAjustePrecios, setShowAjustePrecios] = useState(false);
+  const [productoSel, setProductoSel] = useState(null);
 
+
+  const ajustarPrecio = (producto, index)=>{
+    producto.index = index
+    setProductoSel(producto)
+    setShowAjustePrecios(true)
+  }
   // console.log("selectedProveedor", selectedProveedor);
 
   const setOpenSnackbar = (value) => {
@@ -100,14 +113,20 @@ const IngresoDocumentoProveedor = () => {
 
     // Check if the parsed value is NaN or less than zero
     if (isNaN(parsedValue) || parsedValue < 0) {
+      showMessage("valor incorrecto")
+      return
       // If it's NaN or less than zero, set quantity and total to zero
-      updatedProducts[index].cantidad = 0;
-      updatedProducts[index].total = 0;
+      // updatedProducts[index].cantidad = 0;
+      // updatedProducts[index].total = 0;
     } else {
       // Otherwise, update quantity and calculate total
       updatedProducts[index].cantidad = parsedValue;
-      updatedProducts[index].total =
-        parsedValue * updatedProducts[index].precio;
+      updatedProducts[index].total = calcularTotal(
+        updatedProducts[index].precioCosto,
+        parsedValue,
+        updatedProducts[index].cantidadProveedor
+      )
+
     }
 
     setSelectedProducts(updatedProducts);
@@ -122,21 +141,36 @@ const IngresoDocumentoProveedor = () => {
 
     // Check if the parsed value is NaN or less than zero
     if (isNaN(parsedValue) || parsedValue < 0) {
+
+      showMessage("valor incorrecto")
       // If it's NaN or less than zero, set quantity and total to zero
       // updatedProducts[index].cantidad = 0;
-      updatedProducts[index].precioCosto = 0;
-      updatedProducts[index].precio = 0;
-      updatedProducts[index].total = 0;
+      // updatedProducts[index].precioCosto = 0;
+      // updatedProducts[index].precio = 0;
+      // updatedProducts[index].total = 0;
+      return
     } else {
       // Otherwise, update quantity and calculate total
+
       updatedProducts[index].precioCosto = parsedValue;
-      updatedProducts[index].precio = parsedValue;
-      updatedProducts[index].total =
-        parsedValue * updatedProducts[index].cantidad;
+      const prod = updatedProducts[index]
+      updatedProducts[index] = Product.logicaPrecios(prod,"final")
+      // updatedProducts[index].precio = parsedValue;
+      updatedProducts[index].total = calcularTotal(
+        parsedValue,
+        updatedProducts[index].cantidad,
+        updatedProducts[index].cantidadProveedor
+      )
     }
 
     setSelectedProducts(updatedProducts);
   };
+
+
+  const calcularTotal = (costo,cantidad, cantidadProveedor)=>{
+    console.log("calcularTotal..costo", costo, "..cantidad:", cantidad,"..cantidad proveedor:",cantidadProveedor)
+    return parseInt(costo + "") * parseInt(cantidad + "") * parseInt(cantidadProveedor + "")
+  }
 
   const handleAsocAndAddProductToSales = (product) => {
     if(countPackage<1){
@@ -165,6 +199,7 @@ const IngresoDocumentoProveedor = () => {
   }
 
   const handleAddProductToSales = (product) => {
+    
     const existingProductIndex = selectedProducts.findIndex(
       (p) => p.id === product.idProducto
     );
@@ -177,7 +212,13 @@ const IngresoDocumentoProveedor = () => {
           return {
             ...p,
             cantidad: updatedQuantity,
-            total: updatedQuantity * p.precioCosto,
+            total: calcularTotal(
+              p.precioCosto,
+              updatedQuantity,
+              p.cantidadProveedor
+            )
+
+
           };
         }
         return p;
@@ -186,14 +227,36 @@ const IngresoDocumentoProveedor = () => {
     } else {
       // Producto no existe, agregar como nuevo
       const newProduct = {
-        id: product.idProducto,
-        nombre: product.nombre,
-        cantidad: 1,
-        precio: product.precioCosto,
-        total: product.precioCosto,
-        precioCosto: product.precioCosto,
+        // id: product.idProducto,
+        // nombre: product.nombre,
+        // cantidad: 1,
+        // precio: product.precioCosto,
+        // precioVenta: product.precioCosto,
+        // total: product.precioCosto,
+        // precioCosto: product.precioCosto,
       };
-      setSelectedProducts([...selectedProducts, newProduct]);
+      product.id = product.idProducto
+      product.cantidad = 1
+      // product.precioVenta = product.precioCosto
+      if(product.cantidadProveedor === undefined){
+        product.cantidadProveedor = countPackage
+      }
+      if(product.cantidadProveedor === 0){
+        product.cantidadProveedor = 1
+      }
+
+      product = Product.iniciarLogicaPrecios(product)
+      
+      product.total = calcularTotal(product.precioCosto,product.cantidad,product.cantidadProveedor)
+      product.impuestosValor = Product.calcularImpuestos(product)
+      
+      // if(!product.precioVenta){
+      //   product.precioVenta = Math.round(product.precioCosto * 1.3 * (1+(product.impuestosValor / 100) ))
+      // }
+
+      console.log("agregado queda asi:", System.clone(product))
+      // setSelectedProducts([...selectedProducts, newProduct]);
+      setSelectedProducts([...selectedProducts, product]);
     }
 
     setSearchedProducts([]);
@@ -246,6 +309,7 @@ const IngresoDocumentoProveedor = () => {
     setSelectedProveedor(result);
     setProveedoresFiltrados([]);
     setSearchText("");
+    setShowPanel(false)
   };
 
   const hoy = dayjs();
@@ -294,7 +358,7 @@ const IngresoDocumentoProveedor = () => {
       codigoProveedor:selectedProveedor.codigoProveedor
     },(prods,res)=>{
       if(res.data.cantidadRegistros>0){
-        handleSearchSuccess(res, "PLU");
+        handleSearchSuccess(res, "Codigo Proveedor");
       }else{
         callbackFail()
       }
@@ -307,7 +371,7 @@ const IngresoDocumentoProveedor = () => {
       codigoProveedor:selectedProveedor.codigoProveedor
     },(prods,res)=>{
       if(res.data.cantidadRegistros>0){
-        handleSearchSuccess(res, "PLU");
+        handleSearchSuccess(res, "Descripcion proveedor");
       }else{
         callbackFail()
       }
@@ -473,7 +537,7 @@ const IngresoDocumentoProveedor = () => {
         codProducto: product.id,
         descripcionProducto: product.nombre,
         cantidad: product.cantidad,
-        precioUnidad: product.precio,
+        precioUnidad: product.precioVenta,
         costo: product.total,
       }));
 
@@ -562,7 +626,7 @@ const IngresoDocumentoProveedor = () => {
         </Button>
 
         <SearchListDocumento></SearchListDocumento>
-        <Dialog open={open} onClose={cerrarModalIngresoDocumento} fullWidth minHeight={"lg"} maxWidth={"md"}
+        <Dialog open={open} fullWidth minHeight={"lg"} maxWidth={"md"}
           PaperProps={{
             sx: {
               height: "90%"
@@ -889,8 +953,9 @@ const IngresoDocumentoProveedor = () => {
                       <TableCell sx={{ width: "23%" }}>Descripción</TableCell>
                       <TableCell sx={{ width: "23%" }}>Precio Costo</TableCell>
                       <TableCell sx={{ width: "23%" }}>Cantidad</TableCell>
-                      <TableCell colSpan={2} sx={{ width: "23%" }}>Total</TableCell>
-                      <TableCell sx={{ width: "20%" }}>Eliminar</TableCell>
+                      <TableCell sx={{ }}>Total</TableCell>
+                      <TableCell  sx={{  }}>P. Venta sugerido</TableCell>
+                      <TableCell colSpan={2} sx={{ width: "20%" }}></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody sx={{
@@ -908,9 +973,6 @@ const IngresoDocumentoProveedor = () => {
                             onChange={(e) =>
                               handleCostoChange(e.target.value, index)
                             }
-                            inputProps={{
-                              maxLenght: 3,
-                            }}
                             />
                             </TableCell>
                         <TableCell>
@@ -919,16 +981,13 @@ const IngresoDocumentoProveedor = () => {
                             onChange={(e) =>
                               handleQuantityChange(e.target.value, index)
                             }
-                            InputProps={{
-                              maxLenght: 3,
-                            }}
                           />
                         </TableCell>
                         <TableCell>{product.total}</TableCell>
+                        <TableCell>{product.precioVenta}</TableCell>
                         <TableCell>
                         <Button
-                            onClick={() => {
-
+                            onClick={() => {ajustarPrecio(product,index)
                             }}
                             variant="contained"
                             color="error"
@@ -960,6 +1019,10 @@ const IngresoDocumentoProveedor = () => {
                 }}
               />
             </div>
+          </Grid>
+          </Grid>
+
+          <DialogActions>
             <Button
               variant="contained"
               color="primary"
@@ -968,10 +1031,28 @@ const IngresoDocumentoProveedor = () => {
             >
               Guardar
             </Button>
-          </Grid>
-          </Grid>
+            <Button onClick={() => {
+              showConfirm("Realmente quiere salir?",()=>{
+                cerrarModalIngresoDocumento()
+              },()=>{})
+              }} color="primary">
+              Salir
+          </Button>
+          </DialogActions>
           </DialogContent>
         </Dialog>
+
+
+        <AjustePrecios 
+          openDialog={showAjustePrecios}
+          setOpenDialog={setShowAjustePrecios}
+          productoSel={productoSel}
+          onChange={(changed)=>{
+            console.log("el changed es", changed)
+            changed.total = calcularTotal(changed.precioCosto, changed.cantidad, changed.cantidadProveedor)
+            System.addAllInArr(setSelectedProducts,selectedProducts,changed.index, changed)
+          }}
+        />
 
         <Snackbar
           open={snackbarOpen}

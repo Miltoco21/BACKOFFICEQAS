@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
   Box,
@@ -25,152 +25,126 @@ import ModelConfig from "../../Models/ModelConfig";
 import { AttachMoney, Percent } from "@mui/icons-material";
 import Validator from "../../Helpers/Validator";
 import Product from "../../Models/Product";
-
+import System from "../../Helpers/System";
+import { SelectedOptionsContext } from "./../Context/SelectedOptionsProvider";
 export const defaultTheme = createTheme();
 
 const PreciosGeneralesProducItem = ({ 
-  product,
+  producto,
   index,
-  setProducts,
+  onChange = null,
   onUpdatedOk,
   onUpdatedWrong
  }) => {
 
-  const [ultimoFoco, setUltimoFoco] = useState("")
+  const {
+    showLoading,
+    hideLoading,
+    showMessage,
+    showConfirm
+  } = useContext(SelectedOptionsContext);
+
+  const [ultimoFoco, setUltimoFoco] = useState("-")
+  const [cargaUnica, setCargaUnica] = useState(true)
   const [fijarCosto, setFijarCosto] = useState(false);
   const [fijarVenta, setFijarVenta] = useState(false);
-
-
-  useEffect(()=>{
-    init()
-  },[])
+  const [product, setProduct] = useState(null);
 
   useEffect(()=>{
-    // console.log("product")
-    // console.log(product)
+    // console.log("cambio producto",product)
+    
+    if(cargaUnica){
+      console.log("primera carga de producto", product)
+      init()
+      setCargaUnica(false)
+      console.log("llego hasta cambiar primera carga")
+      return
+    }
+    console.log("product")
+  if(onChange)onChange(product)
 
     if(ultimoFoco == "precioCosto" || ultimoFoco == "gananciaPorcentaje"){
 
       if(fijarVenta || fijarCosto){
         if(product.precioVenta<= product.precioCosto){
+          showMessage("El precio de venta debe ser mayor al de costo")
+          System.addAllInObj(setProduct,{
+            gananciaValor:0,
+            ivaValor:0,
+          })
           setUltimoFoco("")
           return
         }
         console.log("algo fijo")
-        Product.calcularMargen(product)
-        changePriceValue("gananciaValor",product.gananciaValor)
-        changePriceValue("precioNeto",product.precioNeto)
-        changePriceValue("ivaValor",product.ivaValor)
-        changePercentValue("ivaPorcentaje",product.ivaPorcentaje)
-        changePercentValue("gananciaPorcentaje",product.gananciaPorcentaje)
+        const resul = Product.calcularMargen(product)
+        System.addAllInObj(setProduct,resul)
         setUltimoFoco("")
         return
       }
 
-      // setTimeout(() => {
-        Product.logicaPrecios(product,"final")
-        changePriceValue("gananciaValor",product.gananciaValor)
-        changePriceValue("precioNeto",product.precioNeto)
-        changePriceValue("ivaValor",product.ivaValor)
-        changePriceValue("precioVenta",product.precioVenta)
-        changePriceValue("precioCosto",product.precioCosto)
+        const resul = Product.logicaPrecios(product,"final")
+        System.addAllInObj(setProduct,resul)
         setUltimoFoco("")
-      // }, 500);
     }
 
     if(ultimoFoco == "precioVenta"){
       if(fijarVenta || fijarCosto){
         if(product.precioVenta<= product.precioCosto){
+          showMessage("El precio de venta debe ser mayor al de costo")
+          System.addAllInObj(setProduct,{
+            gananciaValor:0,
+            ivaValor:0,
+          })
           setUltimoFoco("")
           return
         }
         console.log("algo fijo")
-        Product.calcularMargen(product)
-        changePriceValue("gananciaValor",product.gananciaValor)
-        changePriceValue("precioNeto",product.precioNeto)
-        changePriceValue("ivaValor",product.ivaValor)
-        changePercentValue("ivaPorcentaje",product.ivaPorcentaje)
-        changePercentValue("gananciaPorcentaje",product.gananciaPorcentaje)
+        
+        const resul = Product.calcularMargen(product)
+        System.addAllInObj(setProduct,resul)
         setUltimoFoco("")
         return
       }
-      // setTimeout(() => {
-        Product.logicaPrecios(product,"costo")
-        changePriceValue("gananciaValor",product.gananciaValor)
-        changePriceValue("precioNeto",product.precioNeto)
-        changePriceValue("ivaValor",product.ivaValor)
-        changePriceValue("precioVenta",product.precioVenta)
-        changePriceValue("precioCosto",product.precioCosto)
-        setUltimoFoco("")
-      // }, 500);
+      const resul = Product.logicaPrecios(product,"costo")
+      System.addAllInObj(setProduct,resul)
+      setUltimoFoco("")
     }
 
-  },[ product ])
+    
+  },[ product
+  ])
 
+  useEffect(()=>{
+    console.log("cambio desde afuera", producto)
+    setCargaUnica(true)
+  },[producto])
 
   const init = ()=>{
-    Product.initLogica(product)
-    changePriceValue("gananciaValor",product.gananciaValor)
-    changePriceValue("precioNeto",product.precioNeto)
-    changePriceValue("ivaValor",product.ivaValor)
-    changePriceValue("precioVenta",product.precioVenta)
-    changePriceValue("precioCosto",product.precioCosto)
-    changePercentValue("ivaPorcentaje",product.ivaPorcentaje)
-    changePercentValue("gananciaPorcentaje",product.gananciaPorcentaje)
-
-    // console.log(product)
+    console.log("inicia con:",System.clone(producto))
+    const resul = Product.iniciarLogicaPrecios(System.clone(producto))
+    System.addAllInObj(setProduct,resul)
+    console.log("termina la carga inicial asi", System.clone(resul))
+    // setProduct(producto)
   }
 
   const changePriceValue = (propName,newValue)=>{
+    console.log("propName", propName)
+    // console.log("index", index)
     if(newValue == '') newValue = "0"
     newValue = parseFloat(newValue)
     newValue = newValue.toFixed(2)
     newValue = parseFloat(newValue)
 
-    // console.log("changePriceValue para " + propName + ".. nuevo valor : " + newValue)
+    console.log("changePriceValue para " + propName + ".. nuevo valor : " + newValue)
     if(Validator.isPeso(newValue)){
-      // console.log("es valido")
-      setProducts((prevProducts) => {
-        const updatedProducts = [...prevProducts];
-        updatedProducts[index] = {
-          ...updatedProducts[index],
-        }
-
-        // console.log("el nuevo valor de " + propName + " es:", parseInt(newValue))
-        updatedProducts[index][propName] = parseInt(parseFloat(newValue).toFixed(0))
-        return updatedProducts;
-      });
+      console.log("es valido")
+      System.addInObj(setProduct,propName,parseInt(parseFloat(newValue).toFixed(0)))
     }else{
       // console.log("no es valido")
     }
-    // console.log(product)
+    console.log("con el cambio queda asi:",product)
     setUltimoFoco(propName)
   }
-
-  const changePercentValue = (propName,newValue)=>{
-    // console.log("changePercentValue para " + propName + ".. nuevo valor : " + newValue)
-    if(newValue == '') newValue = "0"
-    newValue = parseFloat(newValue)
-    newValue = newValue.toFixed(0)
-    newValue = parseInt(newValue)
-
-
-    if(Validator.isCantidad(newValue)){
-      setProducts((prevProducts) => {
-        const updatedProducts = [...prevProducts];
-        updatedProducts[index] = {
-          ...updatedProducts[index],
-        }
-        updatedProducts[index][propName] = parseInt(newValue)
-        return updatedProducts;
-      });
-      setUltimoFoco(propName)
-    }
-    // console.log(product)
-
-  }
-
-
 
   const checkFijarCosto = (e)=>{
     if(!fijarCosto && fijarVenta){
@@ -204,24 +178,16 @@ const PreciosGeneralesProducItem = ({
         subFamilia: product.idSubFamilia,
         margen: product.gananciaPorcentaje
       };
-
-      console.log(product)
-      console.log(editedProduct)
-      return 
-      const response = await axios.put(
-        ModelConfig.get().urlBase + 
-        `/ProductosTmp/UpdateProducto`,
-        editedProduct
-      );
-      if (response.data.statusCode === 200) {
-        onUpdatedOk()
-      }
+      console.log("para enviar",editedProduct)
+      Product.getInstance().update(editedProduct,(data,response)=>{
+        onUpdatedOk(editedProduct,response)
+      },()=>{})
     } catch (error) {
       onUpdatedWrong(error)
     }
   };
 
-  return (
+  return !product ? (<></>): (
     <TableRow key={index} sx={{
       backgroundColor: ( index % 2 == 0 ? "whitesmoke" : "#e5e5e5")
     }}>
@@ -235,7 +201,6 @@ const PreciosGeneralesProducItem = ({
           onChange={(e) => changePriceValue("precioCosto",e.target.value)}
           onClick={()=>setUltimoFoco("precioCosto")}
           InputProps={{
-            inputMode: "numeric", // Establece el modo de entrada como numérico
             pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
             startAdornment: (
               <InputAdornment position="start">
@@ -276,7 +241,7 @@ const PreciosGeneralesProducItem = ({
           variant="outlined"
           fullWidth
           value={product.gananciaPorcentaje}
-          onChange={(e) => changePercentValue("gananciaPorcentaje",e.target.value)}
+          onChange={(e) => changePriceValue("gananciaPorcentaje",e.target.value)}
           onClick={()=>setUltimoFoco("gananciaPorcentaje")}
           InputProps={{
             startAdornment: (
@@ -313,7 +278,7 @@ const PreciosGeneralesProducItem = ({
           fullWidth
           value={product.ivaPorcentaje}
           disabled={true}
-          onChange={(e) => changePercentValue("ivaPorcentaje",e.target.value)}
+          onChange={(e) => changePriceValue("ivaPorcentaje",e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -393,7 +358,7 @@ const PreciosGeneralesProducItem = ({
         </Button>
       </TableCell>
     </TableRow>
-  );
+  )
 };
 
 export default PreciosGeneralesProducItem;
