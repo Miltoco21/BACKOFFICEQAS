@@ -127,6 +127,7 @@ const AjustePrecios = ({
             showMessage("Guardado correctamente")
             onChange(saved)
             setCambiosGuardados(true)
+            setOpenDialog(false)
           }}
           onUpdatedWrong={()=>{
           }}

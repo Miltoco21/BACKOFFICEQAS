@@ -63,11 +63,8 @@ const IngresoDocumentoProveedor = () => {
   const [searchText, setSearchText] = useState("");
   const [proveedoresFiltrados, setProveedoresFiltrados] = useState([]);
   const [proveedores, setProveedores] = useState([]);
-  const [descripcion, setDescripcion] = useState("");
-  const [cantidad, setCantidad] = useState("");
 
   const [selectedProveedor, setSelectedProveedor] = useState(null);
-  const [additionalRows, setAdditionalRows] = useState(1);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarOpen200, setSnackbarOpen200] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -201,7 +198,7 @@ const IngresoDocumentoProveedor = () => {
   const handleAddProductToSales = (product) => {
     
     const existingProductIndex = selectedProducts.findIndex(
-      (p) => p.id === product.idProducto
+      (p) => (p.id === product.idProducto && p.codigoInternoProveedor == product.codigoInternoProveedor)
     );
 
     if (existingProductIndex !== -1) {
@@ -256,6 +253,7 @@ const IngresoDocumentoProveedor = () => {
 
       console.log("agregado queda asi:", System.clone(product))
       // setSelectedProducts([...selectedProducts, newProduct]);
+      console.log("seleccionados:",[...selectedProducts, product]);
       setSelectedProducts([...selectedProducts, product]);
     }
 
@@ -316,20 +314,27 @@ const IngresoDocumentoProveedor = () => {
   const inicioRango = dayjs().subtract(1, "week");
 
   const buscarProductosGeneralesPorCodigoBarras = (callbackFail)=>{
+    showLoading("Buscando por codigo barra")
+
     Product.getInstance().findByCodigoBarras({codigoProducto:searchTermProd},(prods,res)=>{
       if(res.data.cantidadRegistros>0){
+        hideLoading()
         handleSearchSuccess(res, "PLU");
       }else{
+        hideLoading()
         callbackFail()
       }
     },()=>{})
   }
 
   const buscarProductosGeneralesPorDescripcion = (callbackFail)=>{
+    showLoading("Buscando por descripcion")
     Product.getInstance().findByDescription({description:searchTermProd},(prods,res2)=>{
       if(res2.data.cantidadRegistros>0){
+        hideLoading()
         handleSearchSuccess(res2, "Descripción");
       }else{
+        hideLoading()
       callbackFail()
     }
     },()=>{})
@@ -353,26 +358,39 @@ const IngresoDocumentoProveedor = () => {
 
 
   const buscarProductosProvPorCodigo = (callbackFail)=>{
+    showLoading("Buscando por codigo interno proveedor")
+
     Proveedor.getInstance().findProductsByCodigo({
       codigoBuscar:searchTermProd,
       codigoProveedor:selectedProveedor.codigoProveedor
-    },(prods,res)=>{
-      if(res.data.cantidadRegistros>0){
+    },(prods,resx)=>{
+      hideLoading()
+      if(resx.data.cantidadRegistros>0){
+        const res = resx
+        
+        res.data.productos.forEach((pro,ix)=>{
+          res.data.productos[ix].codigoInternoProveedor = searchTermProd
+        })
         handleSearchSuccess(res, "Codigo Proveedor");
       }else{
+        hideLoading()
         callbackFail()
       }
     },()=>{})
   }
 
   const buscarProductosProvPorDescripcion = (callbackFail)=>{
+    showLoading("Buscando por descripcion interna proveedor")
+
     Proveedor.getInstance().findProductsByDescription({
       description:searchTermProd,
       codigoProveedor:selectedProveedor.codigoProveedor
     },(prods,res)=>{
+      hideLoading()
       if(res.data.cantidadRegistros>0){
         handleSearchSuccess(res, "Descripcion proveedor");
       }else{
+        hideLoading()
         callbackFail()
       }
     },()=>{})
@@ -382,6 +400,13 @@ const IngresoDocumentoProveedor = () => {
     if (searchTermProd.trim() === "") {
       setSearchedProducts([]);
       setSnackbarMessage("El campo de búsqueda está vacío");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    if(!selectedProveedor){
+      setSearchedProducts([]);
+      setSnackbarMessage("Seleccionar un proveedor");
       setSnackbarOpen(true);
       return;
     }
@@ -567,9 +592,6 @@ const IngresoDocumentoProveedor = () => {
       setFecha(dayjs());
       setSearchText("");
       setSelectedProveedor(null);
-      setAdditionalRows(1);
-      setDescripcion("");
-      setCantidad("");
       setSelectedProducts([]);
       setProveedoresFiltrados([]);
 
@@ -589,15 +611,14 @@ const IngresoDocumentoProveedor = () => {
     // Obtener la tecla presionada
     const keyPressed = e.key;
 
-    // Verificar si la tecla presionada es un número o la tecla de retroceso (Backspace)
-    const isValidKey = /^\d$/.test(keyPressed) || keyPressed === "Backspace";
+    if(Validator.isTeclaControl(e)){
+      return
+    }
 
-    // Verificar si el valor actual del campo de entrada es negativo
-    const isNegativeValue = e.target.value.startsWith("-");
-
-    // Evitar que se ingrese números negativos o signos
-    if (!isValidKey || isNegativeValue) {
+    if(!Validator.isNumeric(keyPressed)){
+      showMessage("valor incorrecto")
       e.preventDefault();
+      return
     }
   };
   const grandTotal = selectedProducts.reduce(
@@ -858,7 +879,6 @@ const IngresoDocumentoProveedor = () => {
                     borderRadius: "5px",
                   }}
                   fullWidth
-                  focused
                   placeholder={(tipoBuscar == 0 || tipoBuscar ==2) ? "Ingresa Código" : "Ingresar Descripción"}
                   value={searchTermProd}
                   onChange={(e) => setSearchTermProd(e.target.value)}
@@ -964,7 +984,16 @@ const IngresoDocumentoProveedor = () => {
                   }}>
                     {selectedProducts.map((product, index) => (
                       <TableRow key={index}>
-                        <TableCell>{product.nombre}</TableCell>
+                        <TableCell>
+                          <Typography>{product.nombre}</Typography>
+                          {product.codigoInternoProveedor && (
+                            <Typography sx={{
+                              backgroundColor:"#ebffcc",
+                              display:"inline-block",
+                              padding:"10px"
+                            }}>Int.{product.codigoInternoProveedor}</Typography>
+                          )}
+                        </TableCell>
                         <TableCell>
                           {/* {product.precioCosto} */}
 
@@ -976,12 +1005,26 @@ const IngresoDocumentoProveedor = () => {
                             />
                             </TableCell>
                         <TableCell>
+                          
                           <TextField
                             value={product.cantidad}
                             onChange={(e) =>
                               handleQuantityChange(e.target.value, index)
                             }
+                            sx={{
+                              width:"50%",
+                              display:"inline-block"
+
+                            }}
                           />
+                          {product.cantidadProveedor > 1 && (
+                            <Typography sx={{
+                              marginLeft:"10px",
+                              position:"relative",
+                              top:"15px",
+                              display:"inline-block"
+                            }}> x {product.cantidadProveedor}</Typography>
+                          )}
                         </TableCell>
                         <TableCell>{product.total}</TableCell>
                         <TableCell>{product.precioVenta}</TableCell>
@@ -1034,6 +1077,22 @@ const IngresoDocumentoProveedor = () => {
             <Button onClick={() => {
               showConfirm("Realmente quiere salir?",()=>{
                 cerrarModalIngresoDocumento()
+
+                setProductoSel(null)
+                setCountPackage(0)
+                setAssociating(null)
+                setTipoBuscar(0)
+                setShowPanel(true)
+                setSelectedProducts([])
+                setSearchedProducts([])
+                setSearchDescProv("")
+                setSearchCodProv("")
+                setSearchTermProd("")
+                setSelectedProveedor(null)
+                setProveedores([])
+                setTipoDocumento("")
+                setFolioDocumento("")
+                
               },()=>{})
               }} color="primary">
               Salir

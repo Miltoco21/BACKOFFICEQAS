@@ -12,9 +12,20 @@ const BoxSelectTipo = ({
             <tbody>
             <tr>
                 <td><Button
-                sx={{ height: "60px" }}
+                sx={{
+                  height: "60px",
+                  backgroundColor:( tipoElegido == 0 ? "#c9c9c9" : ""),
+                  color:( tipoElegido == 0 ? "black" : ""),
+                  borderColor:( tipoElegido == 0 ? "black" : ""),
+                  "&:hover":{
+                    borderColor: "black",
+                    backgroundColor: "#c9c9c9",
+                    color:"black",
+                  }
+                }}
+                variant={tipoElegido === 1 ? "outlined" : "outlined"}
+
                 fullWidth
-                variant={tipoElegido === 0 ? "contained" : "outlined"}
                 onClick={() => {setTipoElegido(0)}}
                 >
                 Cod prov.
@@ -22,8 +33,18 @@ const BoxSelectTipo = ({
 
               <td>
               <Button
-                sx={{ height: "60px" }}
-                variant={tipoElegido === 1 ? "contained" : "outlined"}
+                sx={{
+                  height: "60px",
+                  backgroundColor:( tipoElegido == 1 ? "#c9c9c9" : ""),
+                  borderColor:( tipoElegido == 1 ? "black" : ""),
+                  color:( tipoElegido == 1 ? "black" : ""),
+                  "&:hover":{
+                    borderColor: "black",
+                    backgroundColor: "#c9c9c9",
+                    color:"black",
+                  }
+                }}
+                variant={tipoElegido === 1 ? "outlined" : "outlined"}
                 onClick={() => {setTipoElegido(1)}}
                 fullWidth
               >
@@ -33,8 +54,18 @@ const BoxSelectTipo = ({
 
               <td>
               <Button
-                sx={{ height: "60px" }}
-                variant={tipoElegido === 2 ? "contained" : "outlined"}
+                sx={{
+                  height: "60px",
+                  backgroundColor:( tipoElegido == 2 ? "#c9c9c9" : ""),
+                  color:( tipoElegido == 2 ? "black" : ""),
+                  borderColor:( tipoElegido == 2 ? "black" : ""),
+                  "&:hover":{
+                    borderColor: "black",
+                    backgroundColor: "#c9c9c9",
+                    color:"black",
+                  }
+                }}
+                variant={tipoElegido === 2 ? "outlined" : "outlined"}
                 onClick={() => {setTipoElegido(2)}}
                 fullWidth
               >
@@ -44,8 +75,18 @@ const BoxSelectTipo = ({
 
               <td>
               <Button
-                sx={{ height: "60px" }}
-                variant={tipoElegido === 3 ? "contained" : "outlined"}
+                sx={{
+                  height: "60px",
+                  backgroundColor:( tipoElegido == 3 ? "#c9c9c9" : ""),
+                  color:( tipoElegido == 3 ? "black" : ""),
+                  borderColor:( tipoElegido == 3 ? "black" : ""),
+                  "&:hover":{
+                    borderColor: "black",
+                    backgroundColor: "#c9c9c9",
+                    color:"black",
+                  }
+                }}
+                variant={tipoElegido === 3 ? "outlined" : "outlined"}
                 onClick={() => {setTipoElegido(3)}}
                 fullWidth
               >
