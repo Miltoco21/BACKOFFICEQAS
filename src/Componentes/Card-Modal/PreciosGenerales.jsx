@@ -27,7 +27,6 @@ import PreciosGeneralesProducItem from "./PreciosGeneralesProducItem";
 import Product from "../../Models/Product";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import dayjs from "dayjs";
-import PreciosGenerales2 from "./PreciosGenerales2";
 
 export const defaultTheme = createTheme();
 
@@ -206,10 +205,32 @@ const PreciosGenerales = ({ onClose }) => {
               </Grid>
             </div>
 
-            <PreciosGenerales2 
-            products={products}
-            setProducts={setProducts}
-            />
+          <Table>
+            <TableBody>
+              { (products.length <= 0) ? (
+                <TableRow>
+                  <TableCell colSpan={20}>No se encontraron productos</TableCell>
+                </TableRow>
+              ) : (
+                products.map((product, index) => (
+                  <PreciosGeneralesProducItem 
+                  producto={product} 
+                  key={index} 
+                  index={index} 
+                  setProducts={setProducts}
+                  onUpdatedOk={()=>{
+                    showMessage("Precio editado exitosamente");
+                  }}
+                  onUpdatedWrong={(error)=>{
+                    console.error("Error al actualizar el producto:", error);
+                    showMessage("Error al actualizar el producto");
+                  }}
+                  />
+                ))
+
+              )}
+            </TableBody>
+          </Table>
             
           </Paper>
         </Grid>

@@ -500,7 +500,7 @@ const SearchListDocumento = () => {
                 value={startDate}
                 onChange={(newValue) => setStartDate(newValue)}
                 format="DD/MM/YYYY"
-                renderInput={(params) => (
+                input={(params) => (
                   <TextField {...params} sx={{ mb: 2 }} fullWidth />
                 )}
               />
@@ -513,7 +513,7 @@ const SearchListDocumento = () => {
                 value={endDate}
                 onChange={(newValue) => setEndDate(newValue)}
                 format="DD/MM/YYYY"
-                renderInput={(params) => (
+                input={(params) => (
                   <TextField {...params} sx={{ mb: 2 }} fullWidth />
                 )}
               />

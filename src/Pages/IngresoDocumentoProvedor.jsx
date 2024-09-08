@@ -71,7 +71,6 @@ const IngresoDocumentoProveedor = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [searchSnackbarOpen, setSearchSnackbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
   
   const [showPanel, setShowPanel] = useState(true);
@@ -203,7 +202,6 @@ const IngresoDocumentoProveedor = () => {
     }
 
     setAssociating(false)
-    setErrorMessage("");
   };
 
   useEffect(() => {
@@ -263,26 +261,25 @@ const IngresoDocumentoProveedor = () => {
 
     try {
       if (!tipoDocumento) {
-        setErrorMessage("Por favor complete tipo de documento.");
+        showMessage("Por favor complete tipo de documento.");
         setLoading(false);
         return;
       }
 
       if (!folioDocumento) {
-        setErrorMessage("Por favor complete campo folio.");
+        showMessage("Por favor complete campo folio.");
         setLoading(false);
         return;
       }else if (folioDocumento){
-        setErrorMessage("");
       }
 
       if (!selectedProveedor) {
-        setErrorMessage("No se ha seleccionado ningún proveedor.");
+        showMessage("No se ha seleccionado ningún proveedor.");
         setLoading(false);
         return;
       }
       if (selectedProducts.length === 0) {
-        setErrorMessage("No se han seleccionado productos.");
+        showMessage("No se han seleccionado productos.");
         setLoading(false);
         return;
       }
@@ -293,7 +290,7 @@ const IngresoDocumentoProveedor = () => {
         total += product.total;
       });
       if (total === 0) {
-        setErrorMessage("El total no puede ser cero.");
+        showMessage("El total no puede ser cero.");
         setLoading(false);
         return;
       }
@@ -352,7 +349,6 @@ const IngresoDocumentoProveedor = () => {
       setSelectedProducts([]);
       setProveedoresFiltrados([]);
 
-      setErrorMessage("");
       setTimeout(() => {
         cerrarModalIngresoDocumento();
       }, "2000");
@@ -403,7 +399,7 @@ const IngresoDocumentoProveedor = () => {
         </Button>
 
         <SearchListDocumento/>
-        <Dialog open={open} fullWidth minHeight={"lg"} maxWidth={"md"}
+        <Dialog open={open} fullWidth maxWidth={"md"}
           PaperProps={{
             sx: {
               height: "90%"
@@ -444,11 +440,7 @@ const IngresoDocumentoProveedor = () => {
             (<>
             <Grid item xs={12} sm={12} md={6} lg={6}>
           
-            {errorMessage && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {errorMessage}
-              </Alert>
-            )}
+            
             <TextField
               select
               label="Tipo de documento"
@@ -694,14 +686,18 @@ const IngresoDocumentoProveedor = () => {
                 </Table>
               </TableContainer>
 
-              <TextField
-                label="Total"
-                value={grandTotal}
-                sx={{ mt: 3 }}
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
+              <Typography variant={'h5'} sx={{
+                padding:"20px",
+                fontWeight:"bold",
+                float:"right"
+              }}>
+                Total. $
+                <Typography sx={{
+                  display:"inline",
+                  fontWeight:"bold",
+                  fontSize:"23px"
+                }}>{grandTotal}</Typography>
+              </Typography>
             </div>
           </Grid>
           </Grid>
@@ -753,22 +749,6 @@ const IngresoDocumentoProveedor = () => {
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
           message={snackbarMessage}
-          action={
-            <IconButton
-              size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={handleCloseSnackbar}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          }
-        />
-        <Snackbar
-          open={snackbarOpen200}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-          message={errorMessage}
           action={
             <IconButton
               size="small"

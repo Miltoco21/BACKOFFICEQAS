@@ -357,7 +357,6 @@ const IngresoDocProvBuscarProductos = ({
               padding:"0 5px",
               height:"30px",
               textAlign:"center",
-              border:"1px solid #b0b0b0",
               overflowX:"scroll",
               width:"130px",
               // backgroundColor:"red"
@@ -429,9 +428,9 @@ const IngresoDocProvBuscarProductos = ({
           style={{ overflowX: "auto", maxHeight: 200, marginBottom:10 }}
         >
           <Table>
-            <TableBody key={123132}>
-              {searchedProducts.map((product) => (
-                <TableRow key={product.id}>
+            <TableBody>
+              {searchedProducts.map((product,ix) => (
+                <TableRow key={ix}>
                   <TableCell sx={{ width: "33%" }}>
                     {product.nombre}
                   </TableCell>
