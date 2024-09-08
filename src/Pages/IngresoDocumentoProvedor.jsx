@@ -402,7 +402,7 @@ const IngresoDocumentoProveedor = () => {
           Ingresa Documento de Compra
         </Button>
 
-        {/* <SearchListDocumento/> */}
+        <SearchListDocumento/>
         <Dialog open={open} fullWidth minHeight={"lg"} maxWidth={"md"}
           PaperProps={{
             sx: {
