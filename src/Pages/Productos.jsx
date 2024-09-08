@@ -11,6 +11,10 @@ import SearchListProducts from "../Componentes/Productos/SearchListProduct";
 import { HorizontalSplit } from "@mui/icons-material";
 
 const Productos = () => {
+
+  const [refresh, setRefresh] = useState(false);
+
+
   const [open, setOpen] = useState(false);
 
   const [open2, setOpen2] = useState(false);
@@ -59,7 +63,10 @@ const Productos = () => {
           Producto con código
         </Button>
 
-        <SearchListProducts/>
+        <SearchListProducts
+          refresh={refresh}
+          setRefresh={setRefresh}
+        />
 
         <Modal open={open} onClose={handleCloseStepper}>
           <Box
@@ -80,7 +87,7 @@ const Productos = () => {
               margin:"2.5% auto"
             }}
           >
-           <StepperSI/> 
+           <StepperSI onSuccessAdd={()=>{ setRefresh(!refresh) }}/> 
           </Box>
         </Modal>
 
@@ -104,7 +111,7 @@ const Productos = () => {
               margin:"2.5% auto"
             }}
           >
-            <StepperSI conCodigo={true} />
+            <StepperSI conCodigo={true} onSuccessAdd={()=>{ setRefresh(!refresh) }} />
           </Box>
         </Modal>
     </div>

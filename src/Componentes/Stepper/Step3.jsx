@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
   Box,
@@ -28,9 +28,24 @@ import ModelConfig from "../../Models/ModelConfig";
 import { AttachMoney, Percent } from "@mui/icons-material";
 import Product from "../../Models/Product";
 import System from "../../Helpers/System";
+import { SelectedOptionsContext } from "./../Context/SelectedOptionsProvider";
 
 
-const Step3Component = ({ data, onNext, stepData }) => {
+const Step3Component = ({ 
+  data, 
+  onNext, 
+  stepData,
+  onSuccessAdd
+}) => {
+
+  const {
+    showLoading,
+    hideLoading,
+    showMessage,
+    showConfirm
+  } = useContext(SelectedOptionsContext);
+
+
   const apiUrl =  ModelConfig.get().urlBase;
 ;
 
@@ -61,32 +76,12 @@ const Step3Component = ({ data, onNext, stepData }) => {
   const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
   const [openDialog1, setOpenDialog1] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [product, setProduct] = useState([]);
   
   const [esPesable, setEsPesable] = useState(false);
   const [fijarCosto, setFijarCosto] = useState(false);
   const [fijarVenta, setFijarVenta] = useState(false);
-
-
-
-  console.log("data:", data);
-
-  const fetchProduct = async () => {
-    try {
-      const response = await axios.get(
-        `${apiUrl}/ProductosTmp/GetProductos`
-      );
-      console.log("API Response:", response.data);
-      if (Array.isArray(response.data.productos)) {
-        setProduct(response.data.productos);
-      }
-    } catch (error) {
-      console.error("Error fetching product:", error);
-    }
-  };
-
 
   const handleUnidadVentaSelect = (selectedUnidadId) => {
     setSelectedUnidadVentaId(selectedUnidadId === "" ? 0 : selectedUnidadId);
@@ -112,7 +107,7 @@ const Step3Component = ({ data, onNext, stepData }) => {
       return;
     }
 
-    setLoading(true);
+    // setLoading(true);
 
     // Crear objeto con los datos del paso 1
     const step1Data = {
@@ -162,6 +157,13 @@ const Step3Component = ({ data, onNext, stepData }) => {
     };
 
     console.log("Datos objeto productos", requestData);
+    const prodNuevo = {
+      ...requestData.step1,
+      ...requestData.step2,
+      ...requestData.step3,
+      ...requestData.step4,
+      ...requestData.step5,
+    }
 
     try {
       // Enviar la petición POST al endpoint con los datos combinados
@@ -175,14 +177,16 @@ const Step3Component = ({ data, onNext, stepData }) => {
       if (response.status === 201) {
         setEmptyFieldsMessage("Producto guardado exitosamente");
         setOpenSnackbar(true);
-        fetchProduct();
+        prodNuevo.idProducto = response.data.codigoProducto
+        prodNuevo.codigoProducto = response.data.codigoProducto
+        onSuccessAdd(prodNuevo,response)
         console.log("Productos",product)
       }
 
       // Llamar a la función onNext para continuar con el siguiente paso
       onNext(requestData, 3);
     } catch (error) {
-      setSnackbarMessage("Error al guardar el producto");
+      showMessage("Error al guardar el producto");
       setOpenSnackbar(true);
       console.error("Error:", error);
     } finally {

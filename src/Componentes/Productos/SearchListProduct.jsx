@@ -37,7 +37,10 @@ import System from "../../Helpers/System";
 
 
 const ITEMS_PER_PAGE = 10;
-const SearchListProducts = () => {
+const SearchListProducts = ({
+  refresh,
+  setRefresh
+}) => {
 
   const {
     showLoading,
@@ -54,7 +57,7 @@ const SearchListProducts = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedTab, setSelectedTab] = useState(0);
-  const [refresh, setRefresh] = useState(false);
+  // const [refresh, setRefresh] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
@@ -266,7 +269,8 @@ const SearchListProducts = () => {
   useEffect(() => {
     if (refresh) {
       setRefresh(false);
-      window.location.reload(1)
+      // window.location.reload(1)
+      fetchProduct()
     }
   }, [refresh]);
 

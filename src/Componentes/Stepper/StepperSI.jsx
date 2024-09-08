@@ -21,12 +21,10 @@ import Step6 from "./Step6";
 const steps = ["Paso 1", "Paso 2"];
 
 const StepperSI = ({
-  conCodigo = false
+  conCodigo = false,
+  onSuccessAdd
 }) => {
   const [activeStep, setActiveStep] = useState(0);
-  const [open, setOpen] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
-  
   const [title, setTitle] = useState("Ingreso producto")
 
   const [stepData, setStepData] = useState({
@@ -69,66 +67,20 @@ const StepperSI = ({
     setStepData((prevData) => ({ ...prevData,  }));
    
   };
-  
-
-  // const handleNext = (stepData) => {
-  //   const updatedData = { ...data, [`step${activeStep + 1}`]: stepData };
-  //   setData(updatedData);
-  //   localStorage.setItem("stepperData", JSON.stringify(updatedData));
-  //   setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  // };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const postData = {
-        step1: step1Data,
-        step3: step3Data,
-      };
-
-      const response = await axios.post(
-        "https://www.easypos.somee.com/api/ProductosTmp/AddProducto",
-        postData
-      );
-
-      console.log("Server Post Response:", response.data);
-
-      setStep1Data({}); // Reinicia los datos del paso 1
-      setStep3Data({}); // Reinicia los datos del paso 3
-
-      setDialogMessage("Producto guardado con éxito");
-      setOpen(true);
-    } catch (error) {
-      console.error("Error:", error);
-      setDialogMessage("Error al guardar");
-      setOpen(true);
-    }
-  };
-
-  const handleSaveStep5 = async (stepData) => {
-    try {
-      const updatedData = { ...data, step5: stepData };
-      setData(updatedData);
-      localStorage.setItem("stepperData", JSON.stringify(updatedData));
-
-      await handleSubmit(); // Envía los datos al servidor
-    } catch (error) {
-      console.error("Error:", error);
-      setDialogMessage("Error al guardar");
-      setOpen(true);
-    }
-  };
 
   const getStepContent = (step) => {
+    console.log("getStepContent..concodigo?", conCodigo)
     if(conCodigo){
       switch (step) {
         case 0:
           return <Step1CC data={stepData} onNext={handleNext} setStepData={setStepData} />;
           case 1:
-            return <Step3CC data={stepData} onNext={handleNext}setStepData={setStepData}  />;
+            return <Step3CC 
+              data={stepData} 
+              onNext={handleNext}
+              setStepData={setStepData}
+              onSuccessAdd = {onSuccessAdd}
+            />;
             case 2:
       }
     }else{
@@ -136,7 +88,12 @@ const StepperSI = ({
         case 0:
           return <Step1 data={stepData} onNext={handleNext} setStepData={setStepData} />;
           case 1:
-            return <Step3 data={stepData} onNext={handleNext}setStepData={setStepData}  />;
+            return <Step3 
+              data={stepData} 
+              onNext={handleNext}
+              setStepData={setStepData}
+              onSuccessAdd = {onSuccessAdd}
+            />;
             case 2:
       }
     }

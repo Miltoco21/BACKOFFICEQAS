@@ -160,6 +160,38 @@ class Proveedor extends Model{
       }
   }
 
+  static assignAndAssociateProduct(product, {
+    codigoProveedor,
+    countPackage,
+    searchCodProv,
+    searchDescProv,
+  }, callbackOk, callbackWrong){
+
+
+    const data = [{
+      codigoProveedor: codigoProveedor,
+      codigoSegunProveedor: "",
+      descripcionSegunProveedor: "",
+      codBarra: product.idProducto + "",
+      cantidadProveedor: parseInt(countPackage + ""),
+      cantidadProducto: 1,
+    }]
+    
+    data[0].codigoSegunProveedor = searchCodProv
+    data[0].descripcionSegunProveedor = searchDescProv
+    
+    product.cantidadProveedor = data[0].cantidadProveedor
+    product.codigoSegunProveedor = data[0].codigoSegunProveedor
+    product.descripcionSegunProveedor = data[0].descripcionSegunProveedor
+    
+    console.log("datos para asociar:", data)
+    Proveedor.getInstance().asociateProduct(data, (res)=>{
+      callbackOk(product,res)
+    },(error)=>{
+      callbackWrong(error)
+    })
+  }
+
 };
 
 export default Proveedor;

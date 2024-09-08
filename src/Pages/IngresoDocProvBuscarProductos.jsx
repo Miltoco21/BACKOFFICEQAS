@@ -22,6 +22,7 @@ import {
   DialogContent,
   Typography,
   DialogActions,
+  Tooltip,
 } from "@mui/material";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -39,6 +40,23 @@ const IngresoDocProvBuscarProductos = ({
   associating,
   setAssociating,
   onAddProduct,
+
+  searchProd, 
+  setSearchProd,
+  
+  searchCodProv, 
+  setSearchCodProv,
+  
+  searchDescProv, 
+  setSearchDescProv,
+  
+  searchedProducts, 
+  setSearchedProducts,
+
+  onAssociateAndAddProduct,
+
+  countPackage,
+  setCountPackage
 }) => {
 
   const {
@@ -48,12 +66,7 @@ const IngresoDocProvBuscarProductos = ({
     showConfirm
   } = useContext(SelectedOptionsContext);
 
-  const [searchText, setSearchText] = useState("");
-
-  const [searchTermProd, setSearchTermProd] = useState("");
-  const [searchCodProv, setSearchCodProv] = useState("");
-  const [searchDescProv, setSearchDescProv] = useState("");
-  const [searchedProducts, setSearchedProducts] = useState([]);
+  
   
   const [tipoBuscar, setTipoBuscar] = useState(0);
   const TIPOS_BUSCAR = {
@@ -62,50 +75,12 @@ const IngresoDocProvBuscarProductos = ({
     CODIGO_BARRAS : 2,
     DESCRIPCION : 3,
   }
-  const [countPackage, setCountPackage] = useState(0);
   
-  const handleAsocAndAddProductToSales = (product) => {
-    if(countPackage<1){
-      showMessage("Ingresar la cantidad de cada paquete")
-      return
-    }
-    // console.log("producto:", product)
-    // console.log("searchCodProv:", searchCodProv)
-    // console.log("searchDescProv:", searchDescProv)
-    const data = [{
-      codigoProveedor: selectedProveedor.codigoProveedor,
-      codigoSegunProveedor: "",
-      descripcionSegunProveedor: "",
-      codBarra: product.idProducto,
-      cantidadProveedor: parseInt(countPackage + ""),
-      cantidadProducto: 1,
-    }]
-    
-    data[0].codigoSegunProveedor = searchCodProv
-    data[0].descripcionSegunProveedor = searchDescProv
-    
-    product.cantidadProveedor = data[0].cantidadProveedor
-    product.codigoSegunProveedor = data[0].codigoSegunProveedor
-    product.descripcionSegunProveedor = data[0].descripcionSegunProveedor
-    
-    console.log("datos para asociar:", data)
-    Proveedor.getInstance().asociateProduct(data, (res)=>{
-      handleAddProductToSales(product)
-    },()=>{
-      showMessage("No se pudo asociar")
-    })
-  }
-
-  const handleAddProductToSales = (product) => {
-    // console.log("addProduct:", product)
-    onAddProduct(product)
-    setSearchedProducts([])
-  };
-
+  
   const buscarProductosGeneralesPorCodigoBarras = (callbackFail)=>{
     showLoading("Buscando por codigo barra")
 
-    Product.getInstance().findByCodigoBarras({codigoProducto:searchTermProd}
+    Product.getInstance().findByCodigoBarras({codigoProducto:searchProd}
       ,(prods,resx)=>{
         hideLoading()
         if(resx.data.cantidadRegistros>0){
@@ -136,7 +111,7 @@ const IngresoDocProvBuscarProductos = ({
 
   const buscarProductosGeneralesPorDescripcion = (callbackFail)=>{
     showLoading("Buscando por descripcion")
-    Product.getInstance().findByDescription({description:searchTermProd}
+    Product.getInstance().findByDescriptionPaginado({description:searchProd}
       ,(prods,resx)=>{
         hideLoading()
         if(resx.data.cantidadRegistros>0){
@@ -169,7 +144,7 @@ const IngresoDocProvBuscarProductos = ({
     buscarProductosGeneralesPorCodigoBarras(()=>{
       buscarProductosGeneralesPorDescripcion(()=>{
         showMessage(
-          `No se encontraron resultados para "${searchTermProd}"`
+          `No se encontraron resultados para "${searchProd}"`
         );
         callbackFail()
       })
@@ -181,7 +156,7 @@ const IngresoDocProvBuscarProductos = ({
     showLoading("Buscando por codigo interno proveedor")
 
     Proveedor.getInstance().findProductsByCodigo({
-      codigoBuscar:searchTermProd,
+      codigoBuscar:searchProd,
       codigoProveedor:selectedProveedor.codigoProveedor
     },(prods,resx)=>{
       hideLoading()
@@ -189,7 +164,7 @@ const IngresoDocProvBuscarProductos = ({
         const res = resx
         
         res.data.productos.forEach((pro,ix)=>{
-          res.data.productos[ix].codigoInternoProveedor = searchTermProd
+          res.data.productos[ix].codigoInternoProveedor = searchProd
         })
         handleSearchSuccess(res, "Codigo Proveedor");
       }else{
@@ -207,7 +182,7 @@ const IngresoDocProvBuscarProductos = ({
     showLoading("Buscando por descripcion interna proveedor")
 
     Proveedor.getInstance().findProductsByDescription({
-      description:searchTermProd,
+      description:searchProd,
       codigoProveedor:selectedProveedor.codigoProveedor
     },(prods,resx)=>{
       hideLoading()
@@ -215,7 +190,7 @@ const IngresoDocProvBuscarProductos = ({
         const res = resx
 
         res.data.productos.forEach((pro,ix)=>{
-          res.data.productos[ix].codigoInternoProveedor = searchTermProd
+          res.data.productos[ix].codigoInternoProveedor = searchProd
         })
 
         handleSearchSuccess(res, "Descripcion proveedor");
@@ -231,7 +206,7 @@ const IngresoDocProvBuscarProductos = ({
   }
 
   const buscarProductos = async () => {
-    if (searchTermProd.trim() === "") {
+    if (searchProd.trim() === "") {
       setSearchedProducts([]);
       showMessage("El campo de búsqueda está vacío");
       return;
@@ -245,19 +220,19 @@ const IngresoDocProvBuscarProductos = ({
 
     switch(tipoBuscar){
       case TIPOS_BUSCAR.CODIGO_SEGUN_PROVEEDOR:
-        setSearchCodProv(searchTermProd)
+        setSearchCodProv(searchProd)
         setSearchDescProv("")
         buscarProductosProvPorCodigo(()=>{
-          showConfirm("Quiere asociar el codigo " + searchTermProd + " con algun producto a este proveedor?",
+          showConfirm("Quiere asociar el codigo " + searchProd + " con algun producto a este proveedor?",
             ()=>{
               setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
-              setSearchTermProd("")
+              setSearchProd("")
               setCountPackage(0)
               setSearchedProducts([])
               setAssociating(true)
             },()=>{
               setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
-              setSearchTermProd("")
+              setSearchProd("")
               setAssociating(false)
           })
         })
@@ -265,18 +240,18 @@ const IngresoDocProvBuscarProductos = ({
 
       case TIPOS_BUSCAR.DESCRIPCION_SEGUN_PROVEEDOR:
         setSearchCodProv("")
-        setSearchDescProv(searchTermProd)
+        setSearchDescProv(searchProd)
         buscarProductosProvPorDescripcion(()=>{
-          showConfirm("Quiere asociar la descripcion " + searchTermProd + " con algun producto a este proveedor?",
+          showConfirm("Quiere asociar la descripcion " + searchProd + " con algun producto a este proveedor?",
             ()=>{
-              setSearchTermProd("")
+              setSearchProd("")
               setAssociating(true)
               setCountPackage(0)
               setSearchedProducts([])
               setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
             },()=>{
               setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
-              setSearchTermProd("")
+              setSearchProd("")
               setAssociating(false)
           })
         })
@@ -319,7 +294,7 @@ const IngresoDocProvBuscarProductos = ({
     if (response.data && response.data.cantidadRegistros > 0) {
       setSearchedProducts(response.data.productos);
       console.log("Productos encontrados", response.data.productos);
-      setSearchTermProd("");
+      setSearchProd("");
       showMessage(`Productos encontrados (${searchType})`);
     } else if (response.data && response.data.cantidadRegistros === 0) {
       showMessage(`No se encontraron resultados (${searchType})`);
@@ -350,17 +325,23 @@ const IngresoDocProvBuscarProductos = ({
           />
 
           {associating && (searchCodProv!= "" || searchDescProv!="") &&(
-            <Typography sx={{
+            <Box sx={{
               position:"relative",
               top:"15px",
               display:"inline-block",
               padding:"0 5px",
-              height:"30px",
+              height:"25px",
               textAlign:"center",
-              overflowX:"scroll",
+              overflow:"hidden",
               width:"130px",
               // backgroundColor:"red"
-            }}>Int.{searchCodProv || searchDescProv}</Typography>
+            }}>
+              <Tooltip title={"Int. " + (searchCodProv || searchDescProv)}>
+                <Typography>
+                Int. {searchCodProv || searchDescProv}
+                </Typography>
+              </Tooltip>
+            </Box>
           )}
         </Grid>
 
@@ -378,8 +359,8 @@ const IngresoDocProvBuscarProductos = ({
             }}
             fullWidth
             placeholder={(tipoBuscar == 0 || tipoBuscar ==2) ? "Ingresa Código" : "Ingresar Descripción"}
-            value={searchTermProd}
-            onChange={(e) => setSearchTermProd(e.target.value)}
+            value={searchProd}
+            onChange={(e) => setSearchProd(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 buscarProductos();
@@ -443,7 +424,10 @@ const IngresoDocProvBuscarProductos = ({
                   <TableCell>
                     {associating ? (
                       <Button
-                      onClick={() => handleAsocAndAddProductToSales(product)}
+                      onClick={() => {
+                        onAssociateAndAddProduct(product)
+                        setSearchedProducts([])
+                      }}
                       variant="contained"
                       color="primary"
                       >
@@ -451,7 +435,10 @@ const IngresoDocProvBuscarProductos = ({
                       </Button>
                     ) : (
                       <Button
-                      onClick={() => handleAddProductToSales(product)}
+                      onClick={() => {
+                        onAddProduct(product)
+                        setSearchedProducts([])
+                      }}
                       variant="contained"
                       color="secondary"
                       >

@@ -45,6 +45,8 @@ import PreciosGeneralesProducItem from "../Componentes/Card-Modal/PreciosGeneral
 import AjustePrecios from "../Componentes/ScreenDialog/AjustePrecios";
 import System from "../Helpers/System";
 import IngresoDocProvBuscarProductos from "./IngresoDocProvBuscarProductos";
+import CrearProducto from "./CrearProducto";
+import StepperSI from "../Componentes/Stepper/StepperSI";
 
 const IngresoDocumentoProveedor = () => {
 
@@ -74,11 +76,18 @@ const IngresoDocumentoProveedor = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   
   const [showPanel, setShowPanel] = useState(true);
-  const [associating, setAssociating] = useState(null)
   
   const [showAjustePrecios, setShowAjustePrecios] = useState(false);
   const [productoSel, setProductoSel] = useState(null);
-
+  
+  const [associating, setAssociating] = useState(null)
+  const [searchProd, setSearchProd] = useState("");
+  const [searchCodProv, setSearchCodProv] = useState("");
+  const [searchDescProv, setSearchDescProv] = useState("");
+  const [searchedProducts, setSearchedProducts] = useState([]);
+  const [countPackage, setCountPackage] = useState(0);
+  
+  const [showCreateProduct, setShowCreateProduct] = useState(false);
 
   const ajustarPrecio = (producto, index)=>{
     producto.index = index
@@ -154,7 +163,7 @@ const IngresoDocumentoProveedor = () => {
   }
 
   const handleAddProductToSelecteds = (product) => {
-    
+    console.log("agregando ", product)
     const existingProductIndex = selectedProducts.findIndex(
       (p) => (p.id === product.idProducto && p.codigoInternoProveedor == product.codigoInternoProveedor)
     );
@@ -205,10 +214,11 @@ const IngresoDocumentoProveedor = () => {
   };
 
   useEffect(() => {
+    if(!open) return
     Proveedor.getInstance().getAll((provs)=>{
       setProveedores(provs);
     },()=>{})
-  }, []);
+  }, [open]);
 
   const abrirModalIngresoDocumento = () => {
     setOpen(true);
@@ -383,6 +393,27 @@ const IngresoDocumentoProveedor = () => {
     updatedProducts.splice(index, 1);
     setSelectedProducts(updatedProducts);
   };
+
+
+
+  const handleAsocAndAddProductToSales = (product) => {
+    console.log("asociando", product)
+    if(countPackage<1){
+      showMessage("Ingresar la cantidad de cada paquete")
+      return
+    }
+    
+    Proveedor.assignAndAssociateProduct(product,{
+      codigoProveedor:selectedProveedor.codigoProveedor,
+      searchCodProv,
+      searchDescProv,
+      countPackage
+    },(productx, response)=>{
+      handleAddProductToSelecteds(productx)
+    },(error)=>{
+      showMessage(error)
+    })
+  }
 
   return (
     <div style={{ display: "flex" }}>
@@ -587,10 +618,25 @@ const IngresoDocumentoProveedor = () => {
           
             
               <IngresoDocProvBuscarProductos
+              
+              searchProd = {searchProd}
+              setSearchProd = {setSearchProd}
+              searchCodProv = {searchCodProv}
+              setSearchCodProv = {setSearchCodProv}
+              searchDescProv = {searchDescProv}
+              setSearchDescProv = {setSearchDescProv}
+              searchedProducts = {searchedProducts}
+              setSearchedProducts = {setSearchedProducts}
+
+
                 selectedProveedor={selectedProveedor}
                 associating={associating}
                 setAssociating={setAssociating}
                 onAddProduct={handleAddProductToSelecteds}
+                onAssociateAndAddProduct={handleAsocAndAddProductToSales}
+
+                countPackage={countPackage}
+                setCountPackage={setCountPackage}
               />
 
 
@@ -686,6 +732,23 @@ const IngresoDocumentoProveedor = () => {
                 </Table>
               </TableContainer>
 
+              <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={()=>{
+                    if(associating && !countPackage){
+                      showMessage("Ingresar la cantidad por paquete antes de crear un producto")
+                      return
+                    }
+                    setShowCreateProduct(true)
+                  }}
+                  sx={{
+                    marginTop:"20px"
+                  }}
+                >
+                  {associating ? "Crear y asociar producto" : "Crear producto"}
+                </Button>
+
               <Typography variant={'h5'} sx={{
                 padding:"20px",
                 fontWeight:"bold",
@@ -703,6 +766,8 @@ const IngresoDocumentoProveedor = () => {
           </Grid>
 
           <DialogActions>
+
+
             <Button
               variant="contained"
               color="primary"
@@ -742,6 +807,19 @@ const IngresoDocumentoProveedor = () => {
             changed.total = calcularTotal(changed.precioCosto, changed.cantidad, changed.cantidadProveedor)
             System.addAllInArr(setSelectedProducts,selectedProducts,changed.index, changed)
           }}
+        />
+
+        <CrearProducto 
+        openAdd={showCreateProduct} 
+        setopenAdd={setShowCreateProduct}
+        onSuccessAdd={(product)=>{
+          if(associating){
+            handleAsocAndAddProductToSales(product)
+          }else{
+            handleAddProductToSelecteds(product)
+          }
+          console.log("agregado ok")
+        }}
         />
 
         <Snackbar

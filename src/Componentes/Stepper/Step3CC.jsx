@@ -29,7 +29,11 @@ import { AttachMoney, CheckBox, DraftsOutlined, Money, Percent } from "@mui/icon
 import Product from "../../Models/Product";
 
 
-const Step3CC = ({ data, onNext, stepData }) => {
+const Step3CC = ({ 
+  data, 
+  onNext, 
+  onSuccessAdd
+}) => {
   const apiUrl =  ModelConfig.get().urlBase;
 ;
 
@@ -81,20 +85,6 @@ const Step3CC = ({ data, onNext, stepData }) => {
 
 
   // console.log("data:", data);
-
-  const fetchProduct = async () => {
-    try {
-      const response = await axios.get(
-        `${apiUrl}/ProductosTmp/GetProductos`
-      );
-      console.log("API Response:", response.data);
-      if (Array.isArray(response.data.productos)) {
-        setProduct(response.data.productos);
-      }
-    } catch (error) {
-      console.error("Error fetching product:", error);
-    }
-  };
 
   const handleNext = async () => {
     const isValid = validateFields();
@@ -154,7 +144,13 @@ const Step3CC = ({ data, onNext, stepData }) => {
       },
     };
 
-
+    const prodNuevo = {
+      ...requestData.step1,
+      ...requestData.step2,
+      ...requestData.step3,
+      ...requestData.step4,
+      ...requestData.step5,
+    }
     
 
 
@@ -172,7 +168,11 @@ const Step3CC = ({ data, onNext, stepData }) => {
       if (response.status === 201) {
         setEmptyFieldsMessage("Producto guardado exitosamente");
         setOpenSnackbar(true);
-        fetchProduct();
+
+        prodNuevo.idProducto = prodNuevo.codBarra
+        prodNuevo.codigoProducto = prodNuevo.codBarra
+        prodNuevo.codigoProductoInterno = response.data.codigoProducto
+        onSuccessAdd(prodNuevo,response)
         console.log("Productos",product)
       }
 
@@ -190,13 +190,7 @@ const Step3CC = ({ data, onNext, stepData }) => {
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
-  const handleOpenDialog1 = () => {
-    setOpenDialog1(true);
-  };
-  const handleCloseDialog1 = () => {
-    setOpenDialog1(false);
-  };
-
+ 
   const handleUnidadSelect = (selectedUnidadId) => {
     setSelectedUnidadId(selectedUnidadId === "" ? 0 : selectedUnidadId);
     console.log("Unidad seleccionada:", selectedUnidadId);
@@ -213,14 +207,6 @@ const Step3CC = ({ data, onNext, stepData }) => {
     console.log("Unidad seleccionada:", selectedUnidadId);
   };
 
-
-  const handleCreateUnidad = () => {
-    // Implement the logic to create a new category here.
-    // You can use the newCategory state to get the input value.
-
-    // After creating the category, you can close the dialog.
-    setOpenDialog1(false);
-  };
 
   const validateFields = () => {
     // Verificar si todos los campos están vacíos
