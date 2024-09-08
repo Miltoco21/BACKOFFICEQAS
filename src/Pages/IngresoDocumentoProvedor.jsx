@@ -402,7 +402,7 @@ const IngresoDocumentoProveedor = () => {
           Ingresa Documento de Compra
         </Button>
 
-        <SearchListDocumento></SearchListDocumento>
+        {/* <SearchListDocumento/> */}
         <Dialog open={open} fullWidth minHeight={"lg"} maxWidth={"md"}
           PaperProps={{
             sx: {
@@ -484,7 +484,7 @@ const IngresoDocumentoProveedor = () => {
                 label="Fecha de ingreso"
                 value={fecha}
                 onChange={(newValue) => setFecha(newValue)}
-                renderInput={(params) => (
+                input={(params) => (
                   <TextField {...params} sx={{ mb: 2 }} />
                 )}
                 format="DD/MM/YYYY"
@@ -720,14 +720,9 @@ const IngresoDocumentoProveedor = () => {
                 cerrarModalIngresoDocumento()
 
                 setProductoSel(null)
-                setCountPackage(0)
                 setAssociating(null)
-                setTipoBuscar(0)
                 setShowPanel(true)
                 setSelectedProducts([])
-                setSearchDescProv("")
-                setSearchCodProv("")
-                setSearchTermProd("")
                 setSelectedProveedor(null)
                 setProveedores([])
                 setTipoDocumento("")
