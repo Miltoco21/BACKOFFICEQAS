@@ -269,7 +269,6 @@ const IngresoDocProvBuscarProductos = ({
           showMessage(
             `No se encontraron resultados descripcion`
           );
-          callbackFail()
         })
 
       break
