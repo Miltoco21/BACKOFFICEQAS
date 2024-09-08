@@ -44,6 +44,7 @@ import BoxSelectTipo from "../Componentes/Proveedores/BoxSelectTipo";
 import PreciosGeneralesProducItem from "../Componentes/Card-Modal/PreciosGeneralesProducItem";
 import AjustePrecios from "../Componentes/ScreenDialog/AjustePrecios";
 import System from "../Helpers/System";
+import IngresoDocProvBuscarProductos from "./IngresoDocProvBuscarProductos";
 
 const IngresoDocumentoProveedor = () => {
 
@@ -71,22 +72,10 @@ const IngresoDocumentoProveedor = () => {
   const [searchSnackbarOpen, setSearchSnackbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [searchTermProd, setSearchTermProd] = useState("");
-  const [searchCodProv, setSearchCodProv] = useState("");
-  const [searchDescProv, setSearchDescProv] = useState("");
-  const [searchedProducts, setSearchedProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   
   const [showPanel, setShowPanel] = useState(true);
-  const [tipoBuscar, setTipoBuscar] = useState(0);
-  const TIPOS_BUSCAR = {
-    CODIGO_SEGUN_PROVEEDOR : 0,
-    DESCRIPCION_SEGUN_PROVEEDOR : 1,
-    CODIGO_BARRAS : 2,
-    DESCRIPCION : 3,
-  }
   const [associating, setAssociating] = useState(null)
-  const [countPackage, setCountPackage] = useState(0);
   
   const [showAjustePrecios, setShowAjustePrecios] = useState(false);
   const [productoSel, setProductoSel] = useState(null);
@@ -98,10 +87,6 @@ const IngresoDocumentoProveedor = () => {
     setShowAjustePrecios(true)
   }
   // console.log("selectedProveedor", selectedProveedor);
-
-  const setOpenSnackbar = (value) => {
-    setSnackbarOpen(value);
-  };
 
   const handleQuantityChange = (value, index) => {
     const updatedProducts = [...selectedProducts];
@@ -131,8 +116,8 @@ const IngresoDocumentoProveedor = () => {
   
   const handleCostoChange = (value, index) => {
     const updatedProducts = [...selectedProducts];
-    console.log("updatedProduct")
-    console.log(updatedProducts[index])
+    // console.log("updatedProduct")
+    // console.log(updatedProducts[index])
     // // Parse the input value to an integer
     const parsedValue = parseInt(value);
 
@@ -165,37 +150,11 @@ const IngresoDocumentoProveedor = () => {
 
 
   const calcularTotal = (costo,cantidad, cantidadProveedor)=>{
-    console.log("calcularTotal..costo", costo, "..cantidad:", cantidad,"..cantidad proveedor:",cantidadProveedor)
+    // console.log("calcularTotal..costo", costo, "..cantidad:", cantidad,"..cantidad proveedor:",cantidadProveedor)
     return parseInt(costo + "") * parseInt(cantidad + "") * parseInt(cantidadProveedor + "")
   }
 
-  const handleAsocAndAddProductToSales = (product) => {
-    if(countPackage<1){
-      showMessage("Ingresar la cantidad de cada paquete")
-      return
-    }
-    // console.log("producto:", product)
-    // console.log("searchCodProv:", searchCodProv)
-    // console.log("searchDescProv:", searchDescProv)
-    const data = [{
-      codigoProveedor: selectedProveedor.codigoProveedor,
-      codigoSegunProveedor: "",
-      descripcionSegunProveedor: "",
-      codBarra: product.idProducto,
-      cantidadProveedor: parseInt(countPackage + ""),
-      cantidadProducto: 1,
-    }]
-    data[0].codigoSegunProveedor = searchCodProv
-    data[0].descripcionSegunProveedor = searchDescProv
-    console.log("datos para asociar:", data)
-    Proveedor.getInstance().asociateProduct(data, (res)=>{
-      handleAddProductToSales(product)
-    },()=>{
-      showMessage("No se pudo asociar")
-    })
-  }
-
-  const handleAddProductToSales = (product) => {
+  const handleAddProductToSelecteds = (product) => {
     
     const existingProductIndex = selectedProducts.findIndex(
       (p) => (p.id === product.idProducto && p.codigoInternoProveedor == product.codigoInternoProveedor)
@@ -222,23 +181,13 @@ const IngresoDocumentoProveedor = () => {
       });
       setSelectedProducts(updatedProducts);
     } else {
-      // Producto no existe, agregar como nuevo
-      const newProduct = {
-        // id: product.idProducto,
-        // nombre: product.nombre,
-        // cantidad: 1,
-        // precio: product.precioCosto,
-        // precioVenta: product.precioCosto,
-        // total: product.precioCosto,
-        // precioCosto: product.precioCosto,
-      };
       product.id = product.idProducto
       product.cantidad = 1
       // product.precioVenta = product.precioCosto
-      if(product.cantidadProveedor === undefined){
-        product.cantidadProveedor = countPackage
-      }
-      if(product.cantidadProveedor === 0){
+      // if(product.cantidadProveedor === undefined){
+      //   product.cantidadProveedor = countPackage
+      // }
+      if(!product.cantidadProveedor){
         product.cantidadProveedor = 1
       }
 
@@ -247,17 +196,12 @@ const IngresoDocumentoProveedor = () => {
       product.total = calcularTotal(product.precioCosto,product.cantidad,product.cantidadProveedor)
       product.impuestosValor = Product.calcularImpuestos(product)
       
-      // if(!product.precioVenta){
-      //   product.precioVenta = Math.round(product.precioCosto * 1.3 * (1+(product.impuestosValor / 100) ))
-      // }
-
-      console.log("agregado queda asi:", System.clone(product))
+      // console.log("agregado queda asi:", System.clone(product))
       // setSelectedProducts([...selectedProducts, newProduct]);
-      console.log("seleccionados:",[...selectedProducts, product]);
+      // console.log("seleccionados:",[...selectedProducts, product]);
       setSelectedProducts([...selectedProducts, product]);
     }
 
-    setSearchedProducts([]);
     setAssociating(false)
     setErrorMessage("");
   };
@@ -313,210 +257,7 @@ const IngresoDocumentoProveedor = () => {
   const hoy = dayjs();
   const inicioRango = dayjs().subtract(1, "week");
 
-  const buscarProductosGeneralesPorCodigoBarras = (callbackFail)=>{
-    showLoading("Buscando por codigo barra")
-
-    Product.getInstance().findByCodigoBarras({codigoProducto:searchTermProd},(prods,res)=>{
-      if(res.data.cantidadRegistros>0){
-        hideLoading()
-        handleSearchSuccess(res, "PLU");
-      }else{
-        hideLoading()
-        callbackFail()
-      }
-    },()=>{})
-  }
-
-  const buscarProductosGeneralesPorDescripcion = (callbackFail)=>{
-    showLoading("Buscando por descripcion")
-    Product.getInstance().findByDescription({description:searchTermProd},(prods,res2)=>{
-      if(res2.data.cantidadRegistros>0){
-        hideLoading()
-        handleSearchSuccess(res2, "Descripción");
-      }else{
-        hideLoading()
-      callbackFail()
-    }
-    },()=>{})
-  }
-
-  const buscarProductosGeneral = (callbackFail = ()=>{})=>{
-    buscarProductosGeneralesPorCodigoBarras(()=>{
-      buscarProductosGeneralesPorDescripcion(()=>{
-        setSnackbarMessage(
-          `No se encontraron resultados para "${searchTermProd}"`
-        );
-        setOpenSnackbar(true);
-        setTimeout(() => {
-          setOpenSnackbar(false);
-        }, 3000);
-
-        callbackFail()
-      })
-    })
-  }
-
-
-  const buscarProductosProvPorCodigo = (callbackFail)=>{
-    showLoading("Buscando por codigo interno proveedor")
-
-    Proveedor.getInstance().findProductsByCodigo({
-      codigoBuscar:searchTermProd,
-      codigoProveedor:selectedProveedor.codigoProveedor
-    },(prods,resx)=>{
-      hideLoading()
-      if(resx.data.cantidadRegistros>0){
-        const res = resx
-        
-        res.data.productos.forEach((pro,ix)=>{
-          res.data.productos[ix].codigoInternoProveedor = searchTermProd
-        })
-        handleSearchSuccess(res, "Codigo Proveedor");
-      }else{
-        hideLoading()
-        callbackFail()
-      }
-    },()=>{})
-  }
-
-  const buscarProductosProvPorDescripcion = (callbackFail)=>{
-    showLoading("Buscando por descripcion interna proveedor")
-
-    Proveedor.getInstance().findProductsByDescription({
-      description:searchTermProd,
-      codigoProveedor:selectedProveedor.codigoProveedor
-    },(prods,res)=>{
-      hideLoading()
-      if(res.data.cantidadRegistros>0){
-        handleSearchSuccess(res, "Descripcion proveedor");
-      }else{
-        hideLoading()
-        callbackFail()
-      }
-    },()=>{})
-  }
-
-  const buscarProductos = async () => {
-    if (searchTermProd.trim() === "") {
-      setSearchedProducts([]);
-      setSnackbarMessage("El campo de búsqueda está vacío");
-      setSnackbarOpen(true);
-      return;
-    }
-
-    if(!selectedProveedor){
-      setSearchedProducts([]);
-      setSnackbarMessage("Seleccionar un proveedor");
-      setSnackbarOpen(true);
-      return;
-    }
-
-    switch(tipoBuscar){
-      case TIPOS_BUSCAR.CODIGO_SEGUN_PROVEEDOR:
-        setSearchCodProv(searchTermProd)
-        setSearchDescProv("")
-        buscarProductosProvPorCodigo(()=>{
-          showConfirm("Quiere asociar el codigo " + searchTermProd + " con algun producto a este proveedor?",
-            ()=>{
-              setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
-              setSearchTermProd("")
-              setCountPackage(0)
-              setSearchedProducts([])
-              setAssociating(true)
-            },()=>{
-              setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
-              setSearchTermProd("")
-              setAssociating(false)
-          })
-        })
-      break
-
-      case TIPOS_BUSCAR.DESCRIPCION_SEGUN_PROVEEDOR:
-        setSearchCodProv("")
-        setSearchDescProv(searchTermProd)
-        buscarProductosProvPorDescripcion(()=>{
-          showConfirm("Quiere asociar la descripcion " + searchTermProd + " con algun producto a este proveedor?",
-            ()=>{
-              setSearchTermProd("")
-              setAssociating(true)
-              setCountPackage(0)
-              setSearchedProducts([])
-              setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
-            },()=>{
-              setTipoBuscar(TIPOS_BUSCAR.DESCRIPCION)
-              setSearchTermProd("")
-              setAssociating(false)
-          })
-        })
-      break
-      case TIPOS_BUSCAR.CODIGO_BARRAS:
-        buscarProductosGeneralesPorCodigoBarras(()=>{
-          setSnackbarMessage(
-            `No se encontraron resultados por codigo de barras`
-          );
-          setOpenSnackbar(true);
-          setTimeout(() => {
-            setOpenSnackbar(false);
-          }, 3000);
-        })
-
-      break
-      case TIPOS_BUSCAR.DESCRIPCION:
-        buscarProductosGeneralesPorDescripcion(()=>{
-          setSnackbarMessage(
-            `No se encontraron resultados descripcion`
-          );
-          setOpenSnackbar(true);
-          setTimeout(() => {
-            setOpenSnackbar(false);
-          }, 3000);
-
-          callbackFail()
-        })
-
-      break
-
-      default:
-        showConfirm("Quiere asociar algun producto a este proveedor?",
-          ()=>{
-            setAssociating(true)
-            buscarProductosGeneral()
-          },()=>{
-            setAssociating(false)
-            buscarProductosGeneral()
-        })
-      break
-    }
-
-    
-    
-  };
-
-  const handleSearchSuccess = (response, searchType) => {
-    if (response.data && response.data.cantidadRegistros > 0) {
-      setSearchedProducts(response.data.productos);
-      console.log("Productos encontrados", response.data.productos);
-      setSearchTermProd("");
-      setSnackbarOpen(true);
-      setSnackbarMessage(`Productos encontrados (${searchType})`);
-      setTimeout(() => {
-        setSnackbarOpen200(false);
-      }, 3000);
-    } else if (response.data && response.data.cantidadRegistros === 0) {
-      setSnackbarMessage(`No se encontraron resultados (${searchType})`);
-      setOpenSnackbar(true);
-      setTimeout(() => {
-        setOpenSnackbar(false);
-      }, 3000);
-    } else {
-      setSnackbarMessage(`Error al buscar el producto (${searchType})`);
-      setOpenSnackbar(true);
-      setTimeout(() => {
-        setOpenSnackbar(false);
-      }, 3000);
-    }
-  };
-
+  
   const handleSubmit = async () => {
     setLoading(true);
 
@@ -557,14 +298,30 @@ const IngresoDocumentoProveedor = () => {
         return;
       }
   
-
-      const proveedorCompraDetalles = selectedProducts.map((product) => ({
+      var noPrice = 0
+      const proveedorCompraDetalles = selectedProducts.map((product) => {
+        if(!product.total){
+          noPrice++
+        }
+        return{
         codProducto: product.id,
         descripcionProducto: product.nombre,
         cantidad: product.cantidad,
         precioUnidad: product.precioVenta,
         costo: product.total,
-      }));
+      }
+      });
+
+      if(noPrice>0){
+        var txt = ""
+        if(noPrice == 1){
+          txt = " item"
+        }else{
+          txt = " items"
+        }
+        showMessage("Completar todos los precios de costo. Hay " + noPrice + txt + " sin valor")
+        return
+      }
 
       const dataToSend = {
         fechaIngreso: fecha.toISOString(),
@@ -601,8 +358,7 @@ const IngresoDocumentoProveedor = () => {
       }, "2000");
     } catch (error) {
       console.error("Error al guardar los datos:", error);
-      setSnackbarMessage("Error al guardar los datos.");
-      setSnackbarOpen(true);
+      showMessage("Error al guardar los datos.");
     } finally {
       setLoading(false);
     }
@@ -836,133 +592,16 @@ const IngresoDocumentoProveedor = () => {
               alignItems: "center", 
               marginTop:"-20px"
               }}>
-              <Grid
-                item
-                xs={12}
-                sm={12}
-                md={12}
-                lg={12}
-                sx={{ display: "flex", margin: "15px 0" }}
-              >
-                <InputLabel
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    margin: 1,
-                    fontSize: "1.2rem",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Buscador de productos
-                </InputLabel>
-                <BoxSelectTipo
-                tipoElegido={tipoBuscar}
-                setTipoElegido={setTipoBuscar}
-                />
-              </Grid>
+          
+            
+              <IngresoDocProvBuscarProductos
+                selectedProveedor={selectedProveedor}
+                associating={associating}
+                setAssociating={setAssociating}
+                onAddProduct={handleAddProductToSelecteds}
+              />
 
 
-              <Grid
-                item
-                xs={12}
-                md={12}
-                lg={12}
-                sx={{
-                  margin: "15px 0",
-                  display: "flex",
-                  // justifyContent: { xs: "flex-start", md: "flex-end" },
-                }}
-              >
-                <TextField
-                  sx={{
-                    backgroundColor: "white",
-                    borderRadius: "5px",
-                  }}
-                  fullWidth
-                  placeholder={(tipoBuscar == 0 || tipoBuscar ==2) ? "Ingresa Código" : "Ingresar Descripción"}
-                  value={searchTermProd}
-                  onChange={(e) => setSearchTermProd(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      buscarProductos();
-                    }
-                  }}
-                />
-                {(tipoBuscar == 0 || tipoBuscar == 1 || associating) &&(
-
-                  <TextField
-                  sx={{
-                    backgroundColor: "white",
-                    margin:"0 5px",
-                    borderRadius: "5px",
-                  }}
-                  type="number"
-                  label= "Cant cada paquete"
-                  value={countPackage}
-                  onChange={(e) => setCountPackage(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "e") {
-                      e.preventDefault()
-                    }
-                  }}
-                  />
-                )}
-                <Button
-                  variant="contained"
-                  onClick={buscarProductos}
-                  sx={{
-                    minWidth:"200px"
-                  }}
-                >
-                  Buscar
-                </Button>
-              </Grid>
-              {/* Agregar el bloque de código para los resultados de la búsqueda de productos */}
-              <TableContainer
-                component={Paper}
-                style={{ overflowX: "auto", maxHeight: 200, marginBottom:10 }}
-              >
-                <Table>
-                  <TableBody key={123132}>
-                    {searchedProducts.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell sx={{ width: "33%" }}>
-                          {product.nombre}
-                        </TableCell>
-                        <TableCell sx={{ width: "21%" }}>
-                          Plu: {product.idProducto}
-                        </TableCell>
-                        <TableCell sx={{ width: "21%" }}>
-                          Precio Costo: {product.precioCosto}
-                        </TableCell>
-                        <TableCell>
-                          {associating ? (
-                            <Button
-                            onClick={() => handleAsocAndAddProductToSales(product)}
-                            variant="contained"
-                            color="primary"
-                            >
-                            Asociar y Agregar
-                            </Button>
-                          ) : (
-                            <Button
-                            onClick={() => handleAddProductToSales(product)}
-                            variant="contained"
-                            color="secondary"
-                            >
-                            Agregar
-                            </Button>
-                          )} 
-
-
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-
-              {/* Fin del bloque de código para los resultados de la búsqueda de productos */}
               <TableContainer
                 component={Paper}
                 style={{ overflowX: "auto", height: 250 }}
@@ -1019,11 +658,13 @@ const IngresoDocumentoProveedor = () => {
                           />
                           {product.cantidadProveedor > 1 && (
                             <Typography sx={{
-                              marginLeft:"10px",
+                              marginLeft:"5px",
                               position:"relative",
-                              top:"15px",
-                              display:"inline-block"
+                              display:"inline-block",
+                              backgroundColor:"#ebffcc",
+                              padding:"17px 10px"
                             }}> x {product.cantidadProveedor}</Typography>
+
                           )}
                         </TableCell>
                         <TableCell>{product.total}</TableCell>
@@ -1084,7 +725,6 @@ const IngresoDocumentoProveedor = () => {
                 setTipoBuscar(0)
                 setShowPanel(true)
                 setSelectedProducts([])
-                setSearchedProducts([])
                 setSearchDescProv("")
                 setSearchCodProv("")
                 setSearchTermProd("")

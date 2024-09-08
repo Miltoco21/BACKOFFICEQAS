@@ -68,8 +68,8 @@ class Product extends Model{
     
     //direccion indica si se calcula para el lado del costo o del precio final
     static logicaPrecios(product, direccion = "final"){
-        console.log("logicaPrecios " + direccion + " para ")
-        console.log("entra con:",System.clone(product))
+        // console.log("logicaPrecios " + direccion + " para ")
+        // console.log("entra con:",System.clone(product))
         if(!product.gananciaPorcentaje) product.gananciaPorcentaje = 30
         if(product.ivaPorcentaje) product.ivaPorcentaje = ModelConfig.get().iva
         // if(product.precioVenta <= 0 && product.precioCosto > 0){
@@ -95,7 +95,7 @@ class Product extends Model{
             product.gananciaValor = this.redondeo_gananciaValor(sumGan)
             product.ivaValor = this.redondeo_ivaValor(sumIva)
         }
-        console.log("sale con:",System.clone(product))
+        // console.log("sale con:",System.clone(product))
         return product
     }
 
