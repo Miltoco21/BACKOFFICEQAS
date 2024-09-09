@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect,useContext } from "react";
 import {
   Box,
   Grid,
@@ -30,10 +29,19 @@ import ModelConfig from "../../Models/ModelConfig";
 import { Label } from "@mui/icons-material";
 import PreciosGeneralesProducItem from "./PreciosGeneralesProducItem";
 import Product from "../../Models/Product";
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+
 
 export const defaultTheme = createTheme();
 
 const PreciosPorCategoria = ({ onClose }) => {
+
+  const {
+    showLoading,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
+
+
   const apiUrl =  ModelConfig.get().urlBase;
   const [txtBuscar, setTxtBuscar] = useState("");
   const [products, setProducts] = useState([]);
@@ -78,15 +86,24 @@ const PreciosPorCategoria = ({ onClose }) => {
   const filtrarProductos = ()=>{
 
 
+    var cantidadEncontrada = 0
+    showLoading("filtrando...")
     var productsFilter = productsSinFiltrar.filter((product)=>{
+      const aplica = ( (checkTodas || checkCategorias) && product.categoria.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
+      || ((checkTodas || checkSubcategorias) && product.subCategoria.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
+      || ((checkTodas || checkFamilias) && product.familia.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
+      || ((checkTodas || checkSubfamilias) && product.subFamilia.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
+      if(aplica) cantidadEncontrada++;
+      console.log("buscando..aplica?", aplica, "..producto", product,"texto buscado", txtBuscar)
       return (
-        //product.nombre.toLowerCase().indexOf(txtBuscar)> -1
-        ( (checkTodas || checkCategorias) && product.categoria.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
-        || ((checkTodas || checkSubcategorias) && product.subCategoria.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
-        || ((checkTodas || checkFamilias) && product.familia.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
-        || ((checkTodas || checkSubfamilias) && product.subFamilia.toLowerCase().indexOf(txtBuscar.toLowerCase())> -1)
+        cantidadEncontrada <= 50 && (
+          //product.nombre.toLowerCase().indexOf(txtBuscar)> -1
+          aplica
+        )
       )
     })
+
+    hideLoading()
 
     console.log("productsFilter")
     console.log(productsFilter)
@@ -302,7 +319,7 @@ const PreciosPorCategoria = ({ onClose }) => {
                   {products.map((product, index) => (
                       <PreciosGeneralesProducItem 
                       key={product.id} 
-                      product={product} 
+                      producto={product} 
                       index={index} 
                       setProducts={setProducts}
                       onUpdatedOk={()=>{
