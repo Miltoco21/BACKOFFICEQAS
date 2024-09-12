@@ -310,10 +310,13 @@ const IngresoDocumentoProveedor = () => {
         if(!product.total){
           noPrice++
         }
+
+        var cantidadProveedor = product.cantidadProveedor
+        if(!cantidadProveedor) cantidadProveedor = 1
         return{
         codProducto: product.id,
         descripcionProducto: product.nombre,
-        cantidad: product.cantidad,
+        cantidad: product.cantidad * cantidadProveedor,
         precioUnidad: product.precioVenta,
         costo: product.total,
       }
