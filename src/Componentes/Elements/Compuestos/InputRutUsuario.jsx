@@ -35,7 +35,8 @@ const InputRut = ({
   const [validation, setValidation] = validationState
   const [keyPressed, setKeyPressed] = useState(false)
 
-  const [rutOk, setRutOk] = useState(null);
+  const [rutUnique, setRutUnique] = useState(null);
+  const [allOk, setAllOk] = useState(null);
 
   const checkKeyDown = (event)=>{
     if(!canAutoComplete && event.key == "Unidentified"){
@@ -51,7 +52,7 @@ const InputRut = ({
       return
     }
     if(!Validator.isRut(event.target.value)){
-      console.log("no es valido")
+      // console.log("no es valido")
       return false
     }
 
@@ -65,24 +66,24 @@ const InputRut = ({
 
   useEffect(()=>{
 
-    if(rut != "" && rutOk === null){
+    if(rut != "" && rutUnique === null){
       // console.log("cambio algo.. hago check unique")
       checkUnique()
     }else{
       validate()
     }
-  },[rutOk, rut])
+  },[rutUnique, rut])
 
   useEffect(()=>{
     // console.log("cambio rut")
-    setRutOk(null)
+    setRutUnique(null)
   },[rut])
 
   const validate = ()=>{
     // console.log("validate de:" + fieldName)
     const len = rut.trim().length
     const reqOk = ( !required  || (required && len > 0))
-    const uniqueOk = rutOk === true
+    const uniqueOk = rutUnique === true
     const formatOk = Validator.isRutChileno(rut)
 
     var badMinlength = false
@@ -116,10 +117,11 @@ const InputRut = ({
       "unique": uniqueOk,
       "require": !reqOk,
       "format" : formatOk,
-      "allOk" : (reqOk && uniqueOk && badMinlength && badMaxlength && formatOk),
+      "allOk" : (reqOk && uniqueOk && !badMinlength && !badMaxlength && formatOk),
       "message" : message
     }
     // console.log("vle:", vl)
+    setAllOk(vl.allOk)
     setValidation(vl)
   }
   const checkUnique = ()=>{
@@ -136,16 +138,16 @@ const InputRut = ({
         (isEdit && usuarios.length>1)
       ){
         showMessage("Ya existe el rut ingresado")
-        setRutOk(false)
+        setRutUnique(false)
       }else{
         if(!isEdit) showMessage("Rut disponible")
-        setRutOk(true)
+          setRutUnique(true)
       }
     }, (err)=>{
-      console.log(err)
+      // console.log(err)
       if(err.response.status == 404){
         // showMessage("Rut disponible")
-        setRutOk(true)
+        setRutUnique(true)
       }
     })
   }
@@ -175,18 +177,18 @@ const InputRut = ({
           <InputAdornment position="end">
             <Check sx={{
               color:"#06AD16",
-              display: (rutOk && rut!="" ? "flex" : "none"),
+              display: (allOk ? "flex" : "none"),
               marginRight:"10px"
             }} />
 
             <Dangerous sx={{
               color:"#CD0606",
-              display: ( ( rutOk === false ) ? "flex" : "none")
+              display: ( (!allOk && rut.length>0)  ? "flex" : "none")
             }} />
 
             <Check sx={{
               color:"transparent",
-              display: (rutOk === null ? "flex" : "none"),
+              display: (allOk === null ? "flex" : "none"),
               marginRight:"10px"
             }} />
           </InputAdornment>

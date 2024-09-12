@@ -270,7 +270,7 @@ export default function Ingreso({
               textButton="Registrar usuario"
               actionButton={handleSubmit}
               sending={showLoadingDialog}
-              sendingText=""
+              sendingText="Registrando..."
               style={{
                 width:"50%",
                 margin: "0 25%",
