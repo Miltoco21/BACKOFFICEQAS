@@ -13,32 +13,19 @@ import SideBar from "../Componentes/NavBar/SideBar";
 import SearchListProveedores from "../Componentes/Proveedores/SearchListProveedores";
 import SearchListClientes from "../Componentes/Proveedores/SearchListClientes";
 
-const Clientes = () => {
+const Clientes = ({ 
+  onClose,
+  openDialog,
+  setOpendialog
+}) => {
   const [open, setOpen] = useState(false);
-  const [openCL, setOpenCL] = useState(false); // New state for IngresoCL modal
-  const text = "Proovedores";
-  const uppercaseText = text.toUpperCase();
-
-  // Event handler to open the IngresoPV modal
   const handleOpenModal = () => {
     setOpen(true);
   };
-
-  // Event handler to close the IngresoPV modal
+ 
   const handleCloseModal = () => {
     setOpen(false);
   };
-
-  // Event handler to open the IngresoCL modal
-  const handleOpenModalCL = () => {
-    setOpenCL(true);
-  };
-
-  // Event handler to close the IngresoCL modal
-  const handleCloseModalCL = () => {
-    setOpenCL(false);
-  };
-
   return (
     <div style={{ display: "flex" }}>
       <SideBar />
@@ -66,7 +53,7 @@ const Clientes = () => {
             mx: 2,
           }}
           startDecorator={<Add />}
-          onClick={handleOpenModalCL}
+          onClick={handleOpenModal}
         >
           CLIENTES
         </Button>
@@ -75,28 +62,21 @@ const Clientes = () => {
 
         <Box />
 
-        {/* Modal for IngresoPV */}
-        <Modal open={open} onClose={handleCloseModal}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              bgcolor: "background.paper",
-              boxShadow: 24,
-              p: 4,
-              overflow: "auto", // Added scrollable feature
-              maxHeight: "100vh", // Adjust as needed
-              maxWidth: "180vw", // Adjust as needed
-            }}
-          >
-            <IngresoPV />
-          </Box>
-        </Modal>
+       
 
         {/* Modal for IngresoCL */}
-        <Modal open={openCL} onClose={handleCloseModalCL}>
+
+        {open ? (
+        <IngresoCL
+        openDialog={open}
+        setOpendialog={setOpen}
+        onClose={handleCloseModal}
+      />
+      ) : (
+        <></>
+      )}
+
+        {/* <Modal open={openDialog} onClose={onClose}>
           <Box
             sx={{
               position: "absolute",
@@ -111,9 +91,9 @@ const Clientes = () => {
               maxWidth: "180vw", // Adjust as needed
             }}
           >
-            <IngresoCL handleCloseModalCL={handleCloseModalCL} />
+            <IngresoCL onCLose={onClose} />
           </Box>
-        </Modal>
+        </Modal> */}
       </Box>
     </div>
   );

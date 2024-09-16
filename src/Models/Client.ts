@@ -6,7 +6,7 @@ import { useState } from 'react';
 import ModelConfig from './ModelConfig.ts';
 
 
-class Client{
+class Client extends Model {
     id: number;
     codigoCliente: number;
     rut: string;
@@ -32,9 +32,6 @@ class Client{
     static instance: Client | null = null;
     sesion: StorageSesion;
 
-    constructor(){
-      this.sesion = new StorageSesion("client");
-    }
 
     static getInstance():Client{
       if(Client.instance == null){
@@ -251,7 +248,7 @@ class Client{
       try {
         const configs = ModelConfig.get()
         var url = configs.urlBase
-        +"/api/RegionComuna/GetAllRegiones"
+        +"/RegionComuna/GetAllRegiones"
 
         const response = await axios.get(url);
         if (response.data.statusCode === 201
@@ -273,7 +270,7 @@ class Client{
       try {
         const configs = ModelConfig.get()
         var url = configs.urlBase
-        +"/api/RegionComuna/GetComunaByIDRegion?IdRegion=" + regionId
+        +"/RegionComuna/GetComunaByIDRegion?IdRegion=" + regionId
         const response = await axios.get(url);
         if (response.data.statusCode === 201
           || response.data.statusCode === 200
@@ -296,12 +293,12 @@ class Client{
 
         const configs = ModelConfig.get()
         var url = configs.urlBase
-        +"/api/Clientes/AddCliente"
+        +"/Clientes/AddCliente"
 
         const response = await axios.post(url,data);
 
-        if (response.data.statusCode === 201
-          || response.data.statusCode === 200
+        if (response.status === 201
+          || response.status === 200
         ) {
           // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
           callbackOk(response.data)
@@ -318,7 +315,7 @@ class Client{
       try {
         const configs = ModelConfig.get()
         var url = configs.urlBase
-        +"/api/Clientes/GetClientesByRut?rut=" + rut
+        +"/Clientes/GetClientesByRut?rut=" + rut
 
         const response = await axios.get(url);
 
