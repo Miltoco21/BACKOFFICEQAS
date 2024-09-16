@@ -311,7 +311,7 @@ class Client extends Model {
       }
     };
 
-    async existByRut(rut,callbackOk,callbackWrong){
+    async existRut(rut,callbackOk,callbackWrong){
       try {
         const configs = ModelConfig.get()
         var url = configs.urlBase

@@ -7,6 +7,8 @@ import ModelConfig from "../../Models/ModelConfig";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
 import InputRutUsuario from "../Elements/Compuestos/InputRutUsuario";
+import InputRutCliente from "../Elements/Compuestos/InputRutCliente";
+
 import InputName from "../Elements/Compuestos/InputName";
 import InputEmail from "../Elements/Compuestos/InputEmail";
 import InputPhone from "../Elements/Compuestos/InputPhone";
@@ -118,7 +120,7 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <InputRutUsuario
+            <InputRutCliente
               inputState={states.rut}
               validationState={validatorStates.rut}
               required={true}
