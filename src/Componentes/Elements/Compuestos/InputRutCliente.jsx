@@ -129,14 +129,13 @@ const InputRutCliente = ({
  
     if(rut === "") return
    //usar distintos modelos para revision de rut 
-    Client.getInstance().existRut({
+    Client.getInstance().existRut(
       rut
-    },(clientes)=>{
-      // console.log(usuarios)
+    ,(res)=>{
       if(
-        (!isEdit && clientes.length>0)
+        (!isEdit && res.clienteSucursal.length>0)
         ||
-        (isEdit && clientes.length>1)
+        (isEdit && res.clienteSucursal.length>1)
       ){
         showMessage("Ya existe el rut ingresado")
         setRutUnique(false)

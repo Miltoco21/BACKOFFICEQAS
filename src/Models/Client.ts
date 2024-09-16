@@ -306,8 +306,16 @@ class Client extends Model {
           callbackWrong("Error de servidor")
         }
       } catch (error) {
-        console.error(error);
-        callbackWrong(error)
+        if (error.response) {
+          callbackWrong(error.message);
+        } else if (error.response && error.response.status === 500) {
+          callbackWrong("Error interno del servidor. Por favor, inténtalo de nuevo más tarde.");
+        } else if(error.message != ""){
+          callbackWrong(error.message)
+        }else {
+          callbackWrong(error);
+        }
+        // console.error(error);
       }
     };
 
