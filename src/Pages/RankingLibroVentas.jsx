@@ -18,6 +18,7 @@ import {
   DialogActions,
   Checkbox,
   FormControlLabel,
+  Typography,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -26,6 +27,7 @@ import SideBar from "../Componentes/NavBar/SideBar";
 import axios from "axios";
 import ModelConfig from "../Models/ModelConfig";
 import dayjs from "dayjs";
+import BoxSelectList from "../Componentes/Proveedores/BoxSelectList";
 
 const RankingLibroVentas = () => {
   const apiUrl = ModelConfig.get().urlBase;
@@ -43,6 +45,10 @@ const RankingLibroVentas = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [totalValues, setTotalValues] = useState(0);
   const [totalIVA, setTotalIVA] = useState(0);
+  
+  const [cajas, setCajas] = useState([]);
+  const [cajaSel, setCajaSel] = useState(null);
+  const [ventasPorCaja, setVentaPorCaja] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -53,22 +59,22 @@ const RankingLibroVentas = () => {
       fechahasta: endDate ? endDate.format("YYYY-MM-DD") : "",
       tipoComprobante: tipo.join(","),
     };
-    console.log("Iniciando fetchData con params:", params);
+    // console.log("Iniciando fetchData con params:", params);
 
     try {
       const url = `${apiUrl}/ReporteVentas/ReporteLibroIVA`;
-      console.log("URL being fetched:", url);
+      // console.log("URL being fetched:", url);
 
       const response = await axios.get(url, { params });
 
-      console.log("Respuesta del servidor:", response);
+      // console.log("Respuesta del servidor:", response);
 
       if (response.data) {
         setCantidad(response.data.cantidad);
 
         if (response.data.cantidad > 0 && response.data.ventaCabeceraReportes) {
           setData(response.data.ventaCabeceraReportes);
-          console.log("Datos recibidos:", response.data.ventaCabeceraReportes);
+          // console.log("Datos recibidos:", response.data.ventaCabeceraReportes);
 
           const totalValue = response.data.ventaCabeceraReportes.reduce(
             (sum, item) => sum + item.total,
@@ -89,6 +95,9 @@ const RankingLibroVentas = () => {
           setTotalValues(0);
           setTotalIVA(0);
         }
+
+        setVentaPorCaja([])
+        setCajaSel(null)
       } else {
         console.warn("La respuesta no contiene datos:", response);
         setData([]);
@@ -151,6 +160,28 @@ const RankingLibroVentas = () => {
     );
   };
 
+  const agruparPorCaja = ()=>{
+    var prodCaja = []
+    data.forEach((prod)=>{
+      if(!prodCaja.includes(prod.puntoVenta)){
+        prodCaja.push(prod.puntoVenta)
+      }
+    })
+
+    setCajas(prodCaja)
+    // console.log("cajas", prodCaja)
+  }
+
+  const cargarVentasPorCaja = (caja)=>{
+    var ventas = []
+
+    data.forEach((venta)=>{
+      if(venta.puntoVenta == caja){
+        ventas.push(venta)
+      }
+    })
+    setVentaPorCaja(ventas)
+  }
 
   useEffect(()=>{
     setStartDate(dayjs())
@@ -159,6 +190,11 @@ const RankingLibroVentas = () => {
       0,1,2
     ])
   },[])
+
+  useEffect(()=>{
+    agruparPorCaja()
+  },[data])
+
   return (
     <div style={{ display: "flex" }}>
       <SideBar />
@@ -246,17 +282,43 @@ const RankingLibroVentas = () => {
               </Button>
             </Grid>
           </Grid>
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-            <Grid item xs={12} md={3}>
+          <Grid container spacing={2} sx={{
+            margin:"10px 0",
+            padding:"10px 0",
+            textAlign:"left",
+            // backgroundColor:"red"
+          }}>
+
+            <Grid item xs={12} sm={12} md={4} lg={4}>
               <p>Total Valores: {totalValues.toLocaleString("es-CL")}</p>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} sm={12} md={4} lg={4}>
               <p>Total IVA: {totalIVA.toLocaleString("es-CL")}</p>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} sm={12} md={4} lg={4}>
               <p>Cantidad Encontrados: {cantidad.toLocaleString("es-CL")}</p>
             </Grid>
+
+
+            <Grid item xs={12} sm={12} md={2} lg={2}>
+              <Typography>Seleccionar caja</Typography>
+            </Grid>
+            <Grid item xs={12} sm={12} md={8} lg={8}>
+              <BoxSelectList
+                listValues={cajas}
+                selected={cajaSel}
+                setSelected={(sel)=>{
+                  console.log("selecciona la caja:", sel)
+                  setCajaSel(sel)
+                  cargarVentasPorCaja(cajas[sel])
+                }}
+              />
+            </Grid>
+
+
           </Grid>
+
+
         </Grid>
         {loading ? (
           <CircularProgress />
@@ -277,7 +339,7 @@ const RankingLibroVentas = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.map((producto) => (
+                {ventasPorCaja.map((producto) => (
                   <TableRow key={producto.idCabecera}>
                     <TableCell>
                       {new Date(producto.fechaIngreso).toLocaleDateString(
@@ -308,6 +370,7 @@ const RankingLibroVentas = () => {
                     </TableCell>
                   </TableRow>
                 ))}
+
               </TableBody>
             </Table>
           </TableContainer>
