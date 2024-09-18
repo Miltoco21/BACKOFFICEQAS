@@ -10,6 +10,7 @@ import Add from "@mui/icons-material/Add";
 
 import SideBar from "../Componentes/NavBar/SideBar";
 import SearchList from "../Componentes/ScreenDialog/Users/SearchList";
+import IngresoSucursal from "../Componentes/Sucursales/IngresoSucursal"
 
 export const defaultTheme = createTheme();
 
@@ -36,7 +37,7 @@ export default function Sucursales() {
               mx: 2,
             }}
             startIcon={<Add />}
-            // onClick={handleOpenModal}
+            onClick={handleOpenModal}
           >
             Crear Sucursal
           </Button>
@@ -45,7 +46,7 @@ export default function Sucursales() {
       </Box>
 
       {open ? (
-        <IngresoUsuarios
+        <IngresoSucursal
         openDialog={open}
         setOpendialog={setOpen}
         onClose={handleCloseModal}
