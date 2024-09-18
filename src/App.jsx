@@ -12,6 +12,8 @@ import Home from './Pages/Home';
 import Registro from './Pages/Registro';
 import Login from './Pages/Login';
 import Usuarios from './Pages/Usuarios';
+import Sucursales from './Pages/Sucursales';
+import IngresoUrl from './Pages/IngresoUrl';
 import Precios from './Pages/Precios';
 import Proveedores from './Pages/Proveedores';
 import Productos from './Pages/Productos';
@@ -59,6 +61,9 @@ function App() {
               element={<Home/>}
             />
             <Route path="/usuarios" element={<Usuarios />} />
+            <Route path="/sucursales" element={<Sucursales />} />
+            <Route path="/sucursales/ingresourl" element={<IngresoUrl />} />
+
             <Route path="/precios" element={<Precios />} />
             <Route path="/proveedores" element={<Proveedores />} />
             <Route path="/clientes" element={<Clientes />} />

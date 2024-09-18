@@ -29,6 +29,7 @@ import FactCheckIcon from '@mui/icons-material/FactCheck';
 import { Button, IconButton, Typography } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import WarehouseIcon from '@mui/icons-material/Warehouse';
+import WebIcon from '@mui/icons-material/Web';
 
 import ScreenDialogConfig from "../ScreenDialog/AdminConfig";
 import CONSTANTS from "../../definitions/Constants";
@@ -73,7 +74,11 @@ export default function PermanentDrawerLeft() {
     if(menuItems.length == 0){
       var menuItemsBase = [
         { text: "Home", link: "/", icon: <HomeIcon /> },
-        { text: "Sucursales", link: "/sucursales", icon: <WarehouseIcon /> },
+        { text: "Sucursales", link: "/sucursales", icon: <WarehouseIcon />,
+          subMenuItems: [
+          { text: "Ingreso URL", link: "/sucursales/ingresourl", icon: <WebIcon /> },
+        ], }
+        ,
         { text: "Usuarios", link: "/usuarios", icon: <PeopleAltIcon /> },
         { text: "Precios", link: "/precios", icon: <PriceChangeIcon /> },
         {
