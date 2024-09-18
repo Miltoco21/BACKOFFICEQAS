@@ -545,10 +545,10 @@ const Editp2 = ({ product, open, handleClose }) => {
               onChange={(e) => {
                 // setSelectedCategoryId(e.target.value);
                 // // setEditedProduct.categoria=e.target.value;
-                setEditedProduct((prevProduct) => ({
-                  ...prevProduct,
-                  stockInicial: e.target.value,
-                }));
+                // setEditedProduct((prevProduct) => ({
+                //   ...prevProduct,
+                //   stockInicial: e.target.value,
+                // }));
               }}
               fullWidth
             />
