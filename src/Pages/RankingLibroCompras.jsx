@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Button,
@@ -25,6 +25,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SideBar from "../Componentes/NavBar/SideBar";
 import axios from "axios";
 import ModelConfig from "../Models/ModelConfig";
+import dayjs from "dayjs";
 
 const RankingLibroCompras = () => {
   const apiUrl = ModelConfig.get().urlBase;
@@ -48,8 +49,8 @@ const RankingLibroCompras = () => {
     setError(null);
 
     const params = {
-      fechaDesde: startDate ? startDate.format("DD-MM-YYYY") : "",
-      fechaHasta: endDate ? endDate.format("DD-MM-YYYY") : "",
+      fechadesde: startDate ? startDate.format("YYYY-MM-DD") : "",
+      fechahasta: endDate ? endDate.format("YYYY-MM-DD") : "",
       tipocomprobantes: tipo.join(","),
     };
 
@@ -150,6 +151,11 @@ const RankingLibroCompras = () => {
         : prev.filter((item) => item !== value)
     );
   };
+
+  useEffect(()=>{
+    setStartDate(dayjs())
+    setEndDate(dayjs())
+  },[])
 
   return (
     <div style={{ display: "flex" }}>
