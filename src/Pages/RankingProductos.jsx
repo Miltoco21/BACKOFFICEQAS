@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Button,
@@ -116,6 +116,11 @@ const RankingProductos = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  useEffect(()=>{
+    setStartDate(dayjs())
+    setEndDate(dayjs())
+  },[])
 
   return (
     <div style={{ display: "flex" }}>
