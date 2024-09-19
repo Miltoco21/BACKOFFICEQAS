@@ -23,7 +23,7 @@ export default function({
     const params = {
       fechadesde: dayjs().format("YYYY-MM-DD"),
       fechahasta: dayjs().format("YYYY-MM-DD"),
-      tipocomprobantes: "0,1,2,3,4",
+      tipocomprobantes: "Ticket,Ingreso Interno,Factura,Boleta",
     };
 
     console.log("Iniciando fetchData con params:", params);
