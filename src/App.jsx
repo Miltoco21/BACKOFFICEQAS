@@ -43,6 +43,8 @@ import { SelectedOptionsProvider } from "./Componentes/Context/SelectedOptionsPr
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import StockMobile from './Pages/StockMobile';
+import PasarelaPago from './Pages/PasarelaPago';
+// import IngresoUrl from '../src/Componentes/Sucursales/IngresoUrl';
 
 function App() {
   return (
@@ -62,7 +64,9 @@ function App() {
             />
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/sucursales" element={<Sucursales />} />
-            <Route path="/sucursales/ingresourl" element={<IngresoUrl />} />
+            <Route path="/sucursales/urlcaja" element={<IngresoUrl />} />
+            <Route path="/sucursales/pasarelapago" element={<PasarelaPago />} />
+            <Route path="/sucursales/urlcaja" element={<IngresoUrl />} />
 
             <Route path="/precios" element={<Precios />} />
             <Route path="/proveedores" element={<Proveedores />} />

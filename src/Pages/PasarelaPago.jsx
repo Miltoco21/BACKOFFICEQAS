@@ -1,16 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Button,Dialog,Grid, Typography } from "@mui/material";
+import { Button, Dialog, Grid, Typography } from "@mui/material";
 import Add from "@mui/icons-material/Add";
 import SideBar from "../Componentes/NavBar/SideBar";
-import IngresoUrl from "../Componentes/Sucursales/IngresoUrl"
-export const defaultTheme = createTheme();
+import IngresoUrl from "../Componentes/Sucursales/IngresoUrl";
+import IngresoPasarelaPago from "../Componentes/Sucursales/IngresoPasarelaPago";
 
-export default function Sucursales() {
+export default function PasarelaPago() {
   const [open, setOpen] = useState(false);
   const handleOpenModal = () => {
     setOpen(true);
@@ -22,11 +21,10 @@ export default function Sucursales() {
 
   return (
     <>
-   
-    <CssBaseline />
+      <CssBaseline />
       <Box sx={{ display: "flex" }}>
-        <SideBar  />
-        <Box sx={{  flex: 1 }}>
+        <SideBar />
+        <Box sx={{ flex: 1 }}>
           <Button
             variant="outlined"
             sx={{
@@ -36,28 +34,21 @@ export default function Sucursales() {
             startIcon={<Add />}
             onClick={handleOpenModal}
           >
-            Ingresa Url
+            Ingresa Pasarela de Pago
           </Button>
           {/* <SearchList /> */}
         </Box>
       </Box>
 
       {open ? (
-        <IngresoUrl
-        openDialog={open}
-        setOpendialog={setOpen}
-        onClose={handleCloseModal}
-      />
+        <IngresoPasarelaPago
+          openDialog={open}
+          setOpendialog={setOpen}
+          onClose={handleCloseModal}
+        />
       ) : (
         <></>
       )}
-      </>
-
-
-
-      
-
-  
-
+    </>
   );
 }

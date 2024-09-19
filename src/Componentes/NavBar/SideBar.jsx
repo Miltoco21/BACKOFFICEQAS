@@ -33,9 +33,11 @@ import WebIcon from '@mui/icons-material/Web';
 
 import ScreenDialogConfig from "../ScreenDialog/AdminConfig";
 import CONSTANTS from "../../definitions/Constants";
-
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import CloseSession from '../ScreenDialog/CloseSession'
+import AddCardIcon from '@mui/icons-material/AddCard';
+import FindInPageIcon from '@mui/icons-material/FindInPage';
 
 const drawerWidth = 240;
 
@@ -76,7 +78,10 @@ export default function PermanentDrawerLeft() {
         { text: "Home", link: "/", icon: <HomeIcon /> },
         { text: "Sucursales", link: "/sucursales", icon: <WarehouseIcon />,
           subMenuItems: [
-          { text: "Ingreso URL", link: "/sucursales/ingresourl", icon: <WebIcon /> },
+          { text: "Ingreso Url Caja", link: "/sucursales/urlcaja", icon: <PointOfSaleIcon /> },
+          { text: "Pasarela de Pago", link: "/sucursales/pasarelapago", icon: <AddCardIcon /> },
+          { text: "Certificado Digital", link: "/sucursales/certificadodigital", icon: <FindInPageIcon /> },
+
         ], }
         ,
         { text: "Usuarios", link: "/usuarios", icon: <PeopleAltIcon /> },
