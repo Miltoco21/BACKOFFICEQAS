@@ -14,13 +14,16 @@ import ModelConfig from '../Models/ModelConfig';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import User from '../Models/User';
+import LongClick from '../Helpers/LongClick';
 
 const defaultTheme = createTheme();
 
 const Home = ({}) => {
 
   const {
-    userData 
+    userData,
+    showMessage,
+    showConfirm
   } = useContext(SelectedOptionsContext);
 
   const [usuarios, setUsuarios] = useState([])
@@ -92,16 +95,46 @@ const Home = ({}) => {
               }}
               >
                 <Typography variant='h5'>Usuarios Activos</Typography>
-                { usuariosActivos.map((usu,ix)=><Typography sx={{
+                { usuariosActivos.map((usu,ix)=>{
+                  const longBoleta = new LongClick(1);
+                  longBoleta.onClick(()=>{
+                    // alert("click normal")
+                  })
+                  longBoleta.onLongClick(()=>{
+                    showConfirm("Cerrar la sesion de " + usu.nombres+ " " + usu.apellidos + "?",()=>{
+                      const user = new User()
+                      user.fill(usu)
+                      user.doLogoutInServer(()=>{
+                        showMessage("Realizado correctamente")
+                        fetchUsuarios()
+                      },()=>{
+                        showMessage("no se pudo realizar")
+                      })
+                    })
+                  })
+                  return (
+                  <Typography sx={{
                   borderRadius:"3px",
                   padding:"10px",
                   backgroundColor:"#E30202",
                   color:"#FFFFFF",
                   margin:"10px",
+                  cursor:"pointer",
+                  userSelect:"none",
                   display:"inline-block"
-                }} key={ix}>
+                }} key={ix} 
+                  onTouchStart={()=>{longBoleta.onStart()}}
+                  onMouseDown={()=>{longBoleta.onStart()}}
+                  onTouchEnd={()=>{longBoleta.onEnd()}}
+                  onMouseUp={()=>{longBoleta.onEnd()}}
+                  onMouseLeave={()=>{longBoleta.cancel()}}
+                  onTouchMove={()=>{longBoleta.cancel()}}
+                  >
                   <Typography variant='p'>
                     {usu.nombres} {usu.apellidos}
+                  </Typography>
+                  <Typography variant='p' sx={{ display:"block" }}>
+                    Cod. {usu.codigoUsuario}
                   </Typography>
                   <Typography variant='p' sx={{ display:"block" }}>
                     Sucursal {usu.codigoSucursal}
@@ -109,7 +142,8 @@ const Home = ({}) => {
                   <Typography variant='p' sx={{ display:"block" }}>
                     Caja {usu.puntoVenta}
                   </Typography>
-                </Typography>)}
+                </Typography>) }
+                )}
               </Box>
             )}
           </Grid>

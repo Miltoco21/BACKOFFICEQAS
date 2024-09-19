@@ -53,6 +53,44 @@ class User extends Model{
         return this.codigoUsuario;
     }
 
+    async doLogoutInServer(callbackOk, callbackWrong){
+        try{
+            const configs = ModelConfig.get()
+            var url = configs.urlBase
+            +"/Usuarios/LoginUsuarioSetInactivo"
+
+           
+            const response = await axios.post(
+                url,
+                this.getFillables()
+            );
+
+            if(response.data.status == 200){
+                callbackOk(response)
+            }else{
+                callbackOk(response.data.descripcion)
+            }
+        }catch(error){
+            console.log(error)
+            if (error.response) {
+                callbackWrong(
+                  "Credenciales incorrectas. Por favor, verifica tu nombre de usuario y contraseña." +
+                    error.message
+                );
+              } else if (error.response && error.response.status === 500) {
+                callbackWrong(
+                  "Error interno del servidor. Por favor, inténtalo de nuevo más tarde."
+                );
+              } else if(error.message != ""){
+                callbackWrong(error.message)
+              }else {
+                callbackWrong(
+                  "Error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde."
+                );
+              }
+        }
+    }
+
     async existRut({rut},callbackOk, callbackWrong){
         try {
             const configs = ModelConfig.get()
