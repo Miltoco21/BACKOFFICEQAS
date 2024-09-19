@@ -6,12 +6,14 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 
 import SideBar from '../Componentes/NavBar/SideBar';
-import Card2 from '../Componentes/Home/Card2';
+import CardTotalCompras from '../Componentes/Home/CardTotalCompras';
+import CardTotalVentas from '../Componentes/Home/CardTotalVentas';
 
 import { SelectedOptionsContext } from "../Componentes/Context/SelectedOptionsProvider";
 import ModelConfig from '../Models/ModelConfig';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import User from '../Models/User';
 
 const defaultTheme = createTheme();
 
@@ -21,57 +23,35 @@ const Home = ({}) => {
     userData 
   } = useContext(SelectedOptionsContext);
 
-  const apiUrl = ModelConfig.get().urlBase;
+  const [usuarios, setUsuarios] = useState([])
+  const [usuariosActivos, setUsuariosActivos] = useState([])
+  const [usuariosInactivos, setUsuariosInactivos] = useState([])
 
-  const [ventas, setVentas] = useState([])
-  const [totalVentas, setTotalVentas] = useState([])
-  const [cantidadVentas, setCantidadVentas] = useState([])
-
-  const fetchDataVentas = async () => {
-    const params = {
-      fechadesde: dayjs().format("YYYY-MM-DD"),
-      fechahasta: dayjs().format("YYYY-MM-DD"),
-      tipoComprobante: "0,1,2,3,4",
-    };
-    // console.log("Iniciando fetchData con params:", params);
-
-    try {
-      const url = `${apiUrl}/ReporteVentas/ReporteLibroIVA`;
-      // console.log("URL being fetched:", url);
-
-      const response = await axios.get(url, { params });
-
-      // console.log("Respuesta del servidor:", response);
-
-      if (response.data) {
-        setCantidadVentas(response.data.cantidad);
-        if (response.data.cantidad > 0 && response.data.ventaCabeceraReportes) {
-          setVentas(response.data.ventaCabeceraReportes);
-          // console.log("Datos recibidos:", response.data.ventaCabeceraReportes);
-
-          const totalValue = response.data.ventaCabeceraReportes.reduce(
-            (sum, item) => sum + item.total,
-            0
-          );
-          setTotalVentas(totalValue);
-        } else {
-          setVentas([]);
-          setTotalVentas(0);
-        }
-      } else {
-        console.warn("La respuesta no contiene datos:", response);
-        setVentas([]);
-        setTotalVentas(0);
+  const clasificaUsuarios = (usus)=>{
+    console.log("clasificando", usus)
+    const ususAct = []
+    const ususInact = []
+    usus.forEach((usu,ix)=>{
+      if(usu.activo){
+        ususAct.push(usu)
+      }else{
+        ususInact.push(usu)
       }
-    } catch (error) {
-      console.error("Error al buscar datos:", error);
-      // setError("Error fetching data");
-      setTotalVentas(0);
-    }
-  };
+    })
+
+    setUsuariosActivos(ususAct)
+    setUsuariosInactivos(ususInact)
+  }
+
+  const fetchUsuarios = ()=>{
+    User.getInstance().getAll((usuariosx)=>{
+      setUsuarios(usuariosx)
+      clasificaUsuarios(usuariosx)
+    },()=>{})
+  }
 
   useEffect(()=>{
-    fetchDataVentas()
+    fetchUsuarios()
   },[])
 
   return (
@@ -90,22 +70,74 @@ const Home = ({}) => {
             Rol: {userData ? userData.rol : 'rol'}
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
+
+          <Grid item xs={12} sm={12} md={6} lg={6}>
+              <CardTotalCompras/>
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={6} lg={6}>
+              <CardTotalVentas/>
+          </Grid>
+
+
           <Grid item xs={12} sm={12} md={12} lg={12}>
-
-              
-
-
-
-
-
+            {usuariosActivos.length>0 && (
+              <Box
+              sx={{
+                bgcolor: "background.paper",
+                boxShadow: 2,
+                p: 4,
+                overflow: "auto", // Added scrollable feature
+                padding:"10px",
+              }}
+              >
+                <Typography variant='h5'>Usuarios Activos</Typography>
+                { usuariosActivos.map((usu,ix)=><Typography sx={{
+                  borderRadius:"3px",
+                  padding:"10px",
+                  backgroundColor:"#E30202",
+                  color:"#FFFFFF",
+                  margin:"10px",
+                  display:"inline-block"
+                }} key={ix}>
+                  <Typography variant='p'>
+                    {usu.nombres} {usu.apellidos}
+                  </Typography>
+                  <Typography variant='p' sx={{ display:"block" }}>
+                    Sucursal {usu.codigoSucursal}
+                  </Typography>
+                  <Typography variant='p' sx={{ display:"block" }}>
+                    Caja {usu.puntoVenta}
+                  </Typography>
+                </Typography>)}
+              </Box>
+            )}
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+            {usuariosInactivos.length>0 && (
+              <Box
+              sx={{
+                bgcolor: "background.paper",
+                boxShadow: 2,
+                p: 4,
+                overflow: "auto", // Added scrollable feature
+                padding:"10px",
+              }}
+              >
+                <Typography variant='h5'>Usuarios inactivos</Typography>
+                { usuariosInactivos.map((usu,ix)=><Typography sx={{
+                  borderRadius:"3px",
+                  padding:"10px",
+                  backgroundColor:"#DBE7FF",
+                  color:"#000000",
+                  margin:"10px",
+                  display:"inline-block"
+                }} key={ix}>{usu.nombres} {usu.apellidos}</Typography>)}
+              </Box>
+            )}
 
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-              <Card2 
-              totalVentas={totalVentas}
-              cantidadVentas={cantidadVentas}
-              />
-            </Grid>
+            
           </Grid>
         </Box>
       </Box>
