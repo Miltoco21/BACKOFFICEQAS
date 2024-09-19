@@ -59,10 +59,12 @@ class User extends Model{
             var url = configs.urlBase
             +"/Usuarios/LoginUsuarioSetInactivo"
 
+            const data = this.getFillables()
+            data.puntoVenta = parseInt(data.puntoVenta) + ""
            
             const response = await axios.post(
                 url,
-                this.getFillables()
+                data
             );
 
             if(response.data.status == 200){
