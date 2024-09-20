@@ -25,6 +25,7 @@ const BoxSelectList = ({
               }}
               variant={selected === ix ? "outlined" : "outlined"}
               onClick={() => {setSelected(ix)}}
+              key={ix}
               >
             {valueItemList}
           </Button>

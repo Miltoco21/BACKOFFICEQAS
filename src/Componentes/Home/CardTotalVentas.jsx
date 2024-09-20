@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import ModelConfig from '../../Models/ModelConfig';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import ReporteVenta from '../../Models/ReporteVenta';
 
 export default function({
 }) {
@@ -17,21 +18,11 @@ export default function({
   const [cantidadVentas, setCantidadVentas] = useState([])
 
   const fetchDataVentas = async () => {
-    const params = {
+    ReporteVenta.getInstance().searchInServer({
       fechadesde: dayjs().format("YYYY-MM-DD"),
       fechahasta: dayjs().format("YYYY-MM-DD"),
       tipoComprobante: "0,1,2,3,4",
-    };
-    // console.log("Iniciando fetchData con params:", params);
-
-    try {
-      const url = `${apiUrl}/ReporteVentas/ReporteLibroIVA`;
-      // console.log("URL being fetched:", url);
-
-      const response = await axios.get(url, { params });
-
-      // console.log("Respuesta del servidor:", response);
-
+    },(response)=>{
       if (response.data) {
         setCantidadVentas(response.data.cantidad);
         if (response.data.cantidad > 0 && response.data.ventaCabeceraReportes) {
@@ -52,11 +43,11 @@ export default function({
         setVentas([]);
         setTotalVentas(0);
       }
-    } catch (error) {
+    },(error)=>{
       console.error("Error al buscar datos:", error);
       // setError("Error fetching data");
       setTotalVentas(0);
-    }
+    })
   };
 
   useEffect(()=>{

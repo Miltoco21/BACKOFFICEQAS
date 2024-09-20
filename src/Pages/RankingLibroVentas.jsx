@@ -28,6 +28,7 @@ import axios from "axios";
 import ModelConfig from "../Models/ModelConfig";
 import dayjs from "dayjs";
 import BoxSelectList from "../Componentes/Proveedores/BoxSelectList";
+import ReporteVenta from "../Models/ReporteVenta";
 
 const RankingLibroVentas = () => {
   const apiUrl = ModelConfig.get().urlBase;
@@ -35,7 +36,6 @@ const RankingLibroVentas = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [data, setData] = useState([]);
-  const [cantidad, setCantidad] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -43,8 +43,14 @@ const RankingLibroVentas = () => {
   const [tipo, setTipo] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  
   const [totalValues, setTotalValues] = useState(0);
   const [totalIVA, setTotalIVA] = useState(0);
+  const [cantidad, setCantidad] = useState(0);
+
+  const [totalValuesCaja, setTotalValuesCaja] = useState(0);
+  const [totalIVACaja, setTotalIVACaja] = useState(0);
+  const [cantidadCaja, setCantidadCaja] = useState(0);
   
   const [cajas, setCajas] = useState([]);
   const [cajaSel, setCajaSel] = useState(null);
@@ -54,67 +60,55 @@ const RankingLibroVentas = () => {
     setLoading(true);
     setError(null);
 
-    const params = {
+    // console.log("Iniciando fetchData con params:", params);
+
+    ReporteVenta.getInstance().searchInServer({
       fechadesde: startDate ? startDate.format("YYYY-MM-DD") : "",
       fechahasta: endDate ? endDate.format("YYYY-MM-DD") : "",
       tipoComprobante: tipo.join(","),
-    };
-    // console.log("Iniciando fetchData con params:", params);
+    },(response)=>{
+      setCantidad(response.data.cantidad);
 
-    try {
-      const url = `${apiUrl}/ReporteVentas/ReporteLibroIVA`;
-      // console.log("URL being fetched:", url);
+      if (response.data.cantidad > 0 && response.data.ventaCabeceraReportes) {
+        setData(response.data.ventaCabeceraReportes);
+        // console.log("Datos recibidos:", response.data.ventaCabeceraReportes);
 
-      const response = await axios.get(url, { params });
+        const totalValue = response.data.ventaCabeceraReportes.reduce(
+          (sum, item) => sum + item.total,
+          0
+        );
+        const totalIVA = response.data.ventaCabeceraReportes
+          // .filter((item) => item.tipoComprobante !== 0)
+          .reduce((sum, item) => sum + item.montoIVA, 0);
 
-      // console.log("Respuesta del servidor:", response);
-
-      if (response.data) {
-        setCantidad(response.data.cantidad);
-
-        if (response.data.cantidad > 0 && response.data.ventaCabeceraReportes) {
-          setData(response.data.ventaCabeceraReportes);
-          // console.log("Datos recibidos:", response.data.ventaCabeceraReportes);
-
-          const totalValue = response.data.ventaCabeceraReportes.reduce(
-            (sum, item) => sum + item.total,
-            0
-          );
-          const totalIVA = response.data.ventaCabeceraReportes
-            .filter((item) => item.tipoComprobante !== 0)
-            .reduce((sum, item) => sum + item.montoIVA, 0);
-
-          setSnackbarMessage(
-            `Se encontraron ${response.data.cantidad} resultados.`
-          );
-          setTotalValues(totalValue);
-          setTotalIVA(totalIVA);
-        } else {
-          setData([]);
-          setSnackbarMessage("No se encontraron resultados.");
-          setTotalValues(0);
-          setTotalIVA(0);
-        }
-
-        setVentaPorCaja([])
-        setCajaSel(null)
+        setSnackbarMessage(
+          `Se encontraron ${response.data.cantidad} resultados.`
+        );
+        setTotalValues(totalValue);
+        setTotalIVA(totalIVA);
       } else {
-        console.warn("La respuesta no contiene datos:", response);
         setData([]);
         setSnackbarMessage("No se encontraron resultados.");
         setTotalValues(0);
         setTotalIVA(0);
       }
-    } catch (error) {
+
+      setVentaPorCaja([])
+      setCajaSel(null)
+
+      setLoading(false);
+    },(error)=>{
+
       console.error("Error al buscar datos:", error);
       setError("Error fetching data");
       setSnackbarMessage("Error al buscar los datos");
       setTotalValues(0);
       setTotalIVA(0);
-    }
 
-    setSnackbarOpen(true);
-    setLoading(false);
+      setSnackbarOpen(true);
+      setLoading(false);
+    })
+    
   };
 
   const handleBuscarClick = () => {
@@ -168,19 +162,31 @@ const RankingLibroVentas = () => {
       }
     })
 
+    prodCaja.push("Todas")
+
     setCajas(prodCaja)
     // console.log("cajas", prodCaja)
   }
 
   const cargarVentasPorCaja = (caja)=>{
     var ventas = []
+    var cantCaja = 0
+    var totCaja = 0
+    var totIvaCaja = 0
 
     data.forEach((venta)=>{
-      if(venta.puntoVenta == caja){
+      if(venta.puntoVenta == caja || caja == "Todas"){
         ventas.push(venta)
+
+        cantCaja ++
+        totCaja += venta.total
+        totIvaCaja += venta.montoIVA
       }
     })
     setVentaPorCaja(ventas)
+    setCantidadCaja(cantCaja)
+    setTotalValuesCaja(totCaja)
+    setTotalIVACaja(totIvaCaja)
   }
 
   useEffect(()=>{
@@ -290,10 +296,10 @@ const RankingLibroVentas = () => {
           }}>
 
             <Grid item xs={12} sm={12} md={4} lg={4}>
-              <p>Total Valores: {totalValues.toLocaleString("es-CL")}</p>
+              <p>Total Valores: ${totalValues.toLocaleString("es-CL")}</p>
             </Grid>
             <Grid item xs={12} sm={12} md={4} lg={4}>
-              <p>Total IVA: {totalIVA.toLocaleString("es-CL")}</p>
+              <p>Total IVA: ${totalIVA.toLocaleString("es-CL")}</p>
             </Grid>
             <Grid item xs={12} sm={12} md={4} lg={4}>
               <p>Cantidad Encontrados: {cantidad.toLocaleString("es-CL")}</p>
@@ -313,6 +319,16 @@ const RankingLibroVentas = () => {
                   cargarVentasPorCaja(cajas[sel])
                 }}
               />
+            </Grid>
+
+            <Grid item xs={12} sm={12} md={4} lg={4}>
+              <p>Total en caja: ${totalValuesCaja.toLocaleString("es-CL")}</p>
+            </Grid>
+            <Grid item xs={12} sm={12} md={4} lg={4}>
+              <p>Total IVA en caja: ${totalIVACaja.toLocaleString("es-CL")}</p>
+            </Grid>
+            <Grid item xs={12} sm={12} md={4} lg={4}>
+              <p>Cantidad de la caja: {cantidadCaja.toLocaleString("es-CL")}</p>
             </Grid>
 
 
