@@ -6,9 +6,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { Button, Dialog, Grid, Typography } from "@mui/material";
 import Add from "@mui/icons-material/Add";
 import SideBar from "../Componentes/NavBar/SideBar";
-import IngresoPasarelaPago from "../Componentes/Sucursales/IngresoPasarelaPago";
+import IngresoCertificadoDigital from "../Componentes/Sucursales/IngresoCertificadoDigital"
 
-export default function PasarelaPago() {
+export default function CertificadoDigital() {
   const [open, setOpen] = useState(false);
   const handleOpenModal = () => {
     setOpen(true);
@@ -33,14 +33,14 @@ export default function PasarelaPago() {
             startIcon={<Add />}
             onClick={handleOpenModal}
           >
-            Ingresa Pasarela de Pago
+            certificado digital 
           </Button>
           {/* <SearchList /> */}
         </Box>
       </Box>
 
       {open ? (
-        <IngresoPasarelaPago
+        <IngresoCertificadoDigital
           openDialog={open}
           setOpendialog={setOpen}
           onClose={handleCloseModal}
