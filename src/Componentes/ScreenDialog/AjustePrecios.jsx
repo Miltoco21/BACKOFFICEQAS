@@ -129,7 +129,9 @@ const AjustePrecios = ({
             setCambiosGuardados(true)
             setOpenDialog(false)
           }}
-          onUpdatedWrong={()=>{
+          onUpdatedWrong={(error)=>{
+            console.error("Error al actualizar el producto:", error);
+            showMessage(error);
           }}
         />
 

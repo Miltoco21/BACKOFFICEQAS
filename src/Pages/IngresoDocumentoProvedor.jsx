@@ -757,12 +757,12 @@ const IngresoDocumentoProveedor = () => {
                 fontWeight:"bold",
                 float:"right"
               }}>
-                Total. $
+                Total: {"   "}
                 <Typography sx={{
                   display:"inline",
                   fontWeight:"bold",
                   fontSize:"23px"
-                }}>{grandTotal}</Typography>
+                }}>${grandTotal.toLocaleString()}</Typography>
               </Typography>
             </div>
           </Grid>
