@@ -4,12 +4,13 @@ import { Grid, Paper, Dialog } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
-
 import InputName from "../Elements/Compuestos/InputName";
+import SelectRegion from "../Elements/Compuestos/SelectRegion";
+import SelectComuna from "../Elements/Compuestos/SelectComuna";
 
 import SendingButton from "../Elements/SendingButton";
-import User from "../../Models/User";
-// import Sucursal from "../../../Models/Sucursal";
+
+import Sucursal from "../../Models/Sucursal";
 
 import System from "../../Helpers/System";
 export const defaultTheme = createTheme();
@@ -19,65 +20,53 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
     useContext(SelectedOptionsContext);
 
   var states = {
-
     nombre: useState(""),
     direccion: useState(""),
-    responsable: useState(""),
-   
+
+    region: useState(-1),
+    comuna: useState(-1),
   };
 
   var validatorStates = {
-    
     nombre: useState(null),
     direccion: useState(null),
-    responsable: useState(null), 
-    
+    region: useState(null),
+    comuna: useState(null),
   };
 
-  // const handleSubmit = async () => {
-  //   //Validaciones
+  const handleSubmit = async () => {
+    //Validaciones
 
-  //   if (!System.allValidationOk(validatorStates, showMessage)) {
-  //     return false;
-  //   }
-  //   // console.log(rut)
-  //   // console.log(nombre)
-  //   const usuario = {
-  //     rut: states.rut[0],
-  //     nombres: states.nombre[0],
-  //     apellidos: states.apellido[0],
-  //     correo: states.correo[0],
-  //     telefono: states.phone[0],
-  //     codigoUsuario: states.userCode[0],
-  //     direccion: states.direccion[0],
-  //     codigoPostal: states.postalCode[0],
-  //     clave: states.clave[0],
-  //     remuneracion: states.remuneracionTipo[0],
-  //     rol: states.rol[0] + "",
-  //     region: states.region[0] + "",
-  //     comuna: states.comuna[0] + "",
-  //     credito: states.credit[0],
-  //   };
+    if (!System.allValidationOk(validatorStates, showMessage)) {
+      return false;
+    }
 
-  //   console.log("Datos antes de enviar:", usuario);
-  //   showLoading("Enviando...");
-  //   User.getInstance().add(
-  //     usuario,
-  //     (res) => {
-  //       console.log("llego al callok");
-  //       hideLoading();
-  //       showMessage("Usuario creado exitosamente");
-  //       setTimeout(() => {
-  //         onClose();
-  //       }, 2000);
-  //     },
-  //     (error) => {
-  //       console.log("llego al callwrong", error);
-  //       hideLoading();
-  //       showMessage(error);
-  //     }
-  //   );
-  // };
+    const sucursal = {
+      descripcionSucursal: states.nombre[0],
+      direccion: states.direccion[0],
+      idRegion: states.region[0],
+      idComuna: states.comuna[0],
+    };
+
+    console.log("Datos antes de enviar:", sucursal);
+    showLoading("Enviando...");
+    Sucursal.getInstance().add(
+      sucursal,
+      (res) => {
+        console.log("llego al callok");
+        hideLoading();
+        showMessage("Sucursal creado exitosamente");
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      },
+      (error) => {
+        console.log("llego al callwrong", error);
+        hideLoading();
+        showMessage(error);
+      }
+    );
+  };
 
   return (
     <Dialog
@@ -94,9 +83,9 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
             <h2>Ingreso Sucursal</h2>
           </Grid>
 
-        
           <Grid item xs={12} md={4}>
             <InputName
+              label={"Descripción "}
               inputState={states.nombre}
               fieldName="nombre"
               required={true}
@@ -112,17 +101,26 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
             />
           </Grid>
           <Grid item xs={12} md={4}>
-            <InputName
-              inputState={states.nombre}
-              fieldName="responsable"
+            <SelectRegion
+              inputState={states.region}
+              fieldName="region"
               required={true}
-              validationState={validatorStates.responsable}
+              validationState={validatorStates.region}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <SelectComuna
+              inputState={states.comuna}
+              inputRegionState={states.region}
+              fieldName="comuna"
+              required={true}
+              validationState={validatorStates.comuna}
             />
           </Grid>
 
           <SendingButton
             textButton="crear sucursal"
-            // actionButton={handleSubmit}
+            actionButton={handleSubmit}
             sending={showLoadingDialog}
             sendingText="Registrando..."
             style={{
