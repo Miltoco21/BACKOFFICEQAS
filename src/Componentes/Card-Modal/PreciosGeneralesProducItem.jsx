@@ -34,7 +34,7 @@ const PreciosGeneralesProducItem = ({
   index,
   onChange = null,
   onUpdatedOk,
-  onUpdatedWrong
+  onUpdatedWrong,
  }) => {
 
   const {
@@ -164,7 +164,7 @@ const PreciosGeneralesProducItem = ({
 
   const handleGuardarClick = async () => {
     // console.log("guardando...")
-    try {
+    // try {
       // console.log("Datos antes de la actualización:", product);
       if(product.precioNeto <= 0){
         alert("falta calcular valores")
@@ -181,10 +181,11 @@ const PreciosGeneralesProducItem = ({
       console.log("para enviar",editedProduct)
       Product.getInstance().update(editedProduct,(data,response)=>{
         onUpdatedOk(editedProduct,response)
-      },()=>{})
-    } catch (error) {
-      onUpdatedWrong(error)
-    }
+      },(error)=>{
+        onUpdatedWrong(error)
+      })
+    // } catch (error) {
+    // }
   };
 
   return !product ? (<></>): (

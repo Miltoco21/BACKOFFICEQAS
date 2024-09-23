@@ -35,7 +35,8 @@ const PreciosGenerales = ({ onClose }) => {
 
   const {
     showLoading,
-    hideLoading
+    hideLoading,
+    showMessage
   } = useContext(SelectedOptionsContext);
 
 
@@ -49,7 +50,7 @@ const PreciosGenerales = ({ onClose }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       Product.getInstance().getAllPaginate({
-        rowPage:1
+        rowPage:5
       },(prods)=>{
         setProducts(prods);
       },(error)=>{
@@ -223,7 +224,7 @@ const PreciosGenerales = ({ onClose }) => {
                   }}
                   onUpdatedWrong={(error)=>{
                     console.error("Error al actualizar el producto:", error);
-                    showMessage("Error al actualizar el producto");
+                    showMessage(error);
                   }}
                   />
                 ))

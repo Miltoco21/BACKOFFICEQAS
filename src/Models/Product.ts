@@ -325,8 +325,20 @@ class Product extends Model{
                callbackWrong("respuesta incorrecta del servidor") 
             }
         } catch (error) {
-            console.error("Error fetching products:", error);
-            callbackWrong(error) 
+            console.log(error)
+            if (error.response && error.response.data &&  error.response.data.descripcion) {
+                callbackWrong(error.response.data.descripcion);
+            } else if (error.response && error.response.status === 500) {
+                callbackWrong(
+                    "Error interno del servidor. Por favor, inténtalo de nuevo más tarde."
+                );
+            } else if(error.message != ""){
+                callbackWrong(error.message)
+            }else {
+                callbackWrong(
+                    "Error al conectar con el servidor. Por favor, inténtalo de nuevo más tarde."
+                );
+            }
           }
     }
 
