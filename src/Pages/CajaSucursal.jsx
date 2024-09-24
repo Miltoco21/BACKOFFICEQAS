@@ -6,9 +6,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { Button, Dialog, Grid, Typography } from "@mui/material";
 import Add from "@mui/icons-material/Add";
 import SideBar from "../Componentes/NavBar/SideBar";
-import IngresoCertificadoDigital from "../Componentes/Sucursales/IngresoCertificadoDigital"
+import IngresoCajaSucursal from "../Componentes/Sucursales/IngresoCajaSucursal"
 
-export default function CertificadoDigital() {
+export default function CajaSucursal() {
   const [open, setOpen] = useState(false);
   const handleOpenModal = () => {
     setOpen(true);
@@ -33,14 +33,14 @@ export default function CertificadoDigital() {
             startIcon={<Add />}
             onClick={handleOpenModal}
           >
-            certificado digital 
+         Ingrese Caja sucursal 
           </Button>
           {/* <SearchList /> */}
         </Box>
       </Box>
 
       {open ? (
-        <IngresoCertificadoDigital
+        <IngresoCajaSucursal
           openDialog={open}
           setOpendialog={setOpen}
           onClose={handleCloseModal}

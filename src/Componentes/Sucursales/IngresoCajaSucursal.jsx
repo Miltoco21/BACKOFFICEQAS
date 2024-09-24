@@ -11,10 +11,11 @@ import SendingButton from "../Elements/SendingButton";
 import User from "../../Models/User";
 
 
+
 import System from "../../Helpers/System";
 
 
-export default function IngresoCertificadoDigital({ onClose, openDialog, setOpendialog }) {
+export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog }) {
   const { showLoading, hideLoading, showLoadingDialog, showMessage } =
     useContext(SelectedOptionsContext);
 
@@ -37,33 +38,26 @@ export default function IngresoCertificadoDigital({ onClose, openDialog, setOpen
   //   if (!System.allValidationOk(validatorStates, showMessage)) {
   //     return false;
   //   }
-  //   // console.log(rut)
-  //   // console.log(nombre)
-  //   const usuario = {
-  //     rut: states.rut[0],
-  //     nombres: states.nombre[0],
-  //     apellidos: states.apellido[0],
-  //     correo: states.correo[0],
-  //     telefono: states.phone[0],
-  //     codigoUsuario: states.userCode[0],
-  //     direccion: states.direccion[0],
-  //     codigoPostal: states.postalCode[0],
-  //     clave: states.clave[0],
-  //     remuneracion: states.remuneracionTipo[0],
+  // 
+  //   const cajaSucursal = {
+  //     
+  //     nombre: states.nombre[0],
+
+  //    
   //     rol: states.rol[0] + "",
   //     region: states.region[0] + "",
   //     comuna: states.comuna[0] + "",
   //     credito: states.credit[0],
   //   };
 
-  //   console.log("Datos antes de enviar:", usuario);
+  //   console.log("Datos antes de enviar:", cajaSucursal);
   //   showLoading("Enviando...");
   //   User.getInstance().add(
-  //     usuario,
+  //     cajaSucursal,
   //     (res) => {
   //       console.log("llego al callok");
   //       hideLoading();
-  //       showMessage("Usuario creado exitosamente");
+  //       showMessage("Caja Sucursal creada exitosamente");
   //       setTimeout(() => {
   //         onClose();
   //       }, 2000);
@@ -88,14 +82,14 @@ export default function IngresoCertificadoDigital({ onClose, openDialog, setOpen
       <Paper elevation={16} square>
         <Grid container spacing={2} sx={{ padding: "2%" }}>
           <Grid item xs={12}>
-            <h2>Ingreso Certificado Digital</h2>
+            <h2>Ingreso Caja Sucursal</h2>
           </Grid>
 
         
           <Grid item xs={12} md={6}>
             <InputName
               inputState={states.nombre}
-              fieldName="Buscar Certificado"
+              fieldName="Caja Sucursal"
               required={true}
               validationState={validatorStates.nombre}
             />

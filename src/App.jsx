@@ -43,9 +43,9 @@ import { SelectedOptionsProvider } from "./Componentes/Context/SelectedOptionsPr
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import StockMobile from './Pages/StockMobile';
-import PasarelaPago from './Pages/PasarelaPago';
-import CertificadoDigital from './Pages/CertificadoDigital';
-
+// import MetodoImpresion from './Pages/MetodoImpresion';
+import CajaSucursal from './Pages/CajaSucursal';
+import MetodoImpresion from './Pages/MetodoImpresion';
 // import IngresoUrl from '../src/Componentes/Sucursales/IngresoUrl';
 
 function App() {
@@ -67,9 +67,9 @@ function App() {
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/sucursales" element={<Sucursales />} />
             <Route path="/sucursales/urlcaja" element={<IngresoUrl />} />
-            <Route path="/sucursales/pasarelapago" element={<PasarelaPago />} />
-            <Route path="/sucursales/urlcaja" element={<IngresoUrl />} />
-            <Route path="/sucursales/certificadodigital" element={<CertificadoDigital />} />
+            <Route path="/sucursales/metodoimpresion" element={<MetodoImpresion/>} />
+            <Route path="/sucursales/preventa" element={<IngresoUrl />} />
+            <Route path="/sucursales/cajasucursal" element={<CajaSucursal />} />
             <Route path="/precios" element={<Precios />} />
             <Route path="/proveedores" element={<Proveedores />} />
             <Route path="/clientes" element={<Clientes />} />

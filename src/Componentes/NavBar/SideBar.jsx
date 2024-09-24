@@ -29,8 +29,7 @@ import FactCheckIcon from '@mui/icons-material/FactCheck';
 import { Button, IconButton, Typography } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import WarehouseIcon from '@mui/icons-material/Warehouse';
-import WebIcon from '@mui/icons-material/Web';
-
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ScreenDialogConfig from "../ScreenDialog/AdminConfig";
 import CONSTANTS from "../../definitions/Constants";
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
@@ -38,7 +37,7 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import CloseSession from '../ScreenDialog/CloseSession'
 import AddCardIcon from '@mui/icons-material/AddCard';
 import FindInPageIcon from '@mui/icons-material/FindInPage';
-
+import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 const drawerWidth = 240;
 
 
@@ -79,8 +78,10 @@ export default function PermanentDrawerLeft() {
         { text: "Sucursales", link: "/sucursales", icon: <WarehouseIcon />,
           subMenuItems: [
           { text: "Ingreso Url Caja", link: "/sucursales/urlcaja", icon: <PointOfSaleIcon /> },
-          { text: "Pasarela de Pago", link: "/sucursales/pasarelapago", icon: <AddCardIcon /> },
-          { text: "Certificado Digital", link: "/sucursales/certificadodigital", icon: <FindInPageIcon /> },
+          { text: "Método Impresión", link: "/sucursales/metodoimpresion", icon: <ReceiptLongIcon /> },
+          { text: "Caja Sucursal", link: "/sucursales/cajasucursal", icon: <PointOfSaleIcon /> },
+          { text: "Preventa", link: "/sucursales/preventa", icon: <RequestQuoteIcon /> },
+
 
         ], }
         ,
