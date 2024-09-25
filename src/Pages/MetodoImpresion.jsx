@@ -7,6 +7,7 @@ import { Button, Dialog, Grid, Typography } from "@mui/material";
 import Add from "@mui/icons-material/Add";
 import SideBar from "../Componentes/NavBar/SideBar";
 import IngresoPasarelaPago from "../Componentes/Sucursales/IngresoPasarelaPago";
+import IngresoMetodoImpresion from "../Componentes/Sucursales/IngresoMetodoImpresion";
 
 export default function MetodoImpresion() {
   const [open, setOpen] = useState(false);
@@ -40,7 +41,7 @@ export default function MetodoImpresion() {
       </Box>
 
       {open ? (
-        <IngresoPasarelaPago
+        <IngresoMetodoImpresion
           openDialog={open}
           setOpendialog={setOpen}
           onClose={handleCloseModal}
