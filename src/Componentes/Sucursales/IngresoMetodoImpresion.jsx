@@ -133,7 +133,7 @@ export default function IngresoMetodoImpresion({
 
           <SendingButton
             textButton="crear método de impresión"
-            // actionButton={handleSubmit}
+            actionButton={handleSubmit}
             sending={showLoadingDialog}
             sendingText="Registrando..."
             style={{
