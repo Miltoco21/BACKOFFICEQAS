@@ -39,43 +39,40 @@ export default function IngresoMetodoImpresion({
     tiempoImpresion2: useState(null),
   };
 
-  // const handleSubmit = async () => {
-  //   //Validaciones
+  const handleSubmit = async () => {
+    //Validaciones
 
-  //   if (!System.allValidationOk(validatorStates, showMessage)) {
-  //     return false;
-  //   }
-  //
-  //   const metodoImpresion = {
-  //  marcaImpresora: states.marcaImpresora[0],
-  //     tipoImpresion: states.tipoImpresion[0] + "",
-  //     modeloImpresora: states.modeloImpresora[0],
-  //        tiempoImpresion1: states.   tiempoImpresion1[0],
-  //        tiempoImpresion2: states.   tiempoImpresion2[0],
-  //
-  //
-  //
-  //   };
+    if (!System.allValidationOk(validatorStates, showMessage)) {
+      return false;
+    }
 
-  //   console.log("Datos antes de enviar:", metodoImpresion);
-  //   showLoading("Enviando...");
-  //   MetodoImpresion.getInstance().add(
-  //     usuario,
-  //     (res) => {
-  //       console.log("llego al callok");
-  //       hideLoading();
-  //       showMessage("Metodo Impresion creado exitosamente");
-  //       setTimeout(() => {
-  //         onClose();
-  //       }, 2000);
-  //     },
-  //     (error) => {
-  //       console.log("llego al callwrong", error);
-  //       hideLoading();
-  //       showMessage(error);
-  //     }
-  //   );
-  // };
+    const metodoImpresion = {
+      marcaImpresora: states.marcaImpresora[0],
+      tipoImpresion: states.tipoImpresion[0] + "",
+      modeloImpresora: states.modeloImpresora[0],
+      tiempoImpresion1: states.tiempoImpresion1[0],
+      tiempoImpresion2: states.tiempoImpresion2[0],
+    };
+
+    console.log("Datos antes de enviar:", metodoImpresion);
+    showLoading("Enviando...");
+    MetodoImpresion.getInstance().add(
+      metodoImpresion,
+      (res) => {
+        console.log("llego al callok");
+        hideLoading();
+        showMessage("Metodo Impresion creado exitosamente");
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      },
+      (error) => {
+        console.log("llego al callwrong", error);
+        hideLoading();
+        showMessage(error);
+      }
+    );
+  };
 
   return (
     <Dialog
@@ -116,8 +113,7 @@ export default function IngresoMetodoImpresion({
               validationState={validatorStates.modeloImpresora}
             />
           </Grid>
-        
-    
+
           <Grid item xs={12} md={6}>
             <InputNumber
               inputState={states.tiempoImpresion1}
