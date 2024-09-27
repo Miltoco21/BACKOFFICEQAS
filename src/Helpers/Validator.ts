@@ -272,6 +272,36 @@ class Validator {
 
         return false
     }
+
+    static isFile(newValuex, extensions = "*"){
+        var newValue = newValuex+""
+        // console.log("validando extensiones", extensions)
+        if(!newValue){
+            console.log("es tecla especial??")
+            return true//caracter especial, ej: borrar, supr,etc
+        }
+
+        if(newValue.trim().length<=0)return false
+       
+        if(extensions == "*"){
+            return true
+        }
+        
+        var tiene = false
+        if(extensions.indexOf(",")>-1){
+            extensions.split(",").forEach((extension)=>{
+                if(newValue.toLocaleLowerCase().indexOf(extension.toLocaleLowerCase())>-1){
+                    tiene = true
+                }
+            })
+        }else if(extensions.length>0){
+            if(newValue.toLocaleLowerCase().indexOf(extensions.toLocaleLowerCase())>-1){
+                tiene = true
+            }
+        }
+
+        return tiene
+    }
     
     
 }
