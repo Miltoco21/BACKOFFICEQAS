@@ -47,6 +47,8 @@ import StockMobile from './Pages/StockMobile';
 import CajaSucursal from './Pages/CajaSucursal';
 import MetodoImpresion from './Pages/MetodoImpresion';
 // import IngresoUrl from '../src/Componentes/Sucursales/IngresoUrl';
+import PasarelaPago from './Pages/PasarelaPago';
+import Preventa from './Pages/PreventaSucursal';
 
 function App() {
   return (
@@ -68,8 +70,9 @@ function App() {
             <Route path="/sucursales" element={<Sucursales />} />
             <Route path="/sucursales/urlcaja" element={<IngresoUrl />} />
             <Route path="/sucursales/metodoimpresion" element={<MetodoImpresion/>} />
-            <Route path="/sucursales/preventa" element={<IngresoUrl />} />
             <Route path="/sucursales/cajasucursal" element={<CajaSucursal />} />
+            <Route path="/sucursales/preventa" element={<Preventa />} />
+            <Route path="/sucursales/pasarelapago" element={<PasarelaPago />} />
             <Route path="/precios" element={<Precios />} />
             <Route path="/proveedores" element={<Proveedores />} />
             <Route path="/clientes" element={<Clientes />} />

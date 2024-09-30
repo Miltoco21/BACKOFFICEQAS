@@ -14,7 +14,7 @@ import SendingButton from "../Elements/SendingButton";
 import User from "../../Models/User";
 import System from "../../Helpers/System";
 
-export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog }) {
+export default function IngresoPreVenta({ onClose, openDialog, setOpendialog }) {
   const { showLoading, hideLoading, showLoadingDialog, showMessage } =
     useContext(SelectedOptionsContext);
 
@@ -81,7 +81,7 @@ export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog
       <Paper elevation={16} square>
         <Grid container spacing={2} sx={{ padding: "2%" }} >
           <Grid item xs={12}>
-            <h2>Ingreso Caja Sucursal</h2>
+            <h2>Ingreso Pre Venta</h2>
           </Grid>
 
           <Grid item xs={12} md={6}>
@@ -92,14 +92,14 @@ export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog
               validationState={validatorStates.nombre}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          {/* <Grid item xs={12} md={6}>
             <InputFile
               inputState={states.nombre}
               fieldName="Certificado Digital"
               required={true}
               validationState={validatorStates.nombre}
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} md={6}sx={{marginBottom:"6px"}}>
             <SelectPasarela
               inputState={states.nombre}
@@ -112,7 +112,7 @@ export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog
          
 
           <SendingButton
-            textButton="Guardar Caja"
+            textButton="Guardar Pre Venta"
             //actionButton={handleSubmit}
             sending={showLoadingDialog}
             sendingText="Registrando..."

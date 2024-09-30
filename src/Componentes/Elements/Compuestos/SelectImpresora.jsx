@@ -75,8 +75,8 @@ const SelectImpresora = ({
         apiUrl + `/Usuarios/GetAllRolUsuario`
       );
       setSelectList([
-        { id: 1, tipoImpresion: "Impresora 80 mm" },
-        { id: 2, tipoImpresion: "Impresora 57 mm" }
+        { id: 1, tipoImpresion: "Impresora 80 mm, Marca, Modelo" },
+        { id: 2, tipoImpresion: "Impresora 57 mm, Marca, Modelo" }
       ]);
       // setSelectList(response.data.usuarios);
       // console.log("ROLES", response.data.usuarios);

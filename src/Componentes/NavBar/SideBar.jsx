@@ -33,6 +33,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ScreenDialogConfig from "../ScreenDialog/AdminConfig";
 import CONSTANTS from "../../definitions/Constants";
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import CloseSession from '../ScreenDialog/CloseSession'
 import AddCardIcon from '@mui/icons-material/AddCard';
@@ -79,6 +80,7 @@ export default function PermanentDrawerLeft() {
           subMenuItems: [
           { text: "Ingreso Url Caja", link: "/sucursales/urlcaja", icon: <PointOfSaleIcon /> },
           { text: "Método Impresión", link: "/sucursales/metodoimpresion", icon: <ReceiptLongIcon /> },
+          { text: "Pasarela de Pago", link: "/sucursales/pasarelapago", icon: <AddCardIcon/> },
           { text: "Caja Sucursal", link: "/sucursales/cajasucursal", icon: <PointOfSaleIcon /> },
           { text: "Preventa", link: "/sucursales/preventa", icon: <RequestQuoteIcon /> },
 
