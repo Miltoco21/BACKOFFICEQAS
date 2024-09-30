@@ -6,14 +6,12 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
 
 import InputName from "../Elements/Compuestos/InputName";
+import InputFile from "../Elements/Compuestos/InputFile"
+import SelectPasarela from "../Elements/Compuestos/SelectPasarela"
 
 import SendingButton from "../Elements/SendingButton";
 import User from "../../Models/User";
-
-
-
 import System from "../../Helpers/System";
-
 
 export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog }) {
   const { showLoading, hideLoading, showLoadingDialog, showMessage } =
@@ -90,6 +88,22 @@ export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog
             <InputName
               inputState={states.nombre}
               fieldName="Caja Sucursal"
+              required={true}
+              validationState={validatorStates.nombre}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <InputFile
+              inputState={states.nombre}
+              fieldName="Certificado Digital"
+              required={true}
+              validationState={validatorStates.nombre}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <SelectPasarela
+              inputState={states.nombre}
+              fieldName="Selecciona Pasarela"
               required={true}
               validationState={validatorStates.nombre}
             />
