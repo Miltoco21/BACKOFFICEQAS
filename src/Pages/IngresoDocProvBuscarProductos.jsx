@@ -424,6 +424,10 @@ const IngresoDocProvBuscarProductos = ({
                     {associating ? (
                       <Button
                       onClick={() => {
+                        if(countPackage<1){
+                          showMessage("Ingresar la cantidad de cada paquete")
+                          return
+                        }
                         onAssociateAndAddProduct(product)
                         setSearchedProducts([])
                       }}
