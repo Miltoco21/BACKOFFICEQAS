@@ -1,6 +1,5 @@
 class StorageSesion {
 
-    name = "sesiondefault";
     // this.nombreBasicoParaAlmacenado = "data";
     nombreBasicoParaAlmacenado = "";
     //BASICOS

@@ -78,14 +78,12 @@ export default function PermanentDrawerLeft() {
         { text: "Home", link: "/", icon: <HomeIcon /> },
         { text: "Sucursales", link: "/sucursales", icon: <WarehouseIcon />,
           subMenuItems: [
-          { text: "Ingreso Url Caja", link: "/sucursales/urlcaja", icon: <PointOfSaleIcon /> },
-          { text: "Método Impresión", link: "/sucursales/metodoimpresion", icon: <ReceiptLongIcon /> },
-          { text: "Pasarela de Pago", link: "/sucursales/pasarelapago", icon: <AddCardIcon/> },
-          { text: "Caja Sucursal", link: "/sucursales/cajasucursal", icon: <PointOfSaleIcon /> },
-          { text: "Preventa", link: "/sucursales/preventa", icon: <RequestQuoteIcon /> },
-
-
-        ], }
+            { text: "Caja", link: "/sucursales/cajasucursal", icon: <PointOfSaleIcon /> },
+            { text: "Preventa", link: "/sucursales/preventa", icon: <RequestQuoteIcon /> },
+            { text: "Método Impresión", link: "/sucursales/metodoimpresion", icon: <ReceiptLongIcon /> },
+            { text: "Pasarela de Pago", link: "/sucursales/pasarelapago", icon: <AddCardIcon/> },
+          ], 
+        }
         ,
         { text: "Usuarios", link: "/usuarios", icon: <PeopleAltIcon /> },
         { text: "Precios", link: "/precios", icon: <PriceChangeIcon /> },

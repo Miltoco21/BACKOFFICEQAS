@@ -13,13 +13,21 @@ import SelectImpresora from "../Elements/Compuestos/SelectImpresora";
 import SendingButton from "../Elements/SendingButton";
 import User from "../../Models/User";
 import System from "../../Helpers/System";
+import Pasarela from "../../Models/Pasarela";
 
-export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog }) {
+export default function IngresoCajaSucursal({ 
+  onClose,
+  openDialog,
+  setOpendialog
+}) {
   const { showLoading, hideLoading, showLoadingDialog, showMessage } =
     useContext(SelectedOptionsContext);
 
   var states = {
     nombre:useState(""),
+    tipoImpresion:useState(""),
+    certificado:useState(""),
+    pasarela:useState(""),
   
    
   };
@@ -27,6 +35,9 @@ export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog
   var validatorStates = {
     
     nombre: useState(null),
+    certificado: useState(null),
+    tipoImpresion: useState(null),
+    pasarela: useState(null),
     
     
   };
@@ -69,6 +80,15 @@ export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog
   //   );
   // };
 
+  useEffect(()=>{
+    const a = Pasarela.getInstance()
+    const b = Pasarela.getInstance()
+    a.nombre = "pepe"
+    b.apellido = "argento"
+    console.log("a",a)
+    console.log("b",b)
+  },[])
+
   return (
     <Dialog
       open={openDialog}
@@ -76,7 +96,7 @@ export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog
         setOpendialog(false);
         onClose();
       }}
-      maxWidth={"lg"}
+      maxWidth={"md"}
     >
       <Paper elevation={16} square>
         <Grid container spacing={2} sx={{ padding: "2%" }} >
@@ -85,29 +105,44 @@ export default function IngresoCajaSucursal({ onClose, openDialog, setOpendialog
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <SelectImpresora
+          <InputName
               inputState={states.nombre}
-              fieldName="Selecciona Tipo de Impresora "
+              label="Descripcion"
               required={true}
               validationState={validatorStates.nombre}
             />
           </Grid>
+
           <Grid item xs={12} md={6}>
             <InputFile
-              inputState={states.nombre}
+              inputState={states.certificado}
               fieldName="Certificado Digital"
               required={true}
-              validationState={validatorStates.nombre}
+              validationState={validatorStates.certificado}
             />
           </Grid>
+
+
+          <Grid item xs={12} md={6}>
+            <SelectImpresora
+              inputState={states.tipoImpresion}
+              label="Selecciona tipo de impresion"
+              required={true}
+              validationState={validatorStates.tipoImpresion}
+            />
+          </Grid>
+          
           <Grid item xs={12} md={6}sx={{marginBottom:"6px"}}>
             <SelectPasarela
-              inputState={states.nombre}
+              inputState={states.pasarela}
               fieldName="Selecciona Pasarela"
               required={true}
-              validationState={validatorStates.nombre}
+              validationState={validatorStates.pasarela}
               
             />
+
+            <br/>
+            <br/>
           </Grid>
          
 

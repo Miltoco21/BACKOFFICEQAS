@@ -13,7 +13,6 @@ import Registro from './Pages/Registro';
 import Login from './Pages/Login';
 import Usuarios from './Pages/Usuarios';
 import Sucursales from './Pages/Sucursales';
-import IngresoUrl from './Pages/IngresoUrl';
 import Precios from './Pages/Precios';
 import Proveedores from './Pages/Proveedores';
 import Productos from './Pages/Productos';
@@ -46,7 +45,6 @@ import StockMobile from './Pages/StockMobile';
 // import MetodoImpresion from './Pages/MetodoImpresion';
 import CajaSucursal from './Pages/CajaSucursal';
 import MetodoImpresion from './Pages/MetodoImpresion';
-// import IngresoUrl from '../src/Componentes/Sucursales/IngresoUrl';
 import PasarelaPago from './Pages/PasarelaPago';
 import Preventa from './Pages/PreventaSucursal';
 
@@ -68,7 +66,6 @@ function App() {
             />
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/sucursales" element={<Sucursales />} />
-            <Route path="/sucursales/urlcaja" element={<IngresoUrl />} />
             <Route path="/sucursales/metodoimpresion" element={<MetodoImpresion/>} />
             <Route path="/sucursales/cajasucursal" element={<CajaSucursal />} />
             <Route path="/sucursales/preventa" element={<Preventa />} />
