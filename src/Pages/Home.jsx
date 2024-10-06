@@ -142,6 +142,11 @@ const Home = ({}) => {
                   <Typography variant='p' sx={{ display:"block" }}>
                     Caja {usu.puntoVenta}
                   </Typography>
+                  { usu.inicioCaja && (
+                      <Typography variant='p' sx={{ display:"block" }}>
+                      Caja iniciada
+                    </Typography>
+                  ) }
                 </Typography>) }
                 )}
               </Box>
@@ -159,14 +164,23 @@ const Home = ({}) => {
               }}
               >
                 <Typography variant='h5'>Usuarios inactivos</Typography>
-                { usuariosInactivos.map((usu,ix)=><Typography sx={{
+                { usuariosInactivos.map((usu,ix)=>
+                <Typography sx={{
                   borderRadius:"3px",
                   padding:"10px",
                   backgroundColor:"#DBE7FF",
                   color:"#000000",
                   margin:"10px",
                   display:"inline-block"
-                }} key={ix}>{usu.nombres} {usu.apellidos}</Typography>)}
+                }} key={ix}>
+                  <Typography variant='p' sx={{ display:"block" }}>
+                  {usu.nombres} {usu.apellidos}
+                  </Typography>
+                  <Typography variant='p' sx={{ display:"block" }}>
+                    Cod. {usu.codigoUsuario}
+                  </Typography>
+                </Typography>
+                )}
               </Box>
             )}
 
