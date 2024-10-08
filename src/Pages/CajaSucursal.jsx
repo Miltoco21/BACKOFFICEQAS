@@ -7,16 +7,10 @@ import { Button, Dialog, Grid, Typography } from "@mui/material";
 import Add from "@mui/icons-material/Add";
 import SideBar from "../Componentes/NavBar/SideBar";
 import IngresoCajaSucursal from "../Componentes/Sucursales/IngresoCajaSucursal"
+import ListadoCajas from "../Componentes/Sucursales/ListadoCajas";
 
 export default function CajaSucursal() {
   const [open, setOpen] = useState(false);
-  const handleOpenModal = () => {
-    setOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpen(false);
-  };
 
   return (
     <>
@@ -31,11 +25,12 @@ export default function CajaSucursal() {
               mx: 2,
             }}
             startIcon={<Add />}
-            onClick={handleOpenModal}
+            onClick={()=>{setOpen(true);}}
           >
          Ingrese Caja sucursal 
           </Button>
           {/* <SearchList /> */}
+          <ListadoCajas/>
         </Box>
       </Box>
 
@@ -43,7 +38,7 @@ export default function CajaSucursal() {
         <IngresoCajaSucursal
           openDialog={open}
           setOpendialog={setOpen}
-          onClose={handleCloseModal}
+          onClose={()=>{setOpen(false);}}
         />
       ) : (
         <></>

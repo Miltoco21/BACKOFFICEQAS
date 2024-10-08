@@ -2,6 +2,7 @@
 import axios from "axios";
 import Model from "./Model.ts";
 import ModelConfig from "./ModelConfig.ts";
+import EndPoint from "./EndPoint.ts";
 
 class Sucursal extends Model {
 
@@ -31,15 +32,20 @@ class Sucursal extends Model {
         callbackWrong("Respuesta desconocida del servidor")
         }
     } catch (error) {
-        if (error.response && error.response.status && error.response.status === 409) {
-            callbackWrong(error.response.descripcion)
-        } else {
-            callbackWrong(error.message)
-          }
-
-
+      if (error.response && error.response.status && error.response.status === 409) {
+          callbackWrong(error.response.descripcion)
+      } else {
+        callbackWrong(error.message)
+      }
     }
-}
+  }
+
+  static async getAll(callbackOk, callbackWrong){
+    const url = ModelConfig.get("urlBase") + "/Sucursales/GetAllSucursales"
+    EndPoint.sendGet(url,(responseData, response)=>{
+      callbackOk(responseData.sucursals, response)
+    },callbackWrong)
+  }
 }
 
 export default Sucursal;

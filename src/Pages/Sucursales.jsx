@@ -11,6 +11,7 @@ import Add from "@mui/icons-material/Add";
 import SideBar from "../Componentes/NavBar/SideBar";
 import SearchList from "../Componentes/ScreenDialog/Users/SearchList";
 import IngresoSucursal from "../Componentes/Sucursales/IngresoSucursal"
+import ListadoSucursales from "../Componentes/Sucursales/ListadoSucursales";
 
 export const defaultTheme = createTheme();
 
@@ -42,6 +43,7 @@ export default function Sucursales() {
             Crear Sucursal
           </Button>
           {/* <SearchList /> */}
+        <ListadoSucursales/>
         </Box>
       </Box>
 

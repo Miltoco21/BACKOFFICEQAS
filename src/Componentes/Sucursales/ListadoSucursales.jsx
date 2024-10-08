@@ -1,0 +1,86 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import {
+  Box,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  MenuItem,
+  IconButton,
+  Grid,
+  Select,
+  InputLabel,
+  Pagination,
+  Typography,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import ModelConfig from "../../Models/ModelConfig";
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import Sucursal from "../../Models/Sucursal";
+
+const ITEMS_PER_PAGE = 10;
+
+const ListadoSucursales = () => {
+
+  const {
+    showLoading,
+    hideLoading,
+    showMessage
+  } = useContext(SelectedOptionsContext);
+
+  const [sucursales, setSucursales] = useState([])
+  
+  const cargarListado = ()=>{
+    Sucursal.getAll((sucursalesx)=>{
+      setSucursales(sucursalesx)
+    },(err)=>{
+      showMessage(err)
+    })
+  }
+
+  useEffect(()=>{
+    cargarListado()
+  },[])
+  return (
+    <Box sx={{ p: 2, mb: 4 }}>
+          {sucursales.length === 0 ? (
+            <Typography>
+              No hay informacion para mostrar
+            </Typography>
+          ) : (
+
+          <Table>
+            <TableHead>
+            <TableRow>
+                <TableCell colSpan={10}>Sucursales</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Descripción</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {sucursales.map((sucursal,key) => (
+                <TableRow key={key}>
+                  <TableCell>{sucursal.idSucursal}</TableCell>
+                  <TableCell>{sucursal.descripcionSucursal}</TableCell>
+                 
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          )}
+    </Box>
+  );
+};
+
+export default ListadoSucursales;

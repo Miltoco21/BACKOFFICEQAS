@@ -7,6 +7,7 @@ import { Button, Dialog, Grid, Typography } from "@mui/material";
 import Add from "@mui/icons-material/Add";
 import SideBar from "../Componentes/NavBar/SideBar";
 import IngresoPreVenta from "../Componentes/Sucursales/IngresoPreVenta"
+import ListadoPreventas from "../Componentes/Sucursales/ListadoPreventas";
 
 export default function Preventa() {
   const [open, setOpen] = useState(false);
@@ -36,6 +37,7 @@ export default function Preventa() {
          Ingrese Pre Venta 
           </Button>
           {/* <SearchList /> */}
+          <ListadoPreventas/>
         </Box>
       </Box>
 

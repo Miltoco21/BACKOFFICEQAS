@@ -80,8 +80,8 @@ export default function PermanentDrawerLeft() {
           subMenuItems: [
             { text: "Caja", link: "/sucursales/cajasucursal", icon: <PointOfSaleIcon /> },
             { text: "Preventa", link: "/sucursales/preventa", icon: <RequestQuoteIcon /> },
-            { text: "Método Impresión", link: "/sucursales/metodoimpresion", icon: <ReceiptLongIcon /> },
-            { text: "Pasarela de Pago", link: "/sucursales/pasarelapago", icon: <AddCardIcon/> },
+            // { text: "Método Impresión", link: "/sucursales/metodoimpresion", icon: <ReceiptLongIcon /> },
+            // { text: "Pasarela de Pago", link: "/sucursales/pasarelapago", icon: <AddCardIcon/> },
           ], 
         }
         ,

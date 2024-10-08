@@ -14,6 +14,9 @@ import SendingButton from "../Elements/SendingButton";
 import User from "../../Models/User";
 import System from "../../Helpers/System";
 import Pasarela from "../../Models/Pasarela";
+import SelectSucursal from "../Elements/Compuestos/SelectSucursal";
+import TiposPasarela from "../../definitions/TiposPasarela";
+import SucursalCaja from "../../Models/SucursalCaja";
 
 export default function IngresoCajaSucursal({ 
   onClose,
@@ -25,6 +28,7 @@ export default function IngresoCajaSucursal({
 
   var states = {
     nombre:useState(""),
+    sucursal:useState(""),
     tipoImpresion:useState(""),
     certificado:useState(""),
     pasarela:useState(""),
@@ -35,58 +39,45 @@ export default function IngresoCajaSucursal({
   var validatorStates = {
     
     nombre: useState(null),
-    certificado: useState(null),
-    tipoImpresion: useState(null),
-    pasarela: useState(null),
+    sucursal: useState(null),
+    // certificado: useState(null),
+    // tipoImpresion: useState(null),
+    // pasarela: useState(null),
     
     
   };
 
-  // const handleSubmit = async () => {
+  const handleSubmit = async () => {
   //   //Validaciones
 
-  //   if (!System.allValidationOk(validatorStates, showMessage)) {
-  //     return false;
-  //   }
-  // 
-  //   const cajaSucursal = {
-  //     
-  //     nombre: states.nombre[0],
+    if (!System.allValidationOk(validatorStates, showMessage)) {
+      return false;
+    }
+  
+    const data = {
+      "idCaja": 0,
+      "idSucursal": states.sucursal[0],
+      "puntoVenta": states.nombre[0],
+      "idSucursalPvTipo": TiposPasarela.CAJA,
+      "fechaIngreso": System.getInstance().getDateForServer(),
+      "fechaUltAct": System.getInstance().getDateForServer(),
+      "puntoVentaConfiguracions": [
+      ]
+    };
 
-  //    
-  //     rol: states.rol[0] + "",
-  //     region: states.region[0] + "",
-  //     comuna: states.comuna[0] + "",
-  //     credito: states.credit[0],
-  //   };
-
-  //   console.log("Datos antes de enviar:", cajaSucursal);
-  //   showLoading("Enviando...");
-  //   User.getInstance().add(
-  //     cajaSucursal,
-  //     (res) => {
-  //       console.log("llego al callok");
-  //       hideLoading();
-  //       showMessage("Caja Sucursal creada exitosamente");
-  //       setTimeout(() => {
-  //         onClose();
-  //       }, 2000);
-  //     },
-  //     (error) => {
-  //       console.log("llego al callwrong", error);
-  //       hideLoading();
-  //       showMessage(error);
-  //     }
-  //   );
-  // };
+    // console.log("Datos antes de enviar:", data);
+    showLoading("Enviando...");
+    const caj = new SucursalCaja()
+    caj.add(data,(responseData)=>{
+      hideLoading();
+      showMessage(responseData.descripcion)
+    },(error)=>{
+      hideLoading();
+      showMessage(error)
+    })
+  };
 
   useEffect(()=>{
-    const a = Pasarela.getInstance()
-    const b = Pasarela.getInstance()
-    a.nombre = "pepe"
-    b.apellido = "argento"
-    console.log("a",a)
-    console.log("b",b)
   },[])
 
   return (
@@ -114,25 +105,35 @@ export default function IngresoCajaSucursal({
           </Grid>
 
           <Grid item xs={12} md={6}>
+          <SelectSucursal
+              inputState={states.sucursal}
+              label="Seleccionar sucursal"
+              required={true}
+              validationState={validatorStates.sucursal}
+            />
+          </Grid>
+
+
+          {/* <Grid item xs={12} md={6}>
             <InputFile
               inputState={states.certificado}
               fieldName="Certificado Digital"
               required={true}
               validationState={validatorStates.certificado}
             />
-          </Grid>
+          </Grid> */}
 
 
-          <Grid item xs={12} md={6}>
+          {/* <Grid item xs={12} md={6}>
             <SelectImpresora
               inputState={states.tipoImpresion}
               label="Selecciona tipo de impresion"
               required={true}
               validationState={validatorStates.tipoImpresion}
             />
-          </Grid>
+          </Grid> */}
           
-          <Grid item xs={12} md={6}sx={{marginBottom:"6px"}}>
+          {/* <Grid item xs={12} md={6}sx={{marginBottom:"6px"}}>
             <SelectPasarela
               inputState={states.pasarela}
               fieldName="Selecciona Pasarela"
@@ -143,12 +144,12 @@ export default function IngresoCajaSucursal({
 
             <br/>
             <br/>
-          </Grid>
+          </Grid> */}
          
 
           <SendingButton
             textButton="Guardar Caja"
-            //actionButton={handleSubmit}
+            actionButton={handleSubmit}
             sending={showLoadingDialog}
             sendingText="Registrando..."
             style={{
