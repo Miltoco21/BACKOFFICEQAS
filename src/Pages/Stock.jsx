@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Dialog, Box } from "@mui/material";
 import SideBar from "../Componentes/NavBar/SideBar.jsx";
+import AjusteInventario from  "../Componentes/Stock/AjusteInventario.jsx";
 
 const Stock = () => {
   // Estado para controlar la apertura/cierre del modal de Ajuste de Inventario
@@ -39,6 +40,8 @@ const Stock = () => {
 
       {/* Dialog para Ajuste de inventario */}
       <Dialog open={openAjusteInventario} onClose={handleCloseAjusteInventario}>
+        
+          <AjusteInventario/>
      
       </Dialog>
     </>
