@@ -28,6 +28,7 @@ import SummarizeIcon from '@mui/icons-material/Summarize';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import { Button, IconButton, Typography } from "@mui/material";
 import { Settings } from "@mui/icons-material";
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
 import ScreenDialogConfig from "../ScreenDialog/AdminConfig";
 import CONSTANTS from "../../definitions/Constants";
@@ -100,6 +101,14 @@ export default function PermanentDrawerLeft() {
             // Add more sub-menu items as needed
           ],
         },
+        {
+          text: "Ajuste de Stock",
+          link: "/stock",
+          icon: <ListAltIcon />,
+          
+        },
+
+
         {
           text: "Reportes",
           link: "/reportes",
