@@ -48,12 +48,9 @@ export default function IngresoCajaSucursal({
   };
 
   const handleSubmit = async () => {
-  //   //Validaciones
-
     if (!System.allValidationOk(validatorStates, showMessage)) {
       return false;
     }
-  
     const data = {
       "idCaja": 0,
       "idSucursal": states.sucursal[0],
@@ -77,8 +74,6 @@ export default function IngresoCajaSucursal({
     })
   };
 
-  useEffect(()=>{
-  },[])
 
   return (
     <Dialog

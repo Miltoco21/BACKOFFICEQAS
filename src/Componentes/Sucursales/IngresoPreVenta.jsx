@@ -13,6 +13,9 @@ import SelectImpresora from "../Elements/Compuestos/SelectImpresora";
 import SendingButton from "../Elements/SendingButton";
 import User from "../../Models/User";
 import System from "../../Helpers/System";
+import SucursalPreventa from "../../Models/SucursalPreventa";
+import SelectSucursal from "../Elements/Compuestos/SelectSucursal";
+import TiposPasarela from "../../definitions/TiposPasarela";
 
 export default function IngresoPreVenta({ onClose, openDialog, setOpendialog }) {
   const { showLoading, hideLoading, showLoadingDialog, showMessage } =
@@ -20,6 +23,7 @@ export default function IngresoPreVenta({ onClose, openDialog, setOpendialog }) 
 
   var states = {
     nombre:useState(""),
+    sucursal:useState(""),
   
    
   };
@@ -27,47 +31,37 @@ export default function IngresoPreVenta({ onClose, openDialog, setOpendialog }) 
   var validatorStates = {
     
     nombre: useState(null),
+    sucursal: useState(null),
     
     
   };
 
-  // const handleSubmit = async () => {
-  //   //Validaciones
+  const handleSubmit = async () => {
+    if (!System.allValidationOk(validatorStates, showMessage)) {
+      return false;
+    }
+    const data = {
+      "idCaja": 0,
+      "idSucursal": states.sucursal[0],
+      "puntoVenta": states.nombre[0],
+      "idSucursalPvTipo": TiposPasarela.CAJA,
+      "fechaIngreso": System.getInstance().getDateForServer(),
+      "fechaUltAct": System.getInstance().getDateForServer(),
+      "puntoVentaConfiguracions": [
+      ]
+    };
 
-  //   if (!System.allValidationOk(validatorStates, showMessage)) {
-  //     return false;
-  //   }
-  // 
-  //   const cajaSucursal = {
-  //     
-  //     nombre: states.nombre[0],
-
-  //    
-  //     rol: states.rol[0] + "",
-  //     region: states.region[0] + "",
-  //     comuna: states.comuna[0] + "",
-  //     credito: states.credit[0],
-  //   };
-
-  //   console.log("Datos antes de enviar:", cajaSucursal);
-  //   showLoading("Enviando...");
-  //   User.getInstance().add(
-  //     cajaSucursal,
-  //     (res) => {
-  //       console.log("llego al callok");
-  //       hideLoading();
-  //       showMessage("Caja Sucursal creada exitosamente");
-  //       setTimeout(() => {
-  //         onClose();
-  //       }, 2000);
-  //     },
-  //     (error) => {
-  //       console.log("llego al callwrong", error);
-  //       hideLoading();
-  //       showMessage(error);
-  //     }
-  //   );
-  // };
+    // console.log("Datos antes de enviar:", data);
+    showLoading("Enviando...");
+    const caj = new SucursalPreventa()
+    caj.add(data,(responseData)=>{
+      hideLoading();
+      showMessage(responseData.descripcion)
+    },(error)=>{
+      hideLoading();
+      showMessage(error)
+    })
+  };
 
   return (
     <Dialog
@@ -85,13 +79,31 @@ export default function IngresoPreVenta({ onClose, openDialog, setOpendialog }) 
           </Grid>
 
           <Grid item xs={12} md={6}>
+          <InputName
+              inputState={states.nombre}
+              label="Descripcion"
+              required={true}
+              validationState={validatorStates.nombre}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+          <SelectSucursal
+              inputState={states.sucursal}
+              label="Seleccionar sucursal"
+              required={true}
+              validationState={validatorStates.sucursal}
+            />
+          </Grid>
+
+          {/* <Grid item xs={12} md={6}>
             <SelectImpresora
               inputState={states.nombre}
               fieldName="Selecciona Tipo de Impresora "
               required={true}
               validationState={validatorStates.nombre}
             />
-          </Grid>
+          </Grid> */}
           {/* <Grid item xs={12} md={6}>
             <InputFile
               inputState={states.nombre}
@@ -100,7 +112,7 @@ export default function IngresoPreVenta({ onClose, openDialog, setOpendialog }) 
               validationState={validatorStates.nombre}
             />
           </Grid> */}
-          <Grid item xs={12} md={6}sx={{marginBottom:"6px"}}>
+          {/* <Grid item xs={12} md={6}sx={{marginBottom:"6px"}}>
             <SelectPasarela
               inputState={states.nombre}
               fieldName="Selecciona Pasarela"
@@ -108,12 +120,12 @@ export default function IngresoPreVenta({ onClose, openDialog, setOpendialog }) 
               validationState={validatorStates.nombre}
               
             />
-          </Grid>
+          </Grid> */}
          
 
           <SendingButton
             textButton="Guardar Pre Venta"
-            //actionButton={handleSubmit}
+            actionButton={handleSubmit}
             sending={showLoadingDialog}
             sendingText="Registrando..."
             style={{
