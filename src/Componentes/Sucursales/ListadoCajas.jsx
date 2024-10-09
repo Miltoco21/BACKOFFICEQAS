@@ -44,26 +44,30 @@ const ListadoCajas = () => {
   const [cajas, setCajas] = useState([])
   
   const cargarListado = ()=>{
+    showLoading("Cargando el listado")
     Sucursal.getAll((sucursalesx)=>{
       setSucursales(sucursalesx)
-
       procesarCajas(sucursalesx)
+      hideLoading()
     },(err)=>{
+      hideLoading()
       showMessage(err)
     })
   }
 
   const procesarCajas = (sucursales)=>{
     var cajasx = []
-
-    
     sucursales.forEach((sucursal,ix)=>{
-      if(sucursal.puntoVenta && sucursal.puntoVenta.idSucursalPvTipo === TiposPasarela.CAJA){
-        sucursal.puntoVenta.sucursal = sucursal.descripcionSucursal
-        cajasx.push(sucursal.puntoVenta)
+      console.log(sucursal)
+      if(sucursal.puntoVenta && sucursal.puntoVenta.length>0){
+        sucursal.puntoVenta.forEach((puntoVentaItem,ix2)=>{
+          if(puntoVentaItem && puntoVentaItem.idSucursalPvTipo === TiposPasarela.CAJA){
+            puntoVentaItem.sucursal = sucursal.descripcionSucursal
+            cajasx.push(puntoVentaItem)
+          }
+        })
       }
     })
-
     setCajas(cajasx)
   }
 

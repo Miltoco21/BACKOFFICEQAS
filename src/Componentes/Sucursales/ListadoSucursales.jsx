@@ -40,9 +40,12 @@ const ListadoSucursales = () => {
   const [sucursales, setSucursales] = useState([])
   
   const cargarListado = ()=>{
+    showLoading("Cargando el listado")
     Sucursal.getAll((sucursalesx)=>{
       setSucursales(sucursalesx)
+      hideLoading()
     },(err)=>{
+      hideLoading()
       showMessage(err)
     })
   }
