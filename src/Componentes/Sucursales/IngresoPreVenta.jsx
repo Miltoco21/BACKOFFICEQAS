@@ -17,7 +17,12 @@ import SucursalPreventa from "../../Models/SucursalPreventa";
 import SelectSucursal from "../Elements/Compuestos/SelectSucursal";
 import TiposPasarela from "../../definitions/TiposPasarela";
 
-export default function IngresoPreVenta({ onClose, openDialog, setOpendialog }) {
+export default function IngresoPreVenta({ 
+  onClose, 
+  openDialog, 
+  setOpendialog,
+  onCreate
+ }) {
   const { showLoading, hideLoading, showLoadingDialog, showMessage } =
     useContext(SelectedOptionsContext);
 
@@ -57,6 +62,7 @@ export default function IngresoPreVenta({ onClose, openDialog, setOpendialog }) 
     caj.add(data,(responseData)=>{
       hideLoading();
       showMessage(responseData.descripcion)
+      onCreate()
     },(error)=>{
       hideLoading();
       showMessage(error)

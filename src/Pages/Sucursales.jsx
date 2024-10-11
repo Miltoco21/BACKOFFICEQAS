@@ -17,13 +17,7 @@ export const defaultTheme = createTheme();
 
 export default function Sucursales() {
   const [open, setOpen] = useState(false);
-  const handleOpenModal = () => {
-    setOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpen(false);
-  };
+  const [refresh, setRefresh] = useState(false);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -38,12 +32,12 @@ export default function Sucursales() {
               mx: 2,
             }}
             startIcon={<Add />}
-            onClick={handleOpenModal}
+            onClick={()=>{setOpen(true)}}
           >
             Crear Sucursal
           </Button>
           {/* <SearchList /> */}
-        <ListadoSucursales/>
+        <ListadoSucursales changeToRefresh={refresh}/>
         </Box>
       </Box>
 
@@ -51,7 +45,10 @@ export default function Sucursales() {
         <IngresoSucursal
         openDialog={open}
         setOpendialog={setOpen}
-        onClose={handleCloseModal}
+        onClose={()=>{setOpen(false)}}
+        onCreate={()=>{
+          setRefresh(!refresh)
+        }}
       />
       ) : (
         <></>

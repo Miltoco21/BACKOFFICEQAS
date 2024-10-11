@@ -3,6 +3,7 @@ import BaseConfig from "../definitions/BaseConfig.ts";
 import axios from "axios";
 import Model from './Model.ts';
 import ModelConfig from './ModelConfig.ts';
+import EndPoint from './EndPoint.ts';
 
 
 class User extends Model{
@@ -123,6 +124,19 @@ class User extends Model{
 
 
         }
+    }
+
+    static async getAll(callbackOk, callbackWrong){
+        const configs = ModelConfig.get()
+        var url = configs.urlBase
+        +"/Usuarios/GetAllUsuarios"
+
+        // url += "?codigoSucursal=" + ModelConfig.get("sucursal")
+        // url += "&puntoVenta=" + ModelConfig.get("puntoVenta")
+        
+        EndPoint.sendGet(url,(responseData, response)=>{
+            callbackOk(responseData.usuarios, response);
+        },callbackWrong)
     }
 
 

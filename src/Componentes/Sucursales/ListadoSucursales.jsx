@@ -29,7 +29,9 @@ import Sucursal from "../../Models/Sucursal";
 
 const ITEMS_PER_PAGE = 10;
 
-const ListadoSucursales = () => {
+const ListadoSucursales = ({
+  changeToRefresh
+}) => {
 
   const {
     showLoading,
@@ -39,7 +41,9 @@ const ListadoSucursales = () => {
 
   const [sucursales, setSucursales] = useState([])
   
+  
   const cargarListado = ()=>{
+    console.log("Cargando el listado")
     showLoading("Cargando el listado")
     Sucursal.getAll((sucursalesx)=>{
       setSucursales(sucursalesx)
@@ -53,6 +57,12 @@ const ListadoSucursales = () => {
   useEffect(()=>{
     cargarListado()
   },[])
+
+  useEffect(()=>{
+    cargarListado()
+    console.log("cambiando para refresh")
+  },[changeToRefresh])
+
   return (
     <Box sx={{ p: 2, mb: 4 }}>
           {sucursales.length === 0 ? (
@@ -69,6 +79,7 @@ const ListadoSucursales = () => {
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Descripción</TableCell>
+                {/* <TableCell>Acciones</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -76,7 +87,16 @@ const ListadoSucursales = () => {
                 <TableRow key={key}>
                   <TableCell>{sucursal.idSucursal}</TableCell>
                   <TableCell>{sucursal.descripcionSucursal}</TableCell>
-                 
+                  {/* <TableCell>
+                    
+                    <IconButton onClick={() => {
+                      setSucursalSelect(sucursal)
+                      setShowEdit(true)
+                    }}>
+                      <EditIcon />
+                    </IconButton>
+  
+                    </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>

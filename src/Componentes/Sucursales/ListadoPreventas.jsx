@@ -30,6 +30,7 @@ import Pasarela from "../../Models/Pasarela";
 import TiposPasarela from "../../definitions/TiposPasarela";
 import System from "../../Helpers/System";
 import SucursalPreventa from "../../Models/SucursalPreventa";
+import EditarPreVenta from "./EditarPreVenta";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -43,6 +44,9 @@ const ListadoPreventas = () => {
 
   const [sucursales, setSucursales] = useState([])
   const [preventas, setPreventas] = useState([])
+
+  const [preventaSelect, setPreventaSelect] = useState(null)
+  const [showEdit, setShowEdit] = useState(false)
   
   const cargarListado = ()=>{
     showLoading("Cargando el listado")
@@ -71,28 +75,6 @@ const ListadoPreventas = () => {
     })
     setPreventas(cajasx)
   }
-
-  const editar = async (caja) => {
-    const nuevoNombre = prompt("Cambiar nombre",caja.sPuntoVenta)
-
-    if(!nuevoNombre)return
-      const data = System.clone(caja)
-      delete data.sucursal
-      delete data.sPuntoVenta
-      data.PuntoVenta = nuevoNombre
-      console.log("Datos antes de enviar:", data);
-      showLoading("Enviando...");
-      const caj = new SucursalPreventa()
-      caj.add(data,(responseData)=>{
-        hideLoading();
-        showMessage(responseData.descripcion)
-        cargarListado()
-      },(error)=>{
-        hideLoading();
-        showMessage(error)
-      })
-    };
-
 
   useEffect(()=>{
     cargarListado()
@@ -127,20 +109,29 @@ const ListadoPreventas = () => {
                   <TableCell>{preventa.sucursal}</TableCell>
                   <TableCell>{preventa.puntoVentaConfiguracions.length}</TableCell>
                   <TableCell>
-                    
-                  <IconButton onClick={() => {
-                    console.log("editar", preventa)
-                    editar(preventa)
-                  }}>
-                    <EditIcon />
-                  </IconButton>
-
-                  </TableCell>
+                    <IconButton onClick={() => {
+                      setPreventaSelect(preventa)
+                      setShowEdit(true)
+                    }}>
+                      <EditIcon />
+                    </IconButton>
+                    </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
           )}
+
+      <EditarPreVenta
+        openDialog={showEdit}
+        setOpendialog={setShowEdit}
+        onClose={()=>{setShowEdit(false)}}
+        data={preventaSelect}
+        onUpdate={()=>{
+          cargarListado()
+          setShowEdit(false)
+        }}
+      />
     </Box>
   );
 };

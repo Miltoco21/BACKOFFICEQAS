@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 
-import { Grid, Paper, Dialog } from "@mui/material";
+import { Grid, Paper, Dialog, Typography, Box } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
@@ -13,9 +13,16 @@ import SendingButton from "../Elements/SendingButton";
 import Sucursal from "../../Models/Sucursal";
 
 import System from "../../Helpers/System";
+import InputFile from "../Elements/Compuestos/InputFile";
+import SelectUser from "../Elements/Compuestos/SelectUser";
 export const defaultTheme = createTheme();
 
-export default function Ingreso({ onClose, openDialog, setOpendialog }) {
+export default function Ingreso({ 
+  onClose, 
+  openDialog, 
+  setOpendialog,
+  onCreate
+}) {
   const { showLoading, hideLoading, showLoadingDialog, showMessage } =
     useContext(SelectedOptionsContext);
 
@@ -25,6 +32,9 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
 
     region: useState(-1),
     comuna: useState(-1),
+
+    // certificado: useState(-1),
+    user: useState(""),
   };
 
   var validatorStates = {
@@ -32,6 +42,8 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
     direccion: useState(null),
     region: useState(null),
     comuna: useState(null),
+    // certificado: useState(null),
+    user: useState(null),
   };
 
   const handleSubmit = async () => {
@@ -46,6 +58,8 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
       direccion: states.direccion[0],
       idRegion: states.region[0],
       idComuna: states.comuna[0],
+      codigoUsuarioResponsable: states.user[0],
+      // certificado: states.certificado[0],
     };
 
     console.log("Datos antes de enviar:", sucursal);
@@ -54,6 +68,7 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
       sucursal,
       (res) => {
         console.log("llego al callok");
+        onCreate()
         hideLoading();
         showMessage("Sucursal creado exitosamente");
         setTimeout(() => {
@@ -75,7 +90,7 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
         setOpendialog(false);
         onClose();
       }}
-      maxWidth={"lg"}
+      maxWidth={"md"}
     >
       <Paper elevation={16} square>
         <Grid container spacing={2} sx={{ padding: "2%" }}>
@@ -83,16 +98,16 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
             <h2>Ingreso Sucursal</h2>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={12} md={4} lg={4}>
             <InputName
-              label={"Descripción "}
+              label={"Nombre "}
               inputState={states.nombre}
               fieldName="nombre"
               required={true}
               validationState={validatorStates.nombre}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={12} md={4} lg={4}>
             <InputName
               inputState={states.direccion}
               required={true}
@@ -100,15 +115,27 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
               validationState={validatorStates.direccion}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+
+          <Grid item xs={12} sm={12} md={4} lg={4}>
+            <SelectUser
+              inputState={states.user}
+              required={true}
+              fieldName="usuario responsable"
+              validationState={validatorStates.user}
+            />
+          </Grid>
+
+
+          <Grid item xs={12} sm={12} md={6} lg={6}>
             <SelectRegion
               inputState={states.region}
               fieldName="region"
+
               required={true}
               validationState={validatorStates.region}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
             <SelectComuna
               inputState={states.comuna}
               inputRegionState={states.region}
@@ -118,6 +145,15 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
             />
           </Grid>
 
+          {/* <Grid item xs={12} sm={12} md={7} lg={7}>
+            <InputFile
+              inputState={states.certificado}
+              fieldName="Certificado Digital"
+              required={false}
+              validationState={validatorStates.certificado}
+              />
+          </Grid> */}
+
           <SendingButton
             textButton="crear sucursal"
             actionButton={handleSubmit}
@@ -125,7 +161,7 @@ export default function Ingreso({ onClose, openDialog, setOpendialog }) {
             sendingText="Registrando..."
             style={{
               width: "50%",
-              margin: "0 25%",
+              margin: "20px 25%",
               backgroundColor: "#950198",
             }}
           />

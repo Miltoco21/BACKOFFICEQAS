@@ -18,13 +18,20 @@ import SelectSucursal from "../Elements/Compuestos/SelectSucursal";
 import TiposPasarela from "../../definitions/TiposPasarela";
 import SucursalCaja from "../../Models/SucursalCaja";
 
-export default function IngresoCajaSucursal({ 
+export default function EditarCajaSucursal({ 
   onClose,
   openDialog,
   setOpendialog,
-  onCreate
+  data,
+  onUpdate
 }) {
-  const { showLoading, hideLoading, showLoadingDialog, showMessage } =
+  const { 
+    showLoading, 
+    hideLoading, 
+    showLoadingDialog, 
+    showMessage 
+
+  } =
     useContext(SelectedOptionsContext);
 
   var states = {
@@ -33,7 +40,11 @@ export default function IngresoCajaSucursal({
     // tipoImpresion:useState(""),
     // certificado:useState(""),
     // pasarela:useState(""),
-
+  
+    cliente_id : useState(""),
+    secret : useState(""),
+    baseurl : useState(""),
+    sNumber : useState(""),
 
    
   };
@@ -46,6 +57,10 @@ export default function IngresoCajaSucursal({
     // tipoImpresion: useState(null),
     // pasarela: useState(null),
 
+    cliente_id: useState(null),
+    secret: useState(null),
+    baseurl: useState(null),
+    sNumber: useState(null),
     
     
   };
@@ -54,30 +69,95 @@ export default function IngresoCajaSucursal({
     if (!System.allValidationOk(validatorStates, showMessage)) {
       return false;
     }
-    const data = {
-      "idCaja": 0,
+    const dataEdit = {
+      "idCaja": data.idCaja,
       "idSucursal": states.sucursal[0],
       "puntoVenta": states.nombre[0],
-      "idSucursalPvTipo": TiposPasarela.CAJA,
+      "idSucursalPvTipo": data.idSucursalPvTipo,
       "fechaIngreso": System.getInstance().getDateForServer(),
       "fechaUltAct": System.getInstance().getDateForServer(),
       "puntoVentaConfiguracions": [
+        {
+          "fechaIngreso": System.getInstance().getDateForServer(),
+          "fechaUltAct": System.getInstance().getDateForServer(),
+          "idCaja": data.idCaja,
+    
+    
+          "grupo": "Redelcom",
+          "entrada": "cliente_id",
+          "valor": states.cliente_id[0],
+        },
+
+        {
+            "fechaIngreso": System.getInstance().getDateForServer(),
+            "fechaUltAct": System.getInstance().getDateForServer(),
+            "idCaja": data.idCaja,
+      
+      
+            "grupo": "Redelcom",
+            "entrada": "secret",
+            "valor": states.secret[0],
+        },
+
+        {
+            "fechaIngreso": System.getInstance().getDateForServer(),
+            "fechaUltAct": System.getInstance().getDateForServer(),
+            "idCaja": data.idCaja,
+      
+      
+            "grupo": "Redelcom",
+            "entrada": "baseurl",
+            "valor": states.baseurl[0],
+        },
+
+
+        {
+            "fechaIngreso": System.getInstance().getDateForServer(),
+            "fechaUltAct": System.getInstance().getDateForServer(),
+            "idCaja": data.idCaja,
+      
+      
+            "grupo": "Redelcom",
+            "entrada": "sNumber",
+            "valor": states.sNumber[0],
+        },
       ]
     };
 
-    // console.log("Datos antes de enviar:", data);
+    console.log("Datos antes de enviar:", dataEdit);
     showLoading("Enviando...");
     const caj = new SucursalCaja()
-    caj.add(data,(responseData)=>{
+    caj.add(dataEdit,(responseData)=>{
       hideLoading();
       showMessage(responseData.descripcion)
-      onCreate()
+      onUpdate()
     },(error)=>{
       hideLoading();
       showMessage(error)
     })
   };
 
+  useEffect(()=>{
+    if(data){
+        console.log("data",data)
+        states.nombre[1](data.sPuntoVenta)
+        states.sucursal[1](data.idSucursal)
+
+        if(data.puntoVentaConfiguracions.length>0){
+          data.puntoVentaConfiguracions.forEach((cfg,ix)=>{
+            if(cfg.entrada == "cliente_id"){
+              states.cliente_id[1](cfg.valor)
+            }else if(cfg.entrada == "secret"){
+              states.secret[1](cfg.valor)
+            }else if(cfg.entrada == "baseurl"){
+              states.baseurl[1](cfg.valor)
+            }else if(cfg.entrada == "sNumber"){
+              states.sNumber[1](cfg.valor)
+            }
+          })
+        }
+    }
+  },[data, openDialog])
 
   return (
     <Dialog
@@ -91,7 +171,7 @@ export default function IngresoCajaSucursal({
       <Paper elevation={16} square>
         <Grid container spacing={2} sx={{ padding: "2%" }} >
           <Grid item xs={12}>
-            <h2>Ingreso Caja Sucursal</h2>
+            <h2>Editar Caja Sucursal</h2>
           </Grid>
 
           <Grid item xs={12} md={6}>
@@ -131,7 +211,7 @@ export default function IngresoCajaSucursal({
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <InputName
                   inputState={states.cliente_id}
-                  required={true}
+                  required={false}
                   fieldName="cliente id"
                   validationState={validatorStates.cliente_id}
                   />
@@ -140,7 +220,7 @@ export default function IngresoCajaSucursal({
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <InputName
                   inputState={states.secret}
-                  required={true}
+                  required={false}
                   fieldName="secret"
                   validationState={validatorStates.secret}
                   />
@@ -149,7 +229,7 @@ export default function IngresoCajaSucursal({
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <InputName
                   inputState={states.baseurl}
-                  required={true}
+                  required={false}
                   fieldName="baseurl"
                   validationState={validatorStates.baseurl}
                   />
@@ -157,7 +237,7 @@ export default function IngresoCajaSucursal({
               <Grid item xs={12} sm={12} md={6} lg={6}>
                 <InputName
                   inputState={states.sNumber}
-                  required={true}
+                  required={false}
                   fieldName="sNumber"
                   validationState={validatorStates.sNumber}
                   />

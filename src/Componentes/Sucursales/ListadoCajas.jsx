@@ -29,6 +29,7 @@ import Sucursal from "../../Models/Sucursal";
 import System from "../../Helpers/System";
 import SucursalCaja from "../../Models/SucursalCaja";
 import TiposPasarela from "../../definitions/TiposPasarela";
+import EditarCajaSucursal from "./EditarCajaSucursal";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -42,6 +43,10 @@ const ListadoCajas = () => {
 
   const [sucursales, setSucursales] = useState([])
   const [cajas, setCajas] = useState([])
+
+  const [cajaSelect, setCajaSelect] = useState(null)
+  const [showEdit, setShowEdit] = useState(false)
+
   
   const cargarListado = ()=>{
     showLoading("Cargando el listado")
@@ -70,27 +75,6 @@ const ListadoCajas = () => {
     })
     setCajas(cajasx)
   }
-
-  const editar = async (caja) => {
-    const nuevoNombre = prompt("Cambiar nombre",caja.sPuntoVenta)
-
-    if(!nuevoNombre)return
-      const data = System.clone(caja)
-      delete data.sucursal
-      delete data.sPuntoVenta
-      data.PuntoVenta = nuevoNombre
-      console.log("Datos antes de enviar:", data);
-      showLoading("Enviando...");
-      const caj = new SucursalCaja()
-      caj.add(data,(responseData)=>{
-        hideLoading();
-        showMessage(responseData.descripcion)
-        cargarListado()
-      },(error)=>{
-        hideLoading();
-        showMessage(error)
-      })
-    };
 
   useEffect(()=>{
     cargarListado()
@@ -125,20 +109,30 @@ const ListadoCajas = () => {
                   <TableCell>{caja.sucursal}</TableCell>
                   <TableCell>{caja.puntoVentaConfiguracions.length}</TableCell>
                   <TableCell>
-                    
-                  <IconButton onClick={() => {
-                    console.log("editar", caja)
-                    editar(caja)
-                  }}>
-                    <EditIcon />
-                  </IconButton>
-
-                  </TableCell>
+                    <IconButton onClick={() => {
+                      setCajaSelect(caja)
+                      setShowEdit(true)
+                    }}>
+                      <EditIcon />
+                    </IconButton>
+                    </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
           )}
+
+      <EditarCajaSucursal
+        openDialog={showEdit}
+        setOpendialog={setShowEdit}
+        onClose={()=>{setShowEdit(false)}}
+        data={cajaSelect}
+        onUpdate={()=>{
+          cargarListado()
+          setShowEdit(false)
+        }}
+      />
+
     </Box>
   );
 };
