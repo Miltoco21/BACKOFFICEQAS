@@ -39,10 +39,13 @@ const Stock = () => {
       </Box>
 
       {/* Dialog para Ajuste de inventario */}
-      <Dialog open={openAjusteInventario} onClose={handleCloseAjusteInventario}>
-        
-          <AjusteInventario/>
-     
+      <Dialog
+        open={openAjusteInventario}
+        onClose={handleCloseAjusteInventario}
+        maxWidth="lg"
+        fullWidth
+      >
+        <AjusteInventario onClose={handleCloseAjusteInventario} />
       </Dialog>
     </>
   );
