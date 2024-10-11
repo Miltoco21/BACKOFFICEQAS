@@ -3,12 +3,14 @@ import Sale from './Sale.ts';
 import Sales from './Sales.ts';
 
 import BaseConfig from "../definitions/BaseConfig.ts";
+import Singleton from './Singleton.ts';
 
 
-class Model{
+class Model extends Singleton{
     sesion: StorageSesion;
 
     constructor(){
+        super()
         this.sesion = new StorageSesion(eval("this.__proto__.constructor.name"));
     }
 

@@ -1,0 +1,217 @@
+import React, { useState, useEffect, useContext } from "react";
+
+import { Grid, Paper, Dialog, Box, Typography } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+
+
+import InputName from "../Elements/Compuestos/InputName";
+import InputFile from "../Elements/Compuestos/InputFile"
+import SelectPasarela from "../Elements/Compuestos/SelectPasarela"
+import SelectImpresora from "../Elements/Compuestos/SelectImpresora";
+
+import SendingButton from "../Elements/SendingButton";
+import User from "../../Models/User";
+import System from "../../Helpers/System";
+import Pasarela from "../../Models/Pasarela";
+import SelectSucursal from "../Elements/Compuestos/SelectSucursal";
+import TiposPasarela from "../../definitions/TiposPasarela";
+import SucursalCaja from "../../Models/SucursalCaja";
+
+export default function IngresoCajaSucursal({ 
+  onClose,
+  openDialog,
+  setOpendialog,
+  onCreate
+}) {
+  const { showLoading, hideLoading, showLoadingDialog, showMessage } =
+    useContext(SelectedOptionsContext);
+
+  var states = {
+    nombre:useState(""),
+    sucursal:useState(""),
+    // tipoImpresion:useState(""),
+    // certificado:useState(""),
+    // pasarela:useState(""),
+
+
+   
+  };
+
+  var validatorStates = {
+    
+    nombre: useState(null),
+    sucursal: useState(null),
+    // certificado: useState(null),
+    // tipoImpresion: useState(null),
+    // pasarela: useState(null),
+
+    
+    
+  };
+
+  const handleSubmit = async () => {
+    if (!System.allValidationOk(validatorStates, showMessage)) {
+      return false;
+    }
+    const data = {
+      "idCaja": 0,
+      "idSucursal": states.sucursal[0],
+      "puntoVenta": states.nombre[0],
+      "idSucursalPvTipo": TiposPasarela.CAJA,
+      "fechaIngreso": System.getInstance().getDateForServer(),
+      "fechaUltAct": System.getInstance().getDateForServer(),
+      "puntoVentaConfiguracions": [
+      ]
+    };
+
+    // console.log("Datos antes de enviar:", data);
+    showLoading("Enviando...");
+    const caj = new SucursalCaja()
+    caj.add(data,(responseData)=>{
+      hideLoading();
+      showMessage(responseData.descripcion)
+      onCreate()
+    },(error)=>{
+      hideLoading();
+      showMessage(error)
+    })
+  };
+
+
+  return (
+    <Dialog
+      open={openDialog}
+      onClose={() => {
+        setOpendialog(false);
+        onClose();
+      }}
+      maxWidth={"md"}
+    >
+      <Paper elevation={16} square>
+        <Grid container spacing={2} sx={{ padding: "2%" }} >
+          <Grid item xs={12}>
+            <h2>Ingreso Caja Sucursal</h2>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+          <InputName
+              inputState={states.nombre}
+              fieldName="Descripcion"
+              required={true}
+              validationState={validatorStates.nombre}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+          <SelectSucursal
+              inputState={states.sucursal}
+              fieldName="Sucursal"
+              required={true}
+              validationState={validatorStates.sucursal}
+            />
+          </Grid>
+
+          <Box sx={{ 
+            display: "flex",
+            border: "1px solid dimgray",
+            backgroundColor:"#F7F7F7",
+            borderRadius:"3px",
+            marginLeft:"15px",
+            marginTop:"20px",
+            padding:"20px"
+            }}>
+
+            <Grid container spacing={2} sx={{ padding: "2%" }}>
+              <Grid item xs={12} sm={12} md={12} lg={12}>
+                <Typography>Redelcom</Typography>
+              </Grid>
+
+              <br/>
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <InputName
+                  inputState={states.cliente_id}
+                  required={true}
+                  fieldName="cliente id"
+                  validationState={validatorStates.cliente_id}
+                  />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <InputName
+                  inputState={states.secret}
+                  required={true}
+                  fieldName="secret"
+                  validationState={validatorStates.secret}
+                  />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <InputName
+                  inputState={states.baseurl}
+                  required={true}
+                  fieldName="baseurl"
+                  validationState={validatorStates.baseurl}
+                  />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <InputName
+                  inputState={states.sNumber}
+                  required={true}
+                  fieldName="sNumber"
+                  validationState={validatorStates.sNumber}
+                  />
+              </Grid>
+            </Grid>
+          </Box>
+
+
+          {/* <Grid item xs={12} md={6}>
+            <InputFile
+              inputState={states.certificado}
+              fieldName="Certificado Digital"
+              required={true}
+              validationState={validatorStates.certificado}
+            />
+          </Grid> */}
+
+
+          {/* <Grid item xs={12} md={6}>
+            <SelectImpresora
+              inputState={states.tipoImpresion}
+              label="Selecciona tipo de impresion"
+              required={true}
+              validationState={validatorStates.tipoImpresion}
+            />
+          </Grid> */}
+          
+          {/* <Grid item xs={12} md={6}sx={{marginBottom:"6px"}}>
+            <SelectPasarela
+              inputState={states.pasarela}
+              fieldName="Selecciona Pasarela"
+              required={true}
+              validationState={validatorStates.pasarela}
+              
+            />
+
+            <br/>
+            <br/>
+          </Grid> */}
+         
+
+          <SendingButton
+            textButton="Guardar Caja"
+            actionButton={handleSubmit}
+            sending={showLoadingDialog}
+            sendingText="Registrando..."
+            style={{
+              width: "50%",
+              margin: "0 25%",
+              backgroundColor: "#950198",
+            }}
+          />
+        </Grid>
+      </Paper>
+    </Dialog>
+  );
+}
