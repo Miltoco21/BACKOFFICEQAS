@@ -108,12 +108,12 @@ const AjusteInventario = ({ onClose }) => {
         </Grid>
         <Grid item xs={12}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
+            {/* <DatePicker
               label="Fecha Ajuste"
-              value={fechaAjuste}
+         
               onChange={(newValue) => setFechaAjuste(newValue)}
               renderInput={(params) => <TextField {...params} fullWidth />}
-            />
+            /> */}
           </LocalizationProvider>
         </Grid>
         <Grid item xs={12}>

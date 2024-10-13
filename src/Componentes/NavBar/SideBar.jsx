@@ -29,6 +29,7 @@ import FactCheckIcon from '@mui/icons-material/FactCheck';
 import { Button, IconButton, Typography } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
 
 import ScreenDialogConfig from "../ScreenDialog/AdminConfig";
 import CONSTANTS from "../../definitions/Constants";
@@ -105,6 +106,8 @@ export default function PermanentDrawerLeft() {
           text: "Ajuste de Stock",
           link: "/stock",
           icon: <ListAltIcon />,
+          subMenuItems: [
+            { text: "Entrada y Salida de Stock ", link: "/stock/entradasalidastock",icon: <ImportExportIcon/>},]
           
         },
 

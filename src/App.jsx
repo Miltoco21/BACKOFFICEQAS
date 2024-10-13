@@ -37,6 +37,7 @@ import RankingProductos from './Pages/RankingProductos';
 import RankingLibroVentas from './Pages/RankingLibroVentas';
 import RankingLibroCompras from './Pages/RankingLibroCompras';
 import Stock from './Pages/Stock/';
+import EntradaSalidaStock from './Pages/EntradaSalidaStock';
 
 import { SelectedOptionsProvider } from "./Componentes/Context/SelectedOptionsProvider";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -79,6 +80,8 @@ function App() {
             <Route path="reportes/rankinglibroventas" element={<RankingLibroVentas />} />
             <Route path="reportes/rankinglibrocompras" element={<RankingLibroCompras />} />
             <Route path="stock" element={<Stock />} />
+            <Route path="stock/entradasalidastock" element={<EntradaSalidaStock />} />
+
             <Route path="stockmobile" element={<StockMobile />} />
           </Routes>
         </SelectedOptionsProvider>
