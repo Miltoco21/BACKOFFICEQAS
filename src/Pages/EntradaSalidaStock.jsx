@@ -40,17 +40,18 @@ const EntradaSalidaStock = ({ onClose }) => {
       return;
     }
 
-    const ajusteInventario = {
-      stockSistema: stockSistema,
+    const ajusteEntradaSalida = {
+     
       stockFisico: stockFisico + "",
       fechaAjuste: fechaAjuste ? fechaAjuste.format("YYYY-MM-DD") : "",
       tipoAjuste: ajusteType, // Agregar el tipo de ajuste
+      ajusteDescripcion:ajusteDescripcion
     };
 
-    console.log("Datos antes de enviar:", ajusteInventario);
+    console.log("Datos antes de enviar:", ajusteEntradaSalida);
     showLoadingDialog("Enviando...");
     System.getInstance().add(
-      ajusteInventario,
+      ajusteEntradaSalida,
       (res) => {
         hideLoading();
         showMessage("Ajuste de Inventario creado exitosamente");
@@ -186,7 +187,7 @@ const EntradaSalidaStock = ({ onClose }) => {
                 fullWidth
                 multiline
                 rows={4}
-                label={`Justificación para el ajuste de ${ajusteType}`}
+                label={`Glosa para el ajuste de ${ajusteType}`}
                 value={ajusteDescripcion}
                 onChange={(e) => setAjusteDescripcion(e.target.value)}
                 placeholder="Escribe una justificación o descripción del ajuste..."
