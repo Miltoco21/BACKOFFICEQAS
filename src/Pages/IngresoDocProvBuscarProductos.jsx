@@ -302,6 +302,11 @@ const IngresoDocProvBuscarProductos = ({
     }
   };
 
+
+  const handleDesasociar = (prod)=>{
+    showMessage("En desarrollo...")
+  }
+
   return (
     <>
         <Grid item xs={12} sm={12} md={12} lg={12}
@@ -437,6 +442,7 @@ const IngresoDocProvBuscarProductos = ({
                       Asociar y Agregar
                       </Button>
                     ) : (
+                      <>
                       <Button
                       onClick={() => {
                         onAddProduct(product)
@@ -447,6 +453,19 @@ const IngresoDocProvBuscarProductos = ({
                       >
                       Agregar
                       </Button>
+
+                      <Button
+                      sx={{
+                        backgroundColor:"red"
+                      }}
+                      onClick={() => {
+                        handleDesasociar(product)
+                      }}
+                      variant="contained"
+                      >
+                      Desasociar
+                      </Button>
+                      </>
                     )} 
 
 

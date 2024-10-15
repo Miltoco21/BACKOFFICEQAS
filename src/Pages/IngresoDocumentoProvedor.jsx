@@ -433,7 +433,7 @@ const IngresoDocumentoProveedor = () => {
         </Button>
 
         <SearchListDocumento/>
-        <Dialog open={open} fullWidth maxWidth={"md"}
+        <Dialog open={open} fullWidth maxWidth={"lg"}
           PaperProps={{
             sx: {
               height: "90%"
@@ -665,14 +665,19 @@ const IngresoDocumentoProveedor = () => {
                     {selectedProducts.map((product, index) => (
                       <TableRow key={index}>
                         <TableCell>
-                          <Typography>{product.nombre}</Typography>
-                          {product.codigoInternoProveedor && (
-                            <Typography sx={{
-                              backgroundColor:"#ebffcc",
-                              display:"inline-block",
-                              padding:"10px"
-                            }}>Int.{product.codigoInternoProveedor}</Typography>
-                          )}
+                          <Typography sx={{
+                            display:"inline-block",
+                            fontSize:"12px"
+                          }} variant="p">{product.nombre.substr(0,10) + '...'}
+                          
+                            {product.codigoInternoProveedor && (
+                              <Typography sx={{
+                                backgroundColor:"#ebffcc",
+                                display:"inline-block",
+                                padding:"10px"
+                              }} variant="span">Int.{product.codigoInternoProveedor}</Typography>
+                            )}
+                          </Typography>
                         </TableCell>
                         <TableCell>
                           {/* {product.precioCosto} */}
@@ -716,6 +721,9 @@ const IngresoDocumentoProveedor = () => {
                             }}
                             variant="contained"
                             color="error"
+                            sx={{
+                              fontSize:"10.5px"
+                            }}
                           >
                             Ajuste precios
                           </Button>
