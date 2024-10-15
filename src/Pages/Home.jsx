@@ -17,6 +17,7 @@ import User from '../Models/User';
 import LongClick from '../Helpers/LongClick';
 import SucursalCaja from '../Models/SucursalCaja';
 import System from '../Helpers/System';
+import CardSemaforo from '../Componentes/Home/CardSemaforo';
 
 const defaultTheme = createTheme();
 
@@ -86,6 +87,10 @@ const Home = ({}) => {
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
 
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+              <CardSemaforo/>
+          </Grid>
+
           <Grid item xs={12} sm={12} md={6} lg={6}>
               <CardTotalCompras/>
           </Grid>
@@ -93,6 +98,7 @@ const Home = ({}) => {
           <Grid item xs={12} sm={12} md={6} lg={6}>
               <CardTotalVentas/>
           </Grid>
+          
 
 
           <Grid item xs={12} sm={12} md={12} lg={12}>

@@ -4,6 +4,8 @@ import Sales from './Sales.ts';
 
 import BaseConfig from "../definitions/BaseConfig.ts";
 import Singleton from './Singleton.ts';
+import ModelConfig from './ModelConfig.ts';
+import EndPoint from './EndPoint.ts';
 
 
 class Model extends Singleton{
@@ -32,6 +34,13 @@ class Model extends Singleton{
         }
         return values
     }
+
+    static async getConexion(callbackOk, callbackWrong){
+        const url = ModelConfig.get("urlBase") + "/Cajas/EstadoApi"
+        EndPoint.sendGet(url,(responseData, response)=>{
+          callbackOk(responseData.sucursals, response)
+        },callbackWrong)
+      }
 
 
 };
