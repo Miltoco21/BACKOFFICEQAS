@@ -15,6 +15,8 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import User from '../Models/User';
 import LongClick from '../Helpers/LongClick';
+import SucursalCaja from '../Models/SucursalCaja';
+import System from '../Helpers/System';
 
 const defaultTheme = createTheme();
 
@@ -29,6 +31,8 @@ const Home = ({}) => {
   const [usuarios, setUsuarios] = useState([])
   const [usuariosActivos, setUsuariosActivos] = useState([])
   const [usuariosInactivos, setUsuariosInactivos] = useState([])
+  
+  const [estadoCajas, setEstadoCajas] = useState([])
 
   const clasificaUsuarios = (usus)=>{
     console.log("clasificando", usus)
@@ -53,8 +57,16 @@ const Home = ({}) => {
     },()=>{})
   }
 
+  const fetchEstadosCajas = ()=>{
+    SucursalCaja.getInstance().getEstados((data)=>{
+      console.log("estados de la caja",data.cajaTurnoEstados)
+      setEstadoCajas(data.cajaTurnoEstados)
+    },()=>{})
+  }
+
   useEffect(()=>{
     fetchUsuarios()
+    fetchEstadosCajas()
   },[])
 
   return (
@@ -152,6 +164,7 @@ const Home = ({}) => {
               </Box>
             )}
           </Grid>
+
           <Grid item xs={12} sm={12} md={12} lg={12}>
             {usuariosInactivos.length>0 && (
               <Box
@@ -185,6 +198,64 @@ const Home = ({}) => {
             )}
 
             </Grid>
+
+
+
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+            {estadoCajas.length>0 ? (
+              <Box
+              sx={{
+                bgcolor: "background.paper",
+                boxShadow: 2,
+                p: 4,
+                overflow: "auto", // Added scrollable feature
+                padding:"10px",
+              }}
+              >
+                <Typography variant='h5'>Estados Cajas</Typography>
+                { estadoCajas.map((estadoCaja,ix)=>(
+                  <div key={ix} style={{
+                    padding:"10px",
+                    margin:"3px",
+                    display:"inline-block",
+                    backgroundColor: ( estadoCaja.cierreCaja  ? "#56D005" : "#E30202"),
+                    color: "#fff"
+                  }}>
+                  <Typography variant='p' sx={{ display:"block" }}>
+                    Sucursal {estadoCaja.codigoSucursal}
+                  </Typography>
+
+                  <Typography variant='p' sx={{ display:"block" }}>
+                    Caja {estadoCaja.puntoVenta}
+                  </Typography>
+
+                  <Typography variant='p' sx={{ display:"block" }}>
+                    Turno {estadoCaja.idTurno}
+                  </Typography>
+
+                  <Typography variant='p' sx={{ display:"block" }}>
+                    {estadoCaja.usuarioNombre} {estadoCaja.usuarioApellido}
+                  </Typography>
+
+                  <Typography variant='p' sx={{ display:"block" }}>
+                    {estadoCaja.cierreCaja ? "Con cierre" : "Sin cerrar"}
+                  </Typography>
+
+                  <Typography variant='p' sx={{ display:"block" }}>
+                    Fecha Ingreso {System.formatDateServer(estadoCaja.fechaIngreso)}
+                  </Typography>
+
+                  <Typography variant='p' sx={{ display:"block" }}>
+                    Fecha Termino {estadoCaja.fechaTermino === "1990-01-01T00:00:00" ? "-" : System.formatDateServer(estadoCaja.fechaTermino)}
+                  </Typography>
+                  </div>
+                  ))}
+                
+              </Box>
+            ): (
+              <Typography>No Hay</Typography>
+            )}
+          </Grid>
             
           </Grid>
         </Box>

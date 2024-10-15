@@ -150,6 +150,17 @@ class System {
         return allOk
       }
 
+      static formatDateServer(dateServer){
+        const v1 = dateServer.split("T")
+        const dt = v1[0]
+        const hrs = v1[1]
+        
+        const [year,month,day] = dt.split("-")
+        const [hr,mn] = hrs.split(":")
+
+        return day + "/" + month + "/" + year + " " + hr + ":" + mn 
+      }
+
 }
 
 
