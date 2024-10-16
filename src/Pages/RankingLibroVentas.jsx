@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Grid,
   Button,
@@ -29,8 +29,18 @@ import ModelConfig from "../Models/ModelConfig";
 import dayjs from "dayjs";
 import BoxSelectList from "../Componentes/Proveedores/BoxSelectList";
 import ReporteVenta from "../Models/ReporteVenta";
+import { SelectedOptionsContext } from "../Componentes/Context/SelectedOptionsProvider";
+import Sale from "../Models/Sale";
 
 const RankingLibroVentas = () => {
+
+  const {
+    userData,
+    showMessage,
+    showConfirm
+  } = useContext(SelectedOptionsContext);
+
+
   const apiUrl = ModelConfig.get().urlBase;
 
   const [startDate, setStartDate] = useState(null);
@@ -143,6 +153,19 @@ const RankingLibroVentas = () => {
   const handleDialogClose = () => {
     setOpenDialog(false);
     setSelectedProduct(null);
+  };
+
+  const handleBorradoLogico = (venta) => {
+    showConfirm("Cancelar la venta?",()=>{
+      Sale.borradoLogico(selectedProduct,(resul)=>{
+        showMessage(resul.descripcion)
+        setSelectedProduct(null)
+        setOpenDialog(false)
+        fetchData()
+      },(error)=>{
+        showMessage(error)
+      })
+    },()=>{})
   };
 
   const handleCheckboxChange = (event) => {
@@ -496,6 +519,17 @@ const RankingLibroVentas = () => {
           )}
         </DialogContent>
         <DialogActions>
+          <Button sx={{
+            backgroundColor:"#ee0000",
+            color:"#f0f0f0",
+            "&:hover":{
+              backgroundColor:"#FD2020",
+              color:"#fff"
+            }
+          }} onClick={handleBorradoLogico}>
+            Borrado logico
+          </Button>
+
           <Button onClick={handleDialogClose} color="primary">
             Cerrar
           </Button>
