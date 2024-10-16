@@ -79,7 +79,11 @@ class EndPoint extends Singleton {
 
   static async sendDelete(url, data, callbackOk, callbackWrong){
     try{
-      const response = await axios.delete(url,data);
+      console.log("ya envio la data", data)
+      const response = await axios.delete(url,
+        {
+          data: data,
+        });
       if (response.data.statusCode === 200 || response.data.statusCode === 201) {
         if(callbackOk != undefined) callbackOk(response.data, response)
       }else{

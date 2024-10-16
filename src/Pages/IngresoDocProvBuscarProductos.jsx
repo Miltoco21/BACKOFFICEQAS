@@ -304,7 +304,13 @@ const IngresoDocProvBuscarProductos = ({
 
 
   const handleDesasociar = (prod)=>{
-    showMessage("En desarrollo...")
+    Proveedor.disAssociateProduct(prod,{
+      codigoProveedor: selectedProveedor.codigoProveedor,
+      searchCodProv:searchCodProv
+    },()=>{
+      showMessage("Realizado correctamente")
+      setSearchedProducts([])
+    },showMessage)
   }
 
   return (
@@ -454,17 +460,17 @@ const IngresoDocProvBuscarProductos = ({
                       Agregar
                       </Button>
 
-                      <Button
-                      sx={{
-                        backgroundColor:"red"
-                      }}
-                      onClick={() => {
-                        handleDesasociar(product)
-                      }}
-                      variant="contained"
-                      >
-                      Desasociar
-                      </Button>
+                      { searchCodProv != '' &&(
+                          <Button
+                          sx={{
+                            backgroundColor:"red"
+                          }}
+                          onClick={() => {
+                            handleDesasociar(product)
+                          }}
+                          variant="contained"
+                          >Desasociar</Button>
+                      ) }
                       </>
                     )} 
 

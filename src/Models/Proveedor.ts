@@ -3,6 +3,7 @@ import Model from './Model.ts';
 import BaseConfig from "../definitions/BaseConfig.ts";
 import axios from 'axios';
 import ModelConfig from './ModelConfig.ts';
+import EndPoint from './EndPoint.ts';
 
 
 class Proveedor extends Model{
@@ -190,6 +191,25 @@ class Proveedor extends Model{
     },(error)=>{
       callbackWrong(error)
     })
+  }
+
+  static disAssociateProduct(product, {
+    codigoProveedor,
+    searchCodProv,
+  }, callbackOk, callbackWrong){
+
+    const data = [
+      {
+        "codigoProveedor": codigoProveedor,
+        "codigoSegunProveedor": searchCodProv + "",
+        "codBarra": product.idProducto + "",
+      }
+    ]
+    
+    const url = ModelConfig.get("urlBase") + "/ProductosTmp/DeleteProductosByCodigoSegunProveedor"
+    EndPoint.sendDelete(url,data,(responseData, response)=>{
+      callbackOk(responseData, response)
+    },callbackWrong)
   }
 
 };

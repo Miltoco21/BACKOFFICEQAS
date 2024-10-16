@@ -161,6 +161,23 @@ class System {
         return day + "/" + month + "/" + year + " " + hr + ":" + mn 
       }
 
+      static maxStr(str,max,completarConPuntos = true){
+        var txt = str
+        console.log("original largo", txt.length)
+
+        //max = 10..str=carambolazo..11 deberia quedar asi 'carambo...'
+        if(str.length>max){
+            if(completarConPuntos){
+                txt = txt.substring(0, max - 3) + "..."
+            }else{
+                txt = txt.substring(0, max)
+            }
+        }
+        console.log("devuelve cortado", txt)
+        console.log("largo cortado", txt.length)
+        return txt
+      }
+
 }
 
 

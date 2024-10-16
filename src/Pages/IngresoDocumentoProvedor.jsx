@@ -23,6 +23,7 @@ import {
   DialogContent,
   Typography,
   DialogActions,
+  Tooltip,
 } from "@mui/material";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -667,8 +668,14 @@ const IngresoDocumentoProveedor = () => {
                         <TableCell>
                           <Typography sx={{
                             display:"inline-block",
+                            cursor:"default",
                             fontSize:"12px"
-                          }} variant="p">{product.nombre.substr(0,10) + '...'}
+                          }} variant="p">
+
+                            <Tooltip title={product.nombre}>
+                              
+                            { System.maxStr(product.nombre,10) }
+
                           
                             {product.codigoInternoProveedor && (
                               <Typography sx={{
@@ -677,6 +684,8 @@ const IngresoDocumentoProveedor = () => {
                                 padding:"10px"
                               }} variant="span">Int.{product.codigoInternoProveedor}</Typography>
                             )}
+
+                            </Tooltip>
                           </Typography>
                         </TableCell>
                         <TableCell>

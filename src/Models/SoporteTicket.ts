@@ -39,7 +39,7 @@ class SoporteTicket extends Singleton {
     }
     console.log("informacion del soporte", data)
 
-    // this.enviarError(data, ()=>{}, ()=>{})
+    this.enviarError(data, ()=>{}, ()=>{})
   }
   
   static catchRequestError(error:any){
@@ -78,7 +78,7 @@ class SoporteTicket extends Singleton {
     }
     console.log("informacion del soporte", data)
 
-    // this.enviarError(data, ()=>{}, ()=>{})
+    this.enviarError(data, ()=>{}, ()=>{})
   }
 
   static async enviarError(data,callbackOk, callbackWrong){
