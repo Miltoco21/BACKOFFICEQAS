@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import {
   Paper,
   Grid,
@@ -76,6 +76,8 @@ const IngresoDocProvBuscarProductos = ({
     DESCRIPCION : 3,
   }
   
+  const refSearch = useRef(null)
+
   
   const buscarProductosGeneralesPorCodigoBarras = (callbackFail)=>{
     showLoading("Buscando por codigo barra")
@@ -368,7 +370,7 @@ const IngresoDocProvBuscarProductos = ({
               borderRadius: "5px",
             }}
             fullWidth
-            placeholder={(tipoBuscar == 0 || tipoBuscar ==2) ? "Ingresa Código" : "Ingresar Descripción"}
+            placeholder={(tipoBuscar == 0 || tipoBuscar ==2) ? "Ingresar Código" : "Ingresar Descripción"}
             value={searchProd}
             onChange={(e) => setSearchProd(e.target.value)}
             onKeyDown={(e) => {
@@ -376,6 +378,8 @@ const IngresoDocProvBuscarProductos = ({
                 buscarProductos();
               }
             }}
+
+            ref={refSearch}
           />
           {(associating) &&(
 
