@@ -179,31 +179,27 @@ class User extends Model{
         },callbackWrong)
     }
 
-
     async getAll(callbackOk, callbackWrong){
-        try {
-            const configs = ModelConfig.get()
-            var url = configs.urlBase
-            + "/Usuarios/GetAllUsuarios"
-            const response = await axios.get(url);
-            if (
-            response.data.statusCode === 200
-            || response.data.statusCode === 201
-            ) {
-            // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
-            callbackOk(response.data.usuarios, response)
-            } else {
-            callbackWrong("Respuesta desconocida del servidor")
+        User.getAll(callbackOk,callbackWrong)
+    }
+
+
+    static async doLoginServer(data,callbackOk, callbackWrong){
+        const configs = ModelConfig.get()
+        var url = configs.urlBase
+        +"/Usuarios/LoginUsuario"
+
+        EndPoint.sendPost(url,data,(responseData, response)=>{
+            if (response.data.responseUsuario && response.data.responseUsuario.codigoUsuario !== -1) {
+                callbackOk(responseData, response);
+            }else{
+                if(responseData.descripcion){
+                    callbackWrong(responseData.descripcion)
+                }else{
+                    callbackWrong("Usuario incorrecto")
+                }
             }
-        } catch (error) {
-            if (error.response && error.response.status && error.response.status === 409) {
-                callbackWrong(error.response.descripcion)
-            } else {
-                callbackWrong(error.message)
-              }
-
-
-        }
+        },callbackWrong)
     }
 
 

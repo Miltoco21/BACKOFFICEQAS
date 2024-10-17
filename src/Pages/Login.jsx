@@ -46,66 +46,35 @@ const Login = () => {
     ModelConfig.getInstance().getFirst()
   },[])
 
-  // useEffect(() => {
-  //   // Verificar si hay datos en sessionStorage y redirigir a /home si existen
-  //   const userData = sessionStorage.getItem("userData");
-  //   if (userData) {
-  //     navigate("/home");
-  //   }
-  // }, [navigate]);
-
   const handleLogin = async () => {
-    try {
-      if (!rutOrCode || !password) {
-        setError("Por favor, completa ambos campos.");
-        return;
-      }
-      setLoading(true);
-
-      const data = {
-        codigoUsuario: 0,
-        rut: "",
-        clave: password,
-      }
-
-      if(rutOrCode.indexOf("-")>-1){
-        data.rut = rutOrCode
-      }else{
-        data.codigoUsuario = parseInt(rutOrCode)
-      }
-
-      const response = await axios.post(`${apiUrl}/Usuarios/LoginUsuario`, data);
-
-      if (response.data.responseUsuario && response.data.responseUsuario.codigoUsuario !== -1) {
-        const userOk = response.data.responseUsuario
-        setUserData(userOk);
-        // console.log(userOk);
-        // Guardar datos en sessionStorage
-        // const userOkStr = JSON.stringify(userOk)
-        // sessionStorage.setItem(
-        //   "userData",
-        //   userOkStr
-        // );
-        // console.log("user loguado:")
-        // console.log(userOk)
-        User.getInstance().saveInSesion(userOk)
-
-        navigate("/home");
-
-        // console.log("despues del navigate")
-      } else if (response.data.responseUsuario.codigoUsuario === -1) {
-        setError("Usuario no encontrado. Verifica tus credenciales.");
-      } else {
-        setError("Error de inicio de sesión. Verifica tus credenciales.");
-      }
-    } catch (error) {
-      console.error("Error al intentar iniciar sesión:", error);
-      setError(
-        "Error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde."
-      );
-    } finally {
-      setLoading(false);
+    if (!rutOrCode || !password) {
+      setError("Por favor, completa ambos campos.");
+      return;
     }
+    setLoading(true);
+
+    const data = {
+      codigoUsuario: 0,
+      rut: "",
+      clave: password,
+    }
+
+    if(rutOrCode.indexOf("-")>-1){
+      data.rut = rutOrCode
+    }else{
+      data.codigoUsuario = parseInt(rutOrCode)
+    }
+
+    User.doLoginServer(data,(responseData, response)=>{
+      const userOk = responseData.responseUsuario
+      setUserData(userOk);
+      User.getInstance().saveInSesion(userOk)
+      navigate("/home");
+      setLoading(false);
+    },(err)=>{
+      setError(err)
+      setLoading(false);
+    })
   };
 
   const handleTogglePasswordVisibility = () => {
