@@ -18,6 +18,7 @@ import LongClick from '../Helpers/LongClick';
 import SucursalCaja from '../Models/SucursalCaja';
 import System from '../Helpers/System';
 import CardSemaforo from '../Componentes/Home/CardSemaforo';
+import CardUsuariosActivos from '../Componentes/Home/CardUsuariosActivos';
 
 const defaultTheme = createTheme();
 
@@ -30,7 +31,6 @@ const Home = ({}) => {
   } = useContext(SelectedOptionsContext);
 
   const [usuarios, setUsuarios] = useState([])
-  const [usuariosActivos, setUsuariosActivos] = useState([])
   const [usuariosInactivos, setUsuariosInactivos] = useState([])
   
   const [estadoCajas, setEstadoCajas] = useState([])
@@ -46,8 +46,7 @@ const Home = ({}) => {
         ususInact.push(usu)
       }
     })
-
-    setUsuariosActivos(ususAct)
+    
     setUsuariosInactivos(ususInact)
   }
 
@@ -102,73 +101,7 @@ const Home = ({}) => {
 
 
           <Grid item xs={12} sm={12} md={12} lg={12}>
-            {usuariosActivos.length>0 && (
-              <Box
-              sx={{
-                bgcolor: "background.paper",
-                boxShadow: 2,
-                p: 4,
-                overflow: "auto", // Added scrollable feature
-                padding:"10px",
-              }}
-              >
-                <Typography variant='h5'>Usuarios Activos</Typography>
-                { usuariosActivos.map((usu,ix)=>{
-                  const longBoleta = new LongClick(1);
-                  longBoleta.onClick(()=>{
-                    // alert("click normal")
-                  })
-                  longBoleta.onLongClick(()=>{
-                    showConfirm("Cerrar la sesion de " + usu.nombres+ " " + usu.apellidos + "?",()=>{
-                      const user = new User()
-                      user.fill(usu)
-                      user.doLogoutInServer(()=>{
-                        showMessage("Realizado correctamente")
-                        fetchUsuarios()
-                      },()=>{
-                        showMessage("no se pudo realizar")
-                      })
-                    })
-                  })
-                  return (
-                  <Typography sx={{
-                  borderRadius:"3px",
-                  padding:"10px",
-                  backgroundColor:"#E30202",
-                  color:"#FFFFFF",
-                  margin:"10px",
-                  cursor:"pointer",
-                  userSelect:"none",
-                  display:"inline-block"
-                }} key={ix} 
-                  onTouchStart={()=>{longBoleta.onStart()}}
-                  onMouseDown={()=>{longBoleta.onStart()}}
-                  onTouchEnd={()=>{longBoleta.onEnd()}}
-                  onMouseUp={()=>{longBoleta.onEnd()}}
-                  onMouseLeave={()=>{longBoleta.cancel()}}
-                  onTouchMove={()=>{longBoleta.cancel()}}
-                  >
-                  <Typography variant='p'>
-                    {usu.nombres} {usu.apellidos}
-                  </Typography>
-                  <Typography variant='p' sx={{ display:"block" }}>
-                    Cod. {usu.codigoUsuario}
-                  </Typography>
-                  <Typography variant='p' sx={{ display:"block" }}>
-                    Sucursal {usu.codigoSucursal}
-                  </Typography>
-                  <Typography variant='p' sx={{ display:"block" }}>
-                    Caja {usu.puntoVenta}
-                  </Typography>
-                  { usu.inicioCaja && (
-                      <Typography variant='p' sx={{ display:"block" }}>
-                      Caja iniciada
-                    </Typography>
-                  ) }
-                </Typography>) }
-                )}
-              </Box>
-            )}
+            <CardUsuariosActivos />
           </Grid>
 
           <Grid item xs={12} sm={12} md={12} lg={12}>

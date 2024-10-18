@@ -171,9 +171,6 @@ class User extends Model{
         var url = configs.urlBase
         +"/Usuarios/GetAllUsuarios"
 
-        // url += "?codigoSucursal=" + ModelConfig.get("sucursal")
-        // url += "&puntoVenta=" + ModelConfig.get("puntoVenta")
-        
         EndPoint.sendGet(url,(responseData, response)=>{
             callbackOk(responseData.usuarios, response);
         },callbackWrong)
@@ -202,6 +199,15 @@ class User extends Model{
         },callbackWrong)
     }
 
+    static async getActivos(callbackOk, callbackWrong){
+        const configs = ModelConfig.get()
+        var url = configs.urlBase
+        +"/Usuarios/GetUsuariosActivos"
+
+        EndPoint.sendGet(url,(responseData, response)=>{
+            callbackOk(responseData.usuariosActivos, response);
+        },callbackWrong)
+    }
 
 };
 
