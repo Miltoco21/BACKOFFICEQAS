@@ -1,30 +1,27 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext, useEffect } from 'react';
 import { Card, CardContent, CardActions, Button, Typography } from '@mui/material';
-import { CircularProgress,  } from '@mui/material';
-import { useNavigate } from "react-router-dom";
-import ModelConfig from '../../Models/ModelConfig';
-import dayjs from 'dayjs';
-import axios from 'axios';
-import ReporteVenta from '../../Models/ReporteVenta';
 import Model from '../../Models/Model';
+import dayjs from 'dayjs';
 
 export default function({
 }) {
-  const navigate = useNavigate();
-  const apiUrl = ModelConfig.get().urlBase;
+
+  const INTERVAL = 5 * 60 * 1000
 
   const [estado, setEstado] = useState(null)
   const [intControl, setIntControl] = useState(null)
+  const [ultimoCheck, setultimoCheck] = useState("")
+
 
   const fetchData = async () => 
   {
     Model.getConexion(()=>{
       setEstado(1)
-      console.log("conexion ok")
+      setultimoCheck(dayjs().format("HH:mm") + "hs")
     },(err)=>{
-      console.log("error en conexion", err)
       setEstado(0)
+      setultimoCheck(dayjs().format("HH:mm") + "hs")
     })
   };
 
@@ -33,7 +30,7 @@ export default function({
     if(intControl === null){
       setIntControl(setInterval(() => {
         fetchData()
-      }, 5 * 1000))
+      }, INTERVAL))
     }
   },[])
 
@@ -42,7 +39,7 @@ export default function({
         <CardContent>
           <Typography variant="body-md">Conexion</Typography>
           {estado !== null &&(
-            <Typography variant="body-md"
+          <Typography variant="p"
             sx={{
               padding:"10px",
               margin:"10px",
@@ -50,7 +47,14 @@ export default function({
               color:"#fff",
               borderRadius:"5px"
             }}
-            >{ estado ? "CONECTADO": "SIN CONEXION" }</Typography>
+            >{ estado ? "CONECTADO": "SIN CONEXION" } 
+            <Typography sx={{
+              margin:"0 10px"
+            }}
+            variant='span'>
+            {ultimoCheck}
+            </Typography>
+          </Typography>
           )}
         </CardContent>
     </Card> 
