@@ -10,50 +10,63 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import User from "../../Models/User";
+import Stock from "../../Models/Stock";
 
 const AjusteInventario = ({ onClose }) => {
-  const { showLoadingDialog, hideLoading, showMessage } = useContext(SelectedOptionsContext);
+  const { showLoading, hideLoading, showMessage } = useContext(SelectedOptionsContext);
 
-  // Definir los estados
-  const [stockSistema, setStockSistema] = useState("");
-  const [stockFisico, setStockFisico] = useState("");
-  const [fechaAjuste, setFechaAjuste] = useState(null);
-  const [validationStockFisico, setValidationStockFisico] = useState({});
-  const [validationStockSistema, setValidationStockSistema] = useState({ error: false, message: '' });
+  var states = {
+    stockFisico: useState(""),
+  }
+  
+  var validatorStates = {
+    stockFisico: useState(null),
+  }
 
   const [selectedProduct, setSelectedProduct] = useState(null); // Para almacenar el producto seleccionado
   
   const handleProductSelect = (product) => {
     // Actualizar el estado del stockSistema y almacenar el producto seleccionado
     setSelectedProduct(product)
-    setStockSistema(product.stockActual);
-    ; // Almacenar el producto seleccionado
     console.log("Producto seleccionado:", product);
+    states.stockFisico[1](product.stockActual)
   };
 
-
   const handleSubmit = async () => {
+    if(states.stockFisico[0] === selectedProduct.stockActual){
+      showMessage("Debe ingresar un valor distinto al del sistema")
+      return
+    }
     // Validar antes de enviar
-    if (!System.allValidationOk({ stockSistema, stockFisico, fechaAjuste }, showMessage)) {
-      return;
+    if(!System.allValidationOk(validatorStates,showMessage)){
+      return false
     }
 
-    const ajusteInventario = {
-      stockSistema: stockSistema,
-      stockFisico: stockFisico + "",
-      fechaAjuste: fechaAjuste.format("YYYY-MM-DD"),
-    };
+    const data = {
+      "observacion": "AJUSTE INVENTARIO",
+      "idUsuario": User.getInstance().getFromSesion().codigoUsuario,
+      "fechaIngreso": System.getInstance().getDateForServer(),
+      "stockMovimientos": [
+        {
+          "cantidad": parseFloat(states.stockFisico[0]),
+          "codProducto": selectedProduct.idProducto + ""
+        }
+      ]
+    }
 
-    console.log("Datos antes de enviar:", ajusteInventario);
+
+
+    console.log("Datos antes de enviar:", data)
     showLoading("Enviando...");
-    System.getInstance().add(
-      ajusteInventario,
+    Stock.ajusteInventario(
+      data,
       (res) => {
         hideLoading();
-        showMessage("Ajuste de Inventario creado exitosamente");
+        showMessage("realizado exitosamente");
         setTimeout(() => {
           onClose();
-        }, 2000);
+        }, 1000);
       },
       (error) => {
         hideLoading();
@@ -66,7 +79,7 @@ const AjusteInventario = ({ onClose }) => {
     <Paper elevation={16} square sx={{ padding: "2%" }}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <h2>Ingreso Ajuste Inventario</h2>
+          <h2>Ajuste Inventario</h2>
         </Grid>
         <Grid item xs={12}>
           {/* SearchProducts ahora pasa el producto seleccionado */}
@@ -74,32 +87,24 @@ const AjusteInventario = ({ onClose }) => {
         </Grid>
               {/* Mostrar detalles del producto seleccionado */}
               {selectedProduct && (
-          <Grid item xs={12}>
-            <Box sx={{ border: '1px solid #ddd', padding: 2, borderRadius: 2, marginTop: 2 }}>
-              <Typography variant="h6"> Producto Seleccionado:</Typography>
-              <Typography>Nombre: {selectedProduct.nombre}</Typography>
-            
-              <Typography>Stock Actual: {selectedProduct.stockActual}</Typography>
-            </Box>
-          </Grid>
-        )}
-        <Grid item xs={12} md={6}>
-        <InputNumber
-    inputState={[stockSistema, setStockSistema]} // Asegúrate de que esto es un array
-    validationState={[validationStockSistema, setValidationStockSistema]} // Asegúrate de que esto es un array
-    withLabel={true}
-    fieldName="stockSistema"
-    label="Stock Sistema"
-    required={true}
-    disabled={true} // Esto hace que el campo sea solo de lectura
-  />
-
-        </Grid>
-        <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={12} md={6} lg={6} >
+                <Box sx={{ 
+                  border: '1px solid #ddd',
+                  padding: 2,
+                  borderRadius: 2,
+                  }}>
+                  <Typography variant="h6"> Producto Seleccionado:</Typography>
+                  <Typography>Nombre: {selectedProduct.nombre}</Typography>
+                
+                  <Typography>Stock en sistema: {selectedProduct.stockActual}</Typography>
+                </Box>
+              </Grid>
+            )}
+          <Grid item xs={12} sm={12} md={6} lg={6} >
           {/* Reemplazamos el TextField con el InputNumber para Stock Físico */}
           <InputNumber
-            inputState={[stockFisico, setStockFisico]}
-            validationState={[validationStockFisico, setValidationStockFisico]}
+            inputState={states.stockFisico}
+            validationState={validatorStates.stockFisico}
             withLabel={true}
             fieldName="stockFisico"
             label="Stock Físico"
@@ -107,29 +112,18 @@ const AjusteInventario = ({ onClose }) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            {/* <DatePicker
-              label="Fecha Ajuste"
-         
-              onChange={(newValue) => setFechaAjuste(newValue)}
-              renderInput={(params) => <TextField {...params} fullWidth />}
-            /> */}
-          </LocalizationProvider>
-        </Grid>
-        <Grid item xs={12}>
-          {/* Botón de Enviar */}
-
           <SendingButton
-              textButton=" Guardar Ajustes"
-              actionButton={handleSubmit}
-              sending={showLoadingDialog}
-              sendingText="Registrando..."
-              style={{
-                width:"50%",
-                margin: "0 25%",
-                backgroundColor:"#950198"
-              }}
-            />        </Grid>
+            textButton=" Aplicar Ajuste"
+            actionButton={handleSubmit}
+            sending={false}
+            sendingText="Registrando..."
+            style={{
+              width:"50%",
+              margin: "0 25%",
+              backgroundColor:"#950198"
+            }}
+          />
+        </Grid>
       </Grid>
     </Paper>
   );
