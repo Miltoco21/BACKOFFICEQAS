@@ -13,6 +13,7 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
 
 export default function({
+  setActivos = ()=>{}
 }) {
   const {
     userData,
@@ -25,6 +26,7 @@ export default function({
   const fetchInfo = ()=>{
     User.getActivos((usuariosx)=>{
       setUsuariosActivos(usuariosx)
+      setActivos(usuariosx)
     },()=>{})
   }
 
@@ -64,9 +66,10 @@ export default function({
           <Typography sx={{
           borderRadius:"3px",
           padding:"10px",
-          backgroundColor:"#E30202",
-          color:"#FFFFFF",
+          backgroundColor:"#ffde06",
+          color:"#000",
           margin:"10px",
+          border:"1px solid #000",
           cursor:"pointer",
           userSelect:"none",
           display:"inline-block"

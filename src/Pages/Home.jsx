@@ -19,6 +19,7 @@ import SucursalCaja from '../Models/SucursalCaja';
 import System from '../Helpers/System';
 import CardSemaforo from '../Componentes/Home/CardSemaforo';
 import CardUsuariosActivos from '../Componentes/Home/CardUsuariosActivos';
+import CardUsuariosInactivos from '../Componentes/Home/CardUsuariosInactivos';
 
 const defaultTheme = createTheme();
 
@@ -29,33 +30,10 @@ const Home = ({}) => {
     showMessage,
     showConfirm
   } = useContext(SelectedOptionsContext);
-
-  const [usuarios, setUsuarios] = useState([])
-  const [usuariosInactivos, setUsuariosInactivos] = useState([])
-  
   const [estadoCajas, setEstadoCajas] = useState([])
+  const [usuariosActivos, setUsuariosActivos] = useState([])
+  const [usuariosInactivos, setUsuariosInactivos] = useState([])
 
-  const clasificaUsuarios = (usus)=>{
-    console.log("clasificando", usus)
-    const ususAct = []
-    const ususInact = []
-    usus.forEach((usu,ix)=>{
-      if(usu.activo){
-        ususAct.push(usu)
-      }else{
-        ususInact.push(usu)
-      }
-    })
-    
-    setUsuariosInactivos(ususInact)
-  }
-
-  const fetchUsuarios = ()=>{
-    User.getInstance().getAll((usuariosx)=>{
-      setUsuarios(usuariosx)
-      clasificaUsuarios(usuariosx)
-    },()=>{})
-  }
 
   const fetchEstadosCajas = ()=>{
     SucursalCaja.getInstance().getEstados((data)=>{
@@ -65,7 +43,6 @@ const Home = ({}) => {
   }
 
   useEffect(()=>{
-    fetchUsuarios()
     fetchEstadosCajas()
   },[])
 
@@ -101,42 +78,12 @@ const Home = ({}) => {
 
 
           <Grid item xs={12} sm={12} md={12} lg={12}>
-            <CardUsuariosActivos />
+            <CardUsuariosActivos setActivos={setUsuariosActivos} />
           </Grid>
 
           <Grid item xs={12} sm={12} md={12} lg={12}>
-            {usuariosInactivos.length>0 && (
-              <Box
-              sx={{
-                bgcolor: "background.paper",
-                boxShadow: 2,
-                p: 4,
-                overflow: "auto", // Added scrollable feature
-                padding:"10px",
-              }}
-              >
-                <Typography variant='h5'>Usuarios inactivos</Typography>
-                { usuariosInactivos.map((usu,ix)=>
-                <Typography sx={{
-                  borderRadius:"3px",
-                  padding:"10px",
-                  backgroundColor:"#DBE7FF",
-                  color:"#000000",
-                  margin:"10px",
-                  display:"inline-block"
-                }} key={ix}>
-                  <Typography variant='p' sx={{ display:"block" }}>
-                  {usu.nombres} {usu.apellidos}
-                  </Typography>
-                  <Typography variant='p' sx={{ display:"block" }}>
-                    Cod. {usu.codigoUsuario}
-                  </Typography>
-                </Typography>
-                )}
-              </Box>
-            )}
-
-            </Grid>
+            <CardUsuariosInactivos usuariosActivos={usuariosActivos}/>
+          </Grid>
 
 
 
