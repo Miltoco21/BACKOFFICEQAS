@@ -1,6 +1,4 @@
 import React, { useState, useContext, useEffect } from "react";
-
-
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -30,6 +28,9 @@ import { Button, IconButton, Typography } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import WarehouseIcon from '@mui/icons-material/Warehouse';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
+
 import ScreenDialogConfig from "../ScreenDialog/AdminConfig";
 import CONSTANTS from "../../definitions/Constants";
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
@@ -113,6 +114,17 @@ export default function PermanentDrawerLeft() {
             // Add more sub-menu items as needed
           ],
         },
+        {
+          text: "Stock",
+          link: "/stock",
+          icon: <ListAltIcon />,
+          // subMenuItems: [
+          //   { text: "Entrada y Salida de Stock ", link: "/stock/entradasalidastock",icon: <ImportExportIcon/>},
+          // ]
+          
+        },
+
+
         {
           text: "Reportes",
           link: "/reportes",
