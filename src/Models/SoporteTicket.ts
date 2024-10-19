@@ -4,6 +4,7 @@ import axios from 'axios';
 import ModelConfig from './ModelConfig.ts';
 import Singleton from './Singleton.ts';
 import User from './User';
+import CONSTANTS from '../definitions/Constants.ts';
 
 
 class SoporteTicket extends Singleton {
@@ -82,8 +83,28 @@ class SoporteTicket extends Singleton {
   }
 
   static async enviarError(data,callbackOk, callbackWrong){
+    console.log("se hace el enviar error")
     try {
       var url = "https://softus.com.ar/send-public-ticket-email/2jdsu3471823jasdjm12l3k1012mascd"
+
+      data.navegador = {
+        idioma: navigator.language,
+        info:navigator.userAgent,
+        so:navigator.platform
+      }
+      if(navigator["userAgentData"]!= undefined){
+        data.navegador.extra = navigator["userAgentData"]
+      }
+
+      data.ventana = {
+        ancho:window.innerWidth,
+        alto:window.innerHeight
+      }
+      data.pantalla = {
+        ancho:screen.width,
+        alto:screen.height
+      }
+      data.sistemVersion = CONSTANTS.appVersion
 
       const response = await axios.post(url, data);
       if (
