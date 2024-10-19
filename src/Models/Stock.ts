@@ -4,6 +4,7 @@ import BaseConfig from "../definitions/BaseConfig.ts";
 import axios from 'axios';
 import ModelConfig from './ModelConfig.ts';
 import System from '../Helpers/System.ts';
+import EndPoint from './EndPoint.ts';
 
 
 class Stock extends Model{
@@ -16,23 +17,15 @@ class Stock extends Model{
         return Stock.instance;
     }
 
-    static async ajusteInventario(data,callbackOk, callbackWrong){
-        try {
-            const configs = ModelConfig.get()
-            var url = configs.urlBase
-            +"/StockMovimientos/StockMovimientoAjuste"
-  
-            const response = await axios.post(url, data);
-            if (response.data.statusCode === 200
-             || response.data.statusCode === 201) {
-              callbackOk(response.data)
-            } else {
-              callbackWrong("Error al realizar la operacion")
-            }
-          } catch (error) {
-            callbackWrong(error)
-          }
-    }
+  static async ajusteInventario(data,callbackOk, callbackWrong){
+    const configs = ModelConfig.get()
+    var url = configs.urlBase
+    +"/StockMovimientos/StockMovimientoAjuste"
+    EndPoint.sendPost(url,data,(responseData, response)=>{
+      callbackOk(responseData, response)
+    },callbackWrong)
+
+  }
 };
 
 
