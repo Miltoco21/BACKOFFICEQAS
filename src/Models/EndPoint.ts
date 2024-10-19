@@ -52,7 +52,10 @@ class EndPoint extends Singleton {
   static async sendPost(url, data, callbackOk, callbackWrong){
     try{
       const response = await axios.post(url,data);
-      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
+      if (
+        response.status === 200
+        || response.data.statusCode === 200 || response.data.statusCode === 201
+      ) {
         if(callbackOk != undefined) callbackOk(response.data, response)
       }else{
         if(callbackWrong != undefined) callbackWrong("Error de servidor")

@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Dialog, Box } from "@mui/material";
 import SideBar from "../Componentes/NavBar/SideBar.jsx";
 import AjusteInventario from  "../Componentes/Stock/AjusteInventario.jsx";
+import StockModel from "../Models/Stock";
+import QrStockMobile from "../Componentes/ScreenDialog/QrStockMobile.jsx";
 
 const Stock = () => {
   // Estado para controlar la apertura/cierre del modal de Ajuste de Inventario
   const [openAjusteInventario, setOpenAjusteInventario] = useState(false);
+  const [showQrStockMobile, setShowQrStockMobile] = useState(false);
+  const [qrLink, setQrLink] = useState("");
 
   // Función para abrir el modal
   const handleOpenAjusteInventario = () => {
@@ -16,6 +20,19 @@ const Stock = () => {
   const handleCloseAjusteInventario = () => {
     setOpenAjusteInventario(false);
   };
+
+  const loadQrLink = ()=>{
+    StockModel.getQrMobileLink((responseData)=>{
+      console.log("response data", responseData)
+      setQrLink(responseData.qr)
+    },()=>{
+      console.log("no se pudo cargar el qr")
+    })
+  }
+
+  useEffect(()=>{
+    loadQrLink()
+  },[])
 
   return (
     <>
@@ -36,6 +53,23 @@ const Stock = () => {
         >
           Ajuste de inventario
         </Button>
+
+          { qrLink !="" && (
+            <Button
+              variant="outlined"
+              sx={{
+                my: 1,
+                mx: 2,
+              }}
+              onClick={()=>{
+                setShowQrStockMobile(true)
+              }} // Abre el modal al hacer clic en el botón
+            >
+              Stock Mobile
+            </Button>
+
+          )}
+          <QrStockMobile openDialog={showQrStockMobile} setOpenDialog={setShowQrStockMobile} qrLink={qrLink} />
       </Box>
 
       {/* Dialog para Ajuste de inventario */}

@@ -26,6 +26,18 @@ class Stock extends Model{
     },callbackWrong)
 
   }
+
+  static async getQrMobileLink(callbackOk, callbackWrong){
+    const configs = ModelConfig.get()
+    // var url = configs.urlBase
+    var url = "https://softus.com.ar/easypos/get-qr-url-stock-mobile"
+    EndPoint.sendPost(url,{
+      url : window.location.href
+    },(responseData, response)=>{
+      callbackOk(responseData, response)
+    },callbackWrong)
+
+  }
 };
 
 
