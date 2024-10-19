@@ -139,7 +139,7 @@ const Home = ({}) => {
                 
               </Box>
             ): (
-              <Typography>No Hay</Typography>
+              <Typography></Typography>
             )}
           </Grid>
             
