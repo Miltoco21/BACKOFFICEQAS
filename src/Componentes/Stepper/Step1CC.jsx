@@ -137,9 +137,6 @@ const Step1CC = ({ data, onNext, setStepData }) => {
       })
       setStepData((prevData) => ({ ...prevData, ...step1Data }));
 
-      console.log("aca deberia guardar las categorias")
-
-      
       const sesion = Model.getInstance().sesion
       console.log("sesion",sesion)
       var sesion1 = sesion.cargar(1)
@@ -199,7 +196,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
       showMessage("No se pudo cargar categorias")
     })
 
-    if(window.location.href.indexOf("stockmobile")>-1){
+    // if(window.location.href.indexOf("stockmobile")>-1){
       const sesion = Model.getInstance().sesion
       var sesion1 = sesion.cargar(1)
       if(sesion1){
@@ -211,7 +208,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
           setMarca(sesion1.ultimaMarcaGuardada)
         }
       }
-    }
+    // }
 
   }, []);
 

@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
  
 import ModelConfig from "../../Models/ModelConfig";
+import Model from "../../Models/Model";
  
 
 const Step1Component = ({ data, onNext, setStepData }) => {
@@ -59,6 +60,8 @@ const Step1Component = ({ data, onNext, setStepData }) => {
   const [newSubFamily, setNewSubFamily] = useState("");
   const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
   const [selectionErrorMessage, setSelectionErrorMessage] = useState("");
+  const [cambioAlgo, setCambioAlgo] = useState(false);
+
   const handleRespuesta = (e) => {
     const value = e.target.value;
     setRespuestaSINO(value);
@@ -139,6 +142,21 @@ const Step1Component = ({ data, onNext, setStepData }) => {
         nombre,
       };
       setStepData((prevData) => ({ ...prevData, ...step1Data }));
+
+      const sesion = Model.getInstance().sesion
+      console.log("sesion",sesion)
+      var sesion1 = sesion.cargar(1)
+      if(!sesion1) sesion1 = {
+        id:1
+      }
+      sesion1.ultimaCategoriaGuardada = selectedCategoryId
+      sesion1.ultimaSubcategoriaGuardada = selectedSubCategoryId
+      sesion1.ultimaFamiliaGuardada = selectedFamilyId
+      sesion1.ultimaSubfamiliaGuardada = selectedSubFamilyId
+      sesion1.ultimaMarcaGuardada = marca
+      sesion.guardar(sesion1)
+
+
       onNext();
     }
   };
@@ -225,12 +243,25 @@ const Step1Component = ({ data, onNext, setStepData }) => {
           `${apiUrl}/NivelMercadoLogicos/GetAllCategorias`
         );
         setCategories(response.data.categorias);
+        setSelectedCategoryId(Model.getInstance().cargarDeSesion1("ultimaCategoriaGuardada"))
       } catch (error) {
         console.log(error);
       }
     }
 
     fetchCategories();
+
+    // if(window.location.href.indexOf("stockmobile")>-1){
+      const sesion = Model.getInstance().sesion
+      var sesion1 = sesion.cargar(1)
+      if(sesion1){
+        if(sesion1.ultimaMarcaGuardada){
+          setMarca(sesion1.ultimaMarcaGuardada)
+        }
+      }
+    // }
+    
+
   }, []);
 
   useEffect(() => {
@@ -241,6 +272,11 @@ const Step1Component = ({ data, onNext, setStepData }) => {
             `${apiUrl}/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`
           );
           setSubCategories(response.data.subCategorias);
+          if(!cambioAlgo) {
+            setSelectedSubCategoryId(Model.getInstance().cargarDeSesion1("ultimaSubcategoriaGuardada"))
+          }else{
+            setSelectedSubCategoryId("")
+          }
         } catch (error) {
           console.error("Error fetching subcategories:", error);
         }
@@ -258,6 +294,11 @@ const Step1Component = ({ data, onNext, setStepData }) => {
             `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}&CategoriaID=${selectedCategoryId}`
           );
           setFamilies(response.data.familias);
+          if(!cambioAlgo) {
+            setSelectedFamilyId(Model.getInstance().cargarDeSesion1("ultimaFamiliaGuardada"))
+          }else{
+            setSelectedFamilyId("")
+          }
         } catch (error) {
           console.error("Error fetching families:", error);
         }
@@ -279,6 +320,11 @@ const Step1Component = ({ data, onNext, setStepData }) => {
             `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${selectedFamilyId}&SubCategoriaID=${selectedSubCategoryId}&CategoriaID=${selectedCategoryId}`
           );
           setSubFamilies(response.data.subFamilias);
+          if(!cambioAlgo){
+            setSelectedSubFamilyId(Model.getInstance().cargarDeSesion1("ultimaSubfamiliaGuardada"))
+          }else{
+            setSelectedSubFamilyId("")
+          }
         } catch (error) {
           console.error("Error fetching subcategories:", error);
         }
@@ -387,6 +433,9 @@ const Step1Component = ({ data, onNext, setStepData }) => {
     value={selectedCategoryId === 0 ? 0 : selectedCategoryId}
     onChange={(e) => handleCategorySelect(e.target.value)}
     label="Selecciona Categoría"
+    onClick={()=>{
+      setCambioAlgo(true)
+    }}
   >
     <MenuItem value={0}>Sin categoría</MenuItem>
     {categories.map((category) => (
@@ -405,6 +454,9 @@ const Step1Component = ({ data, onNext, setStepData }) => {
            
             onChange={(e) => handleSubCategorySelect(e.target.value)}
             label="Selecciona Sub-Categoría"
+            onClick={()=>{
+              setCambioAlgo(true)
+            }}
           >
             <MenuItem value={0}>Sin subcategoría</MenuItem>
             {subcategories.map((subcategory) => (
@@ -424,6 +476,9 @@ const Step1Component = ({ data, onNext, setStepData }) => {
             value={selectedFamilyId=== 0 ? 0 :selectedFamilyId}
             onChange={(e) => handleFamilySelect(e.target.value)}
             label="Selecciona Familia"
+            onClick={()=>{
+              setCambioAlgo(true)
+            }}
           >
             {" "}
             <MenuItem value={0}>Sin familia</MenuItem>
@@ -441,6 +496,9 @@ const Step1Component = ({ data, onNext, setStepData }) => {
             value={selectedSubFamilyId=== 0 ? 0 :selectedSubFamilyId}
             onChange={(e) => handleSubFamilySelect(e.target.value)}
             label="Selecciona Subfamilia"
+            onClick={()=>{
+              setCambioAlgo(true)
+            }}
           >
             <MenuItem value={0}>Sin subfamilia</MenuItem>
             {subfamilies.map((subfamily) => (
