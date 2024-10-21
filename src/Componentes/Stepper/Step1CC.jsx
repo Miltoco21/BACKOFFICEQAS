@@ -93,6 +93,11 @@ const Step1CC = ({ data, onNext, setStepData }) => {
       if(showError)showMessage("Falta completar la descripcion corta.");
       return false;
     }
+
+    if (descripcionCorta.length>50) {
+      if(showError)showMessage("La descripcion corta debe tener 50 caracteres o menos");
+      return false;
+    }
     
     if (marca==="") {
       if(showError)showMessage("Falta completar marca.");
@@ -153,6 +158,20 @@ const Step1CC = ({ data, onNext, setStepData }) => {
   }
 
 
+  const cambioDesCorta = (e)=>{
+    setDescripcionCorta(e.target.value)
+  }
+
+
+  const cambioNombre = (e)=>{
+    setNombre(e.target.value)
+
+    if(descripcionCorta.length<50){
+      cambioDesCorta(e)
+    }
+  }
+
+
   useEffect(() => {
     Product.getInstance().getCategories((cats)=>{
       setCategories(cats);
@@ -209,6 +228,13 @@ const Step1CC = ({ data, onNext, setStepData }) => {
   }, [familyId, categoryId, subCategoryId]);
 
   const handleKeyDown = (event, field) => {
+    if (
+      event.key !== "Backspace" || event.key !== ""
+    ) {
+      console.log("paso")
+      return
+    }
+
     if (field === "nombre" ) {
       const regex = /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s]+$/;// Al menos un carácter alfanumérico
       if (
@@ -242,17 +268,20 @@ const Step1CC = ({ data, onNext, setStepData }) => {
   };
 
 
-  useEffect(() => {
-    setPuedeAvanzar( validateFields(false) && codigoNoRepetido )
-  }, [codigoBarras, 
-    codigoNoRepetido,
-    categoryId, 
-    subCategoryId, 
-    familyId, 
-    subFamilyId,
-    nombre,
-    descripcionCorta,
-    marca]);
+  // useEffect(() => {
+  //   console.log("puede avanzar??")
+  //   console.log("codigoNoRepetido", codigoNoRepetido)
+  //   console.log("validateFields(false)", validateFields(false))
+  //   setPuedeAvanzar( validateFields(false) && codigoNoRepetido )
+  // }, [codigoBarras, 
+  //   codigoNoRepetido,
+  //   categoryId, 
+  //   subCategoryId, 
+  //   familyId, 
+  //   subFamilyId,
+  //   nombre,
+  //   descripcionCorta,
+  //   marca]);
 
   return (
     <Paper
@@ -383,7 +412,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
             fullWidth
             // label="Ingresar Descripci&oacute;n"
             value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            onChange={(e) => cambioNombre(e)}
             onKeyDown={(event) => handleKeyDown(event, "nombre")}
           />
         </Grid>
@@ -394,7 +423,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
             fullWidth
             // label="Ingresar Desc. corta"
             value={descripcionCorta}
-            onChange={(e) => setDescripcionCorta(e.target.value)}
+            onChange={(e) => cambioDesCorta(e)}
             onKeyDown={(event) => handleKeyDown(event, "descripcionCorta")}
           />
         </Grid>
@@ -416,7 +445,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
               variant="contained"
               color="secondary"
               onClick={handleNext}
-              disabled={!puedeAvanzar}
+              // disabled={!puedeAvanzar}
               sx={{
                 width:"50%",
                 height:"55px",
