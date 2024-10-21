@@ -35,6 +35,15 @@ class Model extends Singleton{
         return values
     }
 
+    cargarDeSesion1(nombre){
+        var sesion1 = this.sesion.cargar(1)
+        if(sesion1){
+            if(sesion1[nombre]){
+            return sesion1[nombre]
+            }
+        }
+    }
+
     static async getConexion(callbackOk, callbackWrong){
         const url = ModelConfig.get("urlBase") + "/Cajas/EstadoApi"
         EndPoint.sendGet(url,(responseData, response)=>{

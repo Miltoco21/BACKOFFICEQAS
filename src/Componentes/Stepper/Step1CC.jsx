@@ -55,6 +55,8 @@ const Step1CC = ({ data, onNext, setStepData }) => {
   
   const [puedeAvanzar, setPuedeAvanzar] = useState(false);
   const [codigoNoRepetido, setCodigoNoRepetido] = useState(null);
+  
+  const [cambioAlgo, setCambioAlgo] = useState(false);
 
   const validateFields = (showError = true) => {
 
@@ -134,6 +136,23 @@ const Step1CC = ({ data, onNext, setStepData }) => {
         "step1": step1Data
       })
       setStepData((prevData) => ({ ...prevData, ...step1Data }));
+
+      console.log("aca deberia guardar las categorias")
+
+      
+      const sesion = Model.getInstance().sesion
+      console.log("sesion",sesion)
+      var sesion1 = sesion.cargar(1)
+      if(!sesion1) sesion1 = {
+        id:1
+      }
+      sesion1.ultimaCategoriaGuardada = categoryId
+      sesion1.ultimaSubcategoriaGuardada = subCategoryId
+      sesion1.ultimaFamiliaGuardada = familyId
+      sesion1.ultimaSubfamiliaGuardada = subFamilyId
+      sesion1.ultimaMarcaGuardada = marca
+      sesion.guardar(sesion1)
+
       onNext();
     }
   };
@@ -175,6 +194,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
   useEffect(() => {
     Product.getInstance().getCategories((cats)=>{
       setCategories(cats);
+      setCategoryId(Model.getInstance().cargarDeSesion1("ultimaCategoriaGuardada"))
     },(err)=>{
       showMessage("No se pudo cargar categorias")
     })
@@ -182,8 +202,14 @@ const Step1CC = ({ data, onNext, setStepData }) => {
     if(window.location.href.indexOf("stockmobile")>-1){
       const sesion = Model.getInstance().sesion
       var sesion1 = sesion.cargar(1)
-      if(sesion1 && sesion1.ultimaBusquedaStockMobile){
-        setCodigoBarras(sesion1.ultimaBusquedaStockMobile)
+      if(sesion1){
+        if(sesion1.ultimaBusquedaStockMobile){
+          setCodigoBarras(sesion1.ultimaBusquedaStockMobile)
+        }
+
+        if(sesion1.ultimaMarcaGuardada){
+          setMarca(sesion1.ultimaMarcaGuardada)
+        }
       }
     }
 
@@ -193,6 +219,12 @@ const Step1CC = ({ data, onNext, setStepData }) => {
     if (categoryId >0) {
       Product.getInstance().getSubCategories(categoryId,(subs)=>{
         setSubCategories(subs)
+        if(!cambioAlgo) {
+          setSubCategoryId(Model.getInstance().cargarDeSesion1("ultimaSubcategoriaGuardada"))
+        }else{
+          setSubCategoryId("")
+        }
+
       },(err)=>{
         showMessage("No se pudo cargar subcategorias")
       })
@@ -205,6 +237,12 @@ const Step1CC = ({ data, onNext, setStepData }) => {
         categoryId,subcategoryId : subCategoryId
       },(fams)=>{
         setFamilies(fams)
+
+        if(!cambioAlgo) {
+          setFamilyId(Model.getInstance().cargarDeSesion1("ultimaFamiliaGuardada"))
+        }else{
+          setFamilyId("")
+        }
       },(err)=>{
         showMessage("No se pudo cargar familias")
       })
@@ -221,6 +259,12 @@ const Step1CC = ({ data, onNext, setStepData }) => {
           categoryId,subcategoryId : subCategoryId,familyId
         },(subs)=>{
           setSubFamilies(subs)
+          if(!cambioAlgo){
+            setSubFamilyId(Model.getInstance().cargarDeSesion1("ultimaSubfamiliaGuardada"))
+          }else{
+            setSubFamilyId("")
+          }
+
         },(erro)=>{
           showMessage("No se pudo cargar subfamilias")
         })
@@ -339,6 +383,9 @@ const Step1CC = ({ data, onNext, setStepData }) => {
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
             label="Seleccionar Categoría"
+            onClick={()=>{
+              setCambioAlgo(true)
+            }}
           >
             <MenuItem value={0}>Sin categoría</MenuItem>
             {categories.map((category) => (
@@ -359,6 +406,9 @@ const Step1CC = ({ data, onNext, setStepData }) => {
            
             onChange={(e) => setSubCategoryId(e.target.value)}
             label="Seleccionar Sub-Categoría"
+            onClick={()=>{
+              setCambioAlgo(true)
+            }}
           >
             <MenuItem value={0}>Sin subcategoría</MenuItem>
             {subcategories.map((subcategory) => (
@@ -378,6 +428,9 @@ const Step1CC = ({ data, onNext, setStepData }) => {
             value={familyId}
             onChange={(e) => setFamilyId(e.target.value)}
             label="Seleccionar Familia"
+            onClick={()=>{
+              setCambioAlgo(true)
+            }}
           >
             <MenuItem value={0}>Sin familia</MenuItem>
             {families.map((family) => (
@@ -394,6 +447,9 @@ const Step1CC = ({ data, onNext, setStepData }) => {
             value={subFamilyId}
             onChange={(e) => setSubFamilyId(e.target.value)}
             label="Seleccionar Subfamilia"
+            onClick={()=>{
+              setCambioAlgo(true)
+            }}
           >
             <MenuItem value={0}>Sin subfamilia</MenuItem>
             {subfamilies.map((subfamily) => (
@@ -433,7 +489,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
           <TextField
             fullWidth
             type="text"
-            label="Ingresar Marca"
+            // label="Ingresar Marca"
             value={marca}
             onChange={(e) => setMarca(e.target.value)}
             onKeyDown={(event) => handleKeyDown(event, "marca")}
