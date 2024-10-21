@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import SideBar from "../Componentes/NavBar/SideBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -12,23 +12,41 @@ import { HorizontalSplit } from "@mui/icons-material";
 import Product from "../Models/Product";
 import { TextField } from "@mui/material";
 import Editp2 from "./../Componentes/Productos/Editp2";
+import System from "../Helpers/System";
 
 const StockMobile = () => {
 
   const {
     showMessage,
     showLoading,
-    hideLoading
+    hideLoading,
+    GeneralElements
   } = useContext(SelectedOptionsContext);
 
 
   const [open, setOpen] = useState(false);
   const [openAdd, setopenAdd] = useState(false);
   const [openEdit, setopenEdit] = useState(false);
-
+  
   const [productoEdit, setProductEdit] = useState(null);
 
+  const refInputBuscar  = useRef(null)
+  
 
+  useEffect(()=>{
+    System.intentarFoco(refInputBuscar)
+  },[])
+
+  const checkFoco = ()=>{
+    if(!open && !openAdd && !openEdit){
+      // console.log("intentar foco")
+      System.intentarFoco(refInputBuscar)
+    }
+  }
+
+  useEffect(()=>{
+    checkFoco()
+  },[open,openAdd,openEdit])
 
   const [open2, setOpen2] = useState(false);
 
@@ -65,7 +83,7 @@ const StockMobile = () => {
             codigoProducto: txtSearch
           }, (prods,resp)=>{
             const res = resp.data
-            console.log("res", res)
+            // console.log("res", res)
             if(res.cantidadRegistros>0){
               showMessage("existe el producto")
 
@@ -96,6 +114,8 @@ const StockMobile = () => {
   return (
     <div style={{ display: "flex" }}>
 
+      <GeneralElements/>
+
       <Box sx={{ flexGrow: 1, p: 3 }}>
         
 
@@ -110,6 +130,12 @@ const StockMobile = () => {
             onChange={(e)=>setSearchTerm(e.target.value)}
             onKeyDown={(e)=>{
               checkEnterSearch(e)
+            }}
+
+            ref={refInputBuscar}
+
+            onBlur={()=>{
+              checkFoco()
             }}
           />
           <Button sx={{
