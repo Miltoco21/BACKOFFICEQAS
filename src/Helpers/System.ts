@@ -150,6 +150,28 @@ class System {
         return allOk
       }
 
+      static intentarFoco(textInfoRef){
+        // console.log("..intentarFoco",textInfoRef)
+        // console.log(textInfoRef)
+        if(!textInfoRef || textInfoRef.current == null){
+            // console.log("no tiene valor ref")
+            setTimeout(() => {
+                this.intentarFoco(textInfoRef)
+            }, 300);
+        }else{
+        //   console.log("ya tiene no es null")
+          const contInput = textInfoRef.current
+          // console.log("input encontrado:")
+          // console.log(contInput.querySelector("input"))
+          const inp = contInput.querySelector("input")
+          if(inp){
+              contInput.querySelector("input").focus()
+            }else{
+                textInfoRef.current.focus()
+          }
+        }
+    }
+
       static formatDateServer(dateServer){
         const v1 = dateServer.split("T")
         const dt = v1[0]
