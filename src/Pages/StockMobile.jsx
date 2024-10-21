@@ -13,6 +13,7 @@ import Product from "../Models/Product";
 import { TextField } from "@mui/material";
 import Editp2 from "./../Componentes/Productos/Editp2";
 import System from "../Helpers/System";
+import Model from "../Models/Model";
 
 const StockMobile = () => {
 
@@ -78,30 +79,40 @@ const StockMobile = () => {
       setSearchTerm(replaceSearch)
     }
 
-          showLoading("haciendo busqueda por codigo")
-          Product.getInstance().findByCodigoBarras({
-            codigoProducto: txtSearch
-          }, (prods,resp)=>{
-            const res = resp.data
-            // console.log("res", res)
-            if(res.cantidadRegistros>0){
-              showMessage("existe el producto")
+    const sesion = Model.getInstance().sesion
+    console.log("sesion",sesion)
+    var sesion1 = sesion.cargar(1)
+    if(!sesion1) sesion1 = {
+      id:1
+    }
+    sesion1.ultimaBusquedaStockMobile = searchTerm
 
-              setProductEdit(res.productos[0])
-              setopenEdit(true)
+    sesion.guardar(sesion1)
 
-            }else{
-              showMessage("no existe el producto")
-              setopenAdd(true)
-            }
-            
-            hideLoading()
-          }, ()=>{
-            showMessage("no existe el producto")
+    // showLoading("haciendo busqueda por codigo")
+    Product.getInstance().findByCodigoBarras({
+      codigoProducto: txtSearch
+    }, (prods,resp)=>{
+      const res = resp.data
+      // console.log("res", res)
+      if(res.cantidadRegistros>0){
+        showMessage("existe el producto")
+
+        setProductEdit(res.productos[0])
+        setopenEdit(true)
+
+      }else{
+        showMessage("no existe el producto")
+        setopenAdd(true)
+      }
+      
+      hideLoading()
+    }, ()=>{
+      showMessage("no existe el producto")
 
 
-            hideLoading()
-          })
+      hideLoading()
+    })
   }
 
   const checkEnterSearch = (e)=>{

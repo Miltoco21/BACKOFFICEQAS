@@ -28,6 +28,7 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import ProductStepper from "../../Models/ProductStepper";
 import Product from "../../Models/Product";
 import { Check, Dangerous, Percent } from "@mui/icons-material";
+import Model from "../../Models/Model";
 
 const Step1CC = ({ data, onNext, setStepData }) => {
   const {
@@ -158,6 +159,15 @@ const Step1CC = ({ data, onNext, setStepData }) => {
     },(err)=>{
       showMessage("No se pudo cargar categorias")
     })
+
+    if(window.location.href.indexOf("stockmobile")>-1){
+      const sesion = Model.getInstance().sesion
+      var sesion1 = sesion.cargar(1)
+      if(sesion1 && sesion1.ultimaBusquedaStockMobile){
+        setCodigoBarras(sesion1.ultimaBusquedaStockMobile)
+      }
+    }
+
   }, []);
 
   useEffect(() => {
@@ -257,7 +267,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
         <InputLabel>C&oacute;digo</InputLabel>
         <TextField
           fullWidth
-          label="Ingresar c&oacute;digo"
+          // label="Ingresar c&oacute;digo"
           value={codigoBarras}
           onClick={(e) => { 
             setCodigoNoRepetido(null)
@@ -371,7 +381,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
         <InputLabel>Descripci&oacute;n</InputLabel>
           <TextField
             fullWidth
-            label="Ingresar Descripci&oacute;n"
+            // label="Ingresar Descripci&oacute;n"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
             onKeyDown={(event) => handleKeyDown(event, "nombre")}
@@ -382,7 +392,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
         <InputLabel>Desc. corta</InputLabel>
           <TextField
             fullWidth
-            label="Ingresar Desc. corta"
+            // label="Ingresar Desc. corta"
             value={descripcionCorta}
             onChange={(e) => setDescripcionCorta(e.target.value)}
             onKeyDown={(event) => handleKeyDown(event, "descripcionCorta")}
