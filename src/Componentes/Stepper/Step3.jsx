@@ -531,7 +531,6 @@ const Step3Component = ({
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
                 <TextField
-                icon
                   required
                   name="margenGanancia"
                   fullWidth
