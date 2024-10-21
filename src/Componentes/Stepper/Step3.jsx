@@ -744,6 +744,11 @@ const Step3Component = ({
                   inputMode: "numeric", // Establece el modo de entrada como numérico
                   pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
                 }}
+
+                onClick={(e)=>{
+                  e.target.selectionStart = 0
+                  e.target.selectionEnd = 100
+                }}
               />
             </Box>
           </Grid>
@@ -764,6 +769,11 @@ const Step3Component = ({
                 inputProps={{
                   inputMode: "numeric", // Establece el modo de entrada como numérico
                   pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+                }}
+
+                onClick={(e)=>{
+                  e.target.selectionStart = 0
+                  e.target.selectionEnd = 100
                 }}
               />
             </Box>

@@ -706,6 +706,11 @@ const Step3CC = ({
                   inputMode: "numeric", // Establece el modo de entrada como numérico
                   pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
                 }}
+
+                onClick={(e)=>{
+                  e.target.selectionStart = 0
+                  e.target.selectionEnd = 100
+                }}
               />
             </Box>
           </Grid>
@@ -720,6 +725,10 @@ const Step3CC = ({
                 value={stockCritico}
                 onChange={(event) => handleChange(event, "stockCritico")}
                 onKeyDown={(event) => handleKeyDown(event, "stockCritico")}
+                onClick={(e)=>{
+                  e.target.selectionStart = 0
+                  e.target.selectionEnd = 100
+                }}
               />
             </Box>
           </Grid>
