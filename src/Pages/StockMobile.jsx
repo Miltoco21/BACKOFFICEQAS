@@ -165,7 +165,7 @@ const StockMobile = () => {
             >Buscar</Button>
             
 
-        <Modal open={open} onClose={handleCloseStepper}>
+        <Modal open={open} onClose={()=>{}}>
           <Box
             sx={{
               // position: "absolute",
@@ -185,11 +185,28 @@ const StockMobile = () => {
             }}
           >
            <StepperSI/> 
+
+           <Button sx={{
+            position:"relative",
+            width:"90%",
+            // top:"-60px",
+            "&:hover":{
+              backgroundColor:"red",
+              color:"white",
+            },
+            backgroundColor:"red",
+            color:"white",
+            margin:"20px 5%"
+           }}
+           onClick={()=>{
+            handleCloseStepper()
+           }}
+           >salir</Button>
           </Box>
         </Modal>
 
       </Box>
-        <Modal open={open2} onClose={handleCloseStepper2}>
+        <Modal open={open2} onClose={()=>{}}>
           <Box
             sx={{
               // position: "absolute",
@@ -209,7 +226,27 @@ const StockMobile = () => {
             }}
           >
             <StepperSI conCodigo={true} />
+
+            <Button sx={{
+            position:"relative",
+            width:"90%",
+            // top:"-60px",
+            "&:hover":{
+              backgroundColor:"red",
+              color:"white",
+            },
+            backgroundColor:"red",
+            color:"white",
+            margin:"20px 5%"
+           }}
+           onClick={()=>{
+            handleCloseStepper2()
+           }}
+           >salir</Button>
+           
           </Box>
+
+          
         </Modal>
 
         <Modal open={openAdd} onClose={()=>{ setopenAdd(false)}}>
