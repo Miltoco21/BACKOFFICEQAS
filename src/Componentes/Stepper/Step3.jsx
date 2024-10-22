@@ -29,6 +29,7 @@ import { AttachMoney, Percent } from "@mui/icons-material";
 import Product from "../../Models/Product";
 import System from "../../Helpers/System";
 import { SelectedOptionsContext } from "./../Context/SelectedOptionsProvider";
+import CONSTANTS from "../../definitions/Constants";
 
 
 const Step3Component = ({ 
@@ -293,19 +294,6 @@ const Step3Component = ({
   //   fetchBodegas();
   // }, []);
 
-  const unidades = [
-    { idUnidad: 0, descripcion: "Sin unidad" },
-    { idUnidad: 1, descripcion: "KG" },
-    { idUnidad: 2, descripcion: "UNI" },
-    { idUnidad: 3, descripcion: "MM" },
-    { idUnidad: 4, descripcion: "CM" },
-    { idUnidad: 5, descripcion: "LT" },
-    { idUnidad: 6, descripcion: "OZ" },
-    { idUnidad: 7, descripcion: "CAJON" },
-    { idUnidad: 8, descripcion: "DISPLAY" },
-    { idUnidad: 9, descripcion: "PALLET" },
-    { idUnidad: 10, descripcion: "MALLA" },
-  ];
   const handleKeyDown = (event, field) => {
     // Verificar en qué campo se está escribiendo
     if (field === "precio") {
@@ -466,7 +454,7 @@ const Step3Component = ({
                 onChange={(e) => handleUnidadSelect(e.target.value)}
                 label="Selecciona Unidad"
               >
-                {unidades.map((unidad) => (
+                {CONSTANTS.UNIDADES.map((unidad) => (
                   <MenuItem key={unidad.idUnidad} value={unidad.idUnidad}>
                     {unidad.descripcion}
                   </MenuItem>
@@ -488,7 +476,7 @@ const Step3Component = ({
                 onChange={(e) => handleUnidadVentaSelect(e.target.value)}
                 label="Seleccionar Unidad"
               >
-                {unidades.map((unidad) => (
+                {CONSTANTS.UNIDADES.map((unidad) => (
                   <MenuItem key={unidad.idUnidad} value={unidad.idUnidad}>
                     {unidad.descripcion}
                   </MenuItem>

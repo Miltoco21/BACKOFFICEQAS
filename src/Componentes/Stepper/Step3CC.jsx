@@ -27,6 +27,7 @@ import {
 import ModelConfig from "../../Models/ModelConfig";
 import { AttachMoney, CheckBox, DraftsOutlined, Money, Percent } from "@mui/icons-material";
 import Product from "../../Models/Product";
+import CONSTANTS from "../../definitions/Constants";
 
 
 const Step3CC = ({ 
@@ -63,20 +64,6 @@ const Step3CC = ({
   const [esPesable, setEsPesable] = useState( (data.esPesable == "SI") );
   const [fijarCosto, setFijarCosto] = useState(false);
   const [fijarVenta, setFijarVenta] = useState(false);
-
-  const unidades = [
-    { idUnidad: 0, descripcion: "Sin unidad" },
-    { idUnidad: 1, descripcion: "KG" },
-    { idUnidad: 2, descripcion: "UNI" },
-    { idUnidad: 3, descripcion: "MM" },
-    { idUnidad: 4, descripcion: "CM" },
-    { idUnidad: 5, descripcion: "LT" },
-    { idUnidad: 6, descripcion: "OZ" },
-    { idUnidad: 7, descripcion: "CAJON" },
-    { idUnidad: 8, descripcion: "DISPLAY" },
-    { idUnidad: 9, descripcion: "PALLET" },
-    { idUnidad: 10, descripcion: "MALLA" },
-  ];
 
   var ivas = [
     { idUnidad: 0, descripcion: "Sin iva" },
@@ -436,7 +423,7 @@ const Step3CC = ({
                 onChange={(e) => handleUnidadSelect(e.target.value)}
                 label="Seleccionar Unidad"
               >
-                {unidades.map((unidad) => (
+                {CONSTANTS.UNIDADES.map((unidad) => (
                   <MenuItem key={unidad.idUnidad} value={unidad.idUnidad}>
                     {unidad.descripcion}
                   </MenuItem>
@@ -458,7 +445,7 @@ const Step3CC = ({
                 onChange={(e) => handleUnidadVentaSelect(e.target.value)}
                 label="Seleccionar Unidad"
               >
-                {unidades.map((unidad) => (
+                {CONSTANTS.UNIDADES.map((unidad) => (
                   <MenuItem key={unidad.idUnidad} value={unidad.idUnidad}>
                     {unidad.descripcion}
                   </MenuItem>
