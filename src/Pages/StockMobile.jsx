@@ -8,9 +8,9 @@ import Add from "@mui/icons-material/Add";
 import Modal from "@mui/joy/Modal";
 import { SelectedOptionsContext } from "./../Componentes/Context/SelectedOptionsProvider";
 import StepperSI from "../Componentes/Stepper/StepperSI";
-import { HorizontalSplit } from "@mui/icons-material";
+import { Check, HorizontalSplit, Search } from "@mui/icons-material";
 import Product from "../Models/Product";
-import { TextField } from "@mui/material";
+import { Grid, InputAdornment, TextField } from "@mui/material";
 import Editp2 from "./../Componentes/Productos/Editp2";
 import System from "../Helpers/System";
 import Model from "../Models/Model";
@@ -124,19 +124,19 @@ const StockMobile = () => {
 
   return (
     <div style={{ display: "flex" }}>
-
       <GeneralElements/>
-
       <Box sx={{ flexGrow: 1, p: 3 }}>
-        
 
+      <Grid container spacing={2} >
+          <Grid item xs={12} sm={12} md={12} lg={12}>
           <TextField
             sx={{
-              marginTop:"30px",
-              width:"250px",
+              marginTop:"20%",
+              marginLeft:"10%",
+              width:"80%",
             }}
             margin="dense"
-            label="Buscar codigo"
+            label="Ingresar codigo"
             value={searchTerm}
             onChange={(e)=>setSearchTerm(e.target.value)}
             onKeyDown={(e)=>{
@@ -148,12 +148,27 @@ const StockMobile = () => {
             onBlur={()=>{
               checkFoco()
             }}
+
+
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position={"start"}>
+                  <Search sx={{
+                    marginRight:"10px"
+                  }} />
+                </InputAdornment>
+              ),
+            }}
+
           />
+
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={12}>
           <Button sx={{
-              marginTop:"30px",
-              marginLeft:"10px",
+              marginTop:"10px",
+              marginLeft:"10%",
               height:"55px !important",
-              width:"150px",
+              width:"80%",
               color:"white",
               backgroundColor:"midnightblue",
               "&:hover": {
@@ -163,7 +178,75 @@ const StockMobile = () => {
             }}
             onClick={()=>{doSearch()}}
             >Buscar</Button>
+          </Grid>
             
+        {/* <Modal open={openAdd} onClose={()=>{ setopenAdd(false)}}> */}
+          {/* <Box
+            sx={{
+              // position: "absolute",
+              // top: "50%",
+              // left: "50%",
+              // transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              // p: 4,
+              overflow: "auto", // Added scrollable feature
+              // maxHeight: "100vh", // Adjust as needed
+              // maxWidth: "180vw", // Adjust as needed
+              height:"40%",
+              paddingTop:"10px",
+              width:"85%",
+              margin:"2.5% auto"
+            }}
+          > */}
+
+      <Grid item xs={12} sm={12} md={12} lg={12}>
+            <Button
+          size="large"
+          variant="outlined"
+          style={{ 
+            marginLeft: "10%", 
+            padding: "14px", 
+            marginTop: "80px",
+            width:"80%"
+          }}
+          onClick={handleOpenStepper}
+        >
+          <Add/>
+          Producto sin código
+        </Button>
+
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
+          
+        <Button
+          size="large"
+          variant="outlined"
+          style={{ marginLeft: "10%", 
+            padding: "14px", 
+            marginTop: "6px",
+            width:"80%"
+          }}
+          
+          onClick={handleOpenStepper2}
+        >
+          <HorizontalSplit sx={{transform: "rotate(270deg)"}}/>
+          <Add sx={{
+                width: "15px",
+                position: "relative",
+                left: "-7px"
+          }}/>
+          Producto con código
+        </Button>
+
+    </Grid>
+    </Grid>
+
+          {/* </Box> */}
+        {/* </Modal> */}
+
+
+
 
         <Modal open={open} onClose={()=>{}}>
           <Box
@@ -249,53 +332,7 @@ const StockMobile = () => {
           
         </Modal>
 
-        <Modal open={openAdd} onClose={()=>{ setopenAdd(false)}}>
-          <Box
-            sx={{
-              // position: "absolute",
-              // top: "50%",
-              // left: "50%",
-              // transform: "translate(-50%, -50%)",
-              bgcolor: "background.paper",
-              boxShadow: 24,
-              // p: 4,
-              overflow: "auto", // Added scrollable feature
-              // maxHeight: "100vh", // Adjust as needed
-              // maxWidth: "180vw", // Adjust as needed
-              height:"40%",
-              paddingTop:"10px",
-              width:"85%",
-              margin:"2.5% auto"
-            }}
-          >
-            <Button
-          size="large"
-          variant="outlined"
-          style={{ marginLeft: "18px", padding: "14px", marginTop: "6px" }}
-          onClick={handleOpenStepper}
-        >
-          <Add/>
-          Producto sin código
-        </Button>
-        <Button
-          size="large"
-          variant="outlined"
-          style={{ marginLeft: "18px", padding: "14px", marginTop: "6px" }}
-          
-          onClick={handleOpenStepper2}
-        >
-          <HorizontalSplit sx={{transform: "rotate(270deg)"}}/>
-          <Add sx={{
-                width: "15px",
-                position: "relative",
-                left: "-7px"
-          }}/>
-          Producto con código
-        </Button>
 
-
-          </Box>
-        </Modal>
 
           {(productoEdit && (
             <Editp2
