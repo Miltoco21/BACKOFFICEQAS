@@ -54,7 +54,7 @@ const Editp2 = ({ product, open, handleClose }) => {
   
   useEffect(() => {
     setEditedProduct(product);
-  }, []);
+  }, [open]);
     
 
   const checkChangeNML = ()=>{

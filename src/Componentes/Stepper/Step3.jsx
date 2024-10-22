@@ -92,7 +92,7 @@ const Step3Component = ({
   useEffect(()=>{
     console.log("cambio unidad de venta")
     console.log(selectedUnidadVentaId)
-    if(selectedUnidadVentaId == 1 || selectedUnidadVentaId == 5){
+    if(selectedUnidadVentaId == 10){ //|| selectedUnidadVentaId == 5){
       setEsPesable(true)
     }else{
       setEsPesable(false)
