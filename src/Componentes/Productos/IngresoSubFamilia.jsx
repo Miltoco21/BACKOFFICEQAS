@@ -84,7 +84,7 @@ const IngresoSubFamilias = ({onClose}) => {
       if (selectedSubCategoryId !== "" && selectedCategoryId !== "") {
         try {
           const response = await axios.get(
-            `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}`
+            `${apiUrl}/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}&CategoriaID=${selectedCategoryId}`
           );
 
           console.log("Families Response:", response.data.familias);
@@ -103,7 +103,7 @@ const IngresoSubFamilias = ({onClose}) => {
       if (selectedFamilyId !== "" && selectedCategoryId !== "" && selectedSubCategoryId !== "") {
         try {
           const response = await axios.get(
-            `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${selectedFamilyId}`
+            `${apiUrl}/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${selectedFamilyId}&SubCategoriaID=${selectedSubCategoryId}&CategoriaID=${selectedCategoryId}`
           );
 
           console.log("SubFamilies Response:", response.data.subFamilias);

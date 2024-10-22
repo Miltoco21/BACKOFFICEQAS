@@ -74,6 +74,8 @@ const SearchListSubFamilias = () => {
   };
 
   useEffect(() => {
+    setPageCount(subfamilies.length);
+    updatePageData();
     console.log("cantidad de paginas:" + Math.ceil(filteredSubFamilies.length / ITEMS_PER_PAGE))
     setTotalPages(Math.ceil(filteredSubFamilies.length / ITEMS_PER_PAGE));
   }, [filteredSubFamilies]);
@@ -86,6 +88,13 @@ const SearchListSubFamilias = () => {
           apiUrl + `/NivelMercadoLogicos/GetAllCategorias`
         );
         setCategories(response.data.categorias);
+        setSelectedCategoryId("")
+        setSelectedSubCategoryId("")
+        setSelectedFamilyId("")
+
+        setSubCategories([]);
+        setFamilies([]);
+        setSubFamilies([]);
         hideLoading()
       } catch (error) {
         console.log(error);
@@ -105,6 +114,8 @@ const SearchListSubFamilias = () => {
             apiUrl + `/NivelMercadoLogicos/GetSubCategoriaByIdCategoria?CategoriaID=${selectedCategoryId}`
           );
           setSubCategories(response.data.subCategorias);
+          setFamilies([]);
+          setSubFamilies([]);
           hideLoading()
         } catch (error) {
           console.error("Error fetching subcategories:", error);
@@ -125,6 +136,7 @@ const SearchListSubFamilias = () => {
             apiUrl + `/NivelMercadoLogicos/GetFamiliaByIdSubCategoria?SubCategoriaID=${selectedSubCategoryId}&CategoriaID=${selectedCategoryId}`
           );
           setFamilies(response.data.familias);
+          setSubFamilies([]);
           hideLoading()
         } catch (error) {
           console.error("Error fetching families:", error);
@@ -143,6 +155,7 @@ const SearchListSubFamilias = () => {
         const response = await axios.get(
           apiUrl + `/NivelMercadoLogicos/GetSubFamiliaByIdFamilia?FamiliaID=${selectedFamilyId}&SubCategoriaID=${selectedSubCategoryId}&CategoriaID=${selectedCategoryId}`
         );
+        console.log("subfamilias",response.data.subFamilias);
         setSubFamilies(response.data.subFamilias);
         hideLoading()
       } catch (error) {
@@ -154,12 +167,12 @@ const SearchListSubFamilias = () => {
   
   useEffect(() => {
     fetchSubFamilies(); // Initial fetch of sub-families
-  }, [selectedFamilyId, selectedCategoryId, selectedSubCategoryId, refresh]);
+  // }, [selectedFamilyId, selectedCategoryId, selectedSubCategoryId, refresh]);
+  }, [selectedFamilyId, refresh]);
 
   useEffect(() => {
+    console.log("cambio datos")
     setFilteredSubFamilies(subfamilies);
-    setPageCount(subfamilies.length);
-    updatePageData();
   }, [subfamilies]);
 
   const handleSearch = (event) => {
