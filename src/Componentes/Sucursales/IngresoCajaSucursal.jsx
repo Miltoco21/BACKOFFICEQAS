@@ -30,11 +30,6 @@ export default function IngresoCajaSucursal({
   var states = {
     nombre:useState(""),
     sucursal:useState(""),
-    // tipoImpresion:useState(""),
-    // certificado:useState(""),
-    // pasarela:useState(""),
-
-
    
   };
 
@@ -42,11 +37,6 @@ export default function IngresoCajaSucursal({
     
     nombre: useState(null),
     sucursal: useState(null),
-    // certificado: useState(null),
-    // tipoImpresion: useState(null),
-    // pasarela: useState(null),
-
-    
     
   };
 
@@ -71,7 +61,7 @@ export default function IngresoCajaSucursal({
     caj.add(data,(responseData)=>{
       hideLoading();
       showMessage(responseData.descripcion)
-      onCreate()
+      if(onCreate)onCreate()
     },(error)=>{
       hideLoading();
       showMessage(error)
@@ -111,93 +101,6 @@ export default function IngresoCajaSucursal({
               validationState={validatorStates.sucursal}
             />
           </Grid>
-
-          <Box sx={{ 
-            display: "flex",
-            border: "1px solid dimgray",
-            backgroundColor:"#F7F7F7",
-            borderRadius:"3px",
-            marginLeft:"15px",
-            marginTop:"20px",
-            padding:"20px"
-            }}>
-
-            <Grid container spacing={2} sx={{ padding: "2%" }}>
-              <Grid item xs={12} sm={12} md={12} lg={12}>
-                <Typography>Redelcom</Typography>
-              </Grid>
-
-              <br/>
-              <Grid item xs={12} sm={12} md={6} lg={6}>
-                <InputName
-                  inputState={states.cliente_id}
-                  required={true}
-                  fieldName="cliente id"
-                  validationState={validatorStates.cliente_id}
-                  />
-              </Grid>
-
-              <Grid item xs={12} sm={12} md={6} lg={6}>
-                <InputName
-                  inputState={states.secret}
-                  required={true}
-                  fieldName="secret"
-                  validationState={validatorStates.secret}
-                  />
-              </Grid>
-
-              <Grid item xs={12} sm={12} md={6} lg={6}>
-                <InputName
-                  inputState={states.baseurl}
-                  required={true}
-                  fieldName="baseurl"
-                  validationState={validatorStates.baseurl}
-                  />
-              </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6}>
-                <InputName
-                  inputState={states.sNumber}
-                  required={true}
-                  fieldName="sNumber"
-                  validationState={validatorStates.sNumber}
-                  />
-              </Grid>
-            </Grid>
-          </Box>
-
-
-          {/* <Grid item xs={12} md={6}>
-            <InputFile
-              inputState={states.certificado}
-              fieldName="Certificado Digital"
-              required={true}
-              validationState={validatorStates.certificado}
-            />
-          </Grid> */}
-
-
-          {/* <Grid item xs={12} md={6}>
-            <SelectImpresora
-              inputState={states.tipoImpresion}
-              label="Selecciona tipo de impresion"
-              required={true}
-              validationState={validatorStates.tipoImpresion}
-            />
-          </Grid> */}
-          
-          {/* <Grid item xs={12} md={6}sx={{marginBottom:"6px"}}>
-            <SelectPasarela
-              inputState={states.pasarela}
-              fieldName="Selecciona Pasarela"
-              required={true}
-              validationState={validatorStates.pasarela}
-              
-            />
-
-            <br/>
-            <br/>
-          </Grid> */}
-         
 
           <SendingButton
             textButton="Guardar Caja"

@@ -39,6 +39,7 @@ export default function CajaSucursal() {
           openDialog={open}
           setOpendialog={setOpen}
           onClose={()=>{setOpen(false);}}
+          onCreate={()=>{setOpen(false);}}
         />
       ) : (
         <></>
