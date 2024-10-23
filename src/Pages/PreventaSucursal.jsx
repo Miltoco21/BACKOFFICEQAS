@@ -46,6 +46,10 @@ export default function Preventa() {
           openDialog={open}
           setOpendialog={setOpen}
           onClose={handleCloseModal}
+          onCreate={()=>{
+            handleCloseModal()
+            window.location.href = window.location.href
+          }}
         />
       ) : (
         <></>
