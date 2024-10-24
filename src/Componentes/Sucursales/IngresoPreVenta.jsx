@@ -56,7 +56,7 @@ export default function IngresoPreVenta({
       ]
     };
 
-    console.log("Datos antes de enviar:", data);return
+    // console.log("Datos antes de enviar:", data);return
     showLoading("Enviando...");
     const caj = new SucursalPreventa()
     caj.add(data,(responseData)=>{
