@@ -116,7 +116,8 @@ class Validator {
         var newValue = newValuex+""
         if(!newValue)return true//caracter especial, ej: borrar, supr,etc
         var rex = /^[0-9]+$/g
-        return newValue.match(rex) && newValue.length<=maxDigits
+        const newValueNoMinus = newValue.replace("-","")
+        return (newValue.match(rex) || newValueNoMinus.match(rex)) && newValue.length<=maxDigits
     }
 
     static isRut(newValuex){

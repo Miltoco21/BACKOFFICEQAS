@@ -56,7 +56,7 @@ export default function IngresoPreVenta({
       ]
     };
 
-    // console.log("Datos antes de enviar:", data);
+    console.log("Datos antes de enviar:", data);return
     showLoading("Enviando...");
     const caj = new SucursalPreventa()
     caj.add(data,(responseData)=>{
@@ -88,6 +88,7 @@ export default function IngresoPreVenta({
           <InputName
               inputState={states.nombre}
               label="Descripcion"
+              fieldName="descripcion"
               required={true}
               validationState={validatorStates.nombre}
             />
@@ -98,6 +99,7 @@ export default function IngresoPreVenta({
               inputState={states.sucursal}
               label="Seleccionar sucursal"
               required={true}
+              fieldName="sucursal"
               validationState={validatorStates.sucursal}
             />
           </Grid>

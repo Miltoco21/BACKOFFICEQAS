@@ -39,11 +39,11 @@ const SelectSucursal = ({
 
     const setSelectedOriginal = (newVal)=>{
       // console.log("cambiando original a", newVal)
-      // setSelectedOriginalx(newVal)
+      setSelectedOriginalx(newVal)
     }
 
   const validate = ()=>{
-    console.log("validate de:" + fieldName)
+    // console.log("validate de:" + fieldName)
     // const len = selected.length
     // console.log("len:", len)
     // const reqOk = (!required || (required && len > 0))
@@ -59,10 +59,11 @@ const SelectSucursal = ({
     const vl = {
       "require": !reqOk,
       "empty": empty,
+      "value": selected,
       "allOk" : (reqOk),
       "message" : message
     }
-    console.log("vale:", vl)
+    // console.log("vale:", vl)
     setValidation(vl)
   }
   
@@ -85,8 +86,10 @@ const SelectSucursal = ({
   }
 
   const setByString = (valueString)=>{
+    // console.log("setByString")
     selectList.forEach((item)=>{
       if(item.sucursal == valueString){
+        // console.log("asignando",item.idSucursal)
         setSelected(item.idSucursal)
         setSelectedOriginal(item.idSucursal)
       }
@@ -100,9 +103,9 @@ const SelectSucursal = ({
   },[])
 
   useEffect(()=>{
-    console.log("cambio algo en roles")
+    // console.log("cambio algo")
     if(selectList.length>0 && selectedOriginal !== "" && selected === -1){
-      console.log("carga el original", selectedOriginal)
+      // console.log("carga el original", selectedOriginal)
       if(Validator.isNumeric(selectedOriginal)){
         // console.log("todo numero..")
         setSelected(selectedOriginal)
@@ -110,8 +113,9 @@ const SelectSucursal = ({
         // console.log("no es todo numero..")
         setByString(selectedOriginal)
       }
+      validate()
     }else{
-      console.log("valida normal")
+      // console.log("valida normal")
       validate()
     }
     // console.log("selected es:", selected)
