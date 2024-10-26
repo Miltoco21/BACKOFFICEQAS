@@ -38,6 +38,35 @@ class Stock extends Model{
     },callbackWrong)
 
   }
+
+  static async getUnits(callbackOk, callbackWrong){
+    const configs = ModelConfig.get()
+    var url = configs.urlBase + "/ProductosTmp/GetALLProductoTipoStock"
+    EndPoint.sendGet(url,(responseData, response)=>{
+      callbackOk(responseData.productoTipoStocks, response)
+    },callbackWrong)
+
+  }
+
+
+  static async getProductsMenorNivel(codBarra,callbackOk, callbackWrong){
+    const configs = ModelConfig.get()
+    var url = configs.urlBase + "/ProductosTmp/GetProductoTipoStockByIdHijo?codBarra=" + codBarra
+    EndPoint.sendGet(url,(responseData, response)=>{
+      callbackOk(responseData.productoTipoStocks, response)
+    },callbackWrong)
+
+  }
+
+  static async relacionarUnidades(data,callbackOk, callbackWrong){
+    const configs = ModelConfig.get()
+    var url = configs.urlBase
+    +"/ProductosTmp/ProductoRelacionTipoStock"
+    EndPoint.sendPost(url,data,(responseData, response)=>{
+      callbackOk(responseData, response)
+    },callbackWrong)
+
+  }
 };
 
 

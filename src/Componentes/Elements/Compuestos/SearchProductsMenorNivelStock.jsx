@@ -25,8 +25,14 @@ import SearchIcon from "@mui/icons-material/Search"; // Importar el ícono de b�
 import ModelConfig from "../../../Models/ModelConfig";
 import { SelectedOptionsContext } from "../../Context/SelectedOptionsProvider";
 import Product from "../../../Models/Product";
+import Stock from "../../../Models/Stock";
 
-const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
+const SearchProductsMenorNivelStock = ({ 
+  refresh
+  , setRefresh,
+  firstProductSelected,
+  onProductSelect
+}) => {
   const { showLoading, hideLoading } = useContext(SelectedOptionsContext);
   const apiUrl = ModelConfig.get().urlBase;
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,6 +56,7 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
       setSearchTerm(replaceSearch);
     }
 
+    console.log("hace busqueda");
     showLoading("haciendo busqueda por descripcion");
 
     Product.getInstance().findByDescriptionPaginado(
@@ -58,6 +65,23 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
         canPorPagina: 10,
         pagina: 1, // Pagina 1 para la busqueda
       },
+      (prods) => {
+        setFilteredProducts(prods); // Actualiza los productos filtrados
+        hideLoading();
+        setSearched(true); // Marca que se ha realizado una búsqueda
+      },
+      () => {
+        hideLoading();
+        setSearched(true); // Marca que se ha realizado una búsqueda
+      }
+    );
+  };
+
+  const doSearchSugeridos = (replaceSearch = "") => {
+      setSearchTerm(replaceSearch);
+
+    Stock.getProductsMenorNivel(
+        firstProductSelected.idProducto,
       (prods) => {
         setFilteredProducts(prods); // Actualiza los productos filtrados
         hideLoading();
@@ -108,8 +132,8 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
   return (
     <Box sx={{ p: 2, mb: 4 }}>
       <Grid container spacing={2} alignItems="stretch">
-        <Grid item xs={12}>
-          <TextField
+        <Grid item xs={12} sm={12} md={12} lg={12}>
+        <TextField
             fullWidth
             margin="dense"
             label="Buscar productos..."
@@ -134,12 +158,22 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
                   >
                     Buscar
                   </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => doSearchSugeridos()}
+                    sx={{ height: "40px", marginLeft:"10px" }}
+                  >
+                    Buscar sugeridos
+                  </Button>
+
+            
                 </InputAdornment>
               ),
             }}
           />
         </Grid>
-      </Grid>
+        </Grid>
   
       {/* Mostrar resultados filtrados solo si se ha buscado y hay resultados */}
       {searched && filteredProducts.length > 0 && (
@@ -282,5 +316,5 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
   
 };
 
-export default SearchProducts;
+export default SearchProductsMenorNivelStock;
 

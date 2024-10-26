@@ -4,10 +4,12 @@ import SideBar from "../Componentes/NavBar/SideBar.jsx";
 import AjusteInventario from  "../Componentes/Stock/AjusteInventario.jsx";
 import StockModel from "../Models/Stock";
 import QrStockMobile from "../Componentes/ScreenDialog/QrStockMobile.jsx";
+import NivelesUnidades from "../Componentes/Stock/NivelesUnidades.jsx";
 
 const Stock = () => {
   // Estado para controlar la apertura/cierre del modal de Ajuste de Inventario
   const [openAjusteInventario, setOpenAjusteInventario] = useState(false);
+  const [openNiveles, setOpenNiveles] = useState(false);
   const [showQrStockMobile, setShowQrStockMobile] = useState(false);
   const [qrLink, setQrLink] = useState("");
 
@@ -54,6 +56,19 @@ const Stock = () => {
           Ajuste de inventario
         </Button>
 
+        <Button
+              variant="outlined"
+              sx={{
+                my: 1,
+                mx: 2,
+              }}
+              onClick={()=>{
+                setOpenNiveles(true)
+              }} // Abre el modal al hacer clic en el botón
+            >
+              Niveles Unidades
+            </Button>
+
           { qrLink !="" && (
             <Button
               variant="outlined"
@@ -70,6 +85,8 @@ const Stock = () => {
 
           )}
           <QrStockMobile openDialog={showQrStockMobile} setOpenDialog={setShowQrStockMobile} qrLink={qrLink} />
+
+
       </Box>
 
       {/* Dialog para Ajuste de inventario */}
@@ -80,6 +97,21 @@ const Stock = () => {
         fullWidth
       >
         <AjusteInventario onClose={handleCloseAjusteInventario} />
+      </Dialog>
+
+
+      {/* Dialog para niveles de unidades de stock */}
+      <Dialog
+        open={openNiveles}
+        onClose={()=>{
+          setOpenNiveles(false)
+        }}
+        maxWidth="lg"
+        fullWidth
+      >
+        <NivelesUnidades onClose={()=>{
+          setOpenNiveles(false)
+        }} />
       </Dialog>
     </>
   );
