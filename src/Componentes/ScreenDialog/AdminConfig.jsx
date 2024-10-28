@@ -22,7 +22,6 @@ for (let index = 1; index <= 5; index++) {
 
 const AdminConfig = ({openDialog,setOpenDialog}) => {
   const [urlBase, setUrlBase] = useState("");
-  const [cantBusqRap, setCantBusqRap] = useState(20);
   const [iva, setIva] = useState("");
 
   const [savedConfig, setSavedConfig] = useState(null)
@@ -43,12 +42,10 @@ const AdminConfig = ({openDialog,setOpenDialog}) => {
 
     setUrlBase(savedConfig.urlBase)
     setIva(savedConfig.iva)
-    setCantBusqRap(savedConfig.cantidadProductosBusquedaRapida)
   }
 
   const handlerSaveAction = ()=>{
     ModelConfig.change("urlBase",urlBase);
-    ModelConfig.change("cantidadProductosBusquedaRapida", cantBusqRap)
     ModelConfig.change("iva", iva)
 
     console.log("save config");
@@ -79,15 +76,6 @@ const AdminConfig = ({openDialog,setOpenDialog}) => {
                 type="text" // Cambia dinámicamente el tipo del campo de contraseña
                 value={urlBase}
                 onChange={(e) => setUrlBase(e.target.value)}
-              />
-
-              <TextField
-                margin="normal"
-                fullWidth
-                label="Cantidad busqueda rapida"
-                type="text" // Cambia dinámicamente el tipo del campo de contraseña
-                value={cantBusqRap}
-                onChange={(e) => setCantBusqRap(e.target.value)}
               />
 
               <TextField

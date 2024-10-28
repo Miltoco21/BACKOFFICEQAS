@@ -8,6 +8,7 @@ import {
   CircularProgress,
   IconButton,
   InputAdornment,
+  Grid,
 } from "@mui/material";
 import { Settings, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +19,7 @@ import ScreenDialogConfig from "../Componentes/ScreenDialog/AdminConfig";
 import System from "../Helpers/System";
 import User from "../Models/User";
 import { SelectedOptionsContext } from "../Componentes/Context/SelectedOptionsProvider";
+import CardSemaforo from "../Componentes/Home/CardSemaforo";
 
 const Login = () => {
   const { setUserData } = useContext(SelectedOptionsContext);
@@ -148,6 +150,16 @@ const Login = () => {
               "Iniciar sesión"
             )}
           </Button>
+
+          <Grid item xs={12} sm={12} md={12} lg={12} sx={{
+            marginTop:"50px",
+            border:"1px solid #ccc"
+          }}>
+              <CardSemaforo/>
+          </Grid>
+
+
+
 
           <Typography component="h4" style={{
             position:"fixed",
