@@ -30,6 +30,7 @@ import Product from "../../Models/Product";
 import System from "../../Helpers/System";
 import { SelectedOptionsContext } from "./../Context/SelectedOptionsProvider";
 import CONSTANTS from "../../definitions/Constants";
+import Model from "../../Models/Model";
 
 
 const Step3Component = ({ 
@@ -182,6 +183,19 @@ const Step3Component = ({
         prodNuevo.codigoProducto = response.data.codigoProducto
         onSuccessAdd(prodNuevo,response)
         console.log("Productos",product)
+
+
+      const sesion = Model.getInstance().sesion
+      console.log("sesion",sesion)
+      var sesion1 = sesion.cargar(1)
+      if(!sesion1) sesion1 = {
+        id:1
+      }
+      sesion1.ultimoIdCreado = response.data.codigoProducto
+      sesion.guardar(sesion1)
+
+
+
       }
 
       // Llamar a la función onNext para continuar con el siguiente paso

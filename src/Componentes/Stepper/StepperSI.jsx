@@ -17,6 +17,7 @@ import Step3CC from "./Step3CC";//con codigo
 import Step4 from "./Step4";
 import Step5 from "./Step5";
 import Step6 from "./Step6";
+import Model from "../../Models/Model";
 
 const steps = ["Paso 1", "Paso 2"];
 
@@ -100,6 +101,21 @@ const StepperSI = ({
 
   };
 
+  const [ultimoIdCreado,setUltimoIdCreado] = useState(null)
+
+  useEffect(()=>{
+    if(activeStep === steps.length){
+      const sesion = Model.getInstance().sesion
+      console.log("sesion",sesion)
+      var sesion1 = sesion.cargar(1)
+      if(sesion1) {
+        setUltimoIdCreado(sesion1.ultimoIdCreado)
+      }
+    }else{
+      setUltimoIdCreado(null)
+    }
+  },[activeStep])
+
   return (
     <Container>
       <Paper
@@ -116,8 +132,36 @@ const StepperSI = ({
       </Stepper>
       <div>
         {activeStep === steps.length ? (
-          <div>
+          <div style={{
+            marginTop:"60px",
+            width:"100%",
+            textAlign:"center"
+          }}>
             <p>Todos los pasos han sido completados!!.</p>
+
+            { ultimoIdCreado && (
+              <Typography variant="h3">
+              
+              <Typography sx={{
+                fontSize:"18px"
+              }}>
+                C&oacute;digo generado
+              </Typography>
+
+
+              <Typography sx={{
+                fontSize:"20px"
+              }}>{ultimoIdCreado} </Typography>
+
+
+              </Typography>
+            ) }
+
+            
+
+
+
+
           </div>
         ) : (
           <div>
