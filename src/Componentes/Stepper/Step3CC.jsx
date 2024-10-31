@@ -159,7 +159,7 @@ const Step3CC = ({
         prodNuevo.idProducto = prodNuevo.codBarra
         prodNuevo.codigoProducto = prodNuevo.codBarra
         prodNuevo.codigoProductoInterno = response.data.codigoProducto
-        onSuccessAdd(prodNuevo,response)
+        if(onSuccessAdd) onSuccessAdd(prodNuevo,response)
         console.log("Productos",product)
       }
 

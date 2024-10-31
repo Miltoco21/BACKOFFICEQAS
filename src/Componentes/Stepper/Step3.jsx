@@ -181,7 +181,7 @@ const Step3Component = ({
         setOpenSnackbar(true);
         prodNuevo.idProducto = response.data.codigoProducto
         prodNuevo.codigoProducto = response.data.codigoProducto
-        onSuccessAdd(prodNuevo,response)
+        if(onSuccessAdd) onSuccessAdd(prodNuevo,response)
         console.log("Productos",product)
 
 
