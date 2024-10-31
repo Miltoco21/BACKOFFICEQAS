@@ -603,6 +603,23 @@ const Editp2 = ({ product, open, handleClose }) => {
             <Button variant="contained" onClick={handleClose}>
               Cerrar
             </Button>
+
+            <Typography sx={{
+              float:"right",
+              display:"inline-block",
+            }}
+            variant="p"
+            >
+              Precio vta $
+              <Typography sx={{
+                fontSize:"23px",
+                position:"relative",
+                top:"2px"
+            }}
+            variant="span">
+              {( editedProduct.precioVenta ).toLocaleString()}
+              </Typography>
+            </Typography>
           </Grid>
         </Grid>
       </DialogContent>

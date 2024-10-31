@@ -96,8 +96,7 @@ const StockMobile = () => {
       const res = resp.data
       // console.log("res", res)
       if(res.cantidadRegistros>0){
-        showMessage("existe el producto")
-
+        // showMessage("existe el producto")
         setProductEdit(res.productos[0])
         setopenEdit(true)
 
