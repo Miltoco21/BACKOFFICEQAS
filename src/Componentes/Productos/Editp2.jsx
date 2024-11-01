@@ -617,7 +617,7 @@ const Editp2 = ({ product, open, handleClose }) => {
                 top:"2px"
             }}
             variant="span">
-              {( editedProduct.precioVenta ).toLocaleString()}
+              { (editedProduct.precioVenta ? editedProduct.precioVenta.toLocaleString() : "0") }
               </Typography>
             </Typography>
           </Grid>
