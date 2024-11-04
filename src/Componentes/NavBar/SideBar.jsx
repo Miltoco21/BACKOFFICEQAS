@@ -124,7 +124,7 @@ export default function PermanentDrawerLeft() {
           
         },
 
-
+ 
         {
           text: "Reportes",
           link: "/reportes",
@@ -137,6 +137,8 @@ export default function PermanentDrawerLeft() {
             { text: "Ranking de Venta de Productos", link: "/reportes/rankingproductos",icon: <SummarizeIcon />},
             { text: "Libro de Ventas", link: "/reportes/rankinglibroventas",icon: <SummarizeIcon />},
             { text: "Libro de Compras", link: "/reportes/rankinglibrocompras",icon: <SummarizeIcon />},
+            // { text: "Reporte Z", link: "/reportes/reportez",icon: <SummarizeIcon />},
+            { text: "Reporte Cierre Z", link: "/reportes/reportecierrez",icon: <SummarizeIcon />},
 
 
           

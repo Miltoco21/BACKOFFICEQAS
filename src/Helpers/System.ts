@@ -200,6 +200,11 @@ class System {
         return txt
       }
 
+      static onlyTime(datetime){
+        const arrAll = datetime.split(" ")
+        return arrAll[1]
+      }
+
 }
 
 
