@@ -132,7 +132,7 @@ const DialogReporteCierreZ = ({
     analizarInfo()
   },[])
   
-  return info.length>0 ? (<></>) : (
+  return openDialog && info.length>0 && (
     <Dialog
     open={openDialog}
     onClose={()=>{ setOpenDialog(false) }}
