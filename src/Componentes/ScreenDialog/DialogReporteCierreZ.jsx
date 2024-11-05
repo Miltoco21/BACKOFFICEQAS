@@ -128,11 +128,11 @@ const DialogReporteCierreZ = ({
   }
 
   useEffect(()=>{
-    if(!info || info.length < 1) return
+    if(!info) return
     analizarInfo()
-  },[])
-  
-  return openDialog && info.length>0 && (
+  },[openDialog])
+
+  return openDialog && info && (
     <Dialog
     open={openDialog}
     onClose={()=>{ setOpenDialog(false) }}

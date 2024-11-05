@@ -107,7 +107,7 @@ const ReporteCierreZ = () => {
   const [cajas, setCajas] = useState([]);
   const [cajaSel, setCajaSel] = useState(null);
   const [infoPorCaja, setInfoPorCaja] = useState([]);
-  const [detailsInfo, setDetailsInfo] = useState([]);
+  const [detailsInfo, setDetailsInfo] = useState(null);
 
   const agruparPorCaja = (data)=>{
     var prodCaja = []
@@ -174,8 +174,6 @@ const ReporteCierreZ = () => {
     setStartDate(dayjs())
     setEndDate(dayjs())
   },[])
-
-
 
 
   return (
@@ -295,7 +293,6 @@ const ReporteCierreZ = () => {
                     listValues={cajas}
                     selected={cajaSel}
                     setSelected={(sel)=>{
-                      console.log("selecciona la caja:", sel)
                       setCajaSel(sel)
                       cargarInfoCaja(cajas[sel])
                     }}
