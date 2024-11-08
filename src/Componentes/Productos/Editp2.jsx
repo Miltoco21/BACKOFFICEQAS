@@ -54,6 +54,7 @@ const Editp2 = ({ product, open, handleClose }) => {
   
   useEffect(() => {
     setEditedProduct(product);
+    setEsPesable( product.tipoVenta == 2 )
   }, [open]);
     
 
@@ -249,7 +250,7 @@ const Editp2 = ({ product, open, handleClose }) => {
       setSuccessDialogOpen(true);
       setSuccessMessage(res.message);
       handleClose();
-      window.location.reload(1)
+      // window.location.reload(1)
     },(err)=>{
       setErrorMessage(err.message);
       setOpenErrorDialog(true);
