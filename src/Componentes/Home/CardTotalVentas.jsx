@@ -57,11 +57,28 @@ export default function({
   return (
     <Card>
       <CardContent>
-        
-        <CardContent>
-          <Typography variant="body-md">Ventas</Typography>
-          <Typography variant="h2">${totalVentas.toLocaleString()}</Typography>
-        </CardContent>
+          <div style={{
+            display:"inline-block",
+            padding:"15px 30px",
+            marginRight:"30px",
+            marginBottom:"10px",
+            border:"1px solid darkgray"
+          }}>
+            <Typography variant="p" sx={{ display:"block" }}>Ventas</Typography>
+            <Typography variant="p">&nbsp;</Typography>
+
+            <Typography variant="h2">${totalVentas.toLocaleString()}</Typography>
+          </div>
+          <div style={{
+            display:"inline-block",
+            padding:"15px 30px",
+            textAlign:"center",
+            border:"1px solid darkgray"
+          }}>
+            <Typography variant="p" sx={{ display:"block" }}>Transacciones</Typography>
+            <Typography variant="p">&nbsp;</Typography>
+            <Typography variant="h2">{cantidadVentas}</Typography>
+          </div>
       </CardContent>
       <CardActions>
         <Button variant="contained" size="small" onClick={()=>{
