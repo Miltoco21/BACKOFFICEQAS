@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Paper,
   Grid,
@@ -147,6 +147,12 @@ const ReportesCtaCorrienteProv = () => {
     const totalPagos = pagos.reduce((sum, pago) => sum + pago.montoPagado, 0);
     return total - totalPagos;
   };
+
+  useEffect(()=>{
+    setStartDate(dayjs())
+    setEndDate(dayjs())
+    
+  },[])
 
   return (
     <div style={{ display: "flex" }}>

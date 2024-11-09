@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Paper,
   Grid,
@@ -131,6 +131,12 @@ const RankingVentas = () => {
   };
 
   const grandTotalSuma = calculateTotalSuma();
+
+  useEffect(()=>{
+    setStartDate(dayjs())
+    setEndDate(dayjs())
+    
+  },[])
 
   return (
     <div style={{ display: "flex" }}>

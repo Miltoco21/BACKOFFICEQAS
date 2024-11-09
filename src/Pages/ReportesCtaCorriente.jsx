@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Paper,
   Grid,
@@ -157,6 +157,12 @@ const ReportesCtaCorriente = () => {
   const toggleHideZeroSaldo = () => {
     setHideZeroSaldo((prev) => !prev);
   };
+
+  useEffect(()=>{
+    setStartDate(dayjs())
+    setEndDate(dayjs())
+    
+  },[])
 
   return (
     <div style={{ display: "flex" }}>
