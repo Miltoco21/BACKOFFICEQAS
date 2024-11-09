@@ -31,6 +31,9 @@ import BoxSelectList from "../Componentes/Proveedores/BoxSelectList";
 import ReporteVenta from "../Models/ReporteVenta";
 import { SelectedOptionsContext } from "../Componentes/Context/SelectedOptionsProvider";
 import Sale from "../Models/Sale";
+import System from "../Helpers/System";
+import RankingLibroVentasDetalle from "./RankingLibroVentasDetalle";
+import User from "../Models/User";
 
 const RankingLibroVentas = () => {
 
@@ -64,6 +67,9 @@ const RankingLibroVentas = () => {
   
   const [cajas, setCajas] = useState([]);
   const [cajaSel, setCajaSel] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [userSel, setUserSel] = useState(null);
   const [ventasPorCaja, setVentaPorCaja] = useState([]);
 
   const fetchData = async () => {
@@ -105,6 +111,7 @@ const RankingLibroVentas = () => {
 
       setVentaPorCaja([])
       setCajaSel(null)
+      setUserSel(null)
 
       setLoading(false);
     },(error)=>{
@@ -177,17 +184,44 @@ const RankingLibroVentas = () => {
     );
   };
 
+  const getUserInfo = (fieldValue, nameField = "codigoUsuario")=>{
+    // console.log("getUserInfo")
+    var info = null
+    allUsers.forEach((user)=>{
+      if(user[nameField] === fieldValue){
+        info = user
+      }
+    })
+    // console.log("devuelve ", info)
+    return info
+  }
+
+
   const agruparPorCaja = ()=>{
+    console.log("agruparPorCaja")
+    var usersx = []
     var prodCaja = []
     data.forEach((prod)=>{
       if(!prodCaja.includes(prod.puntoVenta)){
         prodCaja.push(prod.puntoVenta)
       }
+
+      const info = getUserInfo(prod.idUsuario)
+      const userName = info ? info.nombres + " " + info.apellidos : ""
+      // console.log("info", info)
+      // console.log("userName", userName)
+
+      if( userName && !usersx.includes(userName)){
+        usersx.push(userName)
+      }
     })
 
     prodCaja.push("Todas")
+    usersx.push("Todos")
 
     setCajas(prodCaja)
+    setUsers(usersx)
+    console.log("usersx", usersx)
     // console.log("cajas", prodCaja)
   }
 
@@ -212,17 +246,55 @@ const RankingLibroVentas = () => {
     setTotalIVACaja(totIvaCaja)
   }
 
+
+
+  const cargarVentasPorUsuarioYCaja = ()=>{
+    var ventas = []
+    var cantCaja = 0
+    var totCaja = 0
+    var totIvaCaja = 0
+    data.forEach((venta)=>{
+      if( 
+        (venta.puntoVenta == cajas[cajaSel] || cajas[cajaSel] == "Todas") 
+      ){
+        const infoUser = getUserInfo(venta.idUsuario)
+        const userName = infoUser ? infoUser.nombres + " " + infoUser.apellidos : ""
+
+        if(userSel === null || users[userSel] == "Todos" || userName == users[userSel]){
+          ventas.push(venta)
+          cantCaja ++
+          totCaja += venta.total
+          totIvaCaja += venta.montoIVA
+        }
+      }
+    })
+    setVentaPorCaja(ventas)
+    setCantidadCaja(cantCaja)
+    setTotalValuesCaja(totCaja)
+    setTotalIVACaja(totIvaCaja)
+  }
+
   useEffect(()=>{
     setStartDate(dayjs())
     setEndDate(dayjs())
     setTipo([
       0,1,2
     ])
+
+    User.getAll((usersServer)=>{
+      setAllUsers(usersServer)
+    },(error)=>{
+      console.log("no se pudo cargar los usuarios")
+    })
   },[])
 
   useEffect(()=>{
     agruparPorCaja()
   },[data])
+
+  useEffect(()=>{
+    cargarVentasPorUsuarioYCaja()
+  },[userSel, cajaSel])
 
   return (
     <div style={{ display: "flex" }}>
@@ -332,17 +404,29 @@ const RankingLibroVentas = () => {
             <Grid item xs={12} sm={12} md={2} lg={2}>
               <Typography>Seleccionar caja</Typography>
             </Grid>
-            <Grid item xs={12} sm={12} md={8} lg={8}>
+            <Grid item xs={12} sm={12} md={10} lg={10}>
               <BoxSelectList
                 listValues={cajas}
                 selected={cajaSel}
                 setSelected={(sel)=>{
-                  console.log("selecciona la caja:", sel)
                   setCajaSel(sel)
-                  cargarVentasPorCaja(cajas[sel])
                 }}
               />
             </Grid>
+
+            <Grid item xs={12} sm={12} md={2} lg={2}>
+              <Typography>Seleccionar usuario</Typography>
+            </Grid>
+            <Grid item xs={12} sm={12} md={10} lg={10}>
+              <BoxSelectList
+                listValues={users}
+                selected={userSel}
+                setSelected={(sel)=>{
+                  setUserSel(sel)
+                }}
+              />
+            </Grid>
+
 
             <Grid item xs={12} sm={12} md={4} lg={4}>
               <p>Total en caja: ${totalValuesCaja.toLocaleString("es-CL")}</p>
@@ -387,7 +471,7 @@ const RankingLibroVentas = () => {
                     </TableCell>
                     <TableCell>{producto.descripcionComprobante}</TableCell>
                     <TableCell>
-                      {producto.nroComprobante.toLocaleString("es-CL")}
+                      {producto.idCabecera} / {producto.nroComprobante.toLocaleString("es-CL")}
                     </TableCell>
                     <TableCell>
                       {producto.montoNeto.toLocaleString("es-CL")}
@@ -402,7 +486,10 @@ const RankingLibroVentas = () => {
                       <Button
                         variant="contained"
                         color="secondary"
-                        onClick={() => handleDialogOpen(producto)}
+                        onClick={() => {
+                          console.log("detalles del producto", producto)
+                          handleDialogOpen(producto)
+                        }}
                       >
                         Detalles
                       </Button>
@@ -421,120 +508,13 @@ const RankingLibroVentas = () => {
         onClose={() => setSnackbarOpen(false)}
         message={snackbarMessage}
       />
-      <Dialog
-        open={openDialog}
+      
+      <RankingLibroVentasDetalle
+        openDialog={openDialog}
         onClose={handleDialogClose}
-        fullWidth
-        maxWidth="lg"
-      >
-        <DialogTitle>Detalles</DialogTitle>
-        <DialogContent>
-          {selectedProduct && (
-            <>
-              <TableContainer component={Paper} sx={{ mb: 2 }}>
-                <Table>
-                  <TableHead>
-                    <TableRow sx={{ backgroundColor: "gainsboro" }}>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Descripción</TableCell>
-                      <TableCell>Folio Documento</TableCell>
-                      <TableCell>Método de Pago</TableCell>
-
-                      <TableCell>rdcTransactionId </TableCell>
-
-                      <TableCell>Valor Neto</TableCell>
-                      <TableCell>IVA DF</TableCell>
-                      <TableCell>Total</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        {new Date(
-                          selectedProduct.fechaIngreso
-                        ).toLocaleDateString("es-CL")}
-                      </TableCell>
-                      <TableCell>
-                        {selectedProduct.descripcionComprobante}
-                      </TableCell>
-                      <TableCell>
-                        {selectedProduct.nroComprobante.toLocaleString("es-CL")}
-                      </TableCell>
-                      <TableCell>
-                        {selectedProduct.metodoPago.toLocaleString("es-CL")}
-                      </TableCell>
-                      <TableCell>
-                        {selectedProduct.rdcTransactionId.toLocaleString(
-                          "es-CL"
-                        )}
-                      </TableCell>
-
-                      <TableCell>
-                        {selectedProduct.montoNeto.toLocaleString("es-CL")}
-                      </TableCell>
-                      <TableCell>
-                        {selectedProduct.montoIVA.toLocaleString("es-CL")}
-                      </TableCell>
-                      <TableCell>
-                        {selectedProduct.total.toLocaleString("es-CL")}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              Datos de Productos
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow sx={{ backgroundColor: "gainsboro" }}>
-                      <TableCell>Código Producto</TableCell>
-                      <TableCell>Descripción</TableCell>
-                      <TableCell>Precio Unidad</TableCell>
-                      <TableCell>Cantidad</TableCell>
-                      <TableCell>Costo</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {selectedProduct.ventaDetalleReportes.map(
-                      (detalle, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{detalle.codProducto}</TableCell>
-                          <TableCell>{detalle.descripcion}</TableCell>
-                          <TableCell>
-                            {detalle.precioUnidad.toLocaleString("es-CL")}
-                          </TableCell>
-                          <TableCell>
-                            {detalle.cantidad.toLocaleString("es-CL")}
-                          </TableCell>
-                          <TableCell>
-                            {detalle.costo.toLocaleString("es-CL")}
-                          </TableCell>
-                        </TableRow>
-                      )
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button sx={{
-            backgroundColor:"#ee0000",
-            color:"#f0f0f0",
-            "&:hover":{
-              backgroundColor:"#FD2020",
-              color:"#fff"
-            }
-          }} onClick={handleBorradoLogico}>
-            Borrado logico
-          </Button>
-
-          <Button onClick={handleDialogClose} color="primary">
-            Cerrar
-          </Button>
-        </DialogActions>
-      </Dialog>
+        handleBorradoLogico={handleBorradoLogico}
+        selectedProduct={selectedProduct}
+      />
     </div>
   );
 };
