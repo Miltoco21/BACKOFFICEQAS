@@ -471,7 +471,7 @@ const RankingLibroVentas = () => {
                     </TableCell>
                     <TableCell>{producto.descripcionComprobante}</TableCell>
                     <TableCell>
-                      {producto.idCabecera} / {producto.nroComprobante.toLocaleString("es-CL")}
+                      {producto.nroComprobante.toLocaleString("es-CL")}
                     </TableCell>
                     <TableCell>
                       {producto.montoNeto.toLocaleString("es-CL")}

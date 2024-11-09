@@ -75,7 +75,7 @@ const RankingLibroVentasDetalle = ({
                         {selectedProduct.descripcionComprobante}
                       </TableCell>
                       <TableCell>
-                        {selectedProduct.idCabecera} / {selectedProduct.nroComprobante.toLocaleString("es-CL")}
+                        {selectedProduct.nroComprobante.toLocaleString("es-CL")}
                       </TableCell>
                       <TableCell>
                         {selectedProduct.metodoPago.toLocaleString("es-CL")}
