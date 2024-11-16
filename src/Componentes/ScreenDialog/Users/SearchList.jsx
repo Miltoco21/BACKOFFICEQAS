@@ -22,6 +22,9 @@ import EditUsuario from "./Edit";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import SideBar from "../../NavBar/SideBar"
 import ModelConfig from "../../../Models/ModelConfig";
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import GenerarAutorizacion from "../GenerarAutorizacion";
+
 
 const SearchList = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,8 +37,11 @@ const SearchList = () => {
   const [userToDelete, setUserToDelete] = useState("");
   const perPage = 5;
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [openDialogAutorizacion, setOpenDialogAutorizacion] = useState(false)
+
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const apiUrl = ModelConfig.get().urlBase;
+  
   const fetchUsers = async () => {
     try {
       const response = await axios.get(
@@ -120,6 +126,10 @@ const SearchList = () => {
     setModalOpen(true);
   };
 
+  const handleAutorizacion = (user) => {
+    setOpenDialogAutorizacion(true);
+  };
+
   const handleCloseEditModal = () => {
     setModalOpen(false);
     setRefresh(!refresh); // Refresh the users list after editing
@@ -200,6 +210,10 @@ const SearchList = () => {
                   <Button onClick={() => handleEdit(user)}>
                     <EditIcon />
                   </Button>
+
+                  <Button onClick={() => handleAutorizacion(user)}>
+                    <HowToRegIcon/>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))
@@ -214,6 +228,7 @@ const SearchList = () => {
           mt: 2,
         }}
       >
+        <GenerarAutorizacion openDialog={openDialogAutorizacion} setOpenDialog={setOpenDialogAutorizacion} />
         <Typography variant="body2">
           Página {currentPage} de {totalPages}
         </Typography>
