@@ -18,19 +18,81 @@ import User from "../../Models/User";
 import BoxOptionList from "../Elements/BoxOptionList";
 import MainButton from "../Elements/MainButton";
 import { maxWidth, width } from "@mui/system";
+import InputPassword from "../Elements/Compuestos/InputPassword";
+import Model from "../../Models/Model";
+import System from "../../Helpers/System";
+import dayjs from "dayjs";
 
 const GenerarAutorizacion = ({
+  selectedUser,
   openDialog,
   setOpenDialog
 }) => {
-  
+  const {
+    showLoading,
+    hideLoading,
+    showLoadingDialog,
+    userData, 
+    showMessage
+  } = useContext(SelectedOptionsContext);
+
   const [caducidad, setCaducidad] = useState("")
   
-  
+  const opcionesCaducidad = [
+    {
+      id: 1,
+      value:"dia"
+    },
+    {
+      id: 2,
+      value:"semana"
+    },
+    {
+      id: 3,
+      value:"mes"
+    }
+  ]
+
+  const getCaducidad = ()=>{
+    var val = ""
+    opcionesCaducidad.forEach((cad,ix)=>{
+      if(cad.id == caducidad){
+        val = cad.value
+      }
+    })
+    return val
+  }
+
   const [verGenerado, setVerGenerado] = useState(false)
   const [qr, setQr] = useState("")
   const [hash, setHash] = useState("")
   
+  const clave = useState("")
+  const claveValidacion = useState("")
+
+
+  const enviarAutorizador = ()=>{
+    Model.addSupervision({
+      fechaIngreso: System.getInstance().getDateForServer(dayjs()),
+      codigoUsuario : selectedUser.codigoUsuario,
+      opcionCaducidad: getCaducidad(),
+      clave:clave[0],
+      codigoUsuarioAutorizador: User.getInstance().getFromSesion().codigoUsuario
+    },(res)=>{
+      console.log(res)
+      setVerGenerado(true)
+      document.querySelectorAll(".divAutorizacion").forEach((div)=>{
+        console.log("div", div)
+        if(div){
+          div.innerHTML = res.autorizacion
+        }
+
+      })
+    },(err)=>{
+      showMessage(err)
+    })
+  }
+
 
   return (
     <Dialog
@@ -47,26 +109,26 @@ const GenerarAutorizacion = ({
         <BoxOptionList
           optionSelected={caducidad}
           setOptionSelected={setCaducidad}
-          options={ [
-            {
-              id: 1,
-              value:"dia"
-            },
-            {
-              id: 2,
-              value:"semana"
-            },
-            {
-              id: 3,
-              value:"mes"
-            }
-          ]}
+          options={opcionesCaducidad}
         />
 
         </Grid>
+        
+
+        <Grid item xs={12} sm={12} md={6} lg={6}>
+          <InputPassword
+            inputState={clave}
+            fieldName="clave"
+            required={false}
+            withLabel={false}
+            validationState={claveValidacion}
+          />
+        </Grid>
+
         <Grid item xs={12} sm={12} md={12} lg={12}>
           <MainButton actionButton={()=>{
             console.log("hacer hash")
+            enviarAutorizador()
           }} textButton={"Generar autorizacion"} style={{
             width:"300px"
           }}/>
@@ -76,11 +138,12 @@ const GenerarAutorizacion = ({
        
         {verGenerado && (
           <Grid item xs={12} sm={12} md={12} lg={12}>
-            <Typography>Hash Generado</Typography>
-            <input type="text" value={hash} />
+            {/* <Typography>Hash Generado</Typography>
+            <input type="text" value={hash} /> */}
 
-            <Typography>Qr generado</Typography>
-            <Image src={qr}  />
+            {/* <Typography>Autozacion</Typography> */}
+            {/* <Image src={qr}  /> */}
+            <div className="divAutorizacion"></div>
           </Grid>
         )}
       

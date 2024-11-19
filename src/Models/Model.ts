@@ -49,7 +49,22 @@ class Model extends Singleton{
         EndPoint.sendGet(url,(responseData, response)=>{
           callbackOk(responseData.sucursals, response)
         },callbackWrong)
-      }
+    }
+
+    static async getSupervision(data,callbackOk, callbackWrong){
+        const url = ModelConfig.get("urlBase") + "/Ventas/AutorizarAccion?fechaIngreso=" + data.fechaIngreso 
+        + "&idUsuario=" + data.idUsuario + "&CodeAutorizacion=" + data.CodeAutorizacion + "&Accion=" + data.Accion
+        EndPoint.sendPost(url,data.body,(responseData, response)=>{
+            callbackOk(responseData.sucursals, response)
+        },callbackWrong)
+    }
+
+    static async addSupervision(data,callbackOk, callbackWrong){
+        const url = ModelConfig.get("urlBase") + "/Usuarios/CrearAutorizador"
+        EndPoint.sendPost(url,data,(responseData, response)=>{
+            callbackOk(responseData, response)
+        },callbackWrong)
+    }
 
 
 };

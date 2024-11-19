@@ -127,6 +127,7 @@ const SearchList = () => {
   };
 
   const handleAutorizacion = (user) => {
+    setSelectedUser(user);
     setOpenDialogAutorizacion(true);
   };
 
@@ -228,7 +229,11 @@ const SearchList = () => {
           mt: 2,
         }}
       >
-        <GenerarAutorizacion openDialog={openDialogAutorizacion} setOpenDialog={setOpenDialogAutorizacion} />
+        <GenerarAutorizacion
+        selectedUser={selectedUser}
+        openDialog={openDialogAutorizacion} 
+        setOpenDialog={setOpenDialogAutorizacion}
+        />
         <Typography variant="body2">
           Página {currentPage} de {totalPages}
         </Typography>
