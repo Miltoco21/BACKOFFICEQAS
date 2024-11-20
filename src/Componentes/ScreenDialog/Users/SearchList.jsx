@@ -72,10 +72,8 @@ const SearchList = () => {
   const getQrAutorizacion = async (code) => {
     showLoading("cargando imagen")
     try {
-      const response = await axios.post(
-        apiUrl + `/Usuarios/CrearQRAutorizador?code=` + code,{
-        }
-      );
+      const response = await axios.get(
+        apiUrl + `/Usuarios/CrearQRAutorizador?code=` + code );
       // console.log("API response:", response.data);
       if(response.data.autorizacion!=""){
         setQrAutorizacion(response.data.autorizacion);
@@ -83,6 +81,7 @@ const SearchList = () => {
       }
     } catch (error) {
       console.error("Error:", error);
+      showMessage("No se pudo cargar")
     } finally{
       hideLoading()
     }
