@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
   Box,
@@ -24,9 +24,20 @@ import SideBar from "../../NavBar/SideBar"
 import ModelConfig from "../../../Models/ModelConfig";
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import GenerarAutorizacion from "../GenerarAutorizacion";
-
+import QrAutorizacion from "../QrAutorizacion";
+import {SelectedOptionsContext} from "../../Context/SelectedOptionsProvider";
 
 const SearchList = () => {
+
+  const {
+    userData,
+    showMessage,
+    showConfirm,
+    showLoading,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
+
+
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState([]);
@@ -38,10 +49,14 @@ const SearchList = () => {
   const perPage = 5;
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [openDialogAutorizacion, setOpenDialogAutorizacion] = useState(false)
-
+  
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const apiUrl = ModelConfig.get().urlBase;
   
+   const [verAutorizacion, setVerAutorizacion] = useState(false)
+   const [qrAutorizacion, setQrAutorizacion] = useState("")
+
+
   const fetchUsers = async () => {
     try {
       const response = await axios.get(
@@ -51,6 +66,25 @@ const SearchList = () => {
       setUsers(response.data.usuarios);
     } catch (error) {
       console.error("Error fetching users:", error);
+    }
+  };
+
+  const getQrAutorizacion = async (code) => {
+    showLoading("cargando imagen")
+    try {
+      const response = await axios.post(
+        apiUrl + `/Usuarios/CrearQRAutorizador?code=` + code,{
+        }
+      );
+      // console.log("API response:", response.data);
+      if(response.data.autorizacion!=""){
+        setQrAutorizacion(response.data.autorizacion);
+        setVerAutorizacion(true)
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally{
+      hideLoading()
     }
   };
 
@@ -184,7 +218,17 @@ const SearchList = () => {
           ) : (
             paginatedUsers.map((user) => (
               <TableRow key={user.codigoUsuario}>
-                <TableCell>{user.codigoUsuario}</TableCell>
+                <TableCell>
+                  {user.codigoUsuario}
+                  {user.autorizacion &&(
+                    <Button onClick={() => {
+                      console.log("click autorizacion")
+                      getQrAutorizacion(user.autorizacion)
+                    }}>
+                      <HowToRegIcon/>
+                    </Button>
+                  )}
+                  </TableCell>
                 <TableCell>
                   <span style={{ color: "purple" }}>{user.nombres}</span>
                   <br />
@@ -286,6 +330,12 @@ const SearchList = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <QrAutorizacion
+        openDialog={verAutorizacion}
+        setOpenDialog={setVerAutorizacion}
+        qrAutorizacion={qrAutorizacion}
+      />
     </Box>
   );
 };
