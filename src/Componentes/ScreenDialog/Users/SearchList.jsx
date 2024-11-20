@@ -221,7 +221,6 @@ const SearchList = () => {
                   {user.codigoUsuario}
                   {user.autorizacion &&(
                     <Button onClick={() => {
-                      console.log("click autorizacion")
                       getQrAutorizacion(user.autorizacion)
                     }}>
                       <HowToRegIcon/>

@@ -31,7 +31,6 @@ const QrAutorizacion = ({
     const allDiv = document.querySelectorAll(".divVerAutorizacion")
     if(allDiv.length>0){
       document.querySelectorAll(".divVerAutorizacion").forEach((div)=>{
-        console.log("div", div)
         if(div){
           div.innerHTML = qrAutorizacion
         }

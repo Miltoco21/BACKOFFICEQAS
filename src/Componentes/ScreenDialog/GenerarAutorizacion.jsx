@@ -36,7 +36,7 @@ const GenerarAutorizacion = ({
     showMessage
   } = useContext(SelectedOptionsContext);
 
-  const [caducidad, setCaducidad] = useState("")
+  const [caducidad, setCaducidad] = useState(2)
   
   const opcionesCaducidad = [
     {
@@ -71,7 +71,23 @@ const GenerarAutorizacion = ({
   const claveValidacion = useState("")
 
 
+  const verDiv = (dat)=>{
+    const allDiv = document.querySelectorAll(".divAutorizacion")
+    if(allDiv.length>0){
+      document.querySelectorAll(".divAutorizacion").forEach((div)=>{
+        if(div){
+          div.innerHTML = dat
+        }
+      })
+    }else{
+      setTimeout(() => {
+        verDiv(dat)
+      }, 500);
+    }
+  }
+
   const enviarAutorizador = ()=>{
+    showLoading("Generando autorizacion...")
     Model.addSupervision({
       fechaIngreso: System.getInstance().getDateForServer(dayjs()),
       codigoUsuario : selectedUser.codigoUsuario,
@@ -79,20 +95,24 @@ const GenerarAutorizacion = ({
       clave:clave[0],
       codigoUsuarioAutorizador: User.getInstance().getFromSesion().codigoUsuario
     },(res)=>{
-      console.log(res)
+      hideLoading()
       setVerGenerado(true)
-      document.querySelectorAll(".divAutorizacion").forEach((div)=>{
-        console.log("div", div)
-        if(div){
-          div.innerHTML = res.autorizacion
-        }
-
-      })
-    },(err)=>{
+      verDiv(res.autorizacion)
+      // document.querySelectorAll(".divAutorizacion").forEach((div)=>{
+        //   console.log("div", div)
+        //   if(div){
+          //     div.innerHTML = res.autorizacion
+          //   }
+          // })
+        },(err)=>{
+      hideLoading()
       showMessage(err)
     })
   }
 
+  useEffect(()=>{
+    setVerGenerado(false)
+  },[openDialog])
 
   return (
     <Dialog
@@ -104,42 +124,41 @@ const GenerarAutorizacion = ({
 
       <Grid container spacing={2} sx={{ mt: 2}}>
 
-        <Grid item xs={12} sm={12} md={12} lg={12}>
-
-        <BoxOptionList
-          optionSelected={caducidad}
-          setOptionSelected={setCaducidad}
-          options={opcionesCaducidad}
-        />
-
-        </Grid>
-        
-
-        <Grid item xs={12} sm={12} md={6} lg={6}>
-          <InputPassword
-            inputState={clave}
-            fieldName="clave"
-            required={false}
-            withLabel={false}
-            validationState={claveValidacion}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={12} md={12} lg={12}>
-          <MainButton actionButton={()=>{
-            console.log("hacer hash")
-            enviarAutorizador()
-          }} textButton={"Generar autorizacion"} style={{
-            width:"300px"
-          }}/>
-        </Grid>
-
-
-       
-        {verGenerado && (
+          {!verGenerado ? (
+          <>
           <Grid item xs={12} sm={12} md={12} lg={12}>
-            {/* <Typography>Hash Generado</Typography>
-            <input type="text" value={hash} /> */}
+
+          <BoxOptionList
+            optionSelected={caducidad}
+            setOptionSelected={setCaducidad}
+            options={opcionesCaducidad}
+          />
+
+          </Grid>
+          
+
+          <Grid item xs={12} sm={12} md={6} lg={6}>
+            <InputPassword
+              inputState={clave}
+              fieldName="clave"
+              required={false}
+              withLabel={false}
+              validationState={claveValidacion}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+            <MainButton actionButton={()=>{
+              enviarAutorizador()
+            }} textButton={"Generar autorizacion"} style={{
+              width:"300px"
+            }}/>
+          </Grid>
+          </>
+        ) : (
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+            <Typography>Generado</Typography>
+            {/* <input type="text" value={hash} /> */}
 
             {/* <Typography>Autozacion</Typography> */}
             {/* <Image src={qr}  /> */}
