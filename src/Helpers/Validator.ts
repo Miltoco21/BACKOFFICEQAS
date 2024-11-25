@@ -29,6 +29,12 @@ class Validator {
         return newValue.match(rex)
     }
 
+    static isNumericOAlphaConEspacio(newValuex){
+        var newValue = newValuex+""
+        var rex = /^[A-Za-z 0-9]+$/g
+        return newValue.match(rex)
+    }
+
     static isNombre(newValuex){
         var newValue = newValuex+""
         

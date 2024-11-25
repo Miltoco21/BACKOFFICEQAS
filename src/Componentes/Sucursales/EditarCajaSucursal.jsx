@@ -34,36 +34,37 @@ export default function EditarCajaSucursal({
   } =
     useContext(SelectedOptionsContext);
 
-  var states = {
-    nombre:useState(""),
-    sucursal:useState(""),
-    // tipoImpresion:useState(""),
-    // certificado:useState(""),
-    // pasarela:useState(""),
-  
-    cliente_id : useState(""),
-    secret : useState(""),
-    baseurl : useState(""),
-    sNumber : useState(""),
-
-   
-  };
-
-  var validatorStates = {
+    const [debeImprimir, setDebeImprimir] = useState(false)
+    var states = {
+      nombre:useState(""),
+      sucursal:useState(""),
+      // tipoImpresion:useState(""),
+      // certificado:useState(""),
+      // pasarela:useState(""),
     
-    nombre: useState(null),
-    sucursal: useState(null),
-    // certificado: useState(null),
-    // tipoImpresion: useState(null),
-    // pasarela: useState(null),
+      cliente_id : useState(""),
+      secret : useState(""),
+      baseurl : useState(""),
+      sNumber : useState(""),
+      
+      nombreImpresora : useState(""),
+    
+    };
 
-    cliente_id: useState(null),
-    secret: useState(null),
-    baseurl: useState(null),
-    sNumber: useState(null),
-    
-    
-  };
+    var validatorStates = {
+      nombre: useState(null),
+      sucursal: useState(null),
+      // certificado: useState(null),
+      // tipoImpresion: useState(null),
+      // pasarela: useState(null),
+
+      cliente_id: useState(null),
+      secret: useState(null),
+      baseurl: useState(null),
+      sNumber: useState(null),
+      
+      nombreImpresora: useState(null),
+    };
 
   const handleSubmit = async () => {
     if (!System.allValidationOk(validatorStates, showMessage)) {
@@ -192,6 +193,10 @@ export default function EditarCajaSucursal({
             />
           </Grid>
 
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+          <Typography variant="h4" sx={{
+            padding:"30px 20px 0 10px"
+          }}>Terminales de pago</Typography>
           <Box sx={{ 
             display: "flex",
             border: "1px solid dimgray",
@@ -204,7 +209,7 @@ export default function EditarCajaSucursal({
 
             <Grid container spacing={2} sx={{ padding: "2%" }}>
               <Grid item xs={12} sm={12} md={12} lg={12}>
-                <Typography>Redelcom</Typography>
+                <Typography variant="h5">Redelcom</Typography>
               </Grid>
 
               <br/>
@@ -244,6 +249,57 @@ export default function EditarCajaSucursal({
               </Grid>
             </Grid>
           </Box>
+          </Grid>
+
+
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+          <Typography variant="h4" sx={{
+            padding:"30px 20px 0 10px"
+          }}>Impresion</Typography>
+          <Box sx={{ 
+            display: "flex",
+            border: "1px solid dimgray",
+            backgroundColor:"#F7F7F7",
+            borderRadius:"3px",
+            marginLeft:"15px",
+            marginTop:"20px",
+            padding:"20px"
+            }}>
+
+            <Grid container spacing={2} sx={{ padding: "2%" }}>
+              <Grid item xs={12} sm={12} md={12} lg={12}>
+              <label onClick={()=>setDebeImprimir(!debeImprimir)}
+                style={{
+                  userSelect:"none"
+                }}>
+                  Imprimir
+                  </label>
+              <input
+                  type="checkbox"
+                  checked={debeImprimir}
+                  onClick={(e) => setDebeImprimir(!debeImprimir)}
+                  onChange={()=>{}}
+                  style={{
+                    position:"relative",
+                    top:"4px",
+                    width:"50px",
+                    height:"20px"
+                  }}
+                  />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={12} lg={12}>
+                <InputName
+                  inputState={states.nombreImpresora}
+                  required={false}
+                  fieldName="NombreImpresora"
+                  validationState={validatorStates.nombreImpresora}
+                  />
+              </Grid>
+
+            </Grid>
+          </Box>
+          </Grid>
 
 
           {/* <Grid item xs={12} md={6}>

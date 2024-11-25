@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import System from "../../Helpers/System";
 import Confirm from "../Dialogs/Confirm";
+import PedirSupervision from "../ScreenDialog/PedirSupervision";
 
 export const SelectedOptionsContext = React.createContext();
 
@@ -36,6 +37,19 @@ export const SelectedOptionsProvider = ({ children }) => {
   const [handleNotConfirm, setHandleNotConfirm] = useState(null)
   const [userData, setUserData] = useState(null);
   const [CONFIG, setCONFIG] = useState(null)
+
+  const [verPedirSupervision, setVerPedirSupervision] = useState(false)
+  const [accionPedirSupervision, setAccionPedirSupervision] = useState("")
+  const [handleConfirmarSupervision, setHandleConfirmarSupervision] = useState(null)
+  const [datosConfirmarSupervision, setDatosConfirmarSupervision] = useState({})
+
+  const pedirSupervision = (accion, callbackOk, datos)=>{
+    setAccionPedirSupervision(accion)
+    setDatosConfirmarSupervision(datos)
+    setHandleConfirmarSupervision(()=>callbackOk)
+    setVerPedirSupervision(true)
+  }
+
   
   const showMessage = (message)=>{
     setSnackMessage(message)
@@ -123,6 +137,16 @@ export const SelectedOptionsProvider = ({ children }) => {
         handleConfirm={handleConfirm}
         handleNotConfirm={handleNotConfirm}
       />
+
+      <PedirSupervision 
+        openDialog={verPedirSupervision} 
+        accion={accionPedirSupervision} 
+        infoEnviar={datosConfirmarSupervision} 
+        setOpenDialog={setVerPedirSupervision} 
+        onConfirm={()=>{
+          if(handleConfirmarSupervision) handleConfirmarSupervision()
+        }}
+      />
       </>
     )
   }
@@ -151,6 +175,8 @@ export const SelectedOptionsProvider = ({ children }) => {
         setUserData,
         updateUserData,
         getUserData,
+
+        pedirSupervision
 
       }}
     >
