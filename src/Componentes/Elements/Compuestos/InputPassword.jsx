@@ -15,7 +15,7 @@ import Validator from "../../../Helpers/Validator";
 
 const InputPassword = ({
     inputState,
-    validationState,
+    validationState = null,
     withLabel = true,
     autoFocus = false,
     fieldName="password",
@@ -32,7 +32,7 @@ const InputPassword = ({
     
     const [password, setPassword] = inputState
     const [showPassword, setShowPassword] = useState(false)
-    const [validation, setValidation] = validationState
+    const [validation, setValidation] = validationState ?? useState(null)
     const [keyPressed, setKeyPressed] = useState(false)
 
   const validate = ()=>{

@@ -38,11 +38,10 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import System from "../../Helpers/System";
 import dayjs from "dayjs";
 import Validator from "../../Helpers/Validator";
-import IngresarTexto from "./IngresarTexto";
 import User from "../../Models/User";
 import Model from "../../Models/Model";
 import SoporteTicket from "../../Models/SoporteTicket";
-import InputPassword from "../Elements/InputPassword";
+import InputPassword from "../Elements/Compuestos/InputPassword";
 
 const PedirSupervision = ({
   openDialog,

@@ -40,7 +40,8 @@ const RankingLibroVentas = () => {
   const {
     userData,
     showMessage,
-    showConfirm
+    showConfirm,
+    pedirSupervision
   } = useContext(SelectedOptionsContext);
 
 
@@ -164,14 +165,16 @@ const RankingLibroVentas = () => {
 
   const handleBorradoLogico = (venta) => {
     showConfirm("Cancelar la venta?",()=>{
-      Sale.borradoLogico(selectedProduct,(resul)=>{
-        showMessage(resul.descripcion)
-        setSelectedProduct(null)
-        setOpenDialog(false)
-        fetchData()
-      },(error)=>{
-        showMessage(error)
-      })
+      pedirSupervision("borrar una venta", ()=>{
+          Sale.borradoLogico(selectedProduct,(resul)=>{
+            showMessage(resul.descripcion)
+            setSelectedProduct(null)
+            setOpenDialog(false)
+            fetchData()
+          },(error)=>{
+            showMessage(error)
+          })
+      },selectedProduct)
     },()=>{})
   };
 
