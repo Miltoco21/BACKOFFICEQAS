@@ -11,7 +11,7 @@ import StepperSI from "../Componentes/Stepper/StepperSI";
 import { Check, HorizontalSplit, Search } from "@mui/icons-material";
 import Product from "../Models/Product";
 import { Grid, InputAdornment, TextField } from "@mui/material";
-import Editp2 from "./../Componentes/Productos/Editp2";
+import EditarProducto from "./../Componentes/Productos/EditarProducto";
 import System from "../Helpers/System";
 import Model from "../Models/Model";
 
@@ -334,7 +334,7 @@ const StockMobile = () => {
 
 
           {(productoEdit && (
-            <Editp2
+            <EditarProducto
             product={productoEdit}
             open={openEdit}
             handleClose={()=>{

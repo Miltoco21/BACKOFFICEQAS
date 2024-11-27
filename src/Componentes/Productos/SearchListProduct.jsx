@@ -27,7 +27,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import Editp2 from "../Productos/Editp2";
+import EditarProducto from "../Productos/EditarProducto";
 import ModelConfig from "../../Models/ModelConfig";
 
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
@@ -408,7 +408,7 @@ const SearchListProducts = ({
       />
 
       {openEditModal && selectedProduct && (
-        <Editp2
+        <EditarProducto
           product={selectedProduct}
           open={openEditModal}
           handleClose={handleCloseEditModal}

@@ -25,7 +25,7 @@ import ModelConfig from "../../Models/ModelConfig";
 import Product from "../../Models/Product";
 import System from "../../Helpers/System";
 
-const Editp2 = ({ product, open, handleClose }) => {
+const EditarProducto = ({ product, open, handleClose }) => {
   const apiUrl = ModelConfig.get().urlBase;
 
   const [editedProduct, setEditedProduct] = useState({});
@@ -651,4 +651,4 @@ const Editp2 = ({ product, open, handleClose }) => {
   );
 };
 
-export default Editp2;
+export default EditarProducto;
