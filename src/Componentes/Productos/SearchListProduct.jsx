@@ -43,6 +43,7 @@ const SearchListProducts = ({
 }) => {
 
   const {
+    showMessage,
     showLoading,
     hideLoading
   } = useContext(SelectedOptionsContext);
@@ -58,8 +59,6 @@ const SearchListProducts = ({
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedTab, setSelectedTab] = useState(0);
   // const [refresh, setRefresh] = useState(false);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
   const [hasResult, setHasResult] = useState(false);
@@ -77,7 +76,7 @@ const SearchListProducts = ({
     }
   };
 
-   const fetchProduct = async () => {
+   const listarProductos = async () => {
      // console.log("vars:", System.getUrlVars())
      var urlVars = System.getUrlVars()
      if(urlVars.search != undefined){
@@ -106,36 +105,6 @@ const SearchListProducts = ({
         hideLoading()
       })
     };
-
-
-  useEffect(() => {
-    console.log("cambio pageProduct")
-  }, [pageProduct,]);
-
-  // useEffect(() => {
-    // fetchProduct();
-  // }, [productToDelete,]);
- 
-  // useEffect(() => {
-    // const updateProducts = async () => {
-    //   try {
-    //     const response = await axios.get(
-    //       apiUrl + `/ProductosTmp/GetProductos`
-    //     );
-        
-    //     if (Array.isArray(response.data.productos)) {
-    //       setProduct(response.data.productos);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error updating products:", error);
-    //   }
-    // };
-
-    // const intervalId = setInterval(updateProducts, 3000); // Actualizar cada 3 segundos
-
-    // return () => clearInterval(intervalId); // Limpiar intervalo cuando el componente se desmonta
-  // }, []);
-
 
   const doSearch = (replaceSearch = "")=>{
     if(searchTerm == "" && replaceSearch == "")return
@@ -190,21 +159,23 @@ const SearchListProducts = ({
         setHasResult(false)
       })
   }
-  // useEffect(() => {
-    // const filtered = product.filter(
-    //   (product) =>
-    //     product.nombre &&
-    //     product.nombre.trim().toLowerCase().includes(searchTerm.toLowerCase())
-    // );
-    // setFilteredProducts(filtered);
-  
-  // }, [searchTerm, 
-    // product
-  // ]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
+
+  const updateList = ()=>{
+    if(searchTerm.trim() == ""){
+      listarProductos()
+    }else{
+      console.log("tiene algo para buscar")
+      doSearch()
+    }
+  }
+
+  useEffect(() => {
+    console.log("cambio pageProduct")
+  }, [pageProduct,]);
 
   useEffect(() => {
     console.log("cambio searchTerm")
@@ -219,24 +190,11 @@ const SearchListProducts = ({
   }, [
     hasResult
     ]);
-  
 
   useEffect(() => {
-    // const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    // const endIndex = startIndex + ITEMS_PER_PAGE;
-    // const currentProducts = filteredProducts.slice(startIndex, endIndex);
-    // setPageProduct(currentProducts);
-    if(searchTerm.trim() == ""){
-      fetchProduct()
-    }else{
-      console.log("tiene algo para buscar")
-      doSearch()
-    }
-
+    updateList()
     console.log("cambio de pagina")
-  }, [
-    currentPage
-    ]);
+  }, [currentPage]);
 
 
 
@@ -252,49 +210,29 @@ const SearchListProducts = ({
       );
 
       if (response.data.statusCode === 201) {
-        setSnackbarMessage("Producto eliminado correctamente");
-        setOpenSnackbar(true); // Establecer openSnackbar en true
-        setRefresh((prevRefresh) => !prevRefresh); // Actualizar la lista después de la eliminación
-        window.location.reload(1)
+        showMessage("Producto eliminado correctamente");
+        setRefresh(!refresh); // Actualizar la lista después de la eliminación
       } else {
-        setSnackbarMessage("Error al eliminar el producto");
+        showMessage("Error al eliminar el producto");
       }
     } catch (error) {
-      setSnackbarMessage("Error al eliminar el producto");
+      showMessage("Error al eliminar el producto");
       console.error("Error deleting product:", error);
     }
   };
 
   // Dentro de useEffect, después de eliminar el producto, actualiza la lista de productos
   useEffect(() => {
-    if (refresh) {
-      setRefresh(false);
-      // window.location.reload(1)
-      fetchProduct()
-    }
+    updateList()
   }, [refresh]);
 
-
-
-    
-  useEffect(() => {
-    if (openSnackbar) {
-      setTimeout(() => {
-        setOpenSnackbar(false);
-      }, 3000); // Cierra el Snackbar después de 3 segundos
-    }
-  }, [openSnackbar]);
-
   const handleEdit = (product) => {
-    console.log("Edit button pressed for product:", product);
     setSelectedProduct(product);
     setOpenEditModal(true);
   };
 
   const handleCloseEditModal = () => {
-    console.log("handleCloseEditModal")
     setOpenEditModal(false);
-    // setRefresh((prevRefresh) => !prevRefresh);
   };
   const handleOpenDialog = (product) => {
     setProductToDelete(product);
@@ -412,6 +350,12 @@ const SearchListProducts = ({
           product={selectedProduct}
           open={openEditModal}
           handleClose={handleCloseEditModal}
+          onEdit={()=>{
+            showMessage("Editado correctamente")
+            setTimeout(() => {
+              setRefresh(!refresh)
+            }, 100);
+          }}
         />
       )}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
@@ -428,12 +372,7 @@ const SearchListProducts = ({
           </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={3000}
-        onClose={() => setOpenSnackbar(false)}
-        message={snackbarMessage}
-      />
+     
     </Box>
   );
 };

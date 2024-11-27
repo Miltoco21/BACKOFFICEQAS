@@ -25,7 +25,12 @@ import ModelConfig from "../../Models/ModelConfig";
 import Product from "../../Models/Product";
 import System from "../../Helpers/System";
 
-const EditarProducto = ({ product, open, handleClose }) => {
+const EditarProducto = ({ 
+  product, 
+  open, 
+  handleClose,
+  onEdit
+}) => {
   const apiUrl = ModelConfig.get().urlBase;
 
   const [editedProduct, setEditedProduct] = useState({});
@@ -204,7 +209,6 @@ const EditarProducto = ({ product, open, handleClose }) => {
 
   useEffect(() => {
     if(Object.keys(editedProduct).length<1) return
-    console.log("cambio editedProduct")
     console.log(editedProduct)
 
     if(categories.length<1) {
@@ -250,6 +254,7 @@ const EditarProducto = ({ product, open, handleClose }) => {
       setSuccessDialogOpen(true);
       setSuccessMessage(res.message);
       handleClose();
+      if(onEdit) onEdit()
       // window.location.reload(1)
     },(err)=>{
       setErrorMessage(err.message);
