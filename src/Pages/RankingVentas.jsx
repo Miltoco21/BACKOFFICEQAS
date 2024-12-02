@@ -442,7 +442,7 @@ const RankingVentas = () => {
                     <TableCell>{selectedItem.metodoPago}</TableCell>
                     <TableCell>{selectedItem.cantidad}</TableCell>
                     <TableCell>{selectedItem.sumaTotal.toLocaleString("es-CL")}</TableCell>
-                    <TableCell>{Math.round(selectedItem.porcentajeParticipacion * 10000) / 100}%</TableCell>
+                    <TableCell>{(selectedItem.porcentajeParticipacion).toFixed(2)}%</TableCell>
                   </TableRow>
                 )}
               </TableBody>
