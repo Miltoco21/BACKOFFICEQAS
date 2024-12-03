@@ -155,6 +155,13 @@ const RankingLibroCompras = () => {
   useEffect(()=>{
     setStartDate(dayjs())
     setEndDate(dayjs())
+
+    setTipo([
+      "Boleta",
+      "Factura",
+      "Ingreso Interno",
+      "Ticket"
+    ])
   },[])
 
   return (
