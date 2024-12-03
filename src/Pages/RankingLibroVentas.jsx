@@ -258,7 +258,7 @@ const RankingLibroVentas = () => {
     var totIvaCaja = 0
 
     var ventasIds = []
-    data.forEach((venta,keyIdUnico)=>{
+    System.clone(data).forEach((venta,keyIdUnico)=>{
       if( 
         (venta.puntoVenta == cajas[cajaSel] || cajas[cajaSel] == "Todas") 
       ){
@@ -293,7 +293,7 @@ const RankingLibroVentas = () => {
               }
             })
             if(index>-1){
-
+              ventas[index].total = ventas[index].total + venta.total
               ventas[index].pagos.push({
                 nroComprobante: venta.nroComprobante,
                 metodoPago:venta.metodoPago,
@@ -310,6 +310,7 @@ const RankingLibroVentas = () => {
       }
     })
     setVentaPorCaja(ventas)
+    console.log("las ventas quedaron asi",ventas)
     setCantidadCaja(cantCaja)
     setTotalValuesCaja(totCaja)
     setTotalIVACaja(totIvaCaja)
