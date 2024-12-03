@@ -256,7 +256,9 @@ const RankingLibroVentas = () => {
     var cantCaja = 0
     var totCaja = 0
     var totIvaCaja = 0
-    data.forEach((venta)=>{
+
+    var ventasIds = []
+    data.forEach((venta,keyIdUnico)=>{
       if( 
         (venta.puntoVenta == cajas[cajaSel] || cajas[cajaSel] == "Todas") 
       ){
@@ -264,10 +266,46 @@ const RankingLibroVentas = () => {
         const userName = infoUser ? infoUser.nombres + " " + infoUser.apellidos : ""
 
         if(userSel === null || users[userSel] == "Todos" || userName == users[userSel]){
-          ventas.push(venta)
-          cantCaja ++
-          totCaja += venta.total
-          totIvaCaja += venta.montoIVA
+          const nroComprobante = venta.nroComprobante
+          if(!ventasIds.includes(venta.nroComprobante)){
+            ventasIds.push(venta.nroComprobante)
+
+            venta.pagos = []
+            venta.pagos.push({
+              nroComprobante: venta.nroComprobante,
+              metodoPago:venta.metodoPago,
+              fechaIngreso:venta.fechaIngreso,
+              rdcTransactionId:venta.rdcTransactionId,
+              montoIVA:venta.montoIVA,
+              montoNeto:venta.montoNeto,
+              total:venta.total,
+              descripcionComprobante:venta.descripcionComprobante
+            })
+            ventas.push(venta)
+            cantCaja ++
+            totCaja += venta.total
+            totIvaCaja += venta.montoIVA
+          }else{
+            var index = -1
+            ventas.forEach((venta2,ix)=>{
+              if(ix != keyIdUnico && nroComprobante == venta2.nroComprobante){
+                index = ix
+              }
+            })
+            if(index>-1){
+
+              ventas[index].pagos.push({
+                nroComprobante: venta.nroComprobante,
+                metodoPago:venta.metodoPago,
+                fechaIngreso:venta.fechaIngreso,
+                rdcTransactionId:venta.rdcTransactionId,
+                montoIVA:venta.montoIVA,
+                montoNeto:venta.montoNeto,
+                total:venta.total,
+                descripcionComprobante:venta.descripcionComprobante
+              })
+            }
+          }
         }
       }
     })
@@ -465,8 +503,8 @@ const RankingLibroVentas = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {ventasPorCaja.map((producto) => (
-                  <TableRow key={producto.idCabecera}>
+                {ventasPorCaja.map((producto, ix) => (
+                  <TableRow key={ix}>
                     <TableCell>
                       {new Date(producto.fechaIngreso).toLocaleDateString(
                         "es-CL"

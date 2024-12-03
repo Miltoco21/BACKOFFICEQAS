@@ -67,35 +67,39 @@ const RankingLibroVentasDetalle = ({
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    <TableRow>
+
+                    {selectedProduct && selectedProduct.pagos.map((pago,ix)=>(
+                    <TableRow key={ix}>
                       <TableCell>
-                        {System.formatDateServer(selectedProduct.fechaIngreso)}
+                        {System.formatDateServer(pago.fechaIngreso)}
                       </TableCell>
                       <TableCell>
-                        {selectedProduct.descripcionComprobante}
+                        {pago.descripcionComprobante}
                       </TableCell>
                       <TableCell>
-                        {selectedProduct.nroComprobante.toLocaleString("es-CL")}
+                        {pago.nroComprobante.toLocaleString("es-CL")}
                       </TableCell>
                       <TableCell>
-                        {selectedProduct.metodoPago.toLocaleString("es-CL")}
+                        {pago.metodoPago.toLocaleString("es-CL")}
                       </TableCell>
                       <TableCell>
-                        {selectedProduct.rdcTransactionId.toLocaleString(
+                        {pago.rdcTransactionId.toLocaleString(
                           "es-CL"
                         )}
                       </TableCell>
 
                       <TableCell>
-                        {selectedProduct.montoNeto.toLocaleString("es-CL")}
+                        {pago.montoNeto.toLocaleString("es-CL")}
                       </TableCell>
                       <TableCell>
-                        {selectedProduct.montoIVA.toLocaleString("es-CL")}
+                        {pago.montoIVA.toLocaleString("es-CL")}
                       </TableCell>
                       <TableCell>
-                        {selectedProduct.total.toLocaleString("es-CL")}
+                        {pago.total.toLocaleString("es-CL")}
                       </TableCell>
                     </TableRow>
+                    ))}
+
                   </TableBody>
                 </Table>
               </TableContainer>
