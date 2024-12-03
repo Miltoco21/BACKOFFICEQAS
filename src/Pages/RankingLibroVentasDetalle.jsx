@@ -138,30 +138,53 @@ const RankingLibroVentasDetalle = ({
                       <TableCell sx={{ color: "white"}}>Precio Unidad</TableCell>
                       <TableCell sx={{ color: "white"}}>Cantidad</TableCell>
                       <TableCell sx={{ color: "white"}}>Costo</TableCell>
-                      <TableCell sx={{ color: "white"}}>Precio</TableCell>
+                      <TableCell sx={{ color: "white"}}>Monto</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {selectedProduct.ventaDetalleReportes.map(
-                      (detalle, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{detalle.codProducto}</TableCell>
-                          <TableCell>{detalle.descripcion}</TableCell>
-                          <TableCell>
-                            {detalle.precioUnidad.toLocaleString("es-CL")}
-                          </TableCell>
-                          <TableCell>
-                            {detalle.cantidad.toLocaleString("es-CL")}
-                          </TableCell>
-                          <TableCell>
-                            {detalle.costo.toLocaleString("es-CL")}
-                          </TableCell>
-                          <TableCell>
-                            {detalle.precioUnidad.toLocaleString("es-CL")}
-                          </TableCell>
-                        </TableRow>
-                      )
-                    )}
+                      (detalle, index) => {
+                        if(detalle.descripcion.toLowerCase() != "redondeo")
+                          return(
+                          <TableRow key={index}>
+                            <TableCell>{detalle.codProducto}</TableCell>
+                            <TableCell>{detalle.descripcion}</TableCell>
+                            <TableCell>
+                              {detalle.precioUnidad.toLocaleString("es-CL")}
+                            </TableCell>
+                            <TableCell>
+                              {detalle.cantidad.toLocaleString("es-CL")}
+                            </TableCell>
+                            <TableCell>
+                              {detalle.costo.toLocaleString("es-CL")}
+                            </TableCell>
+                            <TableCell>
+                            {(detalle.precioUnidad * detalle.cantidad).toLocaleString("es-CL")}
+                            </TableCell>
+                          </TableRow>
+                          )
+                        else
+                        return(
+                          <TableRow key={index}>
+                            <TableCell>{' '}</TableCell>
+                            <TableCell>{detalle.descripcion}</TableCell>
+                            <TableCell>
+                              {' '}
+                            </TableCell>
+                            <TableCell>
+                              {' '}
+                            </TableCell>
+                            <TableCell>
+                              {' '}
+                            </TableCell>
+                            <TableCell sx={{ 
+                              }}>
+                              {(detalle.precioUnidad * detalle.cantidad).toLocaleString("es-CL")}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })
+                    }
                   </TableBody>
                 </Table>
               </TableContainer>
