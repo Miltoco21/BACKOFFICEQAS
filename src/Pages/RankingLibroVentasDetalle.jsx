@@ -53,17 +53,17 @@ const RankingLibroVentasDetalle = ({
               <TableContainer component={Paper} sx={{ mb: 2 }}>
                 <Table>
                   <TableHead>
-                    <TableRow sx={{ backgroundColor: "gainsboro" }}>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Descripción</TableCell>
-                      <TableCell>Folio Documento</TableCell>
-                      <TableCell>Método de Pago</TableCell>
+                    <TableRow sx={{ backgroundColor: "#2E3030D1"}}>
+                      <TableCell sx={{ color:"white" }}>Fecha</TableCell>
+                      <TableCell sx={{ color:"white" }}>Descripción</TableCell>
+                      <TableCell sx={{ color:"white" }}>Folio Documento</TableCell>
+                      <TableCell sx={{ color:"white" }}>Método de Pago</TableCell>
 
-                      <TableCell>rdcTransactionId </TableCell>
+                      <TableCell sx={{ color:"white" }}>rdcTransactionId </TableCell>
 
-                      <TableCell>Valor Neto</TableCell>
-                      <TableCell>IVA DF</TableCell>
-                      <TableCell>Total</TableCell>
+                      {/* <TableCell sx={{ color:"white" }}>Valor Neto</TableCell> */}
+                      <TableCell sx={{ color:"white" }}>IVA DF</TableCell>
+                      <TableCell sx={{ color:"white" }}>Monto</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -88,9 +88,9 @@ const RankingLibroVentasDetalle = ({
                         )}
                       </TableCell>
 
-                      <TableCell>
+                      {/* <TableCell>
                         {pago.montoNeto.toLocaleString("es-CL")}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell>
                         {pago.montoIVA.toLocaleString("es-CL")}
                       </TableCell>
@@ -100,6 +100,31 @@ const RankingLibroVentasDetalle = ({
                     </TableRow>
                     ))}
 
+                    {selectedProduct && selectedProduct.pagos.length > 0 &&(
+                    <TableRow key={1} sx={{
+                      backgroundColor:"gainsboro"
+                    }}>
+                    <TableCell colSpan={3}>
+                      {" "}
+                    </TableCell>
+                    <TableCell>
+                      <Typography>Monto neto. </Typography>
+                    </TableCell>
+                    <TableCell>
+                      { selectedProduct.pagos[0].montoNeto.toLocaleString("es-CL") }
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography>Total. </Typography>
+                    </TableCell>
+                    <TableCell>
+                      { selectedProduct.pagos.reduce((acum,curr)=>{
+                        return acum + curr.total
+                      },0).toLocaleString("es-CL") }
+                    </TableCell>
+                  </TableRow>
+                    )}
+
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -107,13 +132,13 @@ const RankingLibroVentasDetalle = ({
               <TableContainer component={Paper}>
                 <Table>
                   <TableHead>
-                    <TableRow sx={{ backgroundColor: "gainsboro" }}>
-                      <TableCell>Código Producto</TableCell>
-                      <TableCell>Descripción</TableCell>
-                      <TableCell>Precio Unidad</TableCell>
-                      <TableCell>Cantidad</TableCell>
-                      <TableCell>Costo</TableCell>
-                      <TableCell>Precio</TableCell>
+                    <TableRow sx={{ backgroundColor: "#2E3030D1"}}>
+                      <TableCell sx={{ color: "white"}}>Código Producto</TableCell>
+                      <TableCell sx={{ color: "white"}}>Descripción</TableCell>
+                      <TableCell sx={{ color: "white"}}>Precio Unidad</TableCell>
+                      <TableCell sx={{ color: "white"}}>Cantidad</TableCell>
+                      <TableCell sx={{ color: "white"}}>Costo</TableCell>
+                      <TableCell sx={{ color: "white"}}>Precio</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
