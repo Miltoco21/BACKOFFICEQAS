@@ -20,18 +20,23 @@ import {
 import SmallButton from "../Elements/SmallButton";
 import ModelConfig from "../../Models/ModelConfig";
 import System from "../../Helpers/System";
+import { textAlign, textTransform } from "@mui/system";
 
 var prods = [];
 for (let index = 1; index <= 5; index++) {
   prods.push(index);
 }
 
-const DialogReporteCierreZ = ({
+const ReporteCierreZDetalles = ({
   openDialog,
   setOpenDialog,
 
-  info
+  info,
+  turnoIndex,
+  turnoNombre
 }) => {
+
+  
 
   const [totalVentas,setTotalVentas] = useState(0)
   const [totalEfectivo,setTotalEfectivo] = useState(0)
@@ -39,6 +44,11 @@ const DialogReporteCierreZ = ({
   const [totalDebito,setTotalDebito] = useState(0)
   const [totalTransferencias,setTotalTransferencias] = useState(0)
   const [totalCheques,setTotalCheques] = useState(0)
+
+
+  const [retiros,setRetiros] = useState(0)
+  const [devEnvases,setDevEnvases] = useState(0)
+  const [otrosIngresos,setOtrosIngresos] = useState(0)
   
   const [totalApertura,setTotalApertura] = useState(0)
 
@@ -48,9 +58,8 @@ const DialogReporteCierreZ = ({
   const [cantTransferencias,setCantTransferencias] = useState(0)
   const [cantCheques,setCantCheques] = useState(0)
 
-
   const analizarInfo = ()=>{
-
+    console.log("analizarInfo", info)
     var totalVentas = 0
     var totalEfectivo = 0
     var totalCredito = 0
@@ -58,6 +67,10 @@ const DialogReporteCierreZ = ({
     var totalTransferencias = 0
     var totalCheques = 0
     var totalInicio = 0
+    
+    var devEnvasesx = 0
+    var retirosx = 0
+    var otrosIngresosx = 0
 
     var cantEfectivo = 0
     var cantCredito = 0
@@ -65,7 +78,8 @@ const DialogReporteCierreZ = ({
     var cantTransferencias = 0
     var cantCheques = 0
 
-      info.cierreCajaDetalles.forEach((detalleInfo,ix)=>{
+    info.cierreCajaDetalles.forEach((detalleInfo)=>{
+      if(detalleInfo.idTurno == turnoNombre){
         if(detalleInfo.detalleMovimientoCaja == "VENTA"){
           switch(detalleInfo.metodoPago){
             case "EFECTIVO":
@@ -94,7 +108,14 @@ const DialogReporteCierreZ = ({
           totalVentas += detalleInfo.monto
         }else if(detalleInfo.detalleMovimientoCaja == "INICIOCAJA"){
           totalInicio += detalleInfo.monto
+        }else if(detalleInfo.detalleMovimientoCaja == "DEV ENVASES"){
+          devEnvasesx += detalleInfo.monto
+        }else if(detalleInfo.detalleMovimientoCaja == "OTROSINGRESOS"){
+          otrosIngresosx += detalleInfo.monto
+        }else if(detalleInfo.detalleMovimientoCaja == "RETIRODECAJA"){
+          retirosx += detalleInfo.monto
         }
+      }
     })
 
     setTotalVentas(totalVentas)
@@ -104,6 +125,10 @@ const DialogReporteCierreZ = ({
     setTotalTransferencias(totalTransferencias)
     setTotalCheques(totalCheques)
     setTotalApertura(totalInicio)
+    
+    setRetiros(retirosx)
+    setOtrosIngresos(otrosIngresosx)
+    setDevEnvases(devEnvasesx)
 
     setCantEfectivo(cantEfectivo)
     setCantCredito(cantCredito)
@@ -121,14 +146,19 @@ const DialogReporteCierreZ = ({
   }
   const styleHeader = {
     fontWeight:"bold",
+    textAlign:"center",
+    textTransform:"uppercase",
     backgroundColor:"#e4e4e4"
   }
   const styleCell = {
     // backgroundColor:"#F0F0F0"
+    textAlign:"center",
+    textTransform:"uppercase",
   }
 
   useEffect(()=>{
     if(!info) return
+    if(turnoIndex === null) return
     analizarInfo()
   },[openDialog])
 
@@ -139,7 +169,7 @@ const DialogReporteCierreZ = ({
     fullWidth
     maxWidth="sm"
   >
-  <DialogTitle>Detalles Reporte cierre z</DialogTitle>
+  <DialogTitle>Detalles Reporte cierre z #{turnoNombre}</DialogTitle>
   <DialogContent>
 
   <TableContainer>
@@ -147,8 +177,11 @@ const DialogReporteCierreZ = ({
     <TableBody>
 
       <TableRow>
-        <TableCell colSpan={20} sx={styleTitle}>
-          Venta total ${totalVentas.toLocaleString()}
+        <TableCell colSpan={2} sx={styleTitle}>
+          VENTA TOTAL
+        </TableCell>
+        <TableCell sx={styleTitle}>
+          ${totalVentas.toLocaleString()}
         </TableCell>
         </TableRow>
 
@@ -163,7 +196,7 @@ const DialogReporteCierreZ = ({
 
         <TableCell sx={styleHeader}>
           <Typography>
-            total
+            $
           </Typography>
         </TableCell>
 
@@ -179,8 +212,8 @@ const DialogReporteCierreZ = ({
 
 
 
-
-        <TableRow>
+      {totalEfectivo > 0 &&(
+      <TableRow>
         <TableCell sx={styleCell}>
           <Typography>
             Efectivo
@@ -199,9 +232,11 @@ const DialogReporteCierreZ = ({
           </Typography>
         </TableCell>
         </TableRow>
+        )}
 
 
-        <TableRow>
+        {totalDebito > 0 && (
+          <TableRow>
         <TableCell sx={styleCell}>
           <Typography>
             Debito
@@ -220,7 +255,9 @@ const DialogReporteCierreZ = ({
           </Typography>
         </TableCell>
         </TableRow>
+        )}
 
+        {totalCredito > 0 && (
         <TableRow>
         <TableCell sx={styleCell}>
           <Typography>
@@ -241,6 +278,10 @@ const DialogReporteCierreZ = ({
         </TableCell>
         </TableRow>
 
+        )}
+
+
+        {totalTransferencias > 0 && (
         <TableRow>
         <TableCell sx={styleCell}>
           <Typography>
@@ -260,7 +301,9 @@ const DialogReporteCierreZ = ({
           </Typography>
         </TableCell>
         </TableRow>
+        )}
 
+        {totalTransferencias > 0 && (
         <TableRow>
         <TableCell sx={styleCell}>
           <Typography>
@@ -280,6 +323,7 @@ const DialogReporteCierreZ = ({
           </Typography>
         </TableCell>
         </TableRow>
+        )}
 
 
 
@@ -287,7 +331,7 @@ const DialogReporteCierreZ = ({
 
         <TableRow>
         <TableCell colSpan={20} sx={styleTitle}>
-          Arqueo de caja (${info.diferencia.toLocaleString()})
+          ARQUEO DE CAJA
         </TableCell>
         </TableRow>
 
@@ -295,7 +339,7 @@ const DialogReporteCierreZ = ({
         <TableRow>
         <TableCell sx={styleHeader}>
           <Typography>
-            Apertura Caja
+            Inicio Caja
           </Typography>
         </TableCell>
 
@@ -332,6 +376,7 @@ const DialogReporteCierreZ = ({
           </Typography>
         </TableCell>
         </TableRow>
+
         {/* <TableRow>
         <TableCell sx={styleHeader}>
           <Typography>
@@ -351,16 +396,59 @@ const DialogReporteCierreZ = ({
           </Typography>
         </TableCell>
         </TableRow> */}
-        {/* <TableRow>
+        
+        <TableRow>
         <TableCell sx={styleHeader}>
           <Typography>
-            Egresos
+            Retiro de caja
           </Typography>
         </TableCell>
 
         <TableCell sx={styleHeader}>
           <Typography>
-            {5000}
+            {retiros}
+          </Typography>
+        </TableCell>
+
+        <TableCell sx={styleHeader}>
+          <Typography>
+            -
+          </Typography>
+        </TableCell>
+        </TableRow>
+
+        <TableRow>
+        <TableCell sx={styleHeader}>
+          <Typography>
+            Dev Envases
+          </Typography>
+        </TableCell>
+
+        <TableCell sx={styleHeader}>
+          <Typography>
+            {devEnvases}
+          </Typography>
+        </TableCell>
+
+        <TableCell sx={styleHeader}>
+          <Typography>
+            -
+          </Typography>
+        </TableCell>
+        </TableRow>
+
+
+
+        <TableRow>
+        <TableCell sx={styleHeader}>
+          <Typography>
+            Otros Ingresos
+          </Typography>
+        </TableCell>
+
+        <TableCell sx={styleHeader}>
+          <Typography>
+            {otrosIngresos}
           </Typography>
         </TableCell>
 
@@ -369,23 +457,27 @@ const DialogReporteCierreZ = ({
             +
           </Typography>
         </TableCell>
-        </TableRow> */}
+        </TableRow>
+
+
+
+
         <TableRow>
         <TableCell sx={styleHeader}>
           <Typography>
-            Total Sistema
+            Rendicion caja
           </Typography>
         </TableCell>
 
         <TableCell sx={styleHeader}>
           <Typography>
-            {info.totalSistema.toLocaleString()}
+            {info.totalIngresado.toLocaleString()}
           </Typography>
         </TableCell>
 
         <TableCell sx={styleHeader}>
           <Typography>
-          { ( info.totalSistema > 0 ? "+" : "-" ) }
+          -
           </Typography>
         </TableCell>
         </TableRow>
@@ -428,6 +520,15 @@ const DialogReporteCierreZ = ({
         </TableCell>
         </TableRow>
 
+        <TableRow>
+        <TableCell colSpan={10} sx={styleHeader}>
+          <Typography>
+            {" "}
+          </Typography>
+        </TableCell>
+        </TableRow>
+
+
 
 
         <TableRow>
@@ -458,15 +559,8 @@ const DialogReporteCierreZ = ({
         </TableCell>
         </TableRow>
 
-        <TableRow>
-        <TableCell colSpan={10} sx={styleHeader}>
-          <Typography>
-            {" "}
-          </Typography>
-        </TableCell>
-        </TableRow>
-
-        <TableRow>
+      
+        {/* <TableRow>
         <TableCell sx={styleHeader}>
           <Typography>
             Usuario cierre
@@ -478,7 +572,7 @@ const DialogReporteCierreZ = ({
             {info.nombreApellidoUsuario}
           </Typography>
         </TableCell>
-        </TableRow>
+        </TableRow> */}
 
 
         <TableRow>
@@ -491,6 +585,20 @@ const DialogReporteCierreZ = ({
         <TableCell colSpan={2} sx={styleHeader}>
           <Typography>
             {System.onlyTime(System.formatDateServer(info.fechaTermino))}
+          </Typography>
+        </TableCell>
+        </TableRow>
+
+        <TableRow>
+        <TableCell sx={styleHeader}>
+          <Typography>
+            Caja
+          </Typography>
+        </TableCell>
+
+        <TableCell colSpan={2} sx={styleHeader}>
+          <Typography>
+            {info.puntoVenta}
           </Typography>
         </TableCell>
         </TableRow>
@@ -509,4 +617,4 @@ const DialogReporteCierreZ = ({
   </Dialog>
   )
 }
-export default DialogReporteCierreZ;
+export default ReporteCierreZDetalles;

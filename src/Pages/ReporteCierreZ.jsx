@@ -30,7 +30,8 @@ import BoxSelectList from "../Componentes/Proveedores/BoxSelectList";
 import System from "../Helpers/System";
 
 
-import DialogReporteCierreZ from "../Componentes/ScreenDialog/DialogReporteCierreZ"
+import ReporteCierreZDetalles from "../Componentes/ScreenDialog/ReporteCierreZDetalles"
+import ReporteCierreZSelTurno from "../Componentes/ScreenDialog/ReporteCierreZSelTurno";
 
 const ReporteCierreZ = () => {
 
@@ -108,6 +109,9 @@ const ReporteCierreZ = () => {
   const [cajaSel, setCajaSel] = useState(null);
   const [infoPorCaja, setInfoPorCaja] = useState([]);
   const [detailsInfo, setDetailsInfo] = useState(null);
+  const [turnoSel, setTurnoSel] = useState(null);
+  const [showTurnos, setShowTurnos] = useState(false);
+  const [turnoNombre, setTurnoNombre] = useState("")
 
   const agruparPorCaja = (data)=>{
     var prodCaja = []
@@ -348,7 +352,7 @@ const ReporteCierreZ = () => {
                     <TableCell>
                       <Button variant="contained" color="secondary" onClick={()=>{
                         setDetailsInfo(infoDeCaja)
-                        setShowDetails(true)
+                        setShowTurnos(true)
                       }}>Detalles</Button>
                     </TableCell>
 
@@ -362,21 +366,30 @@ const ReporteCierreZ = () => {
             )}
 
 
-
-            <DialogReporteCierreZ
-              openDialog={showDetails}
-              setOpenDialog={setShowDetails}
+            <ReporteCierreZSelTurno
+              openDialog={showTurnos}
+              setOpenDialog={setShowTurnos}
               info={detailsInfo}
+              cajaSel={cajaSel}
+              turnoSel={turnoSel}
+              setTurnoSel={(t,turnoNombre)=>{
+                setTurnoSel(t)
+                if(t!= null){
+                  setShowDetails(true)
+                  setTurnoNombre(turnoNombre)
+                }
+              }
+              }
             />
 
 
-
-            
-          
-
-
-
-
+              <ReporteCierreZDetalles
+              openDialog={showDetails}
+              setOpenDialog={setShowDetails}
+              info={detailsInfo}
+              turnoIndex={turnoSel}
+              turnoNombre={turnoNombre}
+              />
 
 
 
