@@ -51,16 +51,16 @@ const Home = ({}) => {
     User.getRoles((roles,response)=>{
       window.roles = roles
       setRoles(roles)
-      checkRol(roles)
     }, (error)=>{
       console.log(error);
     })
   }
 
   const checkRol = (roles)=>{
-    if(!userData) return "rol"
+    if(!userData) {
+      return
+    }
     if(Validator.isNumeric(userData.rol)){
-      console.log("esnumerico")
       
       roles.forEach((rolx)=>{
         if(rolx.idRol == userData.rol){
@@ -79,6 +79,10 @@ const Home = ({}) => {
     solicitarEstadosCajas()
     solicitarRoles()
   },[])
+  
+  useEffect(()=>{
+    checkRol(roles)
+  },[userData, roles])
 
 
 
