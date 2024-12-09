@@ -70,15 +70,11 @@ const SelectUserRoles = ({
   }
 
   const loadList = async()=>{
-    try {
-      const response = await axios.get(
-        apiUrl + `/Usuarios/GetAllRolUsuario`
-      );
-      setSelectList(response.data.usuarios);
-      // console.log("ROLES", response.data.usuarios);
-    } catch (error) {
+    User.getRoles((roles,response)=>{
+      setSelectList(roles)
+    }, (error)=>{
       console.log(error);
-    }
+    })
   }
 
   const setByString = (valueString)=>{

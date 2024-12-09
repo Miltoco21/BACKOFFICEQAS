@@ -209,6 +209,17 @@ class User extends Model{
         },callbackWrong)
     }
 
+    static async getRoles(callbackOk,callbackWrong){
+
+        const configs = ModelConfig.get()
+        var url = configs.urlBase
+        +"/Usuarios/GetAllRolUsuario"
+
+        EndPoint.sendGet(url,(responseData, response)=>{
+            callbackOk(responseData.usuarios, response);
+        },callbackWrong)
+    }
+
 };
 
 export default User;

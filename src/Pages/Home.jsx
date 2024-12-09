@@ -20,6 +20,7 @@ import System from '../Helpers/System';
 import CardSemaforo from '../Componentes/Home/CardSemaforo';
 import CardUsuariosActivos from '../Componentes/Home/CardUsuariosActivos';
 import CardUsuariosInactivos from '../Componentes/Home/CardUsuariosInactivos';
+import Validator from '../Helpers/Validator';
 
 const defaultTheme = createTheme();
 
@@ -33,18 +34,53 @@ const Home = ({}) => {
   const [estadoCajas, setEstadoCajas] = useState([])
   const [usuariosActivos, setUsuariosActivos] = useState([])
   const [usuariosInactivos, setUsuariosInactivos] = useState([])
+  
+  const [roles, setRoles] = useState([])
+  const [rol, setRol] = useState("rol")
 
 
-  const fetchEstadosCajas = ()=>{
+  const solicitarEstadosCajas = ()=>{
     SucursalCaja.getInstance().getEstados((data)=>{
       console.log("estados de la caja",data.cajaTurnoEstados)
       setEstadoCajas(data.cajaTurnoEstados)
     },()=>{})
   }
+  
+  const solicitarRoles = ()=>{
+
+    User.getRoles((roles,response)=>{
+      window.roles = roles
+      setRoles(roles)
+      checkRol(roles)
+    }, (error)=>{
+      console.log(error);
+    })
+  }
+
+  const checkRol = (roles)=>{
+    if(!userData) return "rol"
+    if(Validator.isNumeric(userData.rol)){
+      console.log("esnumerico")
+      
+      roles.forEach((rolx)=>{
+        if(rolx.idRol == userData.rol){
+          setRol(rolx.rol)
+        }
+      })
+
+    }else{
+      return userData.rol
+    }
+
+    return userData ? userData.rol : 'rol'
+  }
 
   useEffect(()=>{
-    fetchEstadosCajas()
+    solicitarEstadosCajas()
+    solicitarRoles()
   },[])
+
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -59,7 +95,7 @@ const Home = ({}) => {
             
           </Box>
           <Typography variant="h6">
-            Rol: {userData ? userData.rol : 'rol'}
+            Rol: { rol }
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
 
