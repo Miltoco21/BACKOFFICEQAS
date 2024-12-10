@@ -247,9 +247,12 @@ const SearchList = () => {
                 <TableCell>{user.telefono}</TableCell>
                 <TableCell>{user.credito}</TableCell>
                 <TableCell>
-                  <Button onClick={() => handleDeleteConfirmationOpen(user)}>
+                  { (userData.rol === 1 || ( parseInt(userData.rol) < parseInt(user.rol) )) && (
+                    <>
+                    <Button onClick={() => handleDeleteConfirmationOpen(user)}>
                     <DeleteIcon />
                   </Button>
+
                   <Button onClick={() => handleEdit(user)}>
                     <EditIcon />
                   </Button>
@@ -257,6 +260,8 @@ const SearchList = () => {
                   <Button onClick={() => handleAutorizacion(user)}>
                     <HowToRegIcon/>
                   </Button>
+                    </>
+                  )}
                 </TableCell>
               </TableRow>
             ))
