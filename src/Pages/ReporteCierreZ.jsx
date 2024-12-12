@@ -327,6 +327,10 @@ const ReporteCierreZ = () => {
                       diferencia
                     </TableCell>
 
+                    <TableCell>
+                      Usuario
+                    </TableCell>
+
                   </TableRow>
                 </TableHead>
 
@@ -347,6 +351,10 @@ const ReporteCierreZ = () => {
 
                     <TableCell>
                       ${infoDeCaja.diferencia.toLocaleString()}
+                    </TableCell>
+
+                    <TableCell>
+                      {infoDeCaja.nombreApellidoUsuario}
                     </TableCell>
 
                     <TableCell>
