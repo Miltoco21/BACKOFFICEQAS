@@ -85,7 +85,7 @@ const ReporteCierreZ = () => {
 
       hideLoading()
       
-      console.log("response pro", response.data)
+      // console.log("response pro", response.data)
 
       // setShowDetails(true)
       agruparPorCaja(response.data)
@@ -103,8 +103,6 @@ const ReporteCierreZ = () => {
   const [resumenTarjetas, setResumenTarjetas] = useState(0);
   const [resumenOperaciones, setResumenOperaciones] = useState(0);
 
-
-  
   const [cajas, setCajas] = useState([]);
   const [cajaSel, setCajaSel] = useState(null);
   const [infoPorCaja, setInfoPorCaja] = useState([]);
@@ -113,17 +111,39 @@ const ReporteCierreZ = () => {
   const [showTurnos, setShowTurnos] = useState(false);
   const [turnoNombre, setTurnoNombre] = useState("")
 
+  const [usuarios, setUsuarios] = useState([]);
+  const [usuarioSel, setUsuarioSel] = useState(null);
+  const [resumenFiltroTotal, setResumenFiltroTotal] = useState(0);
+  const [resumenFiltroEfectivo, setResumenFiltroEfectivo] = useState(0);
+  const [resumenFiltroOtros, setResumenFiltroOtros] = useState(0);
+  const [resumenFiltroDiferencia, setResumenFiltroDiferencia] = useState(0);
+
   const agruparPorCaja = (data)=>{
     var prodCaja = []
+    var prodUsuario = []
     data.cierreCajaReportes.forEach((infoItem)=>{
       if(!prodCaja.includes(infoItem.puntoVenta)){
         prodCaja.push(infoItem.puntoVenta)
       }
+
+      if(!prodUsuario.includes(infoItem.nombreApellidoUsuario)){
+        prodUsuario.push(infoItem.nombreApellidoUsuario)
+      }
     })
 
-    prodCaja.push("Todas")
+    if(prodCaja.length > 0){
+      prodCaja.push("Todas")
+      prodUsuario.push("Todos")
+      setCajaSel( prodCaja.length -1 )
+      setUsuarioSel( prodUsuario.length -1 )
+
+      // cargarInfoCaja( prodCaja[prodCaja.length -1], prodUsuario[prodUsuario.length -1])
+    }else{
+      showMessage("Sin resultados")
+    }
 
     setCajas(prodCaja)
+    setUsuarios(prodUsuario)
     // console.log("cajas", prodCaja)
   }
 
@@ -160,12 +180,52 @@ const ReporteCierreZ = () => {
     setResumenOperaciones(operaciones)
   }
 
-  const cargarInfoCaja = (cajaElegida)=>{
-    // setShowDetails(true)
+  const cargarResumenFiltro = (todaLaInfo)=>{
+    var totalVentas = 0
+    var efectivo = 0
+    var otros = 0
+    var diferencias = 0
+
+    const cajaSelValor = cajas[cajaSel]
+    const usuarioSelValor = usuarios[usuarioSel]
     
+    todaLaInfo.cierreCajaReportes.forEach((info,ix)=>{
+      if(
+        (info.puntoVenta == cajaSelValor || cajaSelValor.toLowerCase() == "todas")
+        && (info.nombreApellidoUsuario == usuarioSelValor || usuarioSelValor.toLowerCase() == "todos")
+      ){
+        info.cierreCajaDetalles.forEach((detalleInfo,ix2)=>{
+          if(detalleInfo.detalleMovimientoCaja == "VENTA"){
+
+            switch(detalleInfo.metodoPago){
+              case "EFECTIVO":
+                efectivo += detalleInfo.monto
+              break
+              default:
+                otros += detalleInfo.monto
+              break
+            }
+            totalVentas += detalleInfo.monto
+          }
+        })
+
+        diferencias += info.diferencia
+      }
+    })
+    setResumenFiltroTotal(totalVentas)
+    setResumenFiltroEfectivo(efectivo)
+    setResumenFiltroOtros(otros)
+    setResumenFiltroDiferencia(diferencias)
+  }
+
+  const cargarInfoCaja = (cajaElegida, usuarioElegido)=>{
     var prodCaja = []
     totalInfo.cierreCajaReportes.forEach((infoItem)=>{
-      if(infoItem.puntoVenta == cajaElegida || cajaElegida.toLowerCase() == "todas"){
+      // console.log("infoItem", infoItem)
+      if(
+        (infoItem.puntoVenta == cajaElegida || cajaElegida.toLowerCase() == "todas")
+        && (infoItem.nombreApellidoUsuario == usuarioElegido || usuarioElegido.toLowerCase() == "todos")
+      ){
         prodCaja.push(infoItem)
       }
     })
@@ -178,6 +238,14 @@ const ReporteCierreZ = () => {
     setStartDate(dayjs())
     setEndDate(dayjs())
   },[])
+
+
+  useEffect(()=>{
+    if(totalInfo && cajaSel !== null && usuarioSel !== null){
+      cargarResumenFiltro(totalInfo)
+    }
+  },[cajaSel, usuarioSel])
+
 
 
   return (
@@ -242,8 +310,17 @@ const ReporteCierreZ = () => {
 
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <TableContainer>
-                <Table>
+              <Table sx={{
+                backgroundColor:"rgb(236 249 252)",
+                margin:"4px",
+                width:"90.7%"
+              }}>
                   <TableHead>
+                    <TableRow>
+                      <TableCell colSpan={10}>
+                        Resumen general
+                      </TableCell>
+                    </TableRow>
                     <TableRow>
                       <TableCell>
                         Total ventas
@@ -288,7 +365,6 @@ const ReporteCierreZ = () => {
               </TableContainer>
             </Grid>
 
-
             {cajas.length>0 &&(
               <Grid item xs={12} sm={12} md={12} lg={12}>
               <Typography>Seleccionar caja</Typography>
@@ -298,18 +374,104 @@ const ReporteCierreZ = () => {
                     selected={cajaSel}
                     setSelected={(sel)=>{
                       setCajaSel(sel)
-                      cargarInfoCaja(cajas[sel])
+                      cargarInfoCaja(cajas[sel], usuarios[usuarioSel])
                     }}
                     />
                 </Grid>
               </Grid>
             )}
 
+            {usuarios.length>0 &&(
+              <Grid item xs={12} sm={12} md={12} lg={12}>
+              <Typography>Seleccionar Usuario</Typography>
+                <Grid item xs={12} sm={12} md={8} lg={8}>
+                  <BoxSelectList
+                    listValues={usuarios}
+                    selected={usuarioSel}
+                    setSelected={(sel)=>{
+                      setUsuarioSel(sel)
+                      cargarInfoCaja(cajas[cajaSel], usuarios[sel])
+                    }}
+                    />
+                </Grid>
+              </Grid>
+            )}
+
+            { cajas.length > 0 && (
+
+              <Grid item xs={12} sm={12} md={12} lg={12}>
+              <TableContainer>
+              <Table sx={{
+                backgroundColor:"rgb(236 249 252)",
+                margin:"4px",
+                width:"90.7%"
+              }}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell colSpan={10}>
+                        Resumen filtrado
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        Total ventas
+                      </TableCell>
+
+                      <TableCell>
+                        Efectivo
+                      </TableCell>
+
+                      <TableCell>
+                        Otros
+                      </TableCell>
+
+                      <TableCell>
+                        Diferencia total
+                      </TableCell>
+
+                    </TableRow>
+                  </TableHead>
+   
+                  <TableBody>
+                    <TableRow>
+                      
+                    <TableCell>
+                        $ {resumenFiltroTotal.toLocaleString()}
+                      </TableCell>
+
+                      <TableCell>
+                        $ {resumenFiltroEfectivo.toLocaleString()}
+                      </TableCell>
+
+                      <TableCell>
+                        $ {resumenFiltroOtros.toLocaleString()}
+                      </TableCell>
+
+                      <TableCell>
+                        ${resumenFiltroDiferencia.toLocaleString()}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+
+            )}
 
             {infoPorCaja.length>0 &&(
               <TableContainer>
-              <Table>
+              <Table sx={{
+                backgroundColor:"whitesmoke",
+                margin:"1%",
+                width:"90%"
+              }}>
                 <TableHead>
+                  <TableRow>
+                    <TableCell colSpan={10}>
+                      Reporte
+                    </TableCell>
+                  </TableRow>
+
                   <TableRow>
                     <TableCell>
                       fecha Ingreso
@@ -327,7 +489,7 @@ const ReporteCierreZ = () => {
                       diferencia
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell colSpan={2}>
                       Usuario
                     </TableCell>
 
