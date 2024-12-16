@@ -11,46 +11,39 @@ import {
   InputAdornment,
   Typography,
   DialogTitle,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import SmallButton from "../Elements/SmallButton";
-import ModelConfig from "../../Models/ModelConfig";
+import AdminConfigTabGeneral from "./AdminConfigTabGeneral";
 
 var prods = [];
 for (let index = 1; index <= 5; index++) {
   prods.push(index);
 }
 
-const AdminConfig = ({openDialog,setOpenDialog}) => {
-  const [urlBase, setUrlBase] = useState("");
-  const [iva, setIva] = useState("");
+const AdminConfig = ({
+  openDialog,
+  setOpenDialog
+}) => {
 
-  const [savedConfig, setSavedConfig] = useState(null)
 
+  const [saveChanges, setSaveChanges] = useState(false)
 
-  useEffect( ()=>{
-    setSavedConfig(ModelConfig.get());
-  }, [openDialog])
-
-  useEffect( ()=>{
-    loadConfigSesion();
-  }, [savedConfig])
-
-  const loadConfigSesion = ()=>{
-    // console.log("loadConfigSesion")
-    // console.log(savedConfig);
-    if(!savedConfig) return
-
-    setUrlBase(savedConfig.urlBase)
-    setIva(savedConfig.iva)
-  }
 
   const handlerSaveAction = ()=>{
-    ModelConfig.change("urlBase",urlBase);
-    ModelConfig.change("iva", iva)
+    setSaveChanges(!saveChanges)
 
     console.log("save config");
     setOpenDialog(false)
   }
+
+
+  const [tabNumber, setTabNumber] = useState(0)
+  const handleChange = (event, newValue) => {
+    setTabNumber(newValue);
+  };
+
   return (
       <Dialog open={openDialog} maxWidth="lg" onClose={()=>{
         setOpenDialog(false)
@@ -65,33 +58,19 @@ const AdminConfig = ({openDialog,setOpenDialog}) => {
           marginTop:"0px"
         }}>
           
-              <Grid item xs={12} lg={12}>
-              <Grid container spacing={2}>
 
-             
-              <TextField
-                margin="normal"
-                fullWidth
-                label="UrlBase"
-                type="text" // Cambia dinámicamente el tipo del campo de contraseña
-                value={urlBase}
-                onChange={(e) => setUrlBase(e.target.value)}
-              />
+          <Grid item xs={12}>
+            {/* Tabs component */}
+            <Tabs value={tabNumber} onChange={handleChange}>
+              {/* Individual tabs */}
+              <Tab label="General"/>
+              <Tab label="Comercio"/>
+            </Tabs>
+          </Grid>
 
-              <TextField
-                margin="normal"
-                fullWidth
-                label="Iva"
-                type="text" // Cambia dinámicamente el tipo del campo de contraseña
-                value={iva}
-                onChange={(e) => setIva(e.target.value)}
-              />
-
-
-
-
-              </Grid>
-              </Grid>
+          <Grid item xs={12}>
+            <AdminConfigTabGeneral tabNumber={tabNumber} applyChanges={saveChanges} />
+          </Grid>
               
         </Grid>
         </DialogContent>
