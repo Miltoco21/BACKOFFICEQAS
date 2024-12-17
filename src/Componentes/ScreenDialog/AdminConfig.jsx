@@ -17,6 +17,7 @@ import {
 import SmallButton from "../Elements/SmallButton";
 import AdminConfigTabGeneral from "./AdminConfigTabGeneral";
 import AdminConfigTabComercio from "./AdminConfigTabComercio";
+import AdminConfigTabImpresion from "./AdminConfigTabImpresion";
 
 var prods = [];
 for (let index = 1; index <= 5; index++) {
@@ -66,12 +67,14 @@ const AdminConfig = ({
               {/* Individual tabs */}
               <Tab label="General"/>
               <Tab label="Comercio"/>
+              <Tab label="Impresion"/>
             </Tabs>
           </Grid>
 
           <Grid item xs={12}>
             <AdminConfigTabGeneral tabNumber={tabNumber} applyChanges={saveChanges} />
             <AdminConfigTabComercio tabNumber={tabNumber} applyChanges={saveChanges} />
+            <AdminConfigTabImpresion tabNumber={tabNumber} applyChanges={saveChanges} />
           </Grid>
               
         </Grid>
