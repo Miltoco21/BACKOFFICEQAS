@@ -39,69 +39,64 @@ const AdminConfig = ({
     hideLoading
   } = useContext(SelectedOptionsContext);
 
-
-  const [saveChanges, setSaveChanges] = useState(false)
-
-
-  const handlerSaveAction = ()=>{
-    setSaveChanges(!saveChanges)
-
-    console.log("save config");
-    setOpenDialog(false)
-  }
-
+  const [someChage, setSomeChange] = useState(false)
 
   const [tabNumber, setTabNumber] = useState(0)
   const handleChange = (event, newValue) => {
-    if(tabNumber == 1 || tabNumber == 2){
-      showConfirm("Al cambiar de pestaña se puede perder la informacion de la persaña actual. ¿Quiere continuar?",()=>{
+    if (someChage) {
+      showConfirm("Hay cambios sin guardar. ¿Quiere ignoralos y continuar?", () => {
         setTabNumber(newValue);
+        setSomeChange(false)
       })
-    }else{
+    } else {
       setTabNumber(newValue);
     }
   };
 
+  useEffect(() => {
+    if (!openDialog) return
+    setSomeChange(false)
+  }, [openDialog])
+
   return (
-      <Dialog open={openDialog} maxWidth="lg" onClose={()=>{
-        setOpenDialog(false)
-      }}
-      >
-        <DialogTitle>
-          Configuraciones
-        </DialogTitle>
-        <DialogContent>
+    <Dialog open={openDialog} maxWidth="lg" onClose={() => {
+      setOpenDialog(false)
+    }}
+    >
+      <DialogTitle>
+        Configuraciones
+      </DialogTitle>
+      <DialogContent>
         <Grid container item xs={12} spacing={2} sx={{
-          minWidth:"400px",
-          marginTop:"0px"
+          minWidth: "400px",
+          marginTop: "0px"
         }}>
-          
+
 
           <Grid item xs={12}>
             {/* Tabs component */}
             <Tabs value={tabNumber} onChange={handleChange}>
               {/* Individual tabs */}
-              <Tab label="General"/>
-              <Tab label="Comercio"/>
-              <Tab label="Impresion"/>
+              <Tab label="General" />
+              <Tab label="Comercio" />
+              <Tab label="Impresion" />
             </Tabs>
           </Grid>
 
           <Grid item xs={12}>
-            <AdminConfigTabGeneral tabNumber={tabNumber} applyChanges={saveChanges} />
-            <AdminConfigTabComercio tabNumber={tabNumber} applyChanges={saveChanges} />
-            <AdminConfigTabImpresion tabNumber={tabNumber} applyChanges={saveChanges} />
+            <AdminConfigTabGeneral tabNumber={tabNumber} setSomeChange={setSomeChange} />
+            <AdminConfigTabComercio tabNumber={tabNumber} setSomeChange={setSomeChange} />
+            <AdminConfigTabImpresion tabNumber={tabNumber} setSomeChange={setSomeChange} />
           </Grid>
-              
+
         </Grid>
-        </DialogContent>
-        <DialogActions>
-          <SmallButton textButton="Guardar" actionButton={handlerSaveAction}/>
-          <Button onClick={()=>{
-            setOpenDialog(false)
-          }}>Atras</Button>
-        </DialogActions>
-      </Dialog>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => {
+          setOpenDialog(false)
+        }}>Atras</Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

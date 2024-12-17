@@ -1,7 +1,7 @@
-const CONSTANTS =  {
+const CONSTANTS = {
     appName: "EasyPOSLite",
-    appVersion: "1.0.177",
-    UNIDADES : [
+    appVersion: "1.0.178",
+    UNIDADES: [
         { idUnidad: 0, descripcion: "Sin unidad" },
         { idUnidad: 1, descripcion: "UNI" },
         { idUnidad: 2, descripcion: "SACHET" },

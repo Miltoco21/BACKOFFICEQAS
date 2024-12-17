@@ -4,7 +4,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Grid,
   TextField
@@ -12,75 +12,73 @@ import {
 
 import ModelConfig from "../../Models/ModelConfig";
 import TabPanel from "../Elements/TabPanel";
+import SmallButton from "../Elements/SmallButton";
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+
 
 const AdminConfigTabGeneral = ({
   tabNumber,
-  applyChanges
+  setSomeChange
 }) => {
+
+  const {
+    showMessage,
+    showLoading,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
 
   const [urlBase, setUrlBase] = useState("");
   const [iva, setIva] = useState("");
-  const [canSave, setCanSave] = useState(false);
 
-  const [savedConfig, setSavedConfig] = useState(null)
-  
-  const loadConfigSesion = ()=>{
-    if(!savedConfig) return
-
+  const loadConfigSesion = () => {
+    const savedConfig = ModelConfig.get()
     setUrlBase(savedConfig.urlBase)
     setIva(savedConfig.iva)
-    setCanSave(true)
   }
 
-    const confirmSave = ()=>{
-    ModelConfig.change("urlBase",urlBase);
+  const confirmSave = () => {
+    ModelConfig.change("urlBase", urlBase);
     ModelConfig.change("iva", iva)
+
+    showMessage("Guardado correctamente")
+    setSomeChange(false)
   }
 
-  useEffect( ()=>{
-    if(canSave){
-      confirmSave()
-    }
-  }, [applyChanges])
-
-  useEffect( ()=>{
+  useEffect(() => {
+    if (tabNumber != 0) return
     loadConfigSesion();
-  }, [savedConfig])
-
-  useEffect(()=>{
-    if(tabNumber != 0)return
-
-    setSavedConfig(ModelConfig.get());
-    
-  },[tabNumber]);
-
+  }, [tabNumber]);
 
   return (
     <TabPanel value={tabNumber} index={0}>
 
-<Grid item xs={12} lg={12}>
-  <Grid container spacing={2}>
-    <TextField
-      margin="normal"
-      fullWidth
-      label="UrlBase"
-      type="text" // Cambia dinámicamente el tipo del campo de contraseña
-      value={urlBase}
-      onChange={(e) => setUrlBase(e.target.value)}
-    />
+      <Grid item xs={12} lg={12}>
+        <Grid container spacing={2}>
+          <TextField
+            margin="normal"
+            fullWidth
+            label="UrlBase"
+            type="text" // Cambia dinámicamente el tipo del campo de contraseña
+            value={urlBase}
+            onKeyDown={() => { setSomeChange(true) }}
+            onChange={(e) => setUrlBase(e.target.value)}
+          />
 
-    <TextField
-      margin="normal"
-      fullWidth
-      label="Iva"
-      type="text" // Cambia dinámicamente el tipo del campo de contraseña
-      value={iva}
-      onChange={(e) => setIva(e.target.value)}
-    />
+          <TextField
+            margin="normal"
+            fullWidth
+            label="Iva"
+            type="text" // Cambia dinámicamente el tipo del campo de contraseña
+            value={iva}
+            onKeyDown={() => { setSomeChange(true) }}
+            onChange={(e) => setIva(e.target.value)}
+          />
 
-    </Grid>
-  </Grid>
-      
+          <SmallButton textButton="Guardar" actionButton={confirmSave} />
+
+        </Grid>
+      </Grid>
+
     </TabPanel>
   );
 };

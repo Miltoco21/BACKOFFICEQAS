@@ -13,11 +13,12 @@ import {
 import ModelConfig from "../../Models/ModelConfig";
 import TabPanel from "../Elements/TabPanel";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import SmallButton from "../Elements/SmallButton";
 
 
 const AdminConfigTabImpresion = ({
   tabNumber,
-  applyChanges
+  setSomeChange
 }) => {
 
   const {
@@ -26,51 +27,41 @@ const AdminConfigTabImpresion = ({
     hideLoading
   } = useContext(SelectedOptionsContext);
 
-  const [canSave, setCanSave] = useState(false);
+  const GRUPO = "Ticket"
 
-  const [RazonSocial, setRazonSocial] = useState("");
-  const [ImprimirInicioCaja, setImprimirInicioCaja] = useState("");
-  const [ImprimirRedelcom, setImprimirRedelcom] = useState("");
-  const [Rut, setRut] = useState("");
-  const [NombreEstablecimiento, setNombreEstablecimiento] = useState("");
-  const [Giro, setGiro] = useState("");
-  const [Direccion, setDireccion] = useState("");
-  const [Comuna, setComuna] = useState("");
-  const [Imprimir, setImprimir] = useState("");
-  const [rutEmpresa, setrutEmpresa] = useState("");
-  const [AlargarTicket, setAlargarTicket] = useState("");
-  const [ImprimirAlargar, setImprimirAlargar] = useState("");
+  var states = {
+    RazonSocial: useState(""),
+    ImprimirInicioCaja: useState(""),
+    ImprimirRedelcom: useState(""),
+    Rut: useState(""),
+    NombreEstablecimiento: useState(""),
+    Giro: useState(""),
+    Direccion: useState(""),
+    Comuna: useState(""),
+    Imprimir: useState(""),
+    rutEmpresa: useState(""),
+    AlargarTicket: useState(""),
+    ImprimirAlargar: useState(""),
+  };
 
+  const [props, setProps] = useState([]);
 
-  const getValFromConfig = (entrada, grupo, infoTotal) => {
-    var valor = ""
-    infoTotal.forEach((configInfo) => {
-      if (configInfo.entrada == entrada && configInfo.grupo == grupo) {
-        valor = configInfo.valor
-      }
-    })
-    return valor
+  const changeState = (name, value) => {
+    setSomeChange(true)
+    states[name][1](value)
   }
 
+  const loadInitialValues = (info) => {
+    info.configuracion.forEach((propConfig) => {
+      states[propConfig.entrada][1](propConfig.valor)
+    })
+  }
+
+
   const loadInitial = () => {
-    showLoading("buscando la informacion")
+    showLoading("Buscando la informacion")
     ModelConfig.getAllImpresion((info) => {
-      // console.log(info)
-      setRazonSocial(getValFromConfig("RazonSocial", "Ticket", info.configuracion))
-      setImprimirInicioCaja(getValFromConfig("ImprimirInicioCaja", "Ticket", info.configuracion))
-      setImprimirRedelcom(getValFromConfig("ImprimirRedelcom", "Ticket", info.configuracion))
-      setRut(getValFromConfig("Rut", "Ticket", info.configuracion))
-      setNombreEstablecimiento(getValFromConfig("NombreEstablecimiento", "Ticket", info.configuracion))
-      setGiro(getValFromConfig("Giro", "Ticket", info.configuracion))
-      setDireccion(getValFromConfig("Direccion", "Ticket", info.configuracion))
-      setComuna(getValFromConfig("Comuna", "Ticket", info.configuracion))
-      setImprimir(getValFromConfig("Imprimir", "Ticket", info.configuracion))
-      setrutEmpresa(getValFromConfig("rutEmpresa", "Ticket", info.configuracion))
-      setAlargarTicket(getValFromConfig("AlargarTicket", "Ticket", info.configuracion))
-      setImprimirAlargar(getValFromConfig("ImprimirAlargar", "Ticket", info.configuracion))
-
-      setCanSave(true)
-
+      loadInitialValues(info)
       hideLoading()
     }, (err) => {
       showMessage(err)
@@ -80,72 +71,21 @@ const AdminConfigTabImpresion = ({
 
   const confirmSave = () => {
     const data = [
-      {
-        "grupo": "Ticket",
-        "entrada": "RazonSocial",
-        "valor": RazonSocial
-      },
-      {
-        "grupo": "Ticket",
-        "entrada": "ImprimirInicioCaja",
-        "valor": ImprimirInicioCaja
-      },
-      {
-        "grupo": "Ticket",
-        "entrada": "ImprimirRedelcom",
-        "valor": ImprimirRedelcom
-      },
-      {
-        "grupo": "Ticket",
-        "entrada": "Rut",
-        "valor": Rut
-      },
-      {
-        "grupo": "Ticket",
-        "entrada": "NombreEstablecimiento",
-        "valor": NombreEstablecimiento
-      },
-      {
-        "grupo": "Ticket",
-        "entrada": "Giro",
-        "valor": Giro
-      },
-      {
-        "grupo": "Ticket",
-        "entrada": "Direccion",
-        "valor": Direccion
-      },
-      {
-        "grupo": "Ticket",
-        "entrada": "Comuna",
-        "valor": Comuna
-      },
-      {
-        "grupo": "Ticket",
-        "entrada": "Imprimir",
-        "valor": Imprimir
-      },
-      {
-        "grupo": "Ticket",
-        "entrada": "rutEmpresa",
-        "valor": rutEmpresa
-      },
-      {
-        "grupo": "Ticket",
-        "entrada": "AlargarTicket",
-        "valor": AlargarTicket
-      },
-      {
-        "grupo": "Ticket",
-        "entrada": "ImprimirAlargar",
-        "valor": ImprimirAlargar
-      }
     ]
+
+    props.forEach((propName) => {
+      const newItem = {}
+      newItem.grupo = GRUPO
+      newItem.entrada = propName
+      newItem.valor = states[propName][0]
+      data.push(newItem)
+    })
 
     showLoading("Actualizando")
     ModelConfig.updateImpresion(data, (info) => {
       hideLoading()
       showMessage("Realizado correctamente")
+      setSomeChange(false)
     }, (err) => {
       hideLoading()
       showMessage(err)
@@ -156,15 +96,10 @@ const AdminConfigTabImpresion = ({
   // OBSERVERS
 
   useEffect(() => {
-    if (canSave) {
-      confirmSave()
-    }
-  }, [applyChanges])
-
-  useEffect(() => {
     if (tabNumber != 2) return
     loadInitial();
 
+    setProps(Object.keys(states))
   }, [tabNumber]);
 
 
@@ -173,116 +108,21 @@ const AdminConfigTabImpresion = ({
 
       <Grid item xs={12} lg={12}>
         <Grid container spacing={2}>
-          <TextField
-            margin="normal"
-            fullWidth
-            label="RazonSocial"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={RazonSocial}
-            onChange={(e) => setRazonSocial(e.target.value)}
-          />
+
+          {props.map((name, ix) => (
+            <TextField
+              key={ix}
+              margin="normal"
+              fullWidth
+              label={name}
+              type="text" // Cambia dinámicamente el tipo del campo de contraseña
+              value={states[name][0]}
+              onChange={(e) => changeState(name, e.target.value)}
+            />
+          ))}
 
 
-          <TextField
-            margin="normal"
-            fullWidth
-            label="ImprimirInicioCaja"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={ImprimirInicioCaja}
-            onChange={(e) => setImprimirInicioCaja(e.target.value)}
-          />
-
-          <TextField
-            margin="normal"
-            fullWidth
-            label="ImprimirRedelcom"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={ImprimirRedelcom}
-            onChange={(e) => setImprimirRedelcom(e.target.value)}
-          />
-
-          <TextField
-            margin="normal"
-            fullWidth
-            label="Rut"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={Rut}
-            onChange={(e) => setRut(e.target.value)}
-          />
-
-          <TextField
-            margin="normal"
-            fullWidth
-            label="NombreEstablecimiento"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={NombreEstablecimiento}
-            onChange={(e) => setNombreEstablecimiento(e.target.value)}
-          />
-
-          <TextField
-            margin="normal"
-            fullWidth
-            label="Giro"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={Giro}
-            onChange={(e) => setGiro(e.target.value)}
-          />
-
-          <TextField
-            margin="normal"
-            fullWidth
-            label="Direccion"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={Direccion}
-            onChange={(e) => setDireccion(e.target.value)}
-          />
-
-          <TextField
-            margin="normal"
-            fullWidth
-            label="Comuna"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={Comuna}
-            onChange={(e) => setComuna(e.target.value)}
-          />
-
-          <TextField
-            margin="normal"
-            fullWidth
-            label="Imprimir"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={Imprimir}
-            onChange={(e) => setImprimir(e.target.value)}
-          />
-
-          <TextField
-            margin="normal"
-            fullWidth
-            label="rutEmpresa"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={rutEmpresa}
-            onChange={(e) => setrutEmpresa(e.target.value)}
-          />
-
-          <TextField
-            margin="normal"
-            fullWidth
-            label="AlargarTicket"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={AlargarTicket}
-            onChange={(e) => setAlargarTicket(e.target.value)}
-          />
-
-          <TextField
-            margin="normal"
-            fullWidth
-            label="ImprimirAlargar"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={ImprimirAlargar}
-            onChange={(e) => setImprimirAlargar(e.target.value)}
-          />
-
-
+          <SmallButton textButton="Guardar" actionButton={confirmSave} />
         </Grid>
       </Grid>
 

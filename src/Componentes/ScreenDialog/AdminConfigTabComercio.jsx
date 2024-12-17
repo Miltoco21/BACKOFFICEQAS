@@ -13,11 +13,12 @@ import {
 import ModelConfig from "../../Models/ModelConfig";
 import TabPanel from "../Elements/TabPanel";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import SmallButton from "../Elements/SmallButton";
 
 
 const AdminConfigTabComercio = ({
   tabNumber,
-  applyChanges
+  setSomeChange
 }) => {
 
   const {
@@ -26,136 +27,97 @@ const AdminConfigTabComercio = ({
     hideLoading
   } = useContext(SelectedOptionsContext);
 
-  const [canSave, setCanSave] = useState(false);
-  
-  const [razonSocial, setRazonSocial] = useState("");
-  const [rut, setRut] = useState("");
-  const [direccion, setDireccion] = useState("");
-  const [giro, setGiro] = useState("");
+  const GRUPO = "ImpresionTicket"
 
-  const getValFromConfig = (entrada, grupo, infoTotal)=>{
-    var valor = ""
-    infoTotal.forEach((configInfo)=>{
-      if(configInfo.entrada == entrada && configInfo.grupo == grupo){
-        valor = configInfo.valor
-      }
-    })
-    return valor
+  var states = {
+    Nom_RazonSocial: useState(""),
+    Nro_Rut: useState(""),
+    Nom_Direccion: useState(""),
+    Nom_Giro: useState("")
+  };
+
+  const [props, setProps] = useState([]);
+
+  const changeState = (name, value) => {
+    setSomeChange(true)
+    states[name][1](value)
   }
-  
-  const loadInitial = ()=>{
-    showLoading("buscando la informacion")
-    ModelConfig.getAllComercio((info)=>{
-      // console.log(info)
-      setRazonSocial( getValFromConfig("Nom_RazonSocial", "ImpresionTicket", info.configuracion) )
-      setRut( getValFromConfig("Nro_Rut", "ImpresionTicket", info.configuracion) )
-      setDireccion( getValFromConfig("Nom_Direccion", "ImpresionTicket", info.configuracion) )
-      setGiro( getValFromConfig("Nom_Giro", "ImpresionTicket", info.configuracion) )
 
-      setCanSave(true)
+  const loadInitialValues = (info) => {
+    info.configuracion.forEach((propConfig) => {
+      states[propConfig.entrada][1](propConfig.valor)
+    })
+  }
 
+  const loadInitial = () => {
+    showLoading("Buscando la informacion")
+    ModelConfig.getAllComercio((info) => {
+      loadInitialValues(info)
       hideLoading()
-    }, (err)=>{
+    }, (err) => {
       showMessage(err)
       hideLoading()
     })
   }
 
-  const confirmSave = ()=>{
+  const confirmSave = () => {
     const data = [
-      {
-        "grupo": "ImpresionTicket",
-        "entrada": "Nom_RazonSocial",
-        "valor": razonSocial
-      },
-      {
-        "grupo": "ImpresionTicket",
-        "entrada": "Nro_Rut",
-        "valor": rut
-      },
-      {
-        "grupo": "ImpresionTicket",
-        "entrada": "Nom_Direccion",
-        "valor": direccion
-      },
-      {
-        "grupo": "ImpresionTicket",
-        "entrada": "Nom_Giro",
-        "valor": giro
-      }
     ]
 
+    props.forEach((propName) => {
+      const newItem = {}
+      newItem.grupo = GRUPO
+      newItem.entrada = propName
+      newItem.valor = states[propName][0]
+      data.push(newItem)
+    })
+
     showLoading("actualizando datos del comercio")
-    ModelConfig.updateComercio(data,(info)=>{
+    ModelConfig.updateComercio(data, (info) => {
       hideLoading()
       showMessage("Realizado correctamente")
-    }, (err)=>{
+      setSomeChange(false)
+    }, (err) => {
       hideLoading()
       showMessage(err)
     })
   }
 
 
-// OBSERVERS
+  // OBSERVERS
 
-  useEffect( ()=>{
-    if(canSave){
-      confirmSave()
-    }
-  }, [applyChanges])
-
-  useEffect(()=>{
-    if(tabNumber != 1)return
+  useEffect(() => {
+    if (tabNumber != 1) return
     loadInitial();
-    
-  },[tabNumber]);
+
+    setProps(Object.keys(states))
+
+  }, [tabNumber]);
 
 
   return (
     <TabPanel value={tabNumber} index={1}>
 
-<Grid item xs={12} lg={12}>
-  <Grid container spacing={2}>
-    <TextField
-      margin="normal"
-      fullWidth
-      label="RazonSocial"
-      type="text" // Cambia dinámicamente el tipo del campo de contraseña
-      value={razonSocial}
-      onChange={(e) => setRazonSocial(e.target.value)}
-    />
-
-    <TextField
-      margin="normal"
-      fullWidth
-      label="Rut"
-      type="text" // Cambia dinámicamente el tipo del campo de contraseña
-      value={rut}
-      onChange={(e) => setRut(e.target.value)}
-    />
-
-    <TextField
-      margin="normal"
-      fullWidth
-      label="Direccion"
-      type="text" // Cambia dinámicamente el tipo del campo de contraseña
-      value={direccion}
-      onChange={(e) => setDireccion(e.target.value)}
-    />
+      <Grid item xs={12} lg={12}>
+        <Grid container spacing={2}>
 
 
-    <TextField
-      margin="normal"
-      fullWidth
-      label="Giro"
-      type="text" // Cambia dinámicamente el tipo del campo de contraseña
-      value={giro}
-      onChange={(e) => setGiro(e.target.value)}
-    />
+          {props.map((name, ix) => (
+            <TextField
+              key={ix}
+              margin="normal"
+              fullWidth
+              label={name}
+              type="text" // Cambia dinámicamente el tipo del campo de contraseña
+              value={states[name][0]}
+              onChange={(e) => changeState(name, e.target.value)}
+            />
+          ))}
 
-    </Grid>
-  </Grid>
-      
+          <SmallButton textButton="Guardar" actionButton={confirmSave} />
+        </Grid>
+      </Grid>
+
     </TabPanel>
   );
 };
