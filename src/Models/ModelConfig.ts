@@ -1,3 +1,4 @@
+import axios from 'axios';
 import StorageSesion from '../Helpers/StorageSesion.ts';
 import BaseConfig from "../definitions/BaseConfig";
 
@@ -66,6 +67,45 @@ class ModelConfig {
             this.sesion.guardar(BaseConfig);
         }
         return(this.sesion.getFirst())
+    }
+
+
+    static async getAllComercio(callbackOk, callbackWrong){
+        try {
+            const configs = ModelConfig.get()
+            var url = configs.urlBase
+
+            url += "/Configuracion/GetAllConfiguracionCliente"
+
+            const response = await axios.get(url);
+            if (response.data.statusCode === 200) {
+            // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
+            callbackOk(response.data)
+            } else {
+            callbackWrong("Error del servidor")
+            }
+        } catch (error) {
+            callbackWrong(error)
+        }
+    }
+    
+    static async updateComercio(data,callbackOk, callbackWrong){
+        try {
+            const configs = ModelConfig.get()
+            var url = configs.urlBase
+
+            url += "/Configuracion/PutConfiguracionCliente"
+
+            const response = await axios.put(url,data);
+            if (response.data.statusCode === 200) {
+            // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
+            callbackOk(response.data)
+            } else {
+            callbackWrong("Error del servidor")
+            }
+        } catch (error) {
+            callbackWrong(error)
+        }
     }
 
 };

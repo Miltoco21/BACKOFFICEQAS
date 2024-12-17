@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import SmallButton from "../Elements/SmallButton";
 import AdminConfigTabGeneral from "./AdminConfigTabGeneral";
+import AdminConfigTabComercio from "./AdminConfigTabComercio";
 
 var prods = [];
 for (let index = 1; index <= 5; index++) {
@@ -70,6 +71,7 @@ const AdminConfig = ({
 
           <Grid item xs={12}>
             <AdminConfigTabGeneral tabNumber={tabNumber} applyChanges={saveChanges} />
+            <AdminConfigTabComercio tabNumber={tabNumber} applyChanges={saveChanges} />
           </Grid>
               
         </Grid>
