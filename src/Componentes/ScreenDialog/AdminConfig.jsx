@@ -19,6 +19,9 @@ import AdminConfigTabGeneral from "./AdminConfigTabGeneral";
 import AdminConfigTabComercio from "./AdminConfigTabComercio";
 import AdminConfigTabImpresion from "./AdminConfigTabImpresion";
 
+import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+
+
 var prods = [];
 for (let index = 1; index <= 5; index++) {
   prods.push(index);
@@ -28,6 +31,13 @@ const AdminConfig = ({
   openDialog,
   setOpenDialog
 }) => {
+
+  const {
+    showMessage,
+    showLoading,
+    showConfirm,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
 
 
   const [saveChanges, setSaveChanges] = useState(false)
@@ -43,7 +53,13 @@ const AdminConfig = ({
 
   const [tabNumber, setTabNumber] = useState(0)
   const handleChange = (event, newValue) => {
-    setTabNumber(newValue);
+    if(tabNumber == 1 || tabNumber == 2){
+      showConfirm("Al cambiar de pestaña se puede perder la informacion de la persaña actual. ¿Quiere continuar?",()=>{
+        setTabNumber(newValue);
+      })
+    }else{
+      setTabNumber(newValue);
+    }
   };
 
   return (

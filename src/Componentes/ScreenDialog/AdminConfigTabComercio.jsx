@@ -64,28 +64,33 @@ const AdminConfigTabComercio = ({
   const confirmSave = ()=>{
     const data = [
       {
-        "grupo": "Nom_RazonSocial",
-        "entrada": "ImpresionTicket",
+        "grupo": "ImpresionTicket",
+        "entrada": "Nom_RazonSocial",
         "valor": razonSocial
       },
       {
-        "grupo": "Nro_Rut",
-        "entrada": "ImpresionTicket",
+        "grupo": "ImpresionTicket",
+        "entrada": "Nro_Rut",
         "valor": rut
       },
       {
-        "grupo": "Nom_Direccion",
-        "entrada": "ImpresionTicket",
+        "grupo": "ImpresionTicket",
+        "entrada": "Nom_Direccion",
         "valor": direccion
       },
       {
-        "grupo": "Nom_Giro",
-        "entrada": "ImpresionTicket",
+        "grupo": "ImpresionTicket",
+        "entrada": "Nom_Giro",
         "valor": giro
       }
     ]
+
+    showLoading("actualizando datos del comercio")
     ModelConfig.updateComercio(data,(info)=>{
+      hideLoading()
+      showMessage("Realizado correctamente")
     }, (err)=>{
+      hideLoading()
       showMessage(err)
     })
   }
