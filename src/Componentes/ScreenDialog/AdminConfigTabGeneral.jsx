@@ -27,6 +27,8 @@ const AdminConfigTabGeneral = ({
     hideLoading
   } = useContext(SelectedOptionsContext);
 
+  const TAB_INDEX = 0
+
   const [urlBase, setUrlBase] = useState("");
   const [iva, setIva] = useState("");
 
@@ -45,12 +47,12 @@ const AdminConfigTabGeneral = ({
   }
 
   useEffect(() => {
-    if (tabNumber != 0) return
+    if (tabNumber != TAB_INDEX) return
     loadConfigSesion();
   }, [tabNumber]);
 
   return (
-    <TabPanel value={tabNumber} index={0}>
+    <TabPanel value={tabNumber} index={TAB_INDEX}>
 
       <Grid item xs={12} lg={12}>
         <Grid container spacing={2}>

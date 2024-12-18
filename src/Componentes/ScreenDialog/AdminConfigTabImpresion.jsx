@@ -28,6 +28,7 @@ const AdminConfigTabImpresion = ({
   } = useContext(SelectedOptionsContext);
 
   const GRUPO = "Ticket"
+  const TAB_INDEX = 2
 
   var states = {
     RazonSocial: useState(""),
@@ -96,7 +97,7 @@ const AdminConfigTabImpresion = ({
   // OBSERVERS
 
   useEffect(() => {
-    if (tabNumber != 2) return
+    if (tabNumber != TAB_INDEX) return
     loadInitial();
 
     setProps(Object.keys(states))
@@ -104,7 +105,7 @@ const AdminConfigTabImpresion = ({
 
 
   return (
-    <TabPanel value={tabNumber} index={2}>
+    <TabPanel value={tabNumber} index={TAB_INDEX}>
 
       <Grid item xs={12} lg={12}>
         <Grid container spacing={2}>

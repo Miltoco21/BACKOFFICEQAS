@@ -28,6 +28,8 @@ const AdminConfigTabComercio = ({
   } = useContext(SelectedOptionsContext);
 
   const GRUPO = "ImpresionTicket"
+  const TAB_INDEX = 1
+
 
   var states = {
     Nom_RazonSocial: useState(""),
@@ -87,7 +89,7 @@ const AdminConfigTabComercio = ({
   // OBSERVERS
 
   useEffect(() => {
-    if (tabNumber != 1) return
+    if (tabNumber != TAB_INDEX) return
     loadInitial();
 
     setProps(Object.keys(states))
@@ -96,7 +98,7 @@ const AdminConfigTabComercio = ({
 
 
   return (
-    <TabPanel value={tabNumber} index={1}>
+    <TabPanel value={tabNumber} index={TAB_INDEX}>
 
       <Grid item xs={12} lg={12}>
         <Grid container spacing={2}>
