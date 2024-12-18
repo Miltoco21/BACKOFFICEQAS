@@ -20,6 +20,7 @@ import AdminConfigTabComercio from "./AdminConfigTabComercio";
 import AdminConfigTabImpresion from "./AdminConfigTabImpresion";
 
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import AdminConfigTabSimpleApi from "./AdminConfigTabSimpleApi";
 
 
 var prods = [];
@@ -80,6 +81,7 @@ const AdminConfig = ({
               <Tab label="General" />
               <Tab label="Comercio" />
               <Tab label="Impresion" />
+              <Tab label="Simple Api" />
             </Tabs>
           </Grid>
 
@@ -87,6 +89,7 @@ const AdminConfig = ({
             <AdminConfigTabGeneral tabNumber={tabNumber} setSomeChange={setSomeChange} />
             <AdminConfigTabComercio tabNumber={tabNumber} setSomeChange={setSomeChange} />
             <AdminConfigTabImpresion tabNumber={tabNumber} setSomeChange={setSomeChange} />
+            <AdminConfigTabSimpleApi tabNumber={tabNumber} setSomeChange={setSomeChange} />
           </Grid>
 
         </Grid>

@@ -146,6 +146,48 @@ class ModelConfig {
         }
     }
 
+    static async getAllSimpleApi(callbackOk, callbackWrong){
+        try {
+            const configs = ModelConfig.get()
+            var url = configs.urlBase
+
+            url += "/Configuracion/GetAllConfiguracionSimpleAPI"
+
+            const response = await axios.get(url);
+            if (response.data.statusCode === 200) {
+            // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
+            callbackOk(response.data)
+            } else {
+            callbackWrong("Error del servidor")
+            }
+        } catch (error) {
+            callbackWrong(error)
+        }
+    }
+
+    static async updateSimpleApi(data,callbackOk, callbackWrong){
+        try {
+            const configs = ModelConfig.get()
+            var url = configs.urlBase
+
+            url += "/Configuracion/PutAllConfiguracionSimpleAPI"
+
+            const response = await axios.put(url,data,{
+                // headers: {
+                //   'Content-Type': 'multipart/form-data'
+                // }
+              });
+            if (response.data.statusCode === 200) {
+            // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
+            callbackOk(response.data)
+            } else {
+            callbackWrong("Error del servidor")
+            }
+        } catch (error) {
+            callbackWrong(error)
+        }
+    }
+
 };
 
 export default ModelConfig;
