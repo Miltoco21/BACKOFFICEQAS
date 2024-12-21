@@ -8,6 +8,7 @@ const BaseConfig =  {
     margenGanancia: 30, //en %
     iva: 19, //en %
     cantidadDescripcionCorta:30,
+    porcentajeMargen:30,
     buttonDelayClick: 1500, //en milisegundos
 };
 

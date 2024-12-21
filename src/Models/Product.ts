@@ -34,11 +34,13 @@ class Product extends Model{
     }
 
     static iniciarLogicaPrecios(product){
+        const margenConfig = ModelConfig.get("porcentajeMargen")
+
         if(!product.gananciaPorcentaje){
             if(product.precioNeto>0 && product.precioCosto>0){
                 product.gananciaPorcentaje = this.getGanPorByCostoYNeto(product.precioCosto,product.precioNeto)
             }else{
-                product.gananciaPorcentaje = 30
+                product.gananciaPorcentaje = margenConfig
             }
         }
     
@@ -70,7 +72,9 @@ class Product extends Model{
     static logicaPrecios(product, direccion = "final"){
         // console.log("logicaPrecios " + direccion + " para ")
         // console.log("entra con:",System.clone(product))
-        if(!product.gananciaPorcentaje) product.gananciaPorcentaje = 30
+        const margenConfig = ModelConfig.get("porcentajeMargen")
+
+        if(!product.gananciaPorcentaje) product.gananciaPorcentaje = margenConfig
         if(product.ivaPorcentaje) product.ivaPorcentaje = ModelConfig.get().iva
         // if(product.precioVenta <= 0 && product.precioCosto > 0){
         if( direccion == 'final' ){

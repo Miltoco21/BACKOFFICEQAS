@@ -32,15 +32,21 @@ const AdminConfigTabGeneral = ({
   const [urlBase, setUrlBase] = useState("");
   const [iva, setIva] = useState("");
 
+  const [porcentajeMargen, setPorcentajeMargen] = useState(0);
+
+
   const loadConfigSesion = () => {
     const savedConfig = ModelConfig.get()
     setUrlBase(savedConfig.urlBase)
     setIva(savedConfig.iva)
+    setPorcentajeMargen(savedConfig.porcentajeMargen)
   }
 
   const confirmSave = () => {
     ModelConfig.change("urlBase", urlBase);
     ModelConfig.change("iva", iva)
+    ModelConfig.change("porcentajeMargen", porcentajeMargen)
+    
 
     showMessage("Guardado correctamente")
     setSomeChange(false)
@@ -74,6 +80,16 @@ const AdminConfigTabGeneral = ({
             value={iva}
             onKeyDown={() => { setSomeChange(true) }}
             onChange={(e) => setIva(e.target.value)}
+          />
+
+          <TextField
+            margin="normal"
+            fullWidth
+            label="Porcentaje Margen ganancia"
+            type="text" // Cambia dinámicamente el tipo del campo de contraseña
+            value={porcentajeMargen}
+            onKeyDown={() => { setSomeChange(true) }}
+            onChange={(e) => setPorcentajeMargen(e.target.value)}
           />
 
           <SmallButton textButton="Guardar" actionButton={confirmSave} />
