@@ -56,7 +56,9 @@ const AdminConfigTabSimpleApi = ({
 
   const loadInitialValues = (info) => {
     info.configuracion.forEach((propConfig) => {
-      states[propConfig.entrada][1](propConfig.valor)
+      if( states[propConfig.entrada] != undefined ){
+        states[propConfig.entrada][1](propConfig.valor)
+      }
     })
   }
 
