@@ -7,13 +7,15 @@
 import React, { useEffect, useState, useContext } from "react";
 import {
   Grid,
-  TextField
+  TextField,
+  Typography
 } from "@mui/material";
 
 import ModelConfig from "../../Models/ModelConfig";
 import TabPanel from "../Elements/TabPanel";
 import SmallButton from "../Elements/SmallButton";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import BoxOptionList from "../Elements/BoxOptionList";
 
 
 const AdminConfigTabGeneral = ({
@@ -34,19 +36,21 @@ const AdminConfigTabGeneral = ({
 
   const [porcentajeMargen, setPorcentajeMargen] = useState(0);
 
+  const [tipoPrecioCosto, setTipoPrecioCosto] = useState(null)
+
 
   const loadConfigSesion = () => {
-    const savedConfig = ModelConfig.get()
-    setUrlBase(savedConfig.urlBase)
-    setIva(savedConfig.iva)
-    setPorcentajeMargen(savedConfig.porcentajeMargen)
+    setUrlBase(ModelConfig.get("urlBase") )
+    setIva(ModelConfig.get("iva") )
+    setPorcentajeMargen(ModelConfig.get("porcentajeMargen") )
+    setTipoPrecioCosto(ModelConfig.get("tipoPrecioCosto") )
   }
 
   const confirmSave = () => {
     ModelConfig.change("urlBase", urlBase);
     ModelConfig.change("iva", iva)
     ModelConfig.change("porcentajeMargen", porcentajeMargen)
-    
+    ModelConfig.change("tipoPrecioCosto", tipoPrecioCosto)
 
     showMessage("Guardado correctamente")
     setSomeChange(false)
@@ -57,11 +61,12 @@ const AdminConfigTabGeneral = ({
     loadConfigSesion();
   }, [tabNumber]);
 
+
   return (
     <TabPanel value={tabNumber} index={TAB_INDEX}>
 
-      <Grid item xs={12} lg={12}>
-        <Grid container spacing={2}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} lg={12}>
           <TextField
             margin="normal"
             fullWidth
@@ -72,6 +77,8 @@ const AdminConfigTabGeneral = ({
             onChange={(e) => setUrlBase(e.target.value)}
           />
 
+        </Grid>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <TextField
             margin="normal"
             fullWidth
@@ -81,7 +88,9 @@ const AdminConfigTabGeneral = ({
             onKeyDown={() => { setSomeChange(true) }}
             onChange={(e) => setIva(e.target.value)}
           />
+        </Grid>
 
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <TextField
             margin="normal"
             fullWidth
@@ -91,13 +100,36 @@ const AdminConfigTabGeneral = ({
             onKeyDown={() => { setSomeChange(true) }}
             onChange={(e) => setPorcentajeMargen(e.target.value)}
           />
-
-          <SmallButton textButton="Guardar" actionButton={confirmSave} />
-
         </Grid>
+        <Grid item xs={12} lg={12}>
+          <Typography sx={{ textAlign: "left" }}>Precio de costo</Typography>
+          <BoxOptionList
+            optionSelected={tipoPrecioCosto}
+            setOptionSelected={setTipoPrecioCosto}
+            options={[
+              {
+                id: 1,
+                value: "Neto"
+              },
+              {
+                id: 2,
+                value: "Bruto"
+              }
+            ]}
+          />
+        </Grid>
+
+        <div style={{
+          width: "100%",
+          height: "50px",
+        }}></div>
+
+
+        <SmallButton textButton="Guardar" actionButton={confirmSave} />
+
       </Grid>
 
-    </TabPanel>
+    </TabPanel >
   );
 };
 
