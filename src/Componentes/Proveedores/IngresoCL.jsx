@@ -217,7 +217,7 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
               inputState={states.urlPagina}
               fieldName="Pagina Web"
               required={true}
-              maxLength={30}
+              maxLength={100}
               validationState={validatorStates.urlPagina}
             />
           </Grid>

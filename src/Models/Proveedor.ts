@@ -212,6 +212,14 @@ class Proveedor extends Model{
     },callbackWrong)
   }
 
+
+  static crearNuevo(proveedor,callbackOk,callbackWrong){
+    const url = ModelConfig.get("urlBase") + "/Proveedores/AddProveedor"
+    EndPoint.sendPost(url,proveedor,(responseData, response)=>{
+      callbackOk(responseData, response)
+    },callbackWrong)
+  }
+
 };
 
 export default Proveedor;

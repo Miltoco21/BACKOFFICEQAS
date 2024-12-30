@@ -4,25 +4,17 @@ import Box from "@mui/material/Box";
 import Navegacion from "../Componentes/NavBar/Navegacion";
 import Button from "@mui/joy/Button";
 import Add from "@mui/icons-material/Add";
-import Modal from "@mui/joy/Modal";
 
-import IngresoPV from "../Componentes/Proveedores/IngresoPV";
 import IngresoCL from "../Componentes/Proveedores/IngresoCL";
-import Familias from "../Componentes/Familias/Familias";
 import SideBar from "../Componentes/NavBar/SideBar";
-import SearchListProveedores from "../Componentes/Proveedores/SearchListProveedores";
 import SearchListClientes from "../Componentes/Proveedores/SearchListClientes";
 
-const Clientes = ({ 
-  onClose,
-  openDialog,
-  setOpendialog
-}) => {
+const Clientes = () => {
   const [open, setOpen] = useState(false);
   const handleOpenModal = () => {
     setOpen(true);
   };
- 
+
   const handleCloseModal = () => {
     setOpen(false);
   };
@@ -62,19 +54,17 @@ const Clientes = ({
 
         <Box />
 
-       
+
 
         {/* Modal for IngresoCL */}
 
-        {open ? (
-        <IngresoCL
-        openDialog={open}
-        setOpendialog={setOpen}
-        onClose={handleCloseModal}
-      />
-      ) : (
-        <></>
-      )}
+        {open && (
+          <IngresoCL
+            openDialog={open}
+            setOpendialog={setOpen}
+            onClose={handleCloseModal}
+          />
+        )}
 
         {/* <Modal open={openDialog} onClose={onClose}>
           <Box
