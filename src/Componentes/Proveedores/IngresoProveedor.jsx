@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import InputAdornment from "@mui/material/InputAdornment";
 
 import Tooltip from "@mui/material/Tooltip";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Swal from "sweetalert2";
 import { saveAs } from "file-saver";
 import * as xlsx from "xlsx/xlsx.mjs";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -83,41 +80,7 @@ const IngresoProveedor = ({
     sucursal: useState(""),
   };
 
-
-
-  // const apiUrl = ModelConfig.get().urlBase;
-
-  // const [rut, setRut] = useState("");
-  // const [rutOk, setRutOk] = useState(null);
-
-  // const [razonSocial, setRazonSocial] = useState("");
-  // const [giro, setGiro] = useState("");
-  // const [email, setEmail] = useState("");
-  // const [telefono, setTelefono] = useState("");
-  // const [direccion, setDireccion] = useState("");
-  // const [comuna, setComuna] = useState("");
-  // const [region, setRegion] = useState("");
-  // const [sucursal, setSucursal] = useState("");
-  // const [pagina, setUlrPagina] = useState("");
-  // const [formaPago, setFormaPago] = useState("");
-  // const [nombreResponsable, setNombreResponsable] = useState("");
-  // const [correoResponsable, setcorreoResponsable] = useState("");
-  // const [telefonoResponsable, setTelefonoResponsable] = useState("");
-  // const [errors, setErrors] = useState([]);
-  // const [response, setResponse] = useState(null);
-  // const [formSubmitted, setFormSubmitted] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const theme = createTheme();
-  // const [regiones, setRegiones] = useState([]);
-  // const [comunas, setComunas] = useState([]);
-  // const [selectedRegion, setSelectedRegion] = useState("");
-  // const [selectedComuna, setSelectedComuna] = useState("");
-  // const [camposVacios, setCamposVacios] = useState("");
-  // const [snackbarOpen, setSnackbarOpen] = useState(false);
-  // const [snackbarMessage, setSnackbarMessage] = useState("");
-
-  // const [regionOptions, setRegionOptions] = useState([]);
-  // const [comunaOptions, setComunaOptions] = useState([]);
 
   const {
     userData,
