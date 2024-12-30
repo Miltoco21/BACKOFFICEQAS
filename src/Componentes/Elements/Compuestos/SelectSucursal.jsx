@@ -35,7 +35,7 @@ const SelectSucursal = ({
     const [selectList, setSelectList] = useState([])
     const [selected, setSelected] = useState(-1)
     const [selectedOriginal, setSelectedOriginalx] = inputState
-    const [validation, setValidation] = validationState
+    const [validation, setValidation] = validationState ?? useState(null)
 
     const setSelectedOriginal = (newVal)=>{
       // console.log("cambiando original a", newVal)

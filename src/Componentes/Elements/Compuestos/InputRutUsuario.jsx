@@ -32,7 +32,7 @@ const InputRut = ({
   } = useContext(SelectedOptionsContext);
   
   const [rut, setRut] = inputState
-  const [validation, setValidation] = validationState
+  const [validation, setValidation] = validationState ?? useState(null)
   const [keyPressed, setKeyPressed] = useState(false)
 
   const [rutUnique, setRutUnique] = useState(null);

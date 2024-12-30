@@ -31,7 +31,7 @@ const SelectList = ({
     
     const [selectList, setSelectList] = useState(selectItems)
     const [selected, setSelected] = inputState
-    const [validation, setValidation] = validationState
+    const [validation, setValidation] = validationState ?? useState(null)
 
   const validate = ()=>{
     // console.log("validate de:" + fieldName)

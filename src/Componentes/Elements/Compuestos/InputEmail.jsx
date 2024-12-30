@@ -30,7 +30,7 @@ const InputEmail = ({
     } = useContext(SelectedOptionsContext);
     
     const [email, setEmail] = inputState
-    const [validation, setValidation] = validationState
+    const [validation, setValidation] = validationState ?? useState(null)
     const [keyPressed, setKeyPressed] = useState(false)
 
   const validate = ()=>{

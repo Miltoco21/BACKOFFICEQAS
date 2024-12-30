@@ -129,7 +129,7 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
           </Grid>
           <Grid item xs={12} md={4}>
             <InputName
-              inputState={states.nombre}
+              inputState={ [states.nombre[0], states.nombre[1]] }
               fieldName="nombre"
               required={true}
               validationState={validatorStates.nombre}

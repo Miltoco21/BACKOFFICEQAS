@@ -30,7 +30,7 @@ const InputNumber = ({
     } = useContext(SelectedOptionsContext);
     
     const [number, setNumber] = inputState
-    const [validation, setValidation] = validationState
+    const [validation, setValidation] = validationState ?? useState(null)
     const [keyPressed, setKeyPressed] = useState(false)
 
   const validate = ()=>{

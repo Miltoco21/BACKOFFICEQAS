@@ -34,7 +34,7 @@ const SelectUserRoles = ({
     const [selectList, setSelectList] = useState([])
     const [selected, setSelected] = useState(-1)
     const [selectedOriginal, setSelectedOriginal] = inputState
-    const [validation, setValidation] = validationState
+    const [validation, setValidation] = validationState ?? useState(null)
 
   const validate = ()=>{
     // console.log("validate de:" + fieldName)

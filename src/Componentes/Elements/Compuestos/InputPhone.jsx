@@ -30,7 +30,7 @@ const InputPhone = ({
     } = useContext(SelectedOptionsContext);
     
     const [phone, setPhone] = inputState
-    const [validation, setValidation] = validationState
+    const [validation, setValidation] = validationState ?? useState(null)
     const [keyPressed, setKeyPressed] = useState(false)
 
   const validate = ()=>{

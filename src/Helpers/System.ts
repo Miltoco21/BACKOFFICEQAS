@@ -142,7 +142,8 @@ class System {
         // const keys = Object.keys(validators)
         Object.values(validators).forEach((validation:any,ix)=>{
           // console.log("validation de  " + keys[ix] + " :", validation)
-          if(validation[0].message !="" && allOk){
+          
+          if(validation[0] && validation[0].message !="" && allOk){
             showMessageFunction(validation[0].message)
             allOk = false
           }

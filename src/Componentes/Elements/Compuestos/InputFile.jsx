@@ -64,7 +64,7 @@ const InputFile = ({
       setAccepts(accept)
     }
     
-    const [validation, setValidation] = validationState
+    const [validation, setValidation] = validationState ?? useState(null)
 
     const [fileName, setFileName] = useState("")
     const [fileValue, setFileValue] = inputState
