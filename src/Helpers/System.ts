@@ -261,7 +261,7 @@ class System {
                 // console.log("digitoEntero", digitoEntero)
                 // console.log("index", index)
                 if((index) % 3 === 0){
-                    console.log(index + " es divisor de 3")
+                    // console.log(index + " es divisor de 3")
                     parteEntera2 = "." + parteEntera2
                 }
             }
