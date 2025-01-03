@@ -87,56 +87,26 @@ const IngresoProveedor = ({
     showMessage
   } = useContext(SelectedOptionsContext);
 
-  useEffect(() => {
-    console.log("cargando componente IngresoProveedor..openDialog es", openDialog)
-  }, []);
-
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!System.allValidationOk(validatorStates, showMessage)) {
       return false;
     }
-    const proveedor = {
-      rut: states.rut[0],
-      nombreResponsable: states.nombreResponsable[0],
-      email: states.email[0],
-      correoResponsable: states.correoResponsable[0],
-      razonSocial: states.razonSocial[0],
-      telefono: states.telefono[0],
-      telefonoResponsable: states.telefonoResponsable[0],
-      direccion: states.direccion[0],
-      region: states.region[0] + "",
-      comuna: states.comuna[0] + "",
-      giro: states.giro[0],
-      formaPago: states.formaPago[0],
-      pagina: states.pagina[0],
-      sucursal: states.sucursal[0]
-    };
 
-    console.log("Datos a enviar:", proveedor); // Aquí se muestran los datos en la consola
+    const proveedor = System.prepareStates(states)
+    proveedor.region = proveedor.region + ""
+    proveedor.comuna = proveedor.comuna + ""
+
+    // console.log("Datos a enviar:", proveedor); // Aquí se muestran los datos en la consola
 
     Proveedor.crearNuevo(proveedor, (responseData, response) => {
-      setRazonSocial("");
-      setGiro("");
-      setEmail("");
-      setDireccion("");
-      setTelefono("");
-      setSucursal("");
-      setSelectedRegion("");
-      setSelectedComuna("");
-      setUlrPagina("");
-      setFormaPago("");
-      setRut("");
-      setNombreResponsable("");
-      setcorreoResponsable("");
-      setTelefonoResponsable("");
-
+      System.clearStates(states)
       setTimeout(() => {
         onClose(); ////Cierre Modal al finalizar
       }, 2000);
-
+      
+      setOpenDialog(false)
       onFinish(responseData)
     }, showMessage)
 

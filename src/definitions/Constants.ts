@@ -1,6 +1,6 @@
 const CONSTANTS = {
     appName: "EasyPOSLite",
-    appVersion: "1.0.186",
+    appVersion: "1.0.187",
     UNIDADES: [
         { idUnidad: 0, descripcion: "Sin unidad" },
         { idUnidad: 1, descripcion: "UNI" },
