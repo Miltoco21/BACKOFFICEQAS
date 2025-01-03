@@ -61,6 +61,7 @@ const IngresoDocCompra = ({
     showLoading,
     hideLoading,
     showMessage,
+    showAlert,
     showConfirm
   } = useContext(SelectedOptionsContext);
 
@@ -100,19 +101,61 @@ const IngresoDocCompra = ({
   }
   // console.log("selectedProveedor", selectedProveedor);
 
+  const handleQuantityBlur = (index) => {
+    console.log("handleQuantityBlur")
+
+    
+    const updatedProducts = [...selectedProducts];
+    const value = updatedProducts[index].cantidad
+    // Parse the input value to an integer
+    // console.log("value", value)
+
+    const valStr = value + ""
+    const ultStr = valStr.substr(valStr.length - 1)
+    // console.log("valStr", valStr)
+    // console.log("ultStr", ultStr)
+    if ((ultStr == ".")) {
+      updatedProducts[index].cantidad = value + "0";
+      updatedProducts[index].total = calcularTotal(
+        updatedProducts[index].precioCosto,
+        parseFloat(value + "0"),
+        updatedProducts[index].cantidadProveedor
+      )
+
+      setSelectedProducts(updatedProducts);
+      return
+    }
+  }
+
   const handleQuantityChange = (value, index) => {
+    // console.log("handleQuantityChange")
     const updatedProducts = [...selectedProducts];
     // Parse the input value to an integer
-    const parsedValue = parseInt(value);
+    // console.log("value", value)
+
+    const valStr = value + ""
+    const ultStr = valStr.substr(valStr.length - 1)
+    // console.log("valStr", valStr)
+    // console.log("ultStr", ultStr)
+    if ((ultStr == ".")) {
+      updatedProducts[index].cantidad = value;
+      setSelectedProducts(updatedProducts);
+      return
+    }
+
+    const parsedValue = parseFloat(value);
+    // console.log("parsedValue", parsedValue)
 
     // Check if the parsed value is NaN or less than zero
     if (isNaN(parsedValue) || parsedValue < 0) {
       showMessage("valor incorrecto")
+      // console.log("cantidad incorrecta")
       return
       // If it's NaN or less than zero, set quantity and total to zero
       // updatedProducts[index].cantidad = 0;
       // updatedProducts[index].total = 0;
     } else {
+      // console.log("cantidad correcta", parsedValue)
       // Otherwise, update quantity and calculate total
       updatedProducts[index].cantidad = parsedValue;
       updatedProducts[index].total = calcularTotal(
@@ -163,7 +206,9 @@ const IngresoDocCompra = ({
 
   const calcularTotal = (costo, cantidad, cantidadProveedor) => {
     // console.log("calcularTotal..costo", costo, "..cantidad:", cantidad,"..cantidad proveedor:",cantidadProveedor)
-    return parseInt(costo + "") * parseInt(cantidad + "") * parseInt(cantidadProveedor + "")
+    // const total = parseFloat(costo + "") * parseFloat(cantidad + "") * parseFloat(cantidadProveedor + "")
+    // console.log("devuelvo el total", total)
+    return parseFloat(costo + "") * parseFloat(cantidad + "") * parseFloat(cantidadProveedor + "")
   }
 
   const handleAddProductToSelecteds = (product) => {
@@ -324,36 +369,34 @@ const IngresoDocCompra = ({
         total: total,
         proveedorCompraDetalles,
       };
-
       console.log("Datos a enviar al servidor:", dataToSend);
 
-      const response = await axios.post(
-        apiUrl + "/Proveedores/AddProveedorCompra",
-        dataToSend
-      );
+      Proveedor.agregarCompra(dataToSend, (responseData, response) => {
+        showMessage("Realizado correctamente");
+        console.log("responseData", responseData)
 
-      console.log("Datos enviados al servidor:", response.data);
+        setTipoDocumento("");
+        setFolioDocumento("");
+        setFecha(dayjs());
+        setSearchText("");
+        setSelectedProveedor(null);
+        setSelectedProducts([]);
+        setProveedoresFiltrados([]);
 
-      showMessage(response.data.descripcion);
+        setTimeout(() => {
+          setOpenDialog(false);
+        }, 2000);
 
-      setTipoDocumento("");
-      setFolioDocumento("");
-      setFecha(dayjs());
-      setSearchText("");
-      setSelectedProveedor(null);
-      setSelectedProducts([]);
-      setProveedoresFiltrados([]);
-
-      setTimeout(() => {
-        setOpenDialog(false);
-      }, "2000");
-    } catch (error) {
-      console.error("Error al guardar los datos:", error);
-      showMessage("Error al guardar los datos.");
-    } finally {
-      setLoading(false);
+      }, (err) => {
+        showMessage(err)
+        setLoading(false);
+      })
+    } catch (err) {
+      showMessage(err)
+      console.log(err)
     }
   };
+
   const handleFolioChange = (e) => {
     // Obtener la tecla presionada
     const keyPressed = e.key;
@@ -363,6 +406,8 @@ const IngresoDocCompra = ({
     }
 
     if (!Validator.isNumeric(keyPressed)) {
+      // console.log("e", e)
+      // console.log("keyPressed", keyPressed)
       showMessage("valor incorrecto")
       e.preventDefault();
       return
@@ -415,6 +460,12 @@ const IngresoDocCompra = ({
       setFolioDocumento("")
 
     }, () => { })
+  }
+
+  const checkFolio = () => {
+    Proveedor.checkExistFolio(folioDocumento, () => {
+      showAlert("Ya existe el folio")
+    })
   }
 
   return (
@@ -487,6 +538,7 @@ const IngresoDocCompra = ({
                       value={folioDocumento}
                       onKeyDown={handleFolioChange}
                       onChange={(e) => setFolioDocumento(e.target.value)}
+                      onBlur={checkFolio}
                       fullWidth
                       sx={{ mb: 2 }}
                     />
@@ -660,18 +712,19 @@ const IngresoDocCompra = ({
                             }} variant="p">
 
                               <Tooltip title={product.nombre}>
+                                <>
+                                  {System.maxStr(product.nombre, 10)}
 
-                                {System.maxStr(product.nombre, 10)}
 
+                                  {product.codigoInternoProveedor && (
+                                    <Typography sx={{
+                                      backgroundColor: "#ebffcc",
+                                      display: "inline-block",
+                                      padding: "10px"
+                                    }} variant="span">Int.{product.codigoInternoProveedor}</Typography>
+                                  )}
 
-                                {product.codigoInternoProveedor && (
-                                  <Typography sx={{
-                                    backgroundColor: "#ebffcc",
-                                    display: "inline-block",
-                                    padding: "10px"
-                                  }} variant="span">Int.{product.codigoInternoProveedor}</Typography>
-                                )}
-
+                                </>
                               </Tooltip>
                             </Typography>
                           </TableCell>
@@ -692,6 +745,11 @@ const IngresoDocCompra = ({
                               onChange={(e) =>
                                 handleQuantityChange(e.target.value, index)
                               }
+
+                              onBlur={(e) =>
+                                handleQuantityBlur(index)
+                              }
+
                               sx={{
                                 width: "50%",
                                 display: "inline-block"
@@ -709,8 +767,8 @@ const IngresoDocCompra = ({
 
                             )}
                           </TableCell>
-                          <TableCell>{product.total}</TableCell>
-                          <TableCell>{product.precioVenta}</TableCell>
+                          <TableCell>{parseFloat(product.total).toFixed(2)}</TableCell>
+                          <TableCell>{parseFloat(product.precioVenta).toFixed(2)}</TableCell>
                           <TableCell>
                             <Button
                               onClick={() => {
@@ -781,7 +839,7 @@ const IngresoDocCompra = ({
                     display: "inline",
                     fontWeight: "bold",
                     fontSize: "23px"
-                  }}>${grandTotal.toLocaleString()}</Typography>
+                  }}>${ System.formatMonedaLocal(grandTotal) }</Typography>
                 </Typography>
               </div>
             </Grid>
@@ -840,7 +898,7 @@ const IngresoDocCompra = ({
           setSelectedProveedor(proveedorNuevo)
         }}
 
-        onClose={()=>{}}
+        onClose={() => { }}
       />
 
     </>

@@ -215,7 +215,7 @@ class System {
 
     static maxStr(str, max, completarConPuntos = true) {
         var txt = str
-        console.log("original largo", txt.length)
+        // console.log("original largo", txt.length)
 
         //max = 10..str=carambolazo..11 deberia quedar asi 'carambo...'
         if (str.length > max) {
@@ -225,14 +225,52 @@ class System {
                 txt = txt.substring(0, max)
             }
         }
-        console.log("devuelve cortado", txt)
-        console.log("largo cortado", txt.length)
+        // console.log("devuelve cortado", txt)
+        // console.log("largo cortado", txt.length)
         return txt
     }
 
     static onlyTime(datetime) {
         const arrAll = datetime.split(" ")
         return arrAll[1]
+    }
+
+    // ej 152000.157 ----> 152.000,15
+    static formatMonedaLocal(valorMoneda){
+        // console.log("formatMonedaLocal", valorMoneda)
+        var monedaStr = valorMoneda + ""
+        var parteEntera = monedaStr
+        var parteDecimal = "00"
+        if(monedaStr.indexOf(".")>-1){
+            const partes = monedaStr.split(".")
+            parteEntera = partes[0]
+            parteDecimal = partes[1]
+        }
+
+        if(parteDecimal.length<2) parteDecimal += "0"
+        if(parteDecimal.length>2) {
+            const x = parseFloat("0." + parteDecimal).toFixed(2)
+            parteDecimal = x.split(".")[1]
+        }
+
+        if(parteEntera.length>3){
+            var parteEntera2 = ""
+            for (let index = parteEntera.length; index > 0; index--) {
+                const digitoEntero = parteEntera[ index - 1];
+                parteEntera2 = digitoEntero + parteEntera2
+                // console.log("digitoEntero", digitoEntero)
+                // console.log("index", index)
+                if((index) % 3 === 0){
+                    console.log(index + " es divisor de 3")
+                    parteEntera2 = "." + parteEntera2
+                }
+            }
+
+            parteEntera = parteEntera2
+        }
+
+
+        return parteEntera + "," + parteDecimal
     }
 
 }

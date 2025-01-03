@@ -6,7 +6,7 @@ import ModelConfig from './ModelConfig.ts';
 import EndPoint from './EndPoint.ts';
 
 
-class Proveedor extends Model{
+class Proveedor extends Model {
   codigoProveedor: number
   razonSocial: string
   giro: string
@@ -23,142 +23,142 @@ class Proveedor extends Model{
   telefonoResponsable: string
   sucursal: string
 
-  compraDeudaIds:any
-  montoPagado:any
-  metodoPago:any
+  compraDeudaIds: any
+  montoPagado: any
+  metodoPago: any
 
   static instance: Proveedor | null = null;
 
-    static getInstance():Proveedor{
-        if(Proveedor.instance == null){
-            Proveedor.instance = new Proveedor();
-        }
-
-        return Proveedor.instance;
+  static getInstance(): Proveedor {
+    if (Proveedor.instance == null) {
+      Proveedor.instance = new Proveedor();
     }
 
-    async existRut({rut},callbackOk, callbackWrong){
-      try {
-          const configs = ModelConfig.get()
-          var url = configs.urlBase
-          + "/Proveedores/GetProveedorByRut?rutProveedor=" + rut
-          const response = await axios.get(url);
-          if (
-          response.data.statusCode === 200
-          || response.data.statusCode === 201
-          ) {
-          // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
-          callbackOk(response.data.proveedores, response)
-          } else {
-          callbackWrong("Respuesta desconocida del servidor")
-          }
-      } catch (error) {
-          callbackWrong(error)
-      }
+    return Proveedor.instance;
   }
 
-  async getAll(callbackOk, callbackWrong){
+  async existRut({ rut }, callbackOk, callbackWrong) {
     try {
-      const response = await axios.get(
-          ModelConfig.get("urlBase") 
-          + `/Proveedores/GetAllProveedores`);
-
-      if (response.status === 200) {
-        callbackOk(response.data.proveedores)
-      } 
+      const configs = ModelConfig.get()
+      var url = configs.urlBase
+        + "/Proveedores/GetProveedorByRut?rutProveedor=" + rut
+      const response = await axios.get(url);
+      if (
+        response.data.statusCode === 200
+        || response.data.statusCode === 201
+      ) {
+        // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
+        callbackOk(response.data.proveedores, response)
+      } else {
+        callbackWrong("Respuesta desconocida del servidor")
+      }
     } catch (error) {
       callbackWrong(error)
     }
   }
 
-  async update(data,callbackOk, callbackWrong){
+  async getAll(callbackOk, callbackWrong) {
     try {
-        const response = await axios.put(
-            ModelConfig.get("urlBase") 
-            + `/Proveedores/UpdateProveedor`,
-          data
-        );
-  
-        if (response.status === 200) {
-          callbackOk(response)
-        } 
-      } catch (error) {
-        callbackWrong(error)
+      const response = await axios.get(
+        ModelConfig.get("urlBase")
+        + `/Proveedores/GetAllProveedores`);
+
+      if (response.status === 200) {
+        callbackOk(response.data.proveedores)
       }
+    } catch (error) {
+      callbackWrong(error)
+    }
+  }
+
+  async update(data, callbackOk, callbackWrong) {
+    try {
+      const response = await axios.put(
+        ModelConfig.get("urlBase")
+        + `/Proveedores/UpdateProveedor`,
+        data
+      );
+
+      if (response.status === 200) {
+        callbackOk(response)
+      }
+    } catch (error) {
+      callbackWrong(error)
+    }
   }
 
   async findProductsByCodigo({
-    codigoBuscar, 
+    codigoBuscar,
     codigoProveedor,
-  },callbackOk, callbackWrong){
+  }, callbackOk, callbackWrong) {
     try {
-        const configs = ModelConfig.get()
-        var url = configs.urlBase +
+      const configs = ModelConfig.get()
+      var url = configs.urlBase +
         "/ProductosTmp/GetProductosByCodigoSegunProveedor?codigoSProveedor=" + codigoBuscar
-        url += "&codigoProveedor=" + codigoProveedor
-        const response = await axios.get(url);
-        if(
-            response.data.statusCode == 200
-            || response.data.statusCode == 201
+      url += "&codigoProveedor=" + codigoProveedor
+      const response = await axios.get(url);
+      if (
+        response.data.statusCode == 200
+        || response.data.statusCode == 201
 
-        ){
-            callbackOk(response.data.productos, response);
-        }else{
-           callbackWrong("respuesta incorrecta del servidor") 
-        }
-    } catch (error) {
-        console.error("Error fetching products:", error);
-        callbackWrong(error) 
+      ) {
+        callbackOk(response.data.productos, response);
+      } else {
+        callbackWrong("respuesta incorrecta del servidor")
       }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      callbackWrong(error)
+    }
   }
 
   async findProductsByDescription({
     description,
     codigoProveedor
   },
-    callbackOk, callbackWrong){
+    callbackOk, callbackWrong) {
     try {
-        const configs = ModelConfig.get()
-        var url = configs.urlBase +
+      const configs = ModelConfig.get()
+      var url = configs.urlBase +
         "/ProductosTmp/GetProductosByDescripcionSegunProveedor?"
-        url += "DescripcionSProveedor=" + (description+"")
-        url += "&codigoProveedor=" + codigoProveedor
-        const response = await axios.get(url);
-        if(
-            response.data.statusCode == 200
-            || response.data.statusCode == 201
+      url += "DescripcionSProveedor=" + (description + "")
+      url += "&codigoProveedor=" + codigoProveedor
+      const response = await axios.get(url);
+      if (
+        response.data.statusCode == 200
+        || response.data.statusCode == 201
 
-        ){
-            callbackOk(response.data.productos, response);
-        }else{
-           callbackWrong("respuesta incorrecta del servidor") 
-        }
-    } catch (error) {
-        console.error("Error fetching products:", error);
-        callbackWrong(error) 
+      ) {
+        callbackOk(response.data.productos, response);
+      } else {
+        callbackWrong("respuesta incorrecta del servidor")
       }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      callbackWrong(error)
+    }
   }
-  
-  async asociateProduct(data,callbackOk, callbackWrong){
-    try {
-        const configs = ModelConfig.get()
-        var url = configs.urlBase +
-        "/ProductosTmp/PostProductosByCodigoSegunProveedor"
-        const response = await axios.post(url, data);
-        if(
-            response.data.statusCode == 200
-            || response.data.statusCode == 201
 
-        ){
-            // callbackOk(response.data.productos, response);
-            callbackOk(response);
-        }else{
-           callbackWrong("respuesta incorrecta del servidor") 
-        }
-    } catch (error) {
-        console.error("Error fetching products:", error);
-        callbackWrong(error) 
+  async asociateProduct(data, callbackOk, callbackWrong) {
+    try {
+      const configs = ModelConfig.get()
+      var url = configs.urlBase +
+        "/ProductosTmp/PostProductosByCodigoSegunProveedor"
+      const response = await axios.post(url, data);
+      if (
+        response.data.statusCode == 200
+        || response.data.statusCode == 201
+
+      ) {
+        // callbackOk(response.data.productos, response);
+        callbackOk(response);
+      } else {
+        callbackWrong("respuesta incorrecta del servidor")
       }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      callbackWrong(error)
+    }
   }
 
   static assignAndAssociateProduct(product, {
@@ -166,7 +166,7 @@ class Proveedor extends Model{
     countPackage,
     searchCodProv,
     searchDescProv,
-  }, callbackOk, callbackWrong){
+  }, callbackOk, callbackWrong) {
 
 
     const data = [{
@@ -177,18 +177,18 @@ class Proveedor extends Model{
       cantidadProveedor: parseInt(countPackage + ""),
       cantidadProducto: 1,
     }]
-    
+
     data[0].codigoSegunProveedor = searchCodProv
     data[0].descripcionSegunProveedor = searchDescProv
-    
+
     product.cantidadProveedor = data[0].cantidadProveedor
     product.codigoSegunProveedor = data[0].codigoSegunProveedor
     product.descripcionSegunProveedor = data[0].descripcionSegunProveedor
-    
+
     console.log("datos para asociar:", data)
-    Proveedor.getInstance().asociateProduct(data, (res)=>{
-      callbackOk(product,res)
-    },(error)=>{
+    Proveedor.getInstance().asociateProduct(data, (res) => {
+      callbackOk(product, res)
+    }, (error) => {
       callbackWrong(error)
     })
   }
@@ -196,7 +196,7 @@ class Proveedor extends Model{
   static disAssociateProduct(product, {
     codigoProveedor,
     searchCodProv,
-  }, callbackOk, callbackWrong){
+  }, callbackOk, callbackWrong) {
 
     const data = [
       {
@@ -205,19 +205,49 @@ class Proveedor extends Model{
         "codBarra": product.idProducto + "",
       }
     ]
-    
+
     const url = ModelConfig.get("urlBase") + "/ProductosTmp/DeleteProductosByCodigoSegunProveedor"
-    EndPoint.sendDelete(url,data,(responseData, response)=>{
+    EndPoint.sendDelete(url, data, (responseData, response) => {
       callbackOk(responseData, response)
-    },callbackWrong)
+    }, callbackWrong)
   }
 
 
-  static crearNuevo(proveedor,callbackOk,callbackWrong){
+  static crearNuevo(proveedor, callbackOk, callbackWrong) {
     const url = ModelConfig.get("urlBase") + "/Proveedores/AddProveedor"
-    EndPoint.sendPost(url,proveedor,(responseData, response)=>{
+    EndPoint.sendPost(url, proveedor, (responseData, response) => {
       callbackOk(responseData, response)
-    },callbackWrong)
+    }, callbackWrong)
+  }
+
+
+  static async agregarCompra(datosCompra, callbackOk, callbackWrong) {
+    const url = ModelConfig.get("urlBase") + "/Proveedores/AddProveedorCompra"
+    EndPoint.sendPost(url, datosCompra, (responseData, response) => {
+      callbackOk(responseData, response)
+    }, callbackWrong)
+  }
+
+  static async getCompras(callbackOk, callbackWrong) {
+    const url = ModelConfig.get("urlBase") + "/Proveedores/GetProveedorCompra"
+    EndPoint.sendGet(url, (responseData, response) => {
+      callbackOk(responseData.proveedorCompra.proveedorCompraCabeceras, response)
+    }, callbackWrong)
+  }
+
+
+  static async checkExistFolio(nroFolio, existFolio) {
+    this.getCompras((compras) => {
+      var existe = false
+      compras.forEach(compra => {
+        if (compra.folio == nroFolio) {
+          existe = true
+        }
+      });
+      if (existe) existFolio()
+    }, (err) => {
+      console.log("error al revisar si existe folio", err)
+    })
   }
 
 };

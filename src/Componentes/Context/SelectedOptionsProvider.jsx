@@ -17,20 +17,21 @@ import {
 import System from "../../Helpers/System";
 import Confirm from "../Dialogs/Confirm";
 import PedirSupervision from "../ScreenDialog/PedirSupervision";
+import Alert from "../Dialogs/Alert";
 
 export const SelectedOptionsContext = React.createContext();
 
 export const SelectedOptionsProvider = ({ children }) => {
   //init configs values
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  
+
   const [snackMessage, setSnackMessage] = useState(null)
-  
+
   //set general dialog variables
   const [showLoadingDialog, setShowLoadingDialogx] = useState(false)
   const [loadingDialogText, setLoadingDialogText] = useState("")
-  
-  
+
+
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [textConfirm, setTextConfirm] = useState("")
   const [handleConfirm, setHandleConfirm] = useState(null)
@@ -43,65 +44,80 @@ export const SelectedOptionsProvider = ({ children }) => {
   const [handleConfirmarSupervision, setHandleConfirmarSupervision] = useState(null)
   const [datosConfirmarSupervision, setDatosConfirmarSupervision] = useState({})
 
-  const pedirSupervision = (accion, callbackOk, datos)=>{
+  const pedirSupervision = (accion, callbackOk, datos) => {
     setAccionPedirSupervision(accion)
     setDatosConfirmarSupervision(datos)
-    setHandleConfirmarSupervision(()=>callbackOk)
+    setHandleConfirmarSupervision(() => callbackOk)
     setVerPedirSupervision(true)
   }
 
-  
-  const showMessage = (message)=>{
+
+  const showMessage = (message) => {
     setSnackMessage(message)
     setOpenSnackbar(true)
   }
 
-  const init = ()=>{
+  const [showAlertDialog, setShowAlert] = useState(false)
+  const [titleMsg, setTitleMsg] = useState("")
+  const [textMsg, setTextMsg] = useState("")
+
+  const showAlert = (title, text) => {
+    if (text) {
+      setTitleMsg(title)
+      setTextMsg(text)
+    } else {
+      setTitleMsg("")
+      setTextMsg(title)
+    }
+    setShowAlert(true)
+  }
+
+  const init = () => {
     // console.log("init de SelectedOptionsProvider");
-    if(!CONFIG)
+    if (!CONFIG)
       setCONFIG(ModelConfig.getInstance().getFirst())
-    if(!userData)
+    if (!userData)
       getUserData()
   }
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     init();
-  },[]);
-  
+  }, []);
+
 
   //mostrar un dialog con la animacion del cargando
-  const setShowLoadingDialog = (value)=>{
+  const setShowLoadingDialog = (value) => {
     setShowLoadingDialogx(value);
   }
-  
-  const setShowLoadingDialogWithTitle = (textToShow = "", value)=>{
+
+  const setShowLoadingDialogWithTitle = (textToShow = "", value) => {
     setLoadingDialogText(textToShow)
     setShowLoadingDialogx(value);
   }
 
-  const showLoading = (textToShow = "")=>{
+  const showLoading = (textToShow = "") => {
     setLoadingDialogText(textToShow)
     setShowLoadingDialogx(true);
   }
-  
+
   //ocultar el dialog en x milisegundos
-  const hideLoadingDialog = (timeOut = 200)=>{
-    setTimeout(function(){
+  const hideLoadingDialog = (timeOut = 200) => {
+    setTimeout(function () {
       setShowLoadingDialog(false);
-    },timeOut);
+    }, timeOut);
   }
 
-  const hideLoading = (timeOut = 200)=>{
-    setTimeout(function(){
+  const hideLoading = (timeOut = 200) => {
+    setTimeout(function () {
       setShowLoadingDialog(false);
-    },timeOut);
+    }, timeOut);
   }
 
 
-  const showConfirm = (text, callbackYes, callbackNo)=>{
+  const showConfirm = (text, callbackYes, callbackNo) => {
     setTextConfirm(text)
-    setHandleConfirm(()=>callbackYes)
-    setHandleNotConfirm(()=>callbackNo)
+    setHandleConfirm(() => callbackYes)
+    setHandleNotConfirm(() => callbackNo)
     setShowConfirmDialog(true)
   }
 
@@ -110,7 +126,7 @@ export const SelectedOptionsProvider = ({ children }) => {
   };
 
   const getUserData = () => {
-    if(User.getInstance().sesion.hasOne())
+    if (User.getInstance().sesion.hasOne())
       setUserData(User.getInstance().getFromSesion());
   };
 
@@ -120,33 +136,40 @@ export const SelectedOptionsProvider = ({ children }) => {
     setUserData([])
   };
 
-  const GeneralElements = ()=>{
+  const GeneralElements = () => {
     return (
       <>
-      <Snackbar
-        open={openSnackbar}
-        message={snackMessage}
-        autoHideDuration={3000}
-        onClose={()=>{ setOpenSnackbar(false) }}
-      />
-      <LoadingDialog openDialog = {showLoadingDialog} text={loadingDialogText} />
-      <Confirm 
-        openDialog={showConfirmDialog}
-        setOpenDialog={setShowConfirmDialog}
-        textConfirm={textConfirm}
-        handleConfirm={handleConfirm}
-        handleNotConfirm={handleNotConfirm}
-      />
+        <Snackbar
+          open={openSnackbar}
+          message={snackMessage}
+          autoHideDuration={3000}
+          onClose={() => { setOpenSnackbar(false) }}
+        />
+        <LoadingDialog openDialog={showLoadingDialog} text={loadingDialogText} />
+        <Confirm
+          openDialog={showConfirmDialog}
+          setOpenDialog={setShowConfirmDialog}
+          textConfirm={textConfirm}
+          handleConfirm={handleConfirm}
+          handleNotConfirm={handleNotConfirm}
+        />
 
-      <PedirSupervision 
-        openDialog={verPedirSupervision} 
-        accion={accionPedirSupervision} 
-        infoEnviar={datosConfirmarSupervision} 
-        setOpenDialog={setVerPedirSupervision} 
-        onConfirm={()=>{
-          if(handleConfirmarSupervision) handleConfirmarSupervision()
-        }}
-      />
+        <PedirSupervision
+          openDialog={verPedirSupervision}
+          accion={accionPedirSupervision}
+          infoEnviar={datosConfirmarSupervision}
+          setOpenDialog={setVerPedirSupervision}
+          onConfirm={() => {
+            if (handleConfirmarSupervision) handleConfirmarSupervision()
+          }}
+        />
+
+        <Alert
+          openDialog={showAlertDialog}
+          setOpenDialog={setShowAlert}
+          title={titleMsg}
+          message={textMsg}
+        />
       </>
     )
   }
@@ -160,6 +183,8 @@ export const SelectedOptionsProvider = ({ children }) => {
         showMessage,
 
         showConfirm,
+        showAlert,
+
 
         showLoadingDialog,
         setShowLoadingDialog,
@@ -169,7 +194,7 @@ export const SelectedOptionsProvider = ({ children }) => {
         loadingDialogText,
         setLoadingDialogText,
         showLoading,
-    
+
         clearSessionData,
         userData,
         setUserData,

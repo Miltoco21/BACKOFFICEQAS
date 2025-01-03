@@ -214,6 +214,7 @@ class Validator {
             case "ArrowRight":
             case "ArrowUp":
             case "ArrowDown":
+            case "Unidentified":
                 return true
             break;
             
