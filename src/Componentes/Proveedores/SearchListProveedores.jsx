@@ -41,6 +41,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import ModelConfig from "../../Models/ModelConfig";
+import FormularioProveedor from "./FormularioProveedor";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -94,8 +95,8 @@ const SearchListProveedores = ({
   const [nroOperacion, setNroOperacion] = useState(""); // Estado para almacenar el número de operación
   const [selectedBanco, setSelectedBanco] = useState("");
   const [tipoCuenta, setTipoCuenta] = useState("");
-  const [nroDocumento, setNroDocumento] = useState(""); 
-  const [serieCheque, setSerieCheque] = useState(""); 
+  const [nroDocumento, setNroDocumento] = useState("");
+  const [serieCheque, setSerieCheque] = useState("");
 
 
   const handleCheckboxChange = (index) => {
@@ -277,7 +278,7 @@ const SearchListProveedores = ({
       metodoPago: metodoPago,
     };
 
-    console.log("Datos antes de ser enviados",pagoData)
+    console.log("Datos antes de ser enviados", pagoData)
 
     axios
       .post(
@@ -299,7 +300,7 @@ const SearchListProveedores = ({
           setSelectedItems([]);
           setCantidadPagada(0);
           handleClosePaymentDialog();
-       
+
 
 
           setTimeout(() => {
@@ -472,9 +473,9 @@ const SearchListProveedores = ({
     setCantidadPagada(getTotalSelected());
   };
   const handleChequeModalClose = () => {
-    
+
     setOpenChequeModal(false);
-    
+
   };
 
   const tiposDeCuenta = {
@@ -518,14 +519,14 @@ const SearchListProveedores = ({
   const handlePayment = async () => {
     try {
       setLoading(true);
-  
+
       let endpoint =
         `${apiUrl}/Clientes/PostClientePagarDeudaByIdCliente`
-  
+
       if (metodoPago === "TRANSFERENCIA") {
         endpoint =
-        `${apiUrl}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
-  
+          `${apiUrl}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
+
         if (
           nombre === "" ||
           rut === "" ||
@@ -541,7 +542,7 @@ const SearchListProveedores = ({
           setLoading(false);
           return;
         }
-  
+
         if (nombre === "") {
           setTransferenciaError("Por favor, ingresa el nombre.");
           setLoading(false);
@@ -557,52 +558,52 @@ const SearchListProveedores = ({
           setLoading(false);
           return;
         }
-  
+
         if (selectedBanco === "") {
           setTransferenciaError("Por favor, selecciona el banco.");
           setLoading(false);
           return;
         }
-  
+
         if (tipoCuenta === "") {
           setTransferenciaError("Por favor, selecciona el tipo de cuenta.");
           setLoading(false);
           return;
         }
-  
+
         if (nroCuenta === "") {
           setTransferenciaError("Por favor, ingresa el número de cuenta.");
           setLoading(false);
           return;
         }
-  
+
         if (fecha === "") {
           setTransferenciaError("Por favor, selecciona la fecha.");
           setLoading(false);
           return;
         }
-  
+
         if (nroOperacion === "") {
           setTransferenciaError("Por favor, ingresa el número de operación.");
           setLoading(false);
           return;
         }
       }
-  
+
       if (!metodoPago) {
         setError("Por favor, selecciona un método de pago.");
         setLoading(false);
         return;
       } else setError("");
-  
+
       const selectedDeudas = deudaData.filter((deuda) => deuda.selected);
-  
+
       const deudaIds = selectedDebts.map((deuda) => ({
         idCuentaCorriente: deuda.id,
         idCabecera: deuda.idCabecera,
         total: deuda.total,
       }));
-  
+
       const requestBody = {
         deudaIds: deudaIds,
         montoPagado: getTotalSelected(),
@@ -619,11 +620,11 @@ const SearchListProveedores = ({
           nroOperacion: nroOperacion,
         },
       };
-  
+
       console.log("Request Body:", requestBody);
-  
+
       const response = await axios.post(endpoint, requestBody);
-  
+
       console.log("Response:", response.data);
       console.log("ResponseStatus:", response.data.statusCode);
       ///acciones post pago////
@@ -633,7 +634,7 @@ const SearchListProveedores = ({
         handleClosePaymentDialog();
         setCantidadPagada(0);
         resetDeudaData();
-  
+
         setTimeout(() => {
           handleClosePaymentProcess();
         }, 2000);
@@ -710,11 +711,11 @@ const SearchListProveedores = ({
                     <IconButton onClick={() => {
                       proveedor.index = index
                       handleEdit(proveedor)
-                      }}>
+                    }}>
                       <EditIcon />
                     </IconButton>
                     <IconButton onClick={() => handleDeleteDialogOpen(proveedor)}>
-                      <DeleteIcon/>
+                      <DeleteIcon />
                     </IconButton>
                     <IconButton
                       onClick={() => handleOpenPaymentDialog(proveedor)}
@@ -738,7 +739,7 @@ const SearchListProveedores = ({
           showLastButton
         />
       </Box>
-      <EditarProveedor
+      {/* <EditarProveedor
         open={openEditModal}
         handleClose={handleCloseEditModal}
         proveedor={editProveedorData}
@@ -749,7 +750,24 @@ const SearchListProveedores = ({
           setIsEditSuccessful(true)
         }
         } // New addition
-      />
+      /> */}
+
+
+
+
+      {openEditModal && (
+        <FormularioProveedor
+          openDialog={openEditModal}
+          setOpenDialog={setOpenEditModal}
+          proveedorToEdit={editProveedorData}
+          onClose={handleCloseEditModal}
+          onFinish={() => {
+            fetchProveedores()
+            setIsEditSuccessful(true)
+          }} />
+      )}
+
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
@@ -854,7 +872,7 @@ const SearchListProveedores = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClosePaymentDialog}>Cerrar</Button>
-         
+
         </DialogActions>
       </Dialog>
 
@@ -959,7 +977,7 @@ const SearchListProveedores = ({
                   variant={metodoPago === "CHEQUE" ? "contained" : "outlined"}
                   onClick={() => {
                     setMetodoPago("CHEQUE");
-                    setCantidadPagada(getTotalSelected()); 
+                    setCantidadPagada(getTotalSelected());
                     handleChequeModalOpen(selectedDebts);
                   }}
                   fullWidth
@@ -1089,7 +1107,7 @@ const SearchListProveedores = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <InputLabel sx={{ marginBottom: "4%" }}>
-              Ingresa Tipo de Cuenta{" "}
+                Ingresa Tipo de Cuenta{" "}
               </InputLabel>
               <TextField
                 select

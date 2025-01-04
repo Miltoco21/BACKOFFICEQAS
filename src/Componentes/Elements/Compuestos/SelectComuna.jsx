@@ -113,15 +113,18 @@ const SelectComuna = ({
   useEffect(()=>{
     // console.log("")
     // console.log("selectedregion es:", (selectedRegion + ""))
-    setSelected(-1)
-    setSelectList([])
-    loadList()
+    if(selectedRegion !== -1 && !isNaN(selectedRegion)){
+      setSelected(-1)
+      setSelectList([])
+      loadList()
+    }
   },[selectedRegion])
 
   
   useEffect(()=>{
     // console.log("")
     // console.log("cambio algo en comuna")
+    if(isNaN(selectedRegion))return
     if(selected ===-1 && selectList.length ===0){
       // console.log("debe cargar")
       loadList()

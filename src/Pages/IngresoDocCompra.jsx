@@ -48,7 +48,7 @@ import System from "../Helpers/System";
 import IngresoDocProvBuscarProductos from "./IngresoDocProvBuscarProductos";
 import CrearProducto from "./CrearProducto";
 import StepperSI from "../Componentes/Stepper/StepperSI";
-import IngresoProveedor from "../Componentes/Proveedores/IngresoProveedor";
+import FormularioProveedor from "../Componentes/Proveedores/FormularioProveedor";
 
 const IngresoDocCompra = ({
   openDialog,
@@ -890,7 +890,7 @@ const IngresoDocCompra = ({
         }}
       />
 
-      <IngresoProveedor
+      <FormularioProveedor
         openDialog={showCreateProveedor}
         setOpenDialog={setShowCreateProveedor}
         onFinish={(proveedorNuevo) => {

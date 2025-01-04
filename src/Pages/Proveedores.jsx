@@ -7,7 +7,7 @@ import Modal from "@mui/joy/Modal";
 import SideBar from "../Componentes/NavBar/SideBar";
 import SearchListProveedores from "../Componentes/Proveedores/SearchListProveedores";
 import { Dialog } from "@mui/material";
-import IngresoProveedor from "../Componentes/Proveedores/IngresoProveedor";
+import FormularioProveedor from "../Componentes/Proveedores/FormularioProveedor";
 
 const Proveedores = () => {
   const [open, setOpen] = useState(false);
@@ -48,7 +48,7 @@ const Proveedores = () => {
         <SearchListProveedores doReload={reloadProvs} />
 
         {open && (
-          <IngresoProveedor
+          <FormularioProveedor
             openDialog={open}
             setOpenDialog={setOpen}
             onClose={handleCloseModal}

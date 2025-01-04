@@ -11,7 +11,7 @@ const BaseConfig =  {
     porcentajeMargen:30,
     buttonDelayClick: 1500, //en milisegundos
 
-    tipoPrecioCosto:1
+    criterioCostoComercio:0
 };
 
 export default BaseConfig;

@@ -34,7 +34,9 @@ const SelectRegion = ({
     const [selected, setSelected] = useState(-1)
     const [selectedOriginal, setSelectedOriginal] = inputState
     const [validation, setValidation] = validationState ?? useState(null)
-
+    
+    const [correccionIsNaN, setCorreccionIsNaN] = useState(null)
+    
   const validate = ()=>{
     // console.log("validate de:" + fieldName)
     // const len = selected.length
@@ -69,15 +71,51 @@ const SelectRegion = ({
     
   }
 
+  const corregirIsNaN = (regiones)=>{
+    // console.log("corregirIsNaN")
+    // console.log("regiones", regiones)
+    // console.log("correccionIsNaN", correccionIsNaN)
+    var encontrado = -1
+    regiones.forEach(region => {
+      if(region.regionNombre.trim() == correccionIsNaN.trim()){
+        encontrado = region.id
+      }
+    })
+
+    if(encontrado != -1){
+      // console.log("encontre el", encontrado)
+      setSelectedOriginal(encontrado)
+      setSelected(encontrado)
+    }else{
+      // console.log("no se encontro")
+
+    }
+  }
+
   const loadList = async()=>{
     Region.getInstance().getAll((regiones)=>{
       setSelectList(regiones)
+
+      // console.log("loadList..selectedOriginal",selectedOriginal)
     },(error)=>{
       console.log(error)
     })
     
   }
 
+
+
+  useEffect(()=>{
+    // console.log("cambio selectedOriginal o selectList.length")
+    // console.log("cambio selectedOriginal", selectedOriginal)
+    if(isNaN(selectedOriginal)){
+      setCorreccionIsNaN(selectedOriginal)
+    }
+
+    if(selectList.length > 0 && correccionIsNaN !== null){
+      corregirIsNaN(selectList)
+    }
+  },[selectedOriginal, selectList.length])
   useEffect(()=>{
     validate()
     loadList()
@@ -85,7 +123,15 @@ const SelectRegion = ({
   },[])
 
   useEffect(()=>{
-    if(selectList.length>0 && selectedOriginal !== "" && selected === -1){
+
+    if(isNaN(selected)){
+      // console.log("es NAN")
+      // console.log("selected", selected)
+      return
+    }
+
+
+    if(selectList.length>0 && (selectedOriginal !== "" && !isNaN(selectedOriginal) ) && selected === -1){
       setSelected( parseInt(selectedOriginal + "") )
       setSelectedOriginal( parseInt(selectedOriginal + "") )
     }else{
@@ -111,7 +157,7 @@ const SelectRegion = ({
         autoFocus={autoFocus}
         required={required}
         label={label}
-        value={selected !== "" ? selected : -1}
+        value={selected !== "" && !isNaN(selected) ? selected : -1}
         onChange={checkChange}
       >
         <MenuItem

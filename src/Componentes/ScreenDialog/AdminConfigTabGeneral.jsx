@@ -16,6 +16,7 @@ import TabPanel from "../Elements/TabPanel";
 import SmallButton from "../Elements/SmallButton";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import BoxOptionList from "../Elements/BoxOptionList";
+import CriterioCosto from "../../definitions/CriterioCosto";
 
 
 const AdminConfigTabGeneral = ({
@@ -36,21 +37,21 @@ const AdminConfigTabGeneral = ({
 
   const [porcentajeMargen, setPorcentajeMargen] = useState(0);
 
-  const [tipoPrecioCosto, setTipoPrecioCosto] = useState(null)
+  const [criterioCostoComercio, setCriterioCostoComercio] = useState(null)
 
 
   const loadConfigSesion = () => {
     setUrlBase(ModelConfig.get("urlBase") )
     setIva(ModelConfig.get("iva") )
     setPorcentajeMargen(ModelConfig.get("porcentajeMargen") )
-    setTipoPrecioCosto(ModelConfig.get("tipoPrecioCosto") )
+    setCriterioCostoComercio(ModelConfig.get("criterioCostoComercio") )
   }
 
   const confirmSave = () => {
     ModelConfig.change("urlBase", urlBase);
     ModelConfig.change("iva", iva)
     ModelConfig.change("porcentajeMargen", porcentajeMargen)
-    ModelConfig.change("tipoPrecioCosto", tipoPrecioCosto)
+    ModelConfig.change("criterioCostoComercio", criterioCostoComercio)
 
     showMessage("Guardado correctamente")
     setSomeChange(false)
@@ -104,18 +105,16 @@ const AdminConfigTabGeneral = ({
         <Grid item xs={12} lg={12}>
           <Typography sx={{ textAlign: "left" }}>Precio de costo</Typography>
           <BoxOptionList
-            optionSelected={tipoPrecioCosto}
-            setOptionSelected={setTipoPrecioCosto}
-            options={[
-              {
-                id: 1,
-                value: "Neto"
-              },
-              {
-                id: 2,
-                value: "Bruto"
-              }
-            ]}
+            optionSelected={criterioCostoComercio}
+            setOptionSelected={setCriterioCostoComercio}
+            options={
+              Object.keys(CriterioCosto).map((key)=>{
+                return {
+                  id: CriterioCosto[key],
+                  value: key
+                }
+              })
+            }
           />
         </Grid>
 

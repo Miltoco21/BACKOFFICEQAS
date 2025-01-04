@@ -72,19 +72,10 @@ class Proveedor extends Model {
   }
 
   async update(data, callbackOk, callbackWrong) {
-    try {
-      const response = await axios.put(
-        ModelConfig.get("urlBase")
-        + `/Proveedores/UpdateProveedor`,
-        data
-      );
-
-      if (response.status === 200) {
-        callbackOk(response)
-      }
-    } catch (error) {
-      callbackWrong(error)
-    }
+    const url = ModelConfig.get("urlBase") + "/Proveedores/UpdateProveedor"
+    EndPoint.sendPut(url,data, (responseData, response) => {
+      callbackOk(responseData, response)
+    }, callbackWrong)
   }
 
   async findProductsByCodigo({
