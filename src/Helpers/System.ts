@@ -237,6 +237,7 @@ class System {
 
     // ej 152000.157 ----> 152.000,15
     static formatMonedaLocal(valorMoneda){
+        if(isNaN(valorMoneda))return "0,00"
         // console.log("formatMonedaLocal", valorMoneda)
         var monedaStr = valorMoneda + ""
         var parteEntera = monedaStr
@@ -254,13 +255,16 @@ class System {
         }
 
         if(parteEntera.length>3){
+            // console.log("parteEntera.length>3")
             var parteEntera2 = ""
             for (let index = parteEntera.length; index > 0; index--) {
+                const current = parteEntera.length - index + 1
+                // console.log("current", current)
                 const digitoEntero = parteEntera[ index - 1];
                 parteEntera2 = digitoEntero + parteEntera2
                 // console.log("digitoEntero", digitoEntero)
                 // console.log("index", index)
-                if((index) % 3 === 0){
+                if((current) % 3 === 0){
                     // console.log(index + " es divisor de 3")
                     parteEntera2 = "." + parteEntera2
                 }
@@ -269,6 +273,7 @@ class System {
             parteEntera = parteEntera2
         }
 
+        // console.log("formatMonedaLocal devuelve", parteEntera + "," + parteDecimal)
 
         return parteEntera + "," + parteDecimal
     }

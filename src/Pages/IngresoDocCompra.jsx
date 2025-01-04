@@ -49,6 +49,7 @@ import IngresoDocProvBuscarProductos from "./IngresoDocProvBuscarProductos";
 import CrearProducto from "./CrearProducto";
 import StepperSI from "../Componentes/Stepper/StepperSI";
 import FormularioProveedor from "../Componentes/Proveedores/FormularioProveedor";
+import CriterioCosto from "../definitions/CriterioCosto";
 
 const IngresoDocCompra = ({
   openDialog,
@@ -104,7 +105,7 @@ const IngresoDocCompra = ({
   const handleQuantityBlur = (index) => {
     console.log("handleQuantityBlur")
 
-    
+
     const updatedProducts = [...selectedProducts];
     const value = updatedProducts[index].cantidad
     // Parse the input value to an integer
@@ -248,12 +249,31 @@ const IngresoDocCompra = ({
         product.cantidadProveedor = 1
       }
 
-      product = Product.iniciarLogicaPrecios(product)
+
+      const criterioComercio = ModelConfig.get("criterioCostoComercio")
+      const criterioProveedor = selectedProveedor.criterioCosto
+      console.log('criterioComercio', criterioComercio)
+      console.log('criterioProveedor', criterioProveedor)
+      console.log('product.precioCosto', product.precioCosto)
+      if (criterioComercio != criterioProveedor) {
+        product.precioCostoOriginal = product.precioCosto + 0
+        if (criterioComercio == CriterioCosto.NETO && criterioProveedor == CriterioCosto.BRUTO) {
+          product.precioCosto = parseFloat(product.precioCosto / 1.19)
+        } else {
+          product.precioCosto = parseFloat(product.precioCosto * 1.19)
+        }
+
+        product = Product.iniciarLogicaPrecios(product)
+        product = Product.logicaPrecios(product)
+      }else{
+        product = Product.iniciarLogicaPrecios(product)
+      }
+
 
       product.total = calcularTotal(product.precioCosto, product.cantidad, product.cantidadProveedor)
       product.impuestosValor = Product.calcularImpuestos(product)
 
-      // console.log("agregado queda asi:", System.clone(product))
+      console.log("agregado queda asi:", System.clone(product))
       // setSelectedProducts([...selectedProducts, newProduct]);
       // console.log("seleccionados:",[...selectedProducts, product]);
       setSelectedProducts([...selectedProducts, product]);
@@ -366,7 +386,7 @@ const IngresoDocCompra = ({
         tipoDocumento: tipoDocumento,
         folio: folioDocumento,
         codigoProveedor: selectedProveedor.codigoProveedor,
-        total: total,
+        total: parseFloat(parseFloat(total).toFixed(2)),
         proveedorCompraDetalles,
       };
       console.log("Datos a enviar al servidor:", dataToSend);
@@ -466,6 +486,14 @@ const IngresoDocCompra = ({
     Proveedor.checkExistFolio(folioDocumento, () => {
       showAlert("Ya existe el folio")
     })
+  }
+
+  const revisarLabelCriterioCosto = (producto) => {
+    if (producto.precioCostoOriginal != undefined) {
+      return System.formatMonedaLocal(producto.precioCostoOriginal)
+    } else {
+      return ""
+    }
   }
 
   return (
@@ -732,7 +760,9 @@ const IngresoDocCompra = ({
                             {/* {product.precioCosto} */}
 
                             <TextField
-                              value={product.precioCosto}
+                              label={revisarLabelCriterioCosto(product)}
+                              // value={revisarInputCriterioCosto(product.precioCosto)}
+                              value={(product.precioCosto).toFixed(2)}
                               onChange={(e) =>
                                 handleCostoChange(e.target.value, index)
                               }
@@ -767,8 +797,8 @@ const IngresoDocCompra = ({
 
                             )}
                           </TableCell>
-                          <TableCell>{parseFloat(product.total).toFixed(2)}</TableCell>
-                          <TableCell>{parseFloat(product.precioVenta).toFixed(2)}</TableCell>
+                          <TableCell>{System.formatMonedaLocal(product.total)}</TableCell>
+                          <TableCell>{System.formatMonedaLocal(product.precioVenta)}</TableCell>
                           <TableCell>
                             <Button
                               onClick={() => {
@@ -839,7 +869,7 @@ const IngresoDocCompra = ({
                     display: "inline",
                     fontWeight: "bold",
                     fontSize: "23px"
-                  }}>${ System.formatMonedaLocal(grandTotal) }</Typography>
+                  }}>${System.formatMonedaLocal(grandTotal)}</Typography>
                 </Typography>
               </div>
             </Grid>
