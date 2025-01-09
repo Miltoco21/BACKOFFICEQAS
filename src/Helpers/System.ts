@@ -236,7 +236,7 @@ class System {
     }
 
     // ej 152000.157 ----> 152.000,15
-    static formatMonedaLocal(valorMoneda){
+    static formatMonedaLocal(valorMoneda, conDecimales = true){
         if(isNaN(valorMoneda))return "0,00"
         // console.log("formatMonedaLocal", valorMoneda)
         var monedaStr = valorMoneda + ""
@@ -278,8 +278,11 @@ class System {
         }
 
         // console.log("formatMonedaLocal devuelve", parteEntera + "," + parteDecimal)
-
-        return parteEntera + "," + parteDecimal
+        if(conDecimales){
+            return parteEntera + "," + parteDecimal
+        }else{
+            return parteEntera
+        }
     }
 
 }

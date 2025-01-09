@@ -82,7 +82,7 @@ export default function({
             <Typography variant="p" sx={{ display:"block" }}>Compras</Typography>
             <Typography variant="p">&nbsp;</Typography>
 
-            <Typography variant="h2">${System.formatMonedaLocal(totalCompras)}</Typography>
+            <Typography variant="h2">${System.formatMonedaLocal(totalCompras, false)}</Typography>
           </div>
           <div style={{
             display:"inline-block",

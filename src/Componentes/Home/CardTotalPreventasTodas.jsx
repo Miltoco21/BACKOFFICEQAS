@@ -61,7 +61,7 @@ export default function ({
           <Typography variant="p" sx={{ display: "block" }}>Todas</Typography>
           <Typography variant="p">&nbsp;</Typography>
 
-          <Typography variant="h2">${System.formatMonedaLocal(total)}</Typography>
+          <Typography variant="h2">${System.formatMonedaLocal(total, false)}</Typography>
         </div>
         <div style={{
           display: "inline-block",
