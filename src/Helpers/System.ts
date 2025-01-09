@@ -270,6 +270,10 @@ class System {
                 }
             }
 
+            if(parteEntera2.substr(0,1) === "."){
+                parteEntera2 = parteEntera2.substr(1)
+            }
+
             parteEntera = parteEntera2
         }
 
