@@ -61,7 +61,7 @@ export default function ({
           <Typography variant="p" sx={{ display: "block" }}>Todas</Typography>
           <Typography variant="p">&nbsp;</Typography>
 
-          <Typography variant="h2">${System.formatMonedaLocal(total, false)}</Typography>
+          <Typography variant="h3">${System.formatMonedaLocal(total, false)}</Typography>
         </div>
         <div style={{
           display: "inline-block",
@@ -71,7 +71,7 @@ export default function ({
         }}>
           <Typography variant="p" sx={{ display: "block" }}>Transacciones</Typography>
           <Typography variant="p">&nbsp;</Typography>
-          <Typography variant="h2">{cantidad}</Typography>
+          <Typography variant="h3">{cantidad}</Typography>
         </div>
       </CardContent>
       <CardActions>

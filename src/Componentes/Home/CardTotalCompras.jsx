@@ -82,7 +82,7 @@ export default function({
             <Typography variant="p" sx={{ display:"block" }}>Compras</Typography>
             <Typography variant="p">&nbsp;</Typography>
 
-            <Typography variant="h2">${System.formatMonedaLocal(totalCompras, false)}</Typography>
+            <Typography variant="h3">${System.formatMonedaLocal(totalCompras, false)}</Typography>
           </div>
           <div style={{
             display:"inline-block",
@@ -92,7 +92,7 @@ export default function({
           }}>
             <Typography variant="p" sx={{ display:"block" }}>Facturas</Typography>
             <Typography variant="p">Ingresadas</Typography>
-            <Typography variant="h2">{cantidadCompras}</Typography>
+            <Typography variant="h3">{cantidadCompras}</Typography>
           </div>
       </CardContent>
       <CardActions>
