@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import ModelConfig from '../../Models/ModelConfig';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import System from '../../Helpers/System';
 
 export default function({
   
@@ -81,7 +82,7 @@ export default function({
             <Typography variant="p" sx={{ display:"block" }}>Compras</Typography>
             <Typography variant="p">&nbsp;</Typography>
 
-            <Typography variant="h2">${totalCompras.toLocaleString()}</Typography>
+            <Typography variant="h2">${System.formatMonedaLocal(totalCompras)}</Typography>
           </div>
           <div style={{
             display:"inline-block",

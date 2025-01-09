@@ -7,6 +7,7 @@ import ModelConfig from '../../Models/ModelConfig';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import ReporteVenta from '../../Models/ReporteVenta';
+import System from '../../Helpers/System';
 
 export default function({
 }) {
@@ -67,7 +68,7 @@ export default function({
             <Typography variant="p" sx={{ display:"block" }}>Ventas</Typography>
             <Typography variant="p">&nbsp;</Typography>
 
-            <Typography variant="h2">${totalVentas.toLocaleString()}</Typography>
+            <Typography variant="h2">${System.formatMonedaLocal(totalVentas)}</Typography>
           </div>
           <div style={{
             display:"inline-block",
