@@ -21,6 +21,9 @@ import CardSemaforo from '../Componentes/Home/CardSemaforo';
 import CardUsuariosActivos from '../Componentes/Home/CardUsuariosActivos';
 import CardUsuariosInactivos from '../Componentes/Home/CardUsuariosInactivos';
 import Validator from '../Helpers/Validator';
+import CardTotalPreventasTodas from '../Componentes/Home/CardTotalPreventasTodas';
+import CardTotalPreventasUsadas from '../Componentes/Home/CardTotalPreventasUsadas';
+import CardTotalPreventasDescartadas from '../Componentes/Home/CardTotalPreventasDescartadas';
 
 const defaultTheme = createTheme();
 
@@ -114,6 +117,28 @@ const Home = ({}) => {
           <Grid item xs={12} sm={12} md={6} lg={6}>
               <CardTotalVentas/>
           </Grid>
+
+
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+            <Typography sx={{
+              marginTop:"50px"
+            }}>Preventas</Typography>
+          </Grid>
+
+
+          <Grid item xs={12} sm={12} md={4} lg={4}>
+              <CardTotalPreventasTodas/>
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={4} lg={4}>
+              <CardTotalPreventasUsadas/>
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={4} lg={4}>
+              <CardTotalPreventasDescartadas/>
+          </Grid>
+
+          
           
 
 
