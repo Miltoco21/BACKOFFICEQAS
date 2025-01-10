@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import Navegacion from "../Componentes/NavBar/Navegacion";
 import Button from "@mui/joy/Button";
 import Add from "@mui/icons-material/Add";
 
