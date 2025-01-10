@@ -33,6 +33,7 @@ import '@fontsource/roboto/700.css';
 import ReportesClientes from './Pages/ReportesClientes';
 import ReportesCtaCorriente from './Pages/ReportesCtaCorriente';
 import ReportesCtaCorrienteProv from './Pages/ReportesCtaCorrienteProv';
+import ReporteProductosStockCritico from './Pages/ReporteProductosStockCritico';
 import RankingVentas from './Pages/RankingVentas';
 import RankingProductos from './Pages/RankingProductos';
 import RankingLibroVentas from './Pages/RankingLibroVentas';
@@ -91,6 +92,7 @@ function App() {
             <Route path="reportes/rankingventas" element={<RankingVentas />} />
             <Route path="reportes/rankingproductos" element={<RankingProductos />} />
             <Route path="reportes/rankinglibroventas" element={<RankingLibroVentas />} />
+            <Route path="reportes/stockcriticos" element={<ReporteProductosStockCritico />} />
             <Route path="reportes/rankinglibrocompras" element={<RankingLibroCompras />} />
             <Route path="stock" element={<Stock />} />
             <Route path="stock/entradasalidastock" element={<EntradaSalidaStock />} />

@@ -9,6 +9,7 @@ import SideBar from '../Componentes/NavBar/SideBar';
 import CardTotalCompras from '../Componentes/Home/CardTotalCompras';
 import CardTotalVentas from '../Componentes/Home/CardTotalVentas';
 
+import { useNavigate } from "react-router-dom";
 import { SelectedOptionsContext } from "../Componentes/Context/SelectedOptionsProvider";
 import ModelConfig from '../Models/ModelConfig';
 import dayjs from 'dayjs';
@@ -24,6 +25,7 @@ import Validator from '../Helpers/Validator';
 import CardTotalPreventasTodas from '../Componentes/Home/CardTotalPreventasTodas';
 import CardTotalPreventasUsadas from '../Componentes/Home/CardTotalPreventasUsadas';
 import CardTotalPreventasDescartadas from '../Componentes/Home/CardTotalPreventasDescartadas';
+import Product from '../Models/Product';
 
 const defaultTheme = createTheme();
 
@@ -32,15 +34,17 @@ const Home = ({}) => {
   const {
     userData,
     showMessage,
+    showAlert,
     showConfirm
   } = useContext(SelectedOptionsContext);
   const [estadoCajas, setEstadoCajas] = useState([])
   const [usuariosActivos, setUsuariosActivos] = useState([])
-  const [usuariosInactivos, setUsuariosInactivos] = useState([])
   
   const [roles, setRoles] = useState([])
   const [rol, setRol] = useState("rol")
-
+  
+  const [productosCriticos, setProductosCriticos] = useState(0)
+  const navigate = useNavigate();
 
   const solicitarEstadosCajas = ()=>{
     SucursalCaja.getInstance().getEstados((data)=>{
@@ -56,6 +60,17 @@ const Home = ({}) => {
       setRoles(roles)
     }, (error)=>{
       console.log(error);
+    })
+  }
+  
+  const revisarStockCriticos = ()=>{
+    Product.getInstance().getCriticosPaginate({
+      pageNumber: 1,
+      rowPage:10
+    }, (prods, response) => {
+      setProductosCriticos(response.data.cantidadRegistros)
+    }, (error) => {
+      console.log("error al buscar productos criticos", error)
     })
   }
 
@@ -81,7 +96,16 @@ const Home = ({}) => {
   useEffect(()=>{
     solicitarEstadosCajas()
     solicitarRoles()
+    revisarStockCriticos()
   },[])
+
+  useEffect(()=>{
+    if(productosCriticos > 0){
+      showConfirm("Se han detectado productos en su nivel o menor de stock critico, ¿Desea ver cuales son?",()=>{
+        navigate("/reportes/stockcriticos"); 
+      })
+    }
+  },[productosCriticos])
   
   useEffect(()=>{
     checkRol(roles)

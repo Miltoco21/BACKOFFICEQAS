@@ -209,6 +209,35 @@ class Product extends Model{
         }
     }
 
+    async getCriticosPaginate({
+        pageNumber = 1,
+        rowPage = 10
+    },callbackOk,callbackWrong){
+        try {
+            const configs = ModelConfig.get()
+            var url = configs.urlBase + "/ProductosTmp/GetProductosStockCriticoPaginados"
+            url += "?pageNumber="  + pageNumber
+            url += "&rowPage="  + rowPage
+
+            const response = await axios.get(url);
+            // console.log("API Response:", response.data);
+
+            if(
+                response.data.statusCode == 200
+                || response.data.statusCode == 201
+
+            ){
+                callbackOk(response.data.productos, response);
+            }else{
+               callbackWrong("respuesta incorrecta del servidor") 
+            }
+            
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            callbackWrong(error) 
+        }
+    }
+
     async findByDescription({description, codigoCliente},callbackOk, callbackWrong){
         try {
             const configs = ModelConfig.get()
