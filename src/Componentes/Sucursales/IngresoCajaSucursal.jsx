@@ -18,7 +18,7 @@ import SelectSucursal from "../Elements/Compuestos/SelectSucursal";
 import TiposPasarela from "../../definitions/TiposPasarela";
 import SucursalCaja from "../../Models/SucursalCaja";
 
-export default function IngresoCajaSucursal({ 
+export default function IngresoCajaSucursal({
   onClose,
   openDialog,
   setOpendialog,
@@ -28,16 +28,16 @@ export default function IngresoCajaSucursal({
     useContext(SelectedOptionsContext);
 
   var states = {
-    nombre:useState(""),
-    sucursal:useState(""),
-   
+    nombre: useState(""),
+    sucursal: useState(""),
+
   };
 
   var validatorStates = {
-    
+
     nombre: useState(null),
     sucursal: useState(null),
-    
+
   };
 
   const handleSubmit = async () => {
@@ -58,11 +58,11 @@ export default function IngresoCajaSucursal({
     // console.log("Datos antes de enviar:", data);
     showLoading("Enviando...");
     const caj = new SucursalCaja()
-    caj.add(data,(responseData)=>{
+    caj.add(data, (responseData) => {
       hideLoading();
       showMessage(responseData.descripcion)
-      if(onCreate)onCreate()
-    },(error)=>{
+      if (onCreate) onCreate()
+    }, (error) => {
       hideLoading();
       showMessage(error)
     })
@@ -85,7 +85,7 @@ export default function IngresoCajaSucursal({
           </Grid>
 
           <Grid item xs={12} md={6}>
-          <InputName
+            <InputName
               inputState={states.nombre}
               fieldName="Descripcion"
               required={true}
@@ -94,11 +94,11 @@ export default function IngresoCajaSucursal({
           </Grid>
 
           <Grid item xs={12} md={6}>
-          <SelectSucursal
-              inputState={states.sucursal}
-              fieldName="Sucursal"
+            <SelectSucursal
+              label="Sucursal"
+              fieldName="sucursal"
               required={true}
-              validationState={validatorStates.sucursal}
+              vars={[states, validatorStates]}
             />
           </Grid>
 

@@ -13,28 +13,30 @@ import Validator from "../../../Helpers/Validator";
 
 
 const InputEmail = ({
-    inputState,
-    validationState,
-    withLabel = true,
-    autoFocus = false,
-    fieldName="email",
-    label = fieldName[0].toUpperCase() + fieldName.substr(1),
-    minLength = null,
-    maxLength = null,
-    canAutoComplete = false,
-    required = false
-  }) => {
+  inputState,
+  validationState,
+  withLabel = true,
+  autoFocus = false,
+  fieldName = "email",
+  label = fieldName[0].toUpperCase() + fieldName.substr(1),
+  minLength = null,
+  maxLength = null,
+  canAutoComplete = false,
+  required = false,
+  vars = null
+}) => {
 
-    const {
-      showMessage
-    } = useContext(SelectedOptionsContext);
-    
-    const [email, setEmail] = inputState
-    const [validation, setValidation] = validationState ?? useState(null)
-    const [keyPressed, setKeyPressed] = useState(false)
+  const {
+    showMessage
+  } = useContext(SelectedOptionsContext);
 
-  const validate = ()=>{
-    // console.log("validate de:" + fieldName)
+  const [email, setEmail] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
+  const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
+
+
+  const [keyPressed, setKeyPressed] = useState(false)
+
+  const validate = () => {
     const formatOk = Validator.isEmail(email)
 
     const len = email.length
@@ -42,22 +44,22 @@ const InputEmail = ({
     var badMinlength = false
     var badMaxlength = false
 
-    if(minLength && len < minLength){
+    if (minLength && len < minLength) {
       badMinlength = true
     }
 
-    if(maxLength && len > maxLength){
+    if (maxLength && len > maxLength) {
       badMaxlength = true
     }
 
     var message = ""
-    if(!reqOk){
+    if (!reqOk) {
       message = fieldName + ": es requerido."
-    }else if(badMinlength){
+    } else if (badMinlength) {
       message = fieldName + ": debe tener " + minLength + " caracteres o mas."
-    }else if(badMaxlength){
+    } else if (badMaxlength) {
       message = fieldName + ": debe tener " + maxLength + " caracteres o menos."
-    }else if(!formatOk){
+    } else if (!formatOk) {
       message = fieldName + ": El formato es incorrecto."
     }
 
@@ -66,23 +68,23 @@ const InputEmail = ({
       "badMaxlength": badMaxlength,
       "require": !reqOk,
       "empty": len == 0,
-      "format" : formatOk,
-      "allOk" : (reqOk && !badMinlength && !badMaxlength),
-      "message" : message
+      "format": formatOk,
+      "allOk": (reqOk && !badMinlength && !badMaxlength),
+      "message": message
     }
     // console.log("vale:", vl)
     setValidation(vl)
   }
-  
-  const checkKeyDown = (event)=>{
-    if(!canAutoComplete && event.key == "Unidentified"){
+
+  const checkKeyDown = (event) => {
+    if (!canAutoComplete && event.key == "Unidentified") {
       event.preventDefault();
       return false
-    }else{
+    } else {
       setKeyPressed(true)
     }
-    if(!Validator.isKeyEmail(event)){
-      console.log(event.key,": incorrecta")
+    if (!Validator.isKeyEmail(event)) {
+      console.log(event.key, ": incorrecta")
       event.preventDefault();
       return false
     }
@@ -90,31 +92,31 @@ const InputEmail = ({
     return true
   }
 
-  const checkChange = (event)=>{
-    if(!canAutoComplete && !keyPressed){
+  const checkChange = (event) => {
+    if (!canAutoComplete && !keyPressed) {
       return
     }
     setEmail(event.target.value)
   }
-  
-  const checkChangeBlur = (event)=>{
+
+  const checkChangeBlur = (event) => {
     validate()
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     validate()
-  },[])
+  }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     validate()
-  },[email])
+  }, [email])
 
   return (
     <>
       {withLabel && (
-      <InputLabel sx={{ marginBottom: "2%" }}>
-        {label}
-      </InputLabel>
+        <InputLabel sx={{ marginBottom: "2%" }}>
+          {label}
+        </InputLabel>
       )}
       <TextField
         fullWidth
@@ -127,11 +129,6 @@ const InputEmail = ({
         onChange={checkChange}
         onBlur={checkChangeBlur}
         onKeyDown={checkKeyDown}
-
-        // onChange={handleEmailChange}
-        // onKeyDown={handleEmailKeyDown}
-
-
       />
     </>
   );

@@ -15,79 +15,80 @@ import Validator from "../../../Helpers/Validator";
 
 
 const SelectList = ({
-    inputState,
-    validationState,
-    selectItems,
-    withLabel = true,
-    autoFocus = false,
-    fieldName="select",
-    label = fieldName[0].toUpperCase() + fieldName.substr(1),
-    required = false
-  }) => {
+  inputState,
+  validationState,
+  selectItems,
+  withLabel = true,
+  autoFocus = false,
+  fieldName = "select",
+  label = fieldName[0].toUpperCase() + fieldName.substr(1),
+  required = false,
+  vars = null
+}) => {
 
-    const {
-      showMessage
-    } = useContext(SelectedOptionsContext);
-    
-    const [selectList, setSelectList] = useState(selectItems)
-    const [selected, setSelected] = inputState
-    const [validation, setValidation] = validationState ?? useState(null)
+  const {
+    showMessage
+  } = useContext(SelectedOptionsContext);
 
-  const validate = ()=>{
+  const [selectList, setSelectList] = useState(selectItems)
+  const [selected, setSelected] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
+  const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
+
+  const validate = () => {
     // console.log("validate de:" + fieldName)
     // const len = selected.length
     // console.log("len:", len)
     // const reqOk = (!required || (required && len > 0))
-    const empty = (selected === "" || selected === null || selected ===-1)
+    const empty = (selected === "" || selected === null || selected === -1)
     const reqOk = !required || (required && !empty)
-    
+
 
     var message = ""
-    if(!reqOk){
+    if (!reqOk) {
       message = fieldName + ": es requerido."
     }
 
     const vl = {
       "require": !reqOk,
       "empty": empty,
-      "allOk" : (reqOk),
-      "message" : message
+      "allOk": (reqOk),
+      "message": message
     }
     // console.log("vale:", vl)
     setValidation(vl)
   }
-  
-  const checkChange = (event)=>{
+
+  const checkChange = (event) => {
     setSelected(event.target.value)
   }
-  
-  const checkChangeBlur = (event)=>{
-    
+
+  const checkChangeBlur = (event) => {
+
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     validate()
     setSelected(-1)
-  },[])
+  }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     validate()
     // console.log("selected es:", selected)
-  },[selected])
+  }, [selected])
 
   return (
     <>
       {withLabel && (
-      <InputLabel sx={{ marginBottom: "2%" }}>
-        {label}
-      </InputLabel>
+        <InputLabel sx={{ marginBottom: "2%" }}>
+          {label}
+        </InputLabel>
       )}
-    
+
 
       <Select
-      sx={{
-        marginTop:"17px"
-      }}
+        sx={{
+          marginTop: "17px"
+        }}
         fullWidth
         autoFocus={autoFocus}
         required={required}
@@ -102,7 +103,7 @@ const SelectList = ({
           SELECCIONAR
         </MenuItem>
 
-        {selectList.map((selectOption,ix) => (
+        {selectList.map((selectOption, ix) => (
           <MenuItem
             key={ix}
             value={ix}

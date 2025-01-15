@@ -13,27 +13,28 @@ import Validator from "../../../Helpers/Validator";
 
 
 const InputName = ({
-    inputState,
-    validationState,
-    withLabel = true,
-    autoFocus = false,
-    fieldName="name",
-    label = fieldName[0].toUpperCase() + fieldName.substr(1),
-    minLength = null,
-    canAutoComplete = false,
-    maxLength = 20,
-    required = false
-  }) => {
+  inputState,
+  validationState,
+  withLabel = true,
+  autoFocus = false,
+  fieldName = "name",
+  label = fieldName[0].toUpperCase() + fieldName.substr(1),
+  minLength = null,
+  canAutoComplete = false,
+  maxLength = 20,
+  required = false,
+  vars = null
+}) => {
 
-    const {
-      showMessage
-    } = useContext(SelectedOptionsContext);
-    
-    const [name, setName] = inputState
-    const [validation, setValidation] = validationState ?? useState(null)
-    const [keyPressed, setKeyPressed] = useState(false)
+  const {
+    showMessage
+  } = useContext(SelectedOptionsContext);
 
-  const validate = ()=>{
+  const [name, setName] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
+  const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
+  const [keyPressed, setKeyPressed] = useState(false)
+
+  const validate = () => {
     // console.log("validate de:" + fieldName)
     const len = name.length
     // console.log("len:", len)
@@ -41,20 +42,20 @@ const InputName = ({
     var badMinlength = false
     var badMaxlength = false
 
-    if(minLength && len < minLength){
+    if (minLength && len < minLength) {
       badMinlength = true
     }
 
-    if(maxLength && len > maxLength){
+    if (maxLength && len > maxLength) {
       badMaxlength = true
     }
 
     var message = ""
-    if(!reqOk){
+    if (!reqOk) {
       message = fieldName + ": es requerido."
-    }else if(badMinlength){
+    } else if (badMinlength) {
       message = fieldName + ": debe tener " + minLength + " caracteres o mas."
-    }else if(badMaxlength){
+    } else if (badMaxlength) {
       message = fieldName + ": debe tener " + maxLength + " caracteres o menos."
     }
 
@@ -63,65 +64,65 @@ const InputName = ({
       "badMaxlength": badMaxlength,
       "require": !reqOk,
       "empty": len == 0,
-      "allOk" : (reqOk && !badMinlength && !badMaxlength),
-      "message" : message
+      "allOk": (reqOk && !badMinlength && !badMaxlength),
+      "message": message
     }
     // console.log("vale:", vl)
     setValidation(vl)
   }
-  const checkKeyDown = (event)=>{
-    if(!canAutoComplete && event.key == "Unidentified"){
+  const checkKeyDown = (event) => {
+    if (!canAutoComplete && event.key == "Unidentified") {
       event.preventDefault();
       return false
-    }else{
+    } else {
       setKeyPressed(true)
     }
   }
 
-  const checkChange = (event)=>{
-    if(!canAutoComplete && !keyPressed){
+  const checkChange = (event) => {
+    if (!canAutoComplete && !keyPressed) {
       return
     }
     const value = event.target.value
-    if(value == " "){
+    if (value == " ") {
       showMessage("Valor erroneo")
       return false
     }
-    if(Validator.isNombre(value)){
+    if (Validator.isNombre(value)) {
       // console.log(value + " es valido")
       setName(value);
-    }else{
+    } else {
       // console.log("es incorrecta")
       showMessage("Valor erroneo")
-      
+
     }
   }
-  
-  const checkChangeBlur = (event)=>{
-    if(name.substr(-1) == " "){
+
+  const checkChangeBlur = (event) => {
+    if (name.substr(-1) == " ") {
       setName(name.trim())
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     // console.log("cambio inputState")
     // console.log(inputState)
     validate()
-  },[])
+  }, [])
 
 
-  useEffect(()=>{
+  useEffect(() => {
     // console.log("cambio name")
     // console.log(name)
     validate()
-  },[name])
+  }, [name])
 
   return (
     <>
       {withLabel && (
-      <InputLabel sx={{ marginBottom: "2%" }}>
-        {label}
-      </InputLabel>
+        <InputLabel sx={{ marginBottom: "2%" }}>
+          {label}
+        </InputLabel>
       )}
       <TextField
         fullWidth

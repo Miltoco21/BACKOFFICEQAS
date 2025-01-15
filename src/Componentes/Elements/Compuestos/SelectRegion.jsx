@@ -17,142 +17,144 @@ import Region from "../../../Models/Region";
 
 
 const SelectRegion = ({
-    inputState,
-    validationState,
-    withLabel = true,
-    autoFocus = false,
-    fieldName="select",
-    label = fieldName[0].toUpperCase() + fieldName.substr(1),
-    required = false
-  }) => {
+  inputState,
+  validationState,
+  withLabel = true,
+  autoFocus = false,
+  fieldName = "select",
+  label = fieldName[0].toUpperCase() + fieldName.substr(1),
+  required = false,
+  vars = null
+}) => {
 
-    const {
-      showMessage
-    } = useContext(SelectedOptionsContext);
+  const {
+    showMessage
+  } = useContext(SelectedOptionsContext);
 
-    const [selectList, setSelectList] = useState([])
-    const [selected, setSelected] = useState(-1)
-    const [selectedOriginal, setSelectedOriginal] = inputState
-    const [validation, setValidation] = validationState ?? useState(null)
-    
-    const [correccionIsNaN, setCorreccionIsNaN] = useState(null)
-    
-  const validate = ()=>{
+  const [selectList, setSelectList] = useState([])
+  const [selected, setSelected] = useState(-1)
+
+  const [selectedOriginal, setSelectedOriginal] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
+  const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
+
+  const [correccionIsNaN, setCorreccionIsNaN] = useState(null)
+
+  const validate = () => {
     // console.log("validate de:" + fieldName)
     // const len = selected.length
     // console.log("len:", len)
     // const reqOk = (!required || (required && len > 0))
-    const empty = (selected == "" || selected == null || selected ==-1)
+    const empty = (selected == "" || selected == null || selected == -1)
     const reqOk = !required || (required && !empty)
-    
+
 
     var message = ""
-    if(!reqOk){
+    if (!reqOk) {
       message = fieldName + ": es requerido."
     }
 
     const vl = {
       "require": !reqOk,
       "empty": empty,
-      "allOk" : (reqOk),
-      "message" : message
+      "allOk": (reqOk),
+      "message": message
     }
     // console.log("vale:", vl)
     setValidation(vl)
   }
-  
-  const checkChange = (event)=>{
+
+  const checkChange = (event) => {
     // console.log("cambia region a:", event.target.value)
     setSelected(event.target.value)
     setSelectedOriginal(event.target.value)
   }
-  
-  const checkChangeBlur = (event)=>{
-    
+
+  const checkChangeBlur = (event) => {
+
   }
 
-  const corregirIsNaN = (regiones)=>{
+  const corregirIsNaN = (regiones) => {
     // console.log("corregirIsNaN")
     // console.log("regiones", regiones)
     // console.log("correccionIsNaN", correccionIsNaN)
     var encontrado = -1
     regiones.forEach(region => {
-      if(region.regionNombre.trim() == correccionIsNaN.trim()){
+      if (region.regionNombre.trim() == correccionIsNaN.trim()) {
         encontrado = region.id
       }
     })
 
-    if(encontrado != -1){
+    if (encontrado != -1) {
       // console.log("encontre el", encontrado)
       setSelectedOriginal(encontrado)
       setSelected(encontrado)
-    }else{
+    } else {
       // console.log("no se encontro")
 
     }
   }
 
-  const loadList = async()=>{
-    Region.getInstance().getAll((regiones)=>{
+  const loadList = async () => {
+    Region.getInstance().getAll((regiones) => {
       setSelectList(regiones)
 
       // console.log("loadList..selectedOriginal",selectedOriginal)
-    },(error)=>{
+    }, (error) => {
       console.log(error)
     })
-    
+
   }
 
 
 
-  useEffect(()=>{
+  useEffect(() => {
     // console.log("cambio selectedOriginal o selectList.length")
     // console.log("cambio selectedOriginal", selectedOriginal)
-    if(isNaN(selectedOriginal)){
+    if (isNaN(selectedOriginal)) {
       setCorreccionIsNaN(selectedOriginal)
     }
 
-    if(selectList.length > 0 && correccionIsNaN !== null){
+    if (selectList.length > 0 && correccionIsNaN !== null) {
       corregirIsNaN(selectList)
     }
-  },[selectedOriginal, selectList.length])
-  useEffect(()=>{
+  }, [selectedOriginal, selectList.length])
+  useEffect(() => {
     validate()
     loadList()
     // console.log("cargo region", selected)
-  },[])
+  }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
 
-    if(isNaN(selected)){
+    if (isNaN(selected)) {
       // console.log("es NAN")
       // console.log("selected", selected)
       return
     }
 
 
-    if(selectList.length>0 && (selectedOriginal !== "" && !isNaN(selectedOriginal) ) && selected === -1){
-      setSelected( parseInt(selectedOriginal + "") )
-      setSelectedOriginal( parseInt(selectedOriginal + "") )
-    }else{
+    if (selectList.length > 0 && (selectedOriginal !== "" && !isNaN(selectedOriginal)) && selected === -1) {
+      setSelected(parseInt(selectedOriginal + ""))
+      setSelectedOriginal(parseInt(selectedOriginal + ""))
+    } else {
       validate()
     }
     // console.log("region selected es:", selected)
-  },[selected, selectList.length])
+  }, [selected, selectList.length])
 
   return (
     <>
       {withLabel && (
-      <InputLabel sx={{ marginBottom: "2%" }}>
-        {label}
-      </InputLabel>
+        <InputLabel sx={{ marginBottom: "2%" }}>
+          {label}
+        </InputLabel>
       )}
-    
+
 
       <Select
-      sx={{
-        marginTop:"17px"
-      }}
+        sx={{
+          marginTop: "17px"
+        }}
         fullWidth
         autoFocus={autoFocus}
         required={required}
@@ -167,7 +169,7 @@ const SelectRegion = ({
           SELECCIONAR
         </MenuItem>
 
-        {selectList.map((selectOption,ix) => (
+        {selectList.map((selectOption, ix) => (
           <MenuItem
             key={ix}
             value={selectOption.id}

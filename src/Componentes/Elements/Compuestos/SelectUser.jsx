@@ -17,107 +17,109 @@ import Sucursal from "../../../Models/Sucursal";
 
 
 const SelectUser = ({
-    inputState,
-    validationState,
-    withLabel = true,
-    autoFocus = false,
-    fieldName="select",
-    label = fieldName[0].toUpperCase() + fieldName.substr(1),
-    required = false
-  }) => {
+  inputState,
+  validationState,
+  withLabel = true,
+  autoFocus = false,
+  fieldName = "select",
+  label = fieldName[0].toUpperCase() + fieldName.substr(1),
+  required = false,
+  vars = null
+}) => {
 
-    const {
-      showMessage
-    } = useContext(SelectedOptionsContext);
+  const {
+    showMessage
+  } = useContext(SelectedOptionsContext);
 
-    const [selectList, setSelectList] = useState([])
-    const [selected, setSelected] = useState(-1)
-    const [selectedOriginal, setSelectedOriginal] = inputState
-    const [validation, setValidation] = validationState ?? useState(null)
+  const [selectList, setSelectList] = useState([])
+  const [selected, setSelected] = useState(-1)
 
-  const validate = ()=>{
+  const [selectedOriginal, setSelectedOriginal] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
+  const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
+  
+  const validate = () => {
     // console.log("validate de:" + fieldName)
     // const len = selected.length
     // console.log("len:", len)
     // const reqOk = (!required || (required && len > 0))
-    const empty = (selected == "" || selected == null || selected ==-1)
+    const empty = (selected == "" || selected == null || selected == -1)
     const reqOk = !required || (required && !empty)
-    
+
 
     var message = ""
-    if(!reqOk){
+    if (!reqOk) {
       message = fieldName + ": es requerido."
     }
 
     const vl = {
       "require": !reqOk,
       "empty": empty,
-      "allOk" : (reqOk),
-      "message" : message
+      "allOk": (reqOk),
+      "message": message
     }
     // console.log("vale:", vl)
     setValidation(vl)
   }
-  
-  const checkChange = (event)=>{
+
+  const checkChange = (event) => {
     setSelected(event.target.value)
     setSelectedOriginal(event.target.value)
   }
-  
-  const loadList = async()=>{
-    User.getAll((responseData,response)=>{
+
+  const loadList = async () => {
+    User.getAll((responseData, response) => {
       setSelectList(responseData);
-    },(error)=>{
+    }, (error) => {
       showMessage(error)
     })
   }
 
-  const setByString = (valueString)=>{
-    selectList.forEach((item)=>{
-      if(item.sucursal == valueString){
+  const setByString = (valueString) => {
+    selectList.forEach((item) => {
+      if (item.sucursal == valueString) {
         setSelected(item.idSucursal)
         setSelectedOriginal(item.idSucursal)
       }
     })
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     validate()
     setSelected(-1)
     loadList()
-  },[])
+  }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     // console.log("cambio algo en roles")
-    if(selectList.length>0 && selectedOriginal !== "" && selected === -1){
-      if(Validator.isNumeric(selectedOriginal)){
+    if (selectList.length > 0 && selectedOriginal !== "" && selected === -1) {
+      if (Validator.isNumeric(selectedOriginal)) {
         // console.log("todo numero..")
         setSelected(selectedOriginal)
-      }else{
+      } else {
         // console.log("no es todo numero..")
         setByString(selectedOriginal)
       }
-    }else{
+    } else {
       validate()
     }
     // console.log("selected es:", selected)
-  },[selected, selectList.length])
+  }, [selected, selectList.length])
 
 
 
   return (
     <>
       {withLabel && (
-      <InputLabel sx={{ marginBottom: "2%" }}>
-        {label}
-      </InputLabel>
+        <InputLabel sx={{ marginBottom: "2%" }}>
+          {label}
+        </InputLabel>
       )}
-    
+
 
       <Select
-      sx={{
-        marginTop:"17px"
-      }}
+        sx={{
+          marginTop: "17px"
+        }}
         fullWidth
         autoFocus={autoFocus}
         required={required}
@@ -132,7 +134,7 @@ const SelectUser = ({
           SELECCIONAR
         </MenuItem>
 
-        {selectList.map((selectOption,ix) => (
+        {selectList.map((selectOption, ix) => (
           <MenuItem
             key={ix}
             value={selectOption.codigoUsuario}

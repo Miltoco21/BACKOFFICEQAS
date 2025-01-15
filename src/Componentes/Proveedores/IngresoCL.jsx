@@ -29,8 +29,6 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
   const { showLoading, hideLoading, showLoadingDialog, showMessage } =
     useContext(SelectedOptionsContext);
 
-  const apiUrl = ModelConfig.get().urlBase;
-
   var states = {
     rut: useState(""),
     nombre: useState(""),
@@ -43,7 +41,7 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
     comuna: useState(-1),
     giro: useState(""),
     formaPago: useState(""),
-    urlPagina:useState(""),
+    urlPagina: useState(""),
   };
 
   var validatorStates = {
@@ -62,13 +60,9 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
   };
 
   const handleSubmit = async () => {
-    //Validaciones
-
     if (!System.allValidationOk(validatorStates, showMessage)) {
       return false;
     }
-    // console.log(rut)
-    // console.log(nombre)
     const cliente = {
       rut: states.rut[0],
       nombre: states.nombre[0],
@@ -81,7 +75,7 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
       comuna: states.comuna[0] + "",
       giro: states.giro[0],
       formaPago: states.formaPago[0],
-      urlPagina:states.urlPagina[0],
+      urlPagina: states.urlPagina[0],
     };
 
     console.log("Datos antes de enviar:", cliente);
@@ -121,110 +115,101 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
 
           <Grid item xs={12} md={4}>
             <InputRutCliente
-              inputState={states.rut}
-              validationState={validatorStates.rut}
+              vars={[states, validatorStates]}
               required={true}
               autoFocus={true}
             />
           </Grid>
           <Grid item xs={12} md={4}>
             <InputName
-              inputState={ [states.nombre[0], states.nombre[1]] }
+              vars={[states, validatorStates]}
               fieldName="nombre"
               required={true}
-              validationState={validatorStates.nombre}
             />
           </Grid>
           <Grid item xs={12} md={4}>
             <InputName
-              inputState={states.apellido}
-              required={true}
               fieldName="apellido"
-              validationState={validatorStates.apellido}
+              vars={[states, validatorStates]}
+              required={true}
             />
           </Grid>
           <Grid item xs={12} md={4}>
             <InputEmail
-              inputState={states.correo}
-              required={true}
               fieldName="correo"
-              validationState={validatorStates.correo}
+              vars={[states, validatorStates]}
+              required={true}
             />
           </Grid>
           <Grid item xs={12} md={4}>
             <InputName
-              inputState={states.razonSocial}
+              label="Razón Social"
+              fieldName="razonSocial"
+              vars={[states, validatorStates]}
               required={true}
-              fieldName="Razón Social"
-              validationState={validatorStates.razonSocial}
             />
           </Grid>
           <Grid item xs={12} md={4}>
             <InputPhone
-              inputState={states.phone}
+              label="Tel&eacute;fono"
+              fieldName="phone"
+              vars={[states, validatorStates]}
               required={true}
-              fieldName="telefono"
-              validationState={validatorStates.phone}
             />
           </Grid>
-         
+
           <Grid item xs={12} md={4}>
             <InputName
-              inputState={states.direccion}
+              label="Direcci&oacute;n"
               fieldName="direccion"
               required={true}
               maxLength={30}
-              validationState={validatorStates.direccion}
+              vars={[states, validatorStates]}
             />
           </Grid>
           <Grid item xs={12} md={4}>
             <SelectRegion
-              inputState={states.region}
+              label="Regi&oacute;n"
               fieldName="region"
               required={true}
-              validationState={validatorStates.region}
+              vars={[states, validatorStates]}
             />
           </Grid>
           <Grid item xs={12} md={4}>
             <SelectComuna
-              inputState={states.comuna}
-              inputRegionState={states.region}
               fieldName="comuna"
+              inputRegionState={states.region}
               required={true}
-              validationState={validatorStates.comuna}
+              vars={[states, validatorStates]}
             />
           </Grid>
           <Grid item xs={12} md={4}>
             <InputName
-              inputState={states.giro}
               fieldName="giro"
               required={true}
               maxLength={30}
-              validationState={validatorStates.giro}
+              vars={[states, validatorStates]}
             />
           </Grid>
           <Grid item xs={12} md={4}>
             <InputName
-              inputState={states.formaPago}
-              fieldName="Forma de pago"
+              label="Forma de pago"
+              fieldName="formaPago"
               required={true}
               maxLength={30}
-              validationState={validatorStates.formaPago}
+              vars={[states, validatorStates]}
             />
           </Grid>
           <Grid item xs={12} md={4}>
             <InputPage
-              inputState={states.urlPagina}
-              fieldName="Pagina Web"
+              label="Pagina Web"
+              fieldName="urlPagina"
               required={true}
               maxLength={100}
-              validationState={validatorStates.urlPagina}
+              vars={[states, validatorStates]}
             />
           </Grid>
-          
-          
-         
-         
+
           <Grid item xs={12}>
             <SendingButton
               textButton="Registrar Cliente"

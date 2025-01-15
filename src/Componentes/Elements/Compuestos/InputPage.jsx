@@ -13,12 +13,14 @@ const InputPage = ({
   minLength = null,
   maxLength = 255,
   canAutoComplete = false,
-  required = false
+  required = false,
+  vars = null
 }) => {
   const { showMessage } = useContext(SelectedOptionsContext);
-  
-  const [page, setPage] = inputState;
-  const [validation, setValidation] = validationState ?? useState(null)
+
+  const [page, setPage] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
+  const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
+
   const [keyPressed, setKeyPressed] = useState(false);
 
   const validate = () => {

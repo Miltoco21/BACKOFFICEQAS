@@ -3,11 +3,6 @@ import {
   Button
 } from "@mui/material";
 
-// OptionType {
-//   id:String,
-//   value:String
-// }
-
 const SelectButtonList = ({ 
   optionSelected,
   setOptionSelected,
@@ -21,10 +16,6 @@ const SelectButtonList = ({
             <tr>
 
               {options.map((option,ix)=>{
-                // console.log("map de options")
-                // console.log("option", option)
-                // console.log("optionSelected", optionSelected)
-                // console.log("coincide con el select?",(optionSelected === option.id ? "si" : "no"))
                 return(
                   <td key={ix} ><Button
                   id={`${ix}-btn`}

@@ -30,7 +30,7 @@ class Client extends Model {
     data:any
 
     static instance: Client | null = null;
-    sesion: StorageSesion;
+    
 
 
     static getInstance():Client{

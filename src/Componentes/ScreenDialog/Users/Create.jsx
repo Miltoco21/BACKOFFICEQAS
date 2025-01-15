@@ -23,7 +23,7 @@ import User from "../../../Models/User";
 import System from "../../../Helpers/System";
 export const defaultTheme = createTheme();
 
-export default function Ingreso({ 
+export default function Ingreso({
   onClose,
   openDialog,
   setOpendialog
@@ -51,31 +51,31 @@ export default function Ingreso({
     remuneracionTipo: useState(-1),
     credit: useState(""),
   }
-  
 
 
-  
+
+
   var validatorStates = {
     rut: useState(null),
-    nombre : useState(null),
-    apellido : useState(null),
-    correo : useState(null),
-    phone : useState(null),
-    userCode : useState(null),
-    direccion : useState(null),
-    postalCode : useState(null),
-    credit : useState(null),
-    clave : useState(null),
-    remuneracionTipo : useState(null),
-    rol : useState(null),
-    region : useState(null),
-    comuna : useState(null),
+    nombre: useState(null),
+    apellido: useState(null),
+    correo: useState(null),
+    phone: useState(null),
+    userCode: useState(null),
+    direccion: useState(null),
+    postalCode: useState(null),
+    credit: useState(null),
+    clave: useState(null),
+    remuneracionTipo: useState(null),
+    rol: useState(null),
+    region: useState(null),
+    comuna: useState(null),
   }
 
   const handleSubmit = async () => {
     //Validaciones
-    
-    if(!System.allValidationOk(validatorStates,showMessage)){
+
+    if (!System.allValidationOk(validatorStates, showMessage)) {
       return false
     }
     // console.log(rut)
@@ -96,52 +96,52 @@ export default function Ingreso({
       comuna: states.comuna[0] + "",
       credito: states.credit[0],
     }
-      
-      console.log("Datos antes de enviar:", usuario);
-      showLoading("Enviando...")
-      User.getInstance().add(usuario,(res)=>{
-        console.log("llego al callok")
-        hideLoading()
-        showMessage("Usuario creado exitosamente");
-        setTimeout(() => {
-          onClose();
-        }, 2000);
-      },(error)=>{
-        console.log("llego al callwrong", error)
-        hideLoading()
-        showMessage(error)
-      })
+
+    console.log("Datos antes de enviar:", usuario);
+    showLoading("Enviando...")
+    User.getInstance().add(usuario, (res) => {
+      console.log("llego al callok")
+      hideLoading()
+      showMessage("Usuario creado exitosamente");
+      setTimeout(() => {
+        onClose();
+      }, 2000);
+    }, (error) => {
+      console.log("llego al callwrong", error)
+      hideLoading()
+      showMessage(error)
+    })
   };
 
   return (
-    <Dialog open={openDialog} onClose={()=>{
+    <Dialog open={openDialog} onClose={() => {
       setOpendialog(false)
       onClose()
     }} maxWidth={'lg'}>
 
-        <Paper elevation={16} square>
-          <Grid container spacing={2} sx={{ padding: "2%" }}>
-            <Grid item xs={12}>
-              <h2>Ingreso Usuario</h2>
-            </Grid>
+      <Paper elevation={16} square>
+        <Grid container spacing={2} sx={{ padding: "2%" }}>
+          <Grid item xs={12}>
+            <h2>Ingreso Usuario</h2>
+          </Grid>
 
-            <Grid item xs={12} md={4}>
-              <InputRutUsuario 
-                inputState={states.rut}
-                validationState={validatorStates.rut}
-                required={true}
-                autoFocus={true}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <InputName
-                inputState={states.nombre}
-                fieldName="nombre"
-                required={true}
-                validationState={validatorStates.nombre}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={4}>
+            <InputRutUsuario
+              inputState={states.rut}
+              validationState={validatorStates.rut}
+              required={true}
+              autoFocus={true}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <InputName
+              inputState={states.nombre}
+              fieldName="nombre"
+              required={true}
+              validationState={validatorStates.nombre}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
 
             <InputName
               inputState={states.apellido}
@@ -150,8 +150,8 @@ export default function Ingreso({
               validationState={validatorStates.apellido}
             />
 
-            </Grid>
-            <Grid item xs={12} md={4}>
+          </Grid>
+          <Grid item xs={12} md={4}>
 
 
             <InputEmail
@@ -161,8 +161,8 @@ export default function Ingreso({
               validationState={validatorStates.correo}
             />
 
-            </Grid>
-            <Grid item xs={12} md={4}>
+          </Grid>
+          <Grid item xs={12} md={4}>
             <InputPhone
               inputState={states.phone}
               required={true}
@@ -171,9 +171,9 @@ export default function Ingreso({
             />
 
 
-              
-            </Grid>
-            <Grid item xs={12} md={4}>
+
+          </Grid>
+          <Grid item xs={12} md={4}>
 
             <InputNumber
               inputState={states.userCode}
@@ -182,88 +182,88 @@ export default function Ingreso({
               label="Codigo usuario"
               validationState={validatorStates.userCode}
             />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <InputName
-                inputState={states.direccion}
-                fieldName="direccion"
-                required={true}
-                maxLength={30}
-                validationState={validatorStates.direccion}
-              />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <InputName
+              inputState={states.direccion}
+              fieldName="direccion"
+              required={true}
+              maxLength={30}
+              validationState={validatorStates.direccion}
+            />
 
-            </Grid>
-            <Grid item xs={12} md={4}>
+          </Grid>
+          <Grid item xs={12} md={4}>
 
-              <SelectRegion
-                inputState={states.region}
-                fieldName="region"
-                required={true}
-                validationState={validatorStates.region}
-              />
-              
-            </Grid>
-            <Grid item xs={12} md={4}>
+            <SelectRegion
+              inputState={states.region}
+              fieldName="region"
+              required={true}
+              validationState={validatorStates.region}
+            />
 
-              <SelectComuna
-                inputState={states.comuna}
-                inputRegionState={states.region}
-                fieldName="comuna"
-                required={true}
-                validationState={validatorStates.comuna}
-              />
+          </Grid>
+          <Grid item xs={12} md={4}>
 
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <SelectUserRoles
-                inputState={states.rol}
-                fieldName="rol"
-                required={true}
-                validationState={validatorStates.rol}
-              />
+            <SelectComuna
+              inputState={states.comuna}
+              inputRegionState={states.region}
+              fieldName="comuna"
+              required={true}
+              validationState={validatorStates.comuna}
+            />
 
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <InputNumber
-                inputState={states.postalCode}
-                required={true}
-                fieldName="codigoPostal"
-                label="Codigo Postal"
-                validationState={validatorStates.postalCode}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <InputPassword
-                inputState={states.clave}
-                fieldName="clave"
-                required={true}
-                maxLength={30}
-                validationState={validatorStates.clave}
-              />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <SelectUserRoles
+              inputState={states.rol}
+              fieldName="rol"
+              required={true}
+              validationState={validatorStates.rol}
+            />
 
-              
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <SelectList
-                inputState={states.remuneracionTipo}
-                selectItems={[
-                  "Diario",
-                  "Semanal",
-                  "Mensual",
-                ]}
-                fieldName="remuneracion"
-                required={true}
-                validationState={validatorStates.remuneracionTipo}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <InputNumber
-                inputState={states.credit}
-                required={true}
-                fieldName="credito"
-                validationState={validatorStates.credit}
-              />
-            </Grid>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <InputNumber
+              inputState={states.postalCode}
+              required={true}
+              fieldName="codigoPostal"
+              label="Codigo Postal"
+              validationState={validatorStates.postalCode}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <InputPassword
+              inputState={states.clave}
+              fieldName="clave"
+              required={true}
+              maxLength={30}
+              validationState={validatorStates.clave}
+            />
+
+
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <SelectList
+              selectItems={[
+                "Diario",
+                "Semanal",
+                "Mensual",
+              ]}
+              label="remuneracion"
+              fieldName="remuneracionTipo"
+              vars={[states, validatorStates]}
+              required={true}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <InputNumber
+              inputState={states.credit}
+              required={true}
+              fieldName="credito"
+              validationState={validatorStates.credit}
+            />
+          </Grid>
           <Grid item xs={12}>
 
             <SendingButton
@@ -272,15 +272,15 @@ export default function Ingreso({
               sending={showLoadingDialog}
               sendingText="Registrando..."
               style={{
-                width:"50%",
+                width: "50%",
                 margin: "0 25%",
-                backgroundColor:"#950198"
+                backgroundColor: "#950198"
               }}
             />
 
           </Grid>
-          </Grid>
-        </Paper>
+        </Grid>
+      </Paper>
     </Dialog>
   );
 }
