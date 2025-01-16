@@ -134,7 +134,7 @@ const ReporteCostoGananciaListado = ({
           <Grid item xs={12} sm={12} md={12} lg={12}>
             <br />
             <Typography variant="h5">
-              Ranking de Costos Y Ganancias
+              Reporte de Costos Y Ganancias
             </Typography>
             <br />
           </Grid>
