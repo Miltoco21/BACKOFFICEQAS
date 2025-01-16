@@ -23,6 +23,7 @@ const SelectList = ({
   fieldName = "select",
   label = fieldName[0].toUpperCase() + fieldName.substr(1),
   required = false,
+  styles = {},
   vars = null
 }) => {
 
@@ -87,7 +88,10 @@ const SelectList = ({
 
       <Select
         sx={{
-          marginTop: "17px"
+          ...{
+            marginTop: "17px"
+          },
+          ...styles
         }}
         fullWidth
         autoFocus={autoFocus}
