@@ -54,9 +54,9 @@ const Step3Component = ({
   const refPrecioVenta = useRef(null)
 
   const [newUnidad, setNewUnidad] = useState("");
-  const [stockCritico, setStockCritico] = useState("");
-  const [stockInicial, setStockInicial] = useState("");
-  const [precioCosto, setPrecioCosto] = useState("");
+  const [stockCritico, setStockCritico] = useState(1);
+  const [stockInicial, setStockInicial] = useState(1);
+  const [precioCosto, setPrecioCosto] = useState(1);
   const [precioNeto, setPrecioNeto] = useState(0);
 
   const [selectedUnidadId, setSelectedUnidadId] = useState(
@@ -76,7 +76,7 @@ const Step3Component = ({
   const [valorIva, setValorIva] = useState(0)
   const [valorMargenGanancia, setValorMargenGanancia] = useState(0);
 
-  const [precioVenta, setPrecioVenta] = useState("");
+  const [precioVenta, setPrecioVenta] = useState(0);
   const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
   const [openDialog1, setOpenDialog1] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -402,6 +402,7 @@ const Step3Component = ({
   useEffect(() => {
     System.intentarFoco(refPrecioVenta)
     setUltimoFoco("precioVenta")
+    setPrecioVenta(0)
   }, [])
 
   const handleChange = (event, field) => {

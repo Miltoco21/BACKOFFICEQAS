@@ -51,7 +51,7 @@ const Step3CC = ({
 
   const [stockInicial, setStockInicial] = useState(1);
   const [stockCritico, setStockCritico] = useState(1);
-  const [precioCosto, setPrecioCosto] = useState(0);
+  const [precioCosto, setPrecioCosto] = useState(1);
   const [selectedUnidadId, setSelectedUnidadId] = useState(1);
   const [selectedUnidadVentaId, setSelectedUnidadVentaId] = useState(1);
 
@@ -401,6 +401,7 @@ const Step3CC = ({
   useEffect(() => {
     System.intentarFoco(refPrecioVenta)
     setUltimoFoco("precioVenta")
+    setPrecioVenta(0)
   }, [])
 
 
