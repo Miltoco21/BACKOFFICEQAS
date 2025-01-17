@@ -272,7 +272,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
     if (
       event.key !== "Backspace" || event.key !== ""
     ) {
-      console.log("paso")
+      // console.log("paso")
       return
     }
 

@@ -251,7 +251,7 @@ const EditarProducto = ({
     
     console.log("para enviar:", nuevoObjetoActualizado)
     Product.getInstance().update(nuevoObjetoActualizado,(res)=>{
-      setSuccessDialogOpen(true);
+      // setSuccessDialogOpen(true);
       setSuccessMessage(res.message);
       handleClose();
       if(onEdit) onEdit()
@@ -434,7 +434,7 @@ const EditarProducto = ({
             </Select>
           </Grid>
 
-          <Grid item xs={6} md={6}>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
             <InputLabel>Marca</InputLabel>
             <Grid item xs={12}>
               <TextField
@@ -453,45 +453,14 @@ const EditarProducto = ({
               />
             </Grid>
 
-            
-
-
-
-            {/* <Select
-              fullWidth
-              value={selectedMarcaId}
-              onChange={(e) => {
-                setEditedProduct((prevProduct) => ({
-                  ...prevProduct,
-                  marca: e.target.value,
-                }));
-              }}
-              label="Selecciona Marca"
-            >
-              <MenuItem
-                key={editedProduct.id}
-                value={editedProduct.marca || ""}
-              >
-                {editedProduct.marca}
-              </MenuItem>
-              {marcas.map((marca) => (
-                <MenuItem key={marca.id} value={marca.nombre}>
-                  {marca.nombre}
-                </MenuItem>
-              ))}
-            </Select> */}
-
-
-
-
           </Grid>
 
 
-          <Grid item xs={6} md={6}>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
             <Grid display="flex" alignItems="center">
               <label onClick={checkEsPesable}
                style={{
-                marginTop:"40px",
+                marginTop: (System.isXsOrSm() ? "0": "41px"),
                 userSelect:"none"
                }}>
                 Es Pesable
@@ -504,13 +473,34 @@ const EditarProducto = ({
 
                 onClick={checkEsPesable}
                 style={{
-                  marginTop:"40px",
+                  marginTop: (System.isXsOrSm() ? "0": "41px"),
                   width:"50px",
                   height:"20px"
                 }}
                 />
               </Grid>
             </Grid>
+
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+            <InputLabel>Precio venta</InputLabel>
+            <Grid item xs={12}>
+              <TextField
+                name="precioVenta"
+                label=""
+                value={editedProduct.precioVenta || ""}
+                onChange={(e) => {
+                  // setSelectedCategoryId(e.target.value);
+                  // // setEditedProduct.categoria=e.target.value;
+                  setEditedProduct((prevProduct) => ({
+                    ...prevProduct,
+                    precioVenta: parseFloat(e.target.value),
+                  }));
+                }}
+                fullWidth
+              />
+            </Grid>
+
+          </Grid>
 
 
           {/* <Grid item xs={6}>

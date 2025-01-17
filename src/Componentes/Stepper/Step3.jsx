@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import {
   Box,
@@ -33,9 +33,9 @@ import CONSTANTS from "../../definitions/Constants";
 import Model from "../../Models/Model";
 
 
-const Step3Component = ({ 
-  data, 
-  onNext, 
+const Step3Component = ({
+  data,
+  onNext,
   stepData,
   onSuccessAdd
 }) => {
@@ -48,17 +48,19 @@ const Step3Component = ({
   } = useContext(SelectedOptionsContext);
 
 
-  const apiUrl =  ModelConfig.get().urlBase;
-;
+  const apiUrl = ModelConfig.get().urlBase;
+  ;
+
+  const refPrecioVenta = useRef(null)
 
   const [newUnidad, setNewUnidad] = useState("");
   const [stockCritico, setStockCritico] = useState("");
   const [stockInicial, setStockInicial] = useState("");
   const [precioCosto, setPrecioCosto] = useState("");
   const [precioNeto, setPrecioNeto] = useState(0);
-  
+
   const [selectedUnidadId, setSelectedUnidadId] = useState(
-    data.selectedUnidadId || ""
+    data.selectedUnidadId || "1"
   );
 
   var ivas = [
@@ -66,11 +68,11 @@ const Step3Component = ({
     { idUnidad: ModelConfig.get().iva, descripcion: ModelConfig.get().iva + "%" }
   ];
 
-  const [selectedUnidadVentaId, setSelectedUnidadVentaId] = useState(0);
+  const [selectedUnidadVentaId, setSelectedUnidadVentaId] = useState(1);
   const [ultimoFoco, setUltimoFoco] = useState("");
   const [iva, setIva] = useState(ModelConfig.get().iva)
   const [margenGanancia, setMargenGanancia] = useState(ModelConfig.get().margenGanancia);
-  
+
   const [valorIva, setValorIva] = useState(0)
   const [valorMargenGanancia, setValorMargenGanancia] = useState(0);
 
@@ -80,7 +82,7 @@ const Step3Component = ({
   const [loading, setLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [product, setProduct] = useState([]);
-  
+
   const [esPesable, setEsPesable] = useState(false);
   const [fijarCosto, setFijarCosto] = useState(false);
   const [fijarVenta, setFijarVenta] = useState(false);
@@ -90,15 +92,15 @@ const Step3Component = ({
     console.log("Unidad seleccionada:", selectedUnidadId);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("cambio unidad de venta")
     console.log(selectedUnidadVentaId)
-    if(selectedUnidadVentaId == 10){ //|| selectedUnidadVentaId == 5){
+    if (selectedUnidadVentaId == 10) { //|| selectedUnidadVentaId == 5){
       setEsPesable(true)
-    }else{
+    } else {
       setEsPesable(false)
     }
-  },[selectedUnidadVentaId])
+  }, [selectedUnidadVentaId])
 
 
   const handleNext = async () => {
@@ -181,18 +183,18 @@ const Step3Component = ({
         setOpenSnackbar(true);
         prodNuevo.idProducto = response.data.codigoProducto
         prodNuevo.codigoProducto = response.data.codigoProducto
-        if(onSuccessAdd) onSuccessAdd(prodNuevo,response)
-        console.log("Productos",product)
+        if (onSuccessAdd) onSuccessAdd(prodNuevo, response)
+        console.log("Productos", product)
 
 
-      const sesion = Model.getInstance().sesion
-      console.log("sesion",sesion)
-      var sesion1 = sesion.cargar(1)
-      if(!sesion1) sesion1 = {
-        id:1
-      }
-      sesion1.ultimoIdCreado = response.data.codigoProducto
-      sesion.guardar(sesion1)
+        const sesion = Model.getInstance().sesion
+        console.log("sesion", sesion)
+        var sesion1 = sesion.cargar(1)
+        if (!sesion1) sesion1 = {
+          id: 1
+        }
+        sesion1.ultimoIdCreado = response.data.codigoProducto
+        sesion.guardar(sesion1)
 
 
 
@@ -268,16 +270,16 @@ const Step3Component = ({
       return false;
     }
 
-    if (isNaN(parseFloat(precioVenta)) || parseFloat(precioVenta) === 0) {
-      setEmptyFieldsMessage("El precio de venta no puede ser cero.");
-      return false;
-    }
-    if (parseFloat(precioVenta) < parseFloat(precioCosto)) {
-      setEmptyFieldsMessage(
-        "El precio de venta debe ser al menos igual al precio de costo."
-      );
-      return false;
-    }
+    // if (isNaN(parseFloat(precioVenta)) || parseFloat(precioVenta) === 0) {
+    //   setEmptyFieldsMessage("El precio de venta no puede ser cero.");
+    //   return false;
+    // }
+    // if (parseFloat(precioVenta) < parseFloat(precioCosto)) {
+    //   setEmptyFieldsMessage(
+    //     "El precio de venta debe ser al menos igual al precio de costo."
+    //   );
+    //   return false;
+    // }
 
     if (stockCritico === "") {
       setEmptyFieldsMessage("Favor completar Stock Inicial.");
@@ -319,10 +321,10 @@ const Step3Component = ({
   };
 
 
-  const logicaPrecios = ()=>{
-    if(ultimoFoco != "precioVenta" &&  precioCosto > 0){
+  const logicaPrecios = () => {
+    if (ultimoFoco != "precioVenta" && precioCosto > 0) {
 
-      if(fijarVenta || fijarCosto){
+      if (fijarVenta || fijarCosto) {
         const tmpProduct = {}
         tmpProduct.ivaPorcentaje = iva
         tmpProduct.precioVenta = parseFloat(precioVenta)
@@ -348,14 +350,14 @@ const Step3Component = ({
       Product.logicaPrecios(tmpProduct, "final")
       setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
       setPrecioVenta(tmpProduct.precioVenta.toFixed(0))
-      
+
       setValorIva(tmpProduct.ivaValor.toFixed(0))
       setValorMargenGanancia(tmpProduct.gananciaValor.toFixed(0))
       setMargenGanancia((tmpProduct.gananciaPorcentaje).toFixed(0))
 
-    }else if(ultimoFoco != "precioCosto" && precioVenta>0){
+    } else if (ultimoFoco != "precioCosto" && precioVenta > 0) {
 
-      if(fijarVenta || fijarCosto){
+      if (fijarVenta || fijarCosto) {
         const tmpProduct = {}
         tmpProduct.ivaPorcentaje = iva
         tmpProduct.precioVenta = parseFloat(precioVenta)
@@ -382,7 +384,7 @@ const Step3Component = ({
       console.log("caso 2..devuelve logica 2:", System.clone(tmpProduct))
       setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
       setPrecioCosto(tmpProduct.precioCosto.toFixed(0))
-      
+
       setValorIva(tmpProduct.ivaValor.toFixed(0))
       setValorMargenGanancia(tmpProduct.gananciaValor.toFixed(0))
       setMargenGanancia((tmpProduct.gananciaPorcentaje).toFixed(0))
@@ -393,10 +395,14 @@ const Step3Component = ({
     setUltimoFoco(field)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     logicaPrecios()
-  },[precioCosto, precioVenta, margenGanancia, iva])
+  }, [precioCosto, precioVenta, margenGanancia, iva])
 
+  useEffect(() => {
+    System.intentarFoco(refPrecioVenta)
+    setUltimoFoco("precioVenta")
+  }, [])
 
   const handleChange = (event, field) => {
     // Asegurar que el valor solo contenga números
@@ -411,7 +417,7 @@ const Step3Component = ({
       setPrecioVenta(newValue);
     } else if (field === "stockInicial") {
       setStockInicial(newValue);
-    }else if (field === "stockCritico") {
+    } else if (field === "stockCritico") {
       setStockCritico(newValue);
     } else if (field === "precioNeto") {
       // setPrecioNeto(newValue);
@@ -420,19 +426,19 @@ const Step3Component = ({
     }
   };
 
-  const checkEsPesable = (e)=>{
+  const checkEsPesable = (e) => {
     setEsPesable(!esPesable)
   }
 
-  const checkFijarCosto = (e)=>{
-    if(!fijarCosto && fijarVenta){
+  const checkFijarCosto = (e) => {
+    if (!fijarCosto && fijarVenta) {
       setFijarVenta(false)
     }
     setFijarCosto(!fijarCosto)
   }
 
-  const checkFijarVenta = (e)=>{
-    if(!fijarVenta && fijarCosto){
+  const checkFijarVenta = (e) => {
+    if (!fijarVenta && fijarCosto) {
       setFijarCosto(false)
     }
     setFijarVenta(!fijarVenta)
@@ -498,117 +504,117 @@ const Step3Component = ({
               </Select>
             </Grid>
           </Grid>
-          
 
-            <Grid item xs={12} md={12}>
+
+          <Grid item xs={12} md={12}>
             <Grid display="flex" alignItems="center">
               <label onClick={checkEsPesable}
-               style={{
-                marginTop:"0px",
-                userSelect:"none"
-               }}>
+                style={{
+                  marginTop: "0px",
+                  userSelect: "none"
+                }}>
                 Es Pesable
-                </label>
+              </label>
               <input
                 type="checkbox"
                 checked={esPesable}
-                onChange={()=>{}}
+                onChange={() => { }}
                 onClick={checkEsPesable}
                 style={{
-                  marginTop:"0px",
-                  width:"50px",
-                  height:"20px"
+                  marginTop: "0px",
+                  width: "50px",
+                  height: "20px"
                 }}
-                />
-              </Grid>
+              />
             </Grid>
+          </Grid>
 
 
-            <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6}>
             <Box>
-                <InputLabel sx={{ marginBottom: "4%" }}>
-              Margen ganancia
+              <InputLabel sx={{ marginBottom: "4%" }}>
+                Margen ganancia
               </InputLabel>
 
-            <Grid container spacing={1}>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  required
-                  name="margenGanancia"
-                  fullWidth
-                  value={margenGanancia}
-                  onClick={()=>{ setFocus("margenGanancia") }}
-                  onChange={(event) => handleChange(event, "margenGanancia")}
-                  onKeyDown={(event) => handleKeyDown(event, "margenGanancia")}
-                  InputProps={{
-                    inputMode: "numeric", // Establece el modo de entrada como numérico
-                    pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Percent />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
+              <Grid container spacing={1}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    required
+                    name="margenGanancia"
+                    fullWidth
+                    value={margenGanancia}
+                    onClick={() => { setFocus("margenGanancia") }}
+                    onChange={(event) => handleChange(event, "margenGanancia")}
+                    onKeyDown={(event) => handleKeyDown(event, "margenGanancia")}
+                    InputProps={{
+                      inputMode: "numeric", // Establece el modo de entrada como numérico
+                      pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Percent />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    value={valorMargenGanancia}
+                    InputProps={{
+                      inputMode: "numeric", // Establece el modo de entrada como numérico
+                      pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AttachMoney />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  required
-                  fullWidth
-                  value={valorMargenGanancia}
-                  InputProps={{
-                    inputMode: "numeric", // Establece el modo de entrada como numérico
-                    pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AttachMoney />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-            </Grid>
             </Box>
           </Grid>
 
           <Grid item xs={12} md={6}>
             <Box>
-            <InputLabel sx={{ marginBottom: "4%" }}>
-               iva
+              <InputLabel sx={{ marginBottom: "4%" }}>
+                iva
               </InputLabel>
-            <Grid container spacing={1}>
-              <Grid item xs={12} md={6}>
-              <Select
-                required
-                fullWidth
-                sx={{ width: "100%" }}
-                value={iva}
-                onClick={()=>{ setFocus("iva") }}
-                onChange={(e) => handleIvaSelect(e.target.value)}
-                label="Seleccionar iva"
-              >
-                {ivas.map((ivaItem) => (
-                  <MenuItem key={ivaItem.idUnidad} value={ivaItem.idUnidad}>
-                    {ivaItem.descripcion}
-                  </MenuItem>
-                ))}
-              </Select>
+              <Grid container spacing={1}>
+                <Grid item xs={12} md={6}>
+                  <Select
+                    required
+                    fullWidth
+                    sx={{ width: "100%" }}
+                    value={iva}
+                    onClick={() => { setFocus("iva") }}
+                    onChange={(e) => handleIvaSelect(e.target.value)}
+                    label="Seleccionar iva"
+                  >
+                    {ivas.map((ivaItem) => (
+                      <MenuItem key={ivaItem.idUnidad} value={ivaItem.idUnidad}>
+                        {ivaItem.descripcion}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    value={valorIva}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AttachMoney />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  required
-                  fullWidth
-                  value={valorIva}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AttachMoney />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-            </Grid>
 
 
             </Box>
@@ -626,7 +632,7 @@ const Step3Component = ({
                 value={precioCosto}
                 onChange={(event) => handleChange(event, "precioCosto")}
                 onKeyDown={(event) => handleKeyDown(event, "precioCosto")}
-                onClick={()=>{ setFocus("precioCosto") }}
+                onClick={() => { setFocus("precioCosto") }}
 
                 InputProps={{
                   startAdornment: (
@@ -641,20 +647,20 @@ const Step3Component = ({
           </Grid>
           <Grid item xs={4} sm={4} md={1} lg={1}>
             <Box>
-              
-              <input 
+
+              <input
                 type="checkbox"
                 checked={fijarCosto}
-                onChange={()=>{}}
+                onChange={() => { }}
                 onClick={checkFijarCosto}
                 style={{
-                  marginTop:"15px",
-                  width:"30px",
-                  height:"20px"
+                  marginTop: "15px",
+                  width: "30px",
+                  height: "20px"
                 }}
-                />
+              />
             </Box>
-            </Grid>
+          </Grid>
 
           <Grid item xs={12} md={4}>
             <Box>
@@ -690,8 +696,9 @@ const Step3Component = ({
                 label="Precio Venta publico"
                 fullWidth
                 type="number"
+                ref={refPrecioVenta}
                 value={precioVenta}
-                onClick={()=>{ setFocus("precioVenta") }}
+                onClick={() => { setFocus("precioVenta") }}
                 onChange={(event) => handleChange(event, "precioVenta")}
                 onKeyDown={(event) => handleKeyDown(event, "precioVenta")}
                 InputProps={{
@@ -709,26 +716,26 @@ const Step3Component = ({
 
           <Grid item xs={4} sm={4} md={1} lg={1}>
             <Box>
-              
-              <input 
+
+              <input
                 type="checkbox"
                 checked={fijarVenta}
-                onChange={()=>{}}
+                onChange={() => { }}
                 onClick={checkFijarVenta}
                 style={{
-                  marginTop:"15px",
-                  width:"30px",
-                  height:"20px"
+                  marginTop: "15px",
+                  width: "30px",
+                  height: "20px"
                 }}
-                />
+              />
             </Box>
-            </Grid>
+          </Grid>
 
 
-          
 
 
-         
+
+
           <Grid item xs={12} md={6}>
             <Box>
               <InputLabel sx={{ marginBottom: "4%" }}>
@@ -747,7 +754,7 @@ const Step3Component = ({
                   pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
                 }}
 
-                onClick={(e)=>{
+                onClick={(e) => {
                   e.target.selectionStart = 0
                   e.target.selectionEnd = 100
                 }}
@@ -773,7 +780,7 @@ const Step3Component = ({
                   pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
                 }}
 
-                onClick={(e)=>{
+                onClick={(e) => {
                   e.target.selectionStart = 0
                   e.target.selectionEnd = 100
                 }}

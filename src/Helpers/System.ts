@@ -18,13 +18,24 @@ class System {
         return System.instance;
     }
 
-
     getWindowWidth() {
         return window.innerWidth;
     }
 
     getWindowHeight() {
         return window.innerHeight;
+    }
+
+    static isXs() {
+        return System.getInstance().getWindowWidth() <= 768
+    }
+
+    static isSm() {
+        return System.getInstance().getWindowWidth() <= 899
+    }
+
+    static isXsOrSm() {
+        return this.isXs() || this.isSm()
     }
 
     getCenterStyle(widthPercent = 80, heightPercent = 80) {
@@ -170,11 +181,11 @@ class System {
             // console.log("state:", stateKey)
             var state = states[stateKey]
             // console.log(typeof(state[0]))
-            if(typeof(state[0]) == "number") {
+            if (typeof (state[0]) == "number") {
                 state[1](0)
-            }else if(typeof(state[0]) == "string"){
+            } else if (typeof (state[0]) == "string") {
                 state[1]("")
-            }else{
+            } else {
                 state[1](null)
             }
         })
@@ -236,41 +247,41 @@ class System {
     }
 
     // ej 152000.157 ----> 152.000,15
-    static formatMonedaLocal(valorMoneda, conDecimales = true){
-        if(isNaN(valorMoneda))return "0,00"
+    static formatMonedaLocal(valorMoneda, conDecimales = true) {
+        if (isNaN(valorMoneda)) return "0,00"
         // console.log("formatMonedaLocal", valorMoneda)
         var monedaStr = valorMoneda + ""
         var parteEntera = monedaStr
         var parteDecimal = "00"
-        if(monedaStr.indexOf(".")>-1){
+        if (monedaStr.indexOf(".") > -1) {
             const partes = monedaStr.split(".")
             parteEntera = partes[0]
             parteDecimal = partes[1]
         }
 
-        if(parteDecimal.length<2) parteDecimal += "0"
-        if(parteDecimal.length>2) {
+        if (parteDecimal.length < 2) parteDecimal += "0"
+        if (parteDecimal.length > 2) {
             const x = parseFloat("0." + parteDecimal).toFixed(2)
             parteDecimal = x.split(".")[1]
         }
 
-        if(parteEntera.length>3){
+        if (parteEntera.length > 3) {
             // console.log("parteEntera.length>3")
             var parteEntera2 = ""
             for (let index = parteEntera.length; index > 0; index--) {
                 const current = parteEntera.length - index + 1
                 // console.log("current", current)
-                const digitoEntero = parteEntera[ index - 1];
+                const digitoEntero = parteEntera[index - 1];
                 parteEntera2 = digitoEntero + parteEntera2
                 // console.log("digitoEntero", digitoEntero)
                 // console.log("index", index)
-                if((current) % 3 === 0){
+                if ((current) % 3 === 0) {
                     // console.log(index + " es divisor de 3")
                     parteEntera2 = "." + parteEntera2
                 }
             }
 
-            if(parteEntera2.substr(0,1) === "."){
+            if (parteEntera2.substr(0, 1) === ".") {
                 parteEntera2 = parteEntera2.substr(1)
             }
 
@@ -278,9 +289,9 @@ class System {
         }
 
         // console.log("formatMonedaLocal devuelve", parteEntera + "," + parteDecimal)
-        if(conDecimales){
+        if (conDecimales) {
             return parteEntera + "," + parteDecimal
-        }else{
+        } else {
             return parteEntera
         }
     }

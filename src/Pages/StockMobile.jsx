@@ -21,6 +21,7 @@ const StockMobile = () => {
     showMessage,
     showLoading,
     hideLoading,
+    showAlert,
     GeneralElements
   } = useContext(SelectedOptionsContext);
 
@@ -28,6 +29,7 @@ const StockMobile = () => {
   const [open, setOpen] = useState(false);
   const [openAdd, setopenAdd] = useState(false);
   const [openEdit, setopenEdit] = useState(false);
+  const [open2, setOpen2] = useState(false);
   
   const [productoEdit, setProductEdit] = useState(null);
 
@@ -39,7 +41,11 @@ const StockMobile = () => {
   },[])
 
   const checkFoco = ()=>{
-    if(!open && !openAdd && !openEdit){
+    // console.log("checkFoco..")
+    // console.log("open", open)
+    // console.log("openAdd", openAdd)
+    // console.log("openEdit", openEdit)
+    if(!open && !open2 && !openAdd && !openEdit){
       // console.log("intentar foco")
       System.intentarFoco(refInputBuscar)
     }
@@ -47,9 +53,9 @@ const StockMobile = () => {
 
   useEffect(()=>{
     checkFoco()
-  },[open,openAdd,openEdit])
+  },[open, open2,openAdd,openEdit])
 
-  const [open2, setOpen2] = useState(false);
+  
 
   const handleOpenStepper = () => {
     setOpen(true);
@@ -119,6 +125,16 @@ const StockMobile = () => {
       // console.log("apreto enter")
       doSearch()
     }
+  }
+
+  const onCreateFinish = (productoNuevo, mostrarCodigo = false)=>{
+    if(mostrarCodigo && productoNuevo.codigoProducto){
+      showAlert("El codigo generado es " + productoNuevo.codigoProducto)
+    }
+    handleCloseStepper()
+    handleCloseStepper2()
+
+    setSearchTerm("")
   }
 
   return (
@@ -266,7 +282,7 @@ const StockMobile = () => {
               margin:"2.5% auto"
             }}
           >
-           <StepperSI/> 
+           <StepperSI onSuccessAdd={(pr)=>{onCreateFinish(pr,true)}} /> 
 
            <Button sx={{
             position:"relative",
@@ -307,7 +323,7 @@ const StockMobile = () => {
               margin:"2.5% auto"
             }}
           >
-            <StepperSI conCodigo={true} />
+            <StepperSI conCodigo={true} onSuccessAdd={(pr)=>{onCreateFinish(pr)}} />
 
             <Button sx={{
             position:"relative",
@@ -339,6 +355,10 @@ const StockMobile = () => {
             open={openEdit}
             handleClose={()=>{
               setopenEdit(false)
+            }}
+
+            onEdit={()=>{
+              setSearchTerm("")
             }}
             />
           ))}
