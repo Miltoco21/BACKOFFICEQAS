@@ -23,7 +23,8 @@ const InputPassword = ({
   minLength = null,
   maxLength = 20,
   canAutoComplete = false,
-  required = false
+  required = false,
+  vars = null
 }) => {
 
   const {
