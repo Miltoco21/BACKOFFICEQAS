@@ -26,10 +26,11 @@ import CardTotalPreventasTodas from '../Componentes/Home/CardTotalPreventasTodas
 import CardTotalPreventasUsadas from '../Componentes/Home/CardTotalPreventasUsadas';
 import CardTotalPreventasDescartadas from '../Componentes/Home/CardTotalPreventasDescartadas';
 import Product from '../Models/Product';
+import CardEstadoCajas from '../Componentes/Home/CardEstadoCajas';
 
 const defaultTheme = createTheme();
 
-const Home = ({}) => {
+const Home = ({ }) => {
 
   const {
     userData,
@@ -37,36 +38,29 @@ const Home = ({}) => {
     showAlert,
     showConfirm
   } = useContext(SelectedOptionsContext);
-  const [estadoCajas, setEstadoCajas] = useState([])
+
   const [usuariosActivos, setUsuariosActivos] = useState([])
-  
+
   const [roles, setRoles] = useState([])
   const [rol, setRol] = useState("rol")
-  
+
   const [productosCriticos, setProductosCriticos] = useState(0)
   const navigate = useNavigate();
 
-  const solicitarEstadosCajas = ()=>{
-    SucursalCaja.getInstance().getEstados((data)=>{
-      console.log("estados de la caja",data.cajaTurnoEstados)
-      setEstadoCajas(data.cajaTurnoEstados)
-    },()=>{})
-  }
-  
-  const solicitarRoles = ()=>{
+  const solicitarRoles = () => {
 
-    User.getRoles((roles,response)=>{
+    User.getRoles((roles, response) => {
       window.roles = roles
       setRoles(roles)
-    }, (error)=>{
+    }, (error) => {
       console.log(error);
     })
   }
-  
-  const revisarStockCriticos = ()=>{
+
+  const revisarStockCriticos = () => {
     Product.getInstance().getCriticosPaginate({
       pageNumber: 1,
-      rowPage:10
+      rowPage: 10
     }, (prods, response) => {
       setProductosCriticos(response.data.cantidadRegistros)
     }, (error) => {
@@ -74,42 +68,41 @@ const Home = ({}) => {
     })
   }
 
-  const checkRol = (roles)=>{
-    if(!userData) {
+  const checkRol = (roles) => {
+    if (!userData) {
       return
     }
-    if(Validator.isNumeric(userData.rol)){
-      
-      roles.forEach((rolx)=>{
-        if(rolx.idRol == userData.rol){
+    if (Validator.isNumeric(userData.rol)) {
+
+      roles.forEach((rolx) => {
+        if (rolx.idRol == userData.rol) {
           setRol(rolx.rol)
         }
       })
 
-    }else{
+    } else {
       return userData.rol
     }
 
     return userData ? userData.rol : 'rol'
   }
 
-  useEffect(()=>{
-    solicitarEstadosCajas()
+  useEffect(() => {
     solicitarRoles()
     // revisarStockCriticos()
-  },[])
+  }, [])
 
-  useEffect(()=>{
-    if(productosCriticos > 0){
-      showConfirm("Se han detectado productos en su nivel o menor de stock critico, ¿Desea ver cuales son?",()=>{
-        navigate("/reportes/stockcriticos"); 
+  useEffect(() => {
+    if (productosCriticos > 0) {
+      showConfirm("Se han detectado productos en su nivel o menor de stock critico, ¿Desea ver cuales son?", () => {
+        navigate("/reportes/stockcriticos");
       })
     }
-  },[productosCriticos])
-  
-  useEffect(()=>{
+  }, [productosCriticos])
+
+  useEffect(() => {
     checkRol(roles)
-  },[userData, roles])
+  }, [userData, roles])
 
 
 
@@ -123,115 +116,61 @@ const Home = ({}) => {
             <Typography variant="h5">
               Bienvenido {userData ? `${userData.nombres} ${userData.apellidos}` : 'Usuario'}
             </Typography>
-            
+
           </Box>
           <Typography variant="h6">
-            Rol: { rol }
+            Rol: {rol}
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
 
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-              <CardSemaforo/>
-          </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <CardSemaforo />
+            </Grid>
 
-          <Grid item xs={12} sm={12} md={6} lg={6}>
-              <CardTotalCompras/>
-          </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
+              <CardTotalCompras />
+            </Grid>
 
-          <Grid item xs={12} sm={12} md={6} lg={6}>
-              <CardTotalVentas/>
-          </Grid>
-
-
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <Typography sx={{
-              marginTop:"50px"
-            }}>Preventas</Typography>
-          </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
+              <CardTotalVentas />
+            </Grid>
 
 
-          <Grid item xs={12} sm={12} md={4} lg={4}>
-              <CardTotalPreventasTodas/>
-          </Grid>
-
-          <Grid item xs={12} sm={12} md={4} lg={4}>
-              <CardTotalPreventasUsadas/>
-          </Grid>
-
-          <Grid item xs={12} sm={12} md={4} lg={4}>
-              <CardTotalPreventasDescartadas/>
-          </Grid>
-
-          
-          
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <Typography sx={{
+                marginTop: "50px"
+              }}>Preventas</Typography>
+            </Grid>
 
 
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <CardUsuariosActivos setActivos={setUsuariosActivos} />
-          </Grid>
+            <Grid item xs={12} sm={12} md={4} lg={4}>
+              <CardTotalPreventasTodas />
+            </Grid>
 
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-            <CardUsuariosInactivos usuariosActivos={usuariosActivos}/>
-          </Grid>
+            <Grid item xs={12} sm={12} md={4} lg={4}>
+              <CardTotalPreventasUsadas />
+            </Grid>
+
+            <Grid item xs={12} sm={12} md={4} lg={4}>
+              <CardTotalPreventasDescartadas />
+            </Grid>
+
+
 
 
 
             <Grid item xs={12} sm={12} md={12} lg={12}>
-            {estadoCajas.length>0 ? (
-              <Box
-              sx={{
-                bgcolor: "background.paper",
-                boxShadow: 2,
-                p: 4,
-                overflow: "auto", // Added scrollable feature
-                padding:"10px",
-              }}
-              >
-                <Typography variant='h5'>Estados Cajas</Typography>
-                { estadoCajas.map((estadoCaja,ix)=>(
-                  <div key={ix} style={{
-                    padding:"10px",
-                    margin:"3px",
-                    display:"inline-block",
-                    backgroundColor: ( estadoCaja.cierreCaja  ? "#56D005" : "#E30202"),
-                    color: "#fff"
-                  }}>
-                  <Typography variant='p' sx={{ display:"block" }}>
-                    Sucursal {estadoCaja.codigoSucursal}
-                  </Typography>
+              <CardUsuariosActivos setActivos={setUsuariosActivos} />
+            </Grid>
 
-                  <Typography variant='p' sx={{ display:"block" }}>
-                    Caja {estadoCaja.puntoVenta}
-                  </Typography>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <CardUsuariosInactivos usuariosActivos={usuariosActivos} />
+            </Grid>
 
-                  <Typography variant='p' sx={{ display:"block" }}>
-                    Turno {estadoCaja.idTurno}
-                  </Typography>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <CardEstadoCajas />
+            </Grid>
 
-                  <Typography variant='p' sx={{ display:"block" }}>
-                    {estadoCaja.usuarioNombre} {estadoCaja.usuarioApellido}
-                  </Typography>
-
-                  <Typography variant='p' sx={{ display:"block" }}>
-                    {estadoCaja.cierreCaja ? "Con cierre" : "Sin cerrar"}
-                  </Typography>
-
-                  <Typography variant='p' sx={{ display:"block" }}>
-                    Fecha Ingreso {System.formatDateServer(estadoCaja.fechaIngreso)}
-                  </Typography>
-
-                  <Typography variant='p' sx={{ display:"block" }}>
-                    Fecha Termino {estadoCaja.fechaTermino === "1990-01-01T00:00:00" ? "-" : System.formatDateServer(estadoCaja.fechaTermino)}
-                  </Typography>
-                  </div>
-                  ))}
-                
-              </Box>
-            ): (
-              <Typography></Typography>
-            )}
-          </Grid>
-            
           </Grid>
         </Box>
       </Box>

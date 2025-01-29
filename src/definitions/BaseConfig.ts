@@ -15,6 +15,7 @@ const BaseConfig =  {
 
 
     dashboardRefreshUsuarios:30,
+    dashboardRefreshEstadoCajas:30,
 };
 
 export default BaseConfig;
