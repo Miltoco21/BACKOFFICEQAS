@@ -26,7 +26,7 @@ export default function ({
     return ReporteCompra.searchInServer({
       fechadesde: dayjs().format("YYYY-MM-DD"),
       fechahasta: dayjs().format("YYYY-MM-DD"),
-      tipocomprobantes: "Ticket,Ingreso Interno,Factura,Boleta",
+      tipoComprobantes: "Ticket,Ingreso Interno,Factura,Boleta",
     }, (compras, response) => {
       setCantidadCompras(response.data.cantidad);
 
