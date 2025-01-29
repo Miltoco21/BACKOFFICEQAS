@@ -43,6 +43,10 @@ const AdminConfigTabImpresion = ({
     rutEmpresa: useState(""),
     AlargarTicket: useState(""),
     ImprimirAlargar: useState(""),
+    Items: useState(""),
+    ItemsPreventa: useState(""),
+    ImprimirComanda: useState(""),
+    CodigosActividades: useState(""),
   };
 
   const [props, setProps] = useState([]);

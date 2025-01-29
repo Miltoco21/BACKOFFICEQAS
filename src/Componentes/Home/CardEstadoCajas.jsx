@@ -16,8 +16,6 @@ import RefreshInfoControl from '../Elements/RefreshInfoControl';
 
 
 export default function ({
-  setInactivos = () => { },
-  usuariosActivos
 }) {
   const {
     userData,

@@ -89,7 +89,7 @@ const Home = ({ }) => {
 
   useEffect(() => {
     solicitarRoles()
-    // revisarStockCriticos()
+    revisarStockCriticos()
   }, [])
 
   useEffect(() => {
@@ -171,7 +171,8 @@ const Home = ({ }) => {
             </Grid>
 
             <Grid item xs={12} sm={12} md={12} lg={12}>
-              <CardEstadoCajas />
+              <CardEstadoCajas
+              setInactivos={setUsuariosActivos} />
             </Grid>
 
           </Grid>
