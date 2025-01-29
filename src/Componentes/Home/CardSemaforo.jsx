@@ -3,6 +3,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Card, CardContent, CardActions, Button, Typography } from '@mui/material';
 import Model from '../../Models/Model';
 import dayjs from 'dayjs';
+import RefreshInfoControl from '../Elements/RefreshInfoControl';
 
 export default function({
 }) {
@@ -16,7 +17,7 @@ export default function({
 
   const fetchData = async () => 
   {
-    Model.getConexion(()=>{
+    return Model.getConexion(()=>{
       setEstado(1)
       setultimoCheck(dayjs().format("HH:mm") + "hs")
     },(err)=>{
@@ -36,7 +37,14 @@ export default function({
 
   return (
     <Card>
-        <CardContent>
+        <CardContent sx={{
+        position: "relative"
+      }}>
+
+        <RefreshInfoControl
+          variableEnSesion={"dashboardRefreshConexion"}
+          fetchInfo={fetchData}
+        />
           <Typography variant="body-md">Conexion</Typography>
           {estado !== null &&(
           <Typography variant="p"

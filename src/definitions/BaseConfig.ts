@@ -13,6 +13,7 @@ const BaseConfig =  {
 
     criterioCostoComercio:0,
 
+    dashboardRefreshConexion:20,
 
     dashboardRefreshUsuarios:30,
     dashboardRefreshEstadoCajas:30,
@@ -23,6 +24,7 @@ const BaseConfig =  {
     dashboardRefreshTodasPreventas:30,
     dashboardRefreshPreventasUsadas:30,
     dashboardRefreshPreventasDescartadas:30,
+    
 };
 
 export default BaseConfig;
