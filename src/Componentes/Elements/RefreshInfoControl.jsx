@@ -25,7 +25,7 @@ import dayjs from "dayjs";
 
 const RefreshInfoControl = ({
   variableEnSesion,
-  fetchInfo = ()=>{}//fun async
+  fetchInfo = () => { }//fun async
 }) => {
 
 
@@ -60,9 +60,9 @@ const RefreshInfoControl = ({
       setCargandoInfo(true)
 
       try {
-        fetchInfo().finally(() => {})
+        fetchInfo().finally(() => { })
       } catch (err) {
-      }finally{
+      } finally {
         setTimeout(() => {
           setCargandoInfo(false)
           nuevoTiempo = ModelConfig.get(variableEnSesion)
@@ -113,7 +113,11 @@ const RefreshInfoControl = ({
         }}
       >
         {tiempoRefresh >= 0 ? (
-          <Typography>
+          <Typography
+            sx={{
+              color: "#D4D3D3",
+            }}
+          >
             <CircularProgress
               variant="determinate"
               value={(tiempoRefresh * 100 / ModelConfig.get(variableEnSesion))}
@@ -121,6 +125,7 @@ const RefreshInfoControl = ({
               sx={{
                 position: "absolute",
                 top: "0px",
+                color: "#E6E5E5",
                 right: "0px"
               }}
             />
