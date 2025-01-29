@@ -11,7 +11,10 @@ const BaseConfig =  {
     porcentajeMargen:30,
     buttonDelayClick: 1500, //en milisegundos
 
-    criterioCostoComercio:0
+    criterioCostoComercio:0,
+
+
+    dashboardRefreshUsuarios:30,
 };
 
 export default BaseConfig;

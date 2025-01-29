@@ -15,7 +15,8 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TablePagination
+  TablePagination,
+  Typography
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -24,10 +25,15 @@ import dayjs from "dayjs";
 import SideBar from "../Componentes/NavBar/SideBar";
 import axios from "axios";
 import ModelConfig from "../Models/ModelConfig";
+import InputName from "../Componentes/Elements/Compuestos/InputName";
+import SmallButton from "../Componentes/Elements/SmallButton";
+import SmallDangerButton from "../Componentes/Elements/SmallDangerButton";
+import { height } from "@mui/system";
+import SmallSuccessButton from "../Componentes/Elements/SmallSuccessButton";
 
 const RankingProductos = () => {
   const apiUrl = ModelConfig.get().urlBase;
-  
+
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [data, setData] = useState([]);
@@ -41,39 +47,45 @@ const RankingProductos = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const [dataResult, setDataResult] = useState([]);
+  const [filtrarTexto, setFiltrarTexto] = useState("");
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
-    
+
     const params = {
       fechadesde: startDate ? startDate.format("YYYY-MM-DD") : "",
       fechahasta: endDate ? endDate.format("YYYY-MM-DD") : "",
       tipo: tipo.toString(),
     };
-    
+
     console.log("Iniciando fetchData con params:", params);
-    
+
     try {
       const url = apiUrl + `/ReporteVentas/ReporteVentasRankingProductoGET`;
       console.log("URL being fetched:", url);
-      
+
       const response = await axios.get(url, { params });
-      
+
       console.log("Respuesta del servidor:", response);
-      
+
       if (response.data) {
         setCantidad(response.data.cantidad);
         if (response.data.cantidad > 0 && response.data.reporteVentaRankingProductos) {
           setData(response.data.reporteVentaRankingProductos);
+          setDataResult(response.data.reporteVentaRankingProductos);
           console.log("Datos recibidos:", response.data.reporteVentaRankingProductos);
           setSnackbarMessage(`Se encontraron ${response.data.cantidad} resultados.`);
         } else {
           setData([]);
+          setDataResult([]);
           setSnackbarMessage("No se encontraron resultados.");
         }
       } else {
         console.warn("La respuesta no contiene datos:", response);
         setData([]);
+        setDataResult([]);
         setSnackbarMessage("No se encontraron resultados.");
       }
     } catch (error) {
@@ -81,7 +93,7 @@ const RankingProductos = () => {
       setError("Error fetching data");
       setSnackbarMessage("Error al buscar los datos");
     }
-    
+
     setSnackbarOpen(true);
     setLoading(false);
   };
@@ -117,10 +129,27 @@ const RankingProductos = () => {
     setPage(0);
   };
 
-  useEffect(()=>{
+
+  const filtrar = () => {
+    var dataFiltrada = []
+    dataResult.forEach((itemResult) => {
+      if (itemResult.descripcion.toLowerCase().indexOf(filtrarTexto) > -1) {
+        dataFiltrada.push(itemResult)
+      }
+    })
+
+    setData(dataFiltrada)
+  }
+
+  const quitarFiltro = () => {
+    setFiltrarTexto("")
+    setData(dataResult)
+  }
+
+  useEffect(() => {
     setStartDate(dayjs())
     setEndDate(dayjs())
-  },[])
+  }, [])
 
   return (
     <div style={{ display: "flex" }}>
@@ -188,6 +217,46 @@ const RankingProductos = () => {
               </Button>
             </Grid>
           </Grid>
+        </Grid>
+
+
+        <Grid container spacing={1} alignItems="center">
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+            <br />
+            <br />
+            <br />
+            <Typography>Filtrar</Typography>
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
+            <InputName
+              inputState={[filtrarTexto, setFiltrarTexto]}
+              label={"Descripcion"}
+              onEnter={filtrar}
+              withLabel={false}
+            />
+          </Grid>
+          <Grid item xs={12} sm={12} md={6} lg={6}>
+            <SmallSuccessButton
+              textButton={"Filtrar"}
+              actionButton={filtrar}
+              style={{
+                marginTop: "12px",
+                height: "50px"
+              }}
+            />
+            {filtrarTexto != "" && (
+              <SmallDangerButton
+                textButton={"Quitar Filtro"}
+                actionButton={quitarFiltro}
+                style={{
+                  marginTop: "12px",
+                  height: "50px"
+                }}
+              />
+            )}
+          </Grid>
+
+
         </Grid>
         {loading ? (
           <CircularProgress />

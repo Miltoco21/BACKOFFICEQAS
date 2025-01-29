@@ -296,6 +296,22 @@ class System {
         }
     }
 
+
+    static getPaginaActual() {
+        var urlActual = window.location.href + ""
+        urlActual = urlActual.replace("https", "")
+        urlActual = urlActual.replace("http", "")
+        urlActual = urlActual.replace("://", "")
+
+        var pagina = ""
+        if (urlActual.indexOf("/") > -1) {
+            const urlArr = urlActual.split("/")
+            pagina = urlArr[urlArr.length - 1]
+        }
+
+        return pagina
+    }
+
 }
 
 

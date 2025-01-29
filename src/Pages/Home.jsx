@@ -96,7 +96,7 @@ const Home = ({}) => {
   useEffect(()=>{
     solicitarEstadosCajas()
     solicitarRoles()
-    revisarStockCriticos()
+    // revisarStockCriticos()
   },[])
 
   useEffect(()=>{

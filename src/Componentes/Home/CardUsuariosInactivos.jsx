@@ -36,7 +36,7 @@ export default function({
   }
   
   const clasificaUsuarios = (usus)=>{
-    console.log("clasificando", usus)
+    // console.log("clasificando", usus)
     const ususInact = []
     usus.forEach((usu,ix)=>{
       if(!esActivo(usu)){

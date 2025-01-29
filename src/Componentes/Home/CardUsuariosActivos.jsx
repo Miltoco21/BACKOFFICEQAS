@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext, useEffect } from 'react';
 import { Card, CardContent, CardActions, Button, Typography, Box } from '@mui/material';
-import { CircularProgress,  } from '@mui/material';
+import { CircularProgress, } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import ModelConfig from '../../Models/ModelConfig';
 import dayjs from 'dayjs';
@@ -10,94 +10,108 @@ import ReporteVenta from '../../Models/ReporteVenta';
 import User from '../../Models/User';
 import LongClick from '../../Helpers/LongClick';
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import System from '../../Helpers/System';
+import RefreshInfoControl from '../Elements/RefreshInfoControl';
 
 
-export default function({
-  setActivos = ()=>{}
+export default function ({
+  setActivos = () => { }
 }) {
   const {
     userData,
     showMessage,
     showConfirm
   } = useContext(SelectedOptionsContext);
-  
+
   const [usuariosActivos, setUsuariosActivos] = useState([])
 
-  const fetchInfo = ()=>{
-    User.getActivos((usuariosx)=>{
+  const  fetchInfo = () => {
+    console.log("fetchInfo")
+    return User.getActivos((usuariosx) => {
       setUsuariosActivos(usuariosx)
       setActivos(usuariosx)
-    },()=>{})
+    }, () => {})
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchInfo()
-  },[])
+  }, [])
 
-  return (usuariosActivos.length>0 ? (
-      <Box
+  
+
+  return (usuariosActivos.length > 0 ? (
+    <Box
       sx={{
         bgcolor: "background.paper",
         boxShadow: 2,
         p: 4,
         overflow: "auto", // Added scrollable feature
-        padding:"10px",
+        padding: "10px",
+        position: "relative"
       }}
-      >
-        <Typography variant='h5'>Usuarios Activos</Typography>
-        { usuariosActivos.map((usu,ix)=>{
+    >
+      <RefreshInfoControl 
+        variableEnSesion = { "dashboardRefreshUsuarios" }
+        fetchInfo={fetchInfo}
+      />
+
+      <Typography variant='h5'>Usuarios Activos</Typography>
+      {
+        usuariosActivos.map((usu, ix) => {
           const longBoleta = new LongClick(1);
-          longBoleta.onClick(()=>{
+          longBoleta.onClick(() => {
             // alert("click normal")
           })
-          longBoleta.onLongClick(()=>{
-            showConfirm("Cerrar la sesion de " + usu.nombre+ " " + usu.apellido + "?",()=>{
+          longBoleta.onLongClick(() => {
+            showConfirm("Cerrar la sesion de " + usu.nombre + " " + usu.apellido + "?", () => {
               const user = new User()
               user.fill(usu)
-              user.doLogoutInServer(()=>{
+              user.doLogoutInServer(() => {
                 showMessage("Realizado correctamente")
                 fetchInfo()
-              },()=>{
+              }, () => {
                 showMessage("no se pudo realizar")
               })
             })
           })
           return (
-          <Typography sx={{
-          borderRadius:"3px",
-          padding:"10px",
-          backgroundColor:"#ffde06",
-          color:"#000",
-          margin:"10px",
-          border:"1px solid #000",
-          cursor:"pointer",
-          userSelect:"none",
-          display:"inline-block"
-        }} key={ix} 
-          onTouchStart={()=>{longBoleta.onStart()}}
-          onMouseDown={()=>{longBoleta.onStart()}}
-          onTouchEnd={()=>{longBoleta.onEnd()}}
-          onMouseUp={()=>{longBoleta.onEnd()}}
-          onMouseLeave={()=>{longBoleta.cancel()}}
-          onTouchMove={()=>{longBoleta.cancel()}}
-          >
-          <Typography variant='p'>
-            {usu.nombre} {usu.apellido}
-          </Typography>
-          <Typography variant='p' sx={{ display:"block" }}>
-            Cod. {usu.codigoUsuario}
-          </Typography>
-          <Typography variant='p' sx={{ display:"block" }}>
-            Sucursal {usu.codigoSucursal}
-          </Typography>
-          <Typography variant='p' sx={{ display:"block" }}>
-            Caja {usu.puntoVenta}
-          </Typography>
-        </Typography>) }
-        )}
-      </Box>
-    ):(
-      <Typography></Typography>
-    )
+            <Typography sx={{
+              borderRadius: "3px",
+              padding: "10px",
+              backgroundColor: "#ffde06",
+              color: "#000",
+              margin: "10px",
+              border: "1px solid #000",
+              cursor: "pointer",
+              userSelect: "none",
+              display: "inline-block"
+            }} key={ix}
+              onTouchStart={() => { longBoleta.onStart() }}
+              onMouseDown={() => { longBoleta.onStart() }}
+              onTouchEnd={() => { longBoleta.onEnd() }}
+              onMouseUp={() => { longBoleta.onEnd() }}
+              onMouseLeave={() => { longBoleta.cancel() }}
+              onTouchMove={() => { longBoleta.cancel() }}
+            >
+              <Typography variant='p'>
+                {usu.nombre} {usu.apellido}
+              </Typography>
+              <Typography variant='p' sx={{ display: "block" }}>
+                Cod. {usu.codigoUsuario}
+              </Typography>
+              <Typography variant='p' sx={{ display: "block" }}>
+                Sucursal {usu.codigoSucursal}
+              </Typography>
+              <Typography variant='p' sx={{ display: "block" }}>
+                Caja {usu.puntoVenta}
+              </Typography>
+            </Typography>)
+        }
+        )
+      }
+    </Box >
+  ) : (
+    <Typography></Typography>
+  )
   );
 }

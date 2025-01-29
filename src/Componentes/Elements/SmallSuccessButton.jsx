@@ -9,7 +9,7 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import ModelConfig from "../../Models/ModelConfig";
 
 
-const SmallDangerButton = ({ 
+const SmallSuccessButton = ({ 
   textButton,
   actionButton,
   style = {}
@@ -22,10 +22,10 @@ const SmallDangerButton = ({
       sx={{
         ...{
           width: "130px",
-          backgroundColor: "#d33131",
+          backgroundColor: "#259825",
           color: "white",
           "&:hover": {
-            backgroundColor: "#F84747 ",
+            backgroundColor: "#52E138 ",
             color: "white",
           },
           margin: "5px",
@@ -50,4 +50,4 @@ const SmallDangerButton = ({
   );
 };
 
-export default SmallDangerButton;
+export default SmallSuccessButton;

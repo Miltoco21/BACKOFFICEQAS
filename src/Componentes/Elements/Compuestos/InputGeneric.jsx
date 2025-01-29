@@ -12,12 +12,12 @@ import User from "../../../Models/User";
 import Validator from "../../../Helpers/Validator";
 
 
-const InputName = ({
+const InputGeneric = ({
   inputState,
   validationState,
   withLabel = true,
   autoFocus = false,
-  fieldName = "name",
+  fieldName = "generic",
   label = fieldName[0].toUpperCase() + fieldName.substr(1),
   minLength = null,
   canAutoComplete = false,
@@ -31,13 +31,13 @@ const InputName = ({
     showMessage
   } = useContext(SelectedOptionsContext);
 
-  const [name, setName] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
+  const [generic, setGeneric] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
   const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
   const [keyPressed, setKeyPressed] = useState(false)
 
   const validate = () => {
     // console.log("validate de:" + fieldName)
-    const len = name.length
+    const len = generic.length
     // console.log("len:", len)
     const reqOk = (!required || (required && len > 0))
     var badMinlength = false
@@ -93,34 +93,31 @@ const InputName = ({
       showMessage("Valor erroneo")
       return false
     }
-    if (Validator.isNombre(value)) {
-      // console.log(value + " es valido")
-      setName(value);
-    } else {
-      // console.log("es incorrecta")
-      showMessage("Valor erroneo")
+    // if (Validator.isNombre(value)) {
+    //   // console.log(value + " es valido")
+      setGeneric(value);
+    // } else {
+    //   // console.log("es incorrecta")
+    //   showMessage("Valor erroneo")
 
-    }
+    // }
   }
 
   const checkChangeBlur = (event) => {
-    if (name.substr(-1) == " ") {
-      setName(name.trim())
+    var vl = generic + ""
+    if (vl.substr(-1) == " ") {
+      setGeneric(vl.trim())
     }
   }
 
   useEffect(() => {
-    // console.log("cambio inputState")
-    // console.log(inputState)
     validate()
   }, [])
 
 
   useEffect(() => {
-    // console.log("cambio name")
-    // console.log(name)
     validate()
-  }, [name])
+  }, [generic])
 
   return (
     <>
@@ -136,7 +133,7 @@ const InputName = ({
         required={required}
         type="text"
         label={label}
-        value={name}
+        value={generic}
         onChange={checkChange}
         onBlur={checkChangeBlur}
         onKeyDown={checkKeyDown}
@@ -145,4 +142,4 @@ const InputName = ({
   );
 };
 
-export default InputName;
+export default InputGeneric;
