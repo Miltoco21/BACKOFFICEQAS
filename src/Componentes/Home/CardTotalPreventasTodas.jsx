@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import ReporteVenta from '../../Models/ReporteVenta';
 import System from '../../Helpers/System';
+import RefreshInfoControl from '../Elements/RefreshInfoControl';
 
 export default function ({
 }) {
@@ -16,8 +17,8 @@ export default function ({
   const [total, setTotal] = useState(0)
   const [cantidad, setCantidad] = useState([])
 
-  const fetchDataVentas = async () => {
-    ReporteVenta.getInstance().searchPreventasInServer({
+  const fetchDataPreventas = async () => {
+    return ReporteVenta.getInstance().searchPreventasInServer({
       // fechadesde: "2025-01-01",
       fechadesde: dayjs().format("YYYY-MM-DD"),
       fechahasta: dayjs().format("YYYY-MM-DD"),
@@ -43,14 +44,22 @@ export default function ({
   };
 
   useEffect(() => {
-    fetchDataVentas()
+    fetchDataPreventas()
   }, [])
 
   return (
     <Card sx={{
       backgroundColor: "#EEF4F9",
     }}>
-      <CardContent>
+      <CardContent sx={{
+        position: "relative"
+      }}>
+
+        <RefreshInfoControl
+          variableEnSesion={"dashboardRefreshTodasPreventas"}
+          fetchInfo={fetchDataPreventas}
+        />
+
         <div style={{
           display: "inline-block",
           padding: "15px 30px",

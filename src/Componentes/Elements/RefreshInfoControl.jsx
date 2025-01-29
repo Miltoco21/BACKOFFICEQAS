@@ -25,7 +25,7 @@ import dayjs from "dayjs";
 
 const RefreshInfoControl = ({
   variableEnSesion,
-  fetchInfo//fun async
+  fetchInfo = ()=>{}//fun async
 }) => {
 
 
@@ -58,13 +58,17 @@ const RefreshInfoControl = ({
     var nuevoTiempo = tiempoRefresh - 1
     if (nuevoTiempo < 0) {
       setCargandoInfo(true)
-      fetchInfo().finally(() => {
+
+      try {
+        fetchInfo().finally(() => {})
+      } catch (err) {
+      }finally{
         setTimeout(() => {
           setCargandoInfo(false)
           nuevoTiempo = ModelConfig.get(variableEnSesion)
           setTiempoRefresh(nuevoTiempo)
         }, 1 * 1000);
-      })
+      }
       return
     }
     // console.log("cicloTiempoRefresh..nuevoTiempo", nuevoTiempo)

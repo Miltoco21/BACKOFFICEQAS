@@ -16,6 +16,13 @@ const BaseConfig =  {
 
     dashboardRefreshUsuarios:30,
     dashboardRefreshEstadoCajas:30,
+
+    dashboardRefreshVentas:30,
+    dashboardRefreshCompras:30,
+
+    dashboardRefreshTodasPreventas:30,
+    dashboardRefreshPreventasUsadas:30,
+    dashboardRefreshPreventasDescartadas:30,
 };
 
 export default BaseConfig;
