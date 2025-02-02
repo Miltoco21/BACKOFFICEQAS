@@ -7,6 +7,7 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
   Box,
+  Grid,
   TextField,
   Table,
   TableBody,
@@ -35,10 +36,15 @@ import Product from "../../Models/Product";
 import SearchListProductItem from "./SearchListProductItem";
 import System from "../../Helpers/System";
 import ProductoCriticoItem from "./ProductoCriticoItem";
+import ProductoValorizadoItem from "./ProductoValorizadoItem";
 
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 const ITEMS_PER_PAGE = 10;
-const ProductosCriticos = ({
+const ProductosValorizados = ({
   refresh,
   setRefresh
 }) => {
@@ -48,6 +54,9 @@ const ProductosCriticos = ({
     showLoading,
     hideLoading
   } = useContext(SelectedOptionsContext);
+
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1000);
@@ -76,10 +85,9 @@ const ProductosCriticos = ({
 
   const listarProductos = async () => {
     showLoading("Cargando productos...")
-
     Product.getInstance().getCriticosPaginate({
       pageNumber: currentPage,
-      rowPage:ITEMS_PER_PAGE
+      rowPage: ITEMS_PER_PAGE
     }, (prods, response) => {
       if (Array.isArray(response.data.productos)) {
         setProduct(response.data.productos);
@@ -128,30 +136,70 @@ const ProductosCriticos = ({
   }, [refresh]);
 
 
-
-  const handleCloseEditModal = () => {
-    setOpenEditModal(false);
-  };
-  const handleOpenDialog = (product) => {
-    setProductToDelete(product);
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setProductToDelete(null);
-  };
+  useEffect(()=>{
+    setStartDate(dayjs())
+    setEndDate(dayjs())
+    
+  },[])
 
   return (
     <Box sx={{ p: 2, mb: 4 }}>
       <div>
         {/* <Tabs value={selectedTab} onChange={handleTabChange}> */}
         <Tabs value={0}>
-          <Tab label="Productos con stock criticos" />
+          <Tab label="Stock valorizado" />
           {/* <Tab label="Productos con codigos" /> */}
         </Tabs>
         {/* <div style={{ p: 2, mt: 4 }} role="tabpanel" hidden={selectedTab !== 0}> */}
         <div style={{ p: 2, mt: 4 }} role="tabpanel">
+
+
+
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+
+            <Grid item xs={12} md={3}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Fecha Inicio"
+                  value={startDate}
+                  onChange={(newValue) => setStartDate(newValue)}
+                  format="DD/MM/YYYY"
+                  slotProps={{
+                    textField: {
+                      sx: { mb: 2 },
+                      fullWidth: true,
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Fecha Término"
+                  value={endDate}
+                  onChange={(newValue) => setEndDate(newValue)}
+                  format="DD/MM/YYYY"
+                  slotProps={{
+                    textField: {
+                      sx: { mb: 2 },
+                      fullWidth: true,
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <Button
+                sx={{ p: 2, mb: 3 }}
+                variant="contained"
+                onClick={listarProductos}
+                fullWidth
+              >
+                Buscar
+              </Button>
+            </Grid>
+          </Grid>
 
           <Table>
             <TableHead>
@@ -162,8 +210,6 @@ const ProductosCriticos = ({
                 <TableCell>Precio venta </TableCell>
                 <TableCell>Stock actual</TableCell>
                 <TableCell>Stock critico</TableCell>
-                <TableCell>Marca</TableCell>
-                <TableCell>Ranking</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -173,7 +219,7 @@ const ProductosCriticos = ({
                 </TableRow>
               ) : (
                 pageProduct.map((product, index) => (
-                  <ProductoCriticoItem
+                  <ProductoValorizadoItem
                     product={product}
                     key={index}
                     index={index}
@@ -197,4 +243,4 @@ const ProductosCriticos = ({
   );
 };
 
-export default ProductosCriticos;
+export default ProductosValorizados;

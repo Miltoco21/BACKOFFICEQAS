@@ -136,6 +136,7 @@ export default function PermanentDrawerLeft() {
             { text: "Ranking de Venta por forma de pago", link: "/reportes/rankingventas",icon: <SummarizeIcon />},
             { text: "Ranking de Venta de Productos", link: "/reportes/rankingproductos",icon: <SummarizeIcon />},
             { text: "Reporte stock critico", link: "/reportes/stockcriticos",icon: <SummarizeIcon style={{color:"red"}}  />},
+            { text: "Reporte stock valorizado", link: "/reportes/reportestockvalorizado",icon: <SummarizeIcon style={{color:"springgreen"}}  />},
             { text: "Reporte costos ganancias", link: "/reportes/costosganancias",icon: <SummarizeIcon />},
             { text: "Libro de Ventas", link: "/reportes/rankinglibroventas",icon: <SummarizeIcon />},
             { text: "Libro de Compras", link: "/reportes/rankinglibrocompras",icon: <SummarizeIcon />},

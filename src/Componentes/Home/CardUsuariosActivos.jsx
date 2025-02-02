@@ -26,7 +26,7 @@ export default function ({
   const [usuariosActivos, setUsuariosActivos] = useState([])
 
   const  fetchInfo = () => {
-    console.log("fetchInfo")
+    // console.log("fetchInfo")
     return User.getActivos((usuariosx) => {
       setUsuariosActivos(usuariosx)
       setActivos(usuariosx)

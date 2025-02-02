@@ -53,6 +53,7 @@ import PasarelaPago from './Pages/PasarelaPago';
 import Preventa from './Pages/PreventaSucursal';
 import ReporteZ from './Pages/ReporteZ';
 import ReporteCierreZ from './Pages/ReporteCierreZ';
+import ReporteStockValorizado from './Pages/ReporteStockValorizado';
 
 function App() {
   return (
@@ -101,6 +102,7 @@ function App() {
             <Route path="stockmobile" element={<StockMobile />} />
             <Route path="reportes/reportez" element={<ReporteZ />} />
             <Route path="reportes/reportecierrez" element={<ReporteCierreZ />} />
+            <Route path="reportes/reportestockvalorizado" element={<ReporteStockValorizado />} />
           </Routes>
         </SelectedOptionsProvider>
       </LocalizationProvider>
