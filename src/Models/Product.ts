@@ -210,28 +210,28 @@ class Product extends Model {
         }
     }
 
-
-
-
-
-
-    static async getStockValorizado(data: {
+    static async getStockValorizadoPaginado(data: {
         fechadesde: string,
         fechahasta: string,
         tipo: number,
 
-        // pageNumber: number,
-        // rowPage: number,
+        pageNumber: number,
+        rowPage: number,
     }, callbackOk, callbackWrong) {
+
+
+        // &precio=PrecioVenta&pageNumber=1&rowPage=10
+
 
         const configs = ModelConfig.get()
         var url = configs.urlBase
-            + "/ReporteVentas/ReporteVentaCostoMargen?"//cambiar
+            + "/ProductosTmp/GetProductosStockValorizadoPaginados?"//cambiar
             + "fechadesde=" + data.fechadesde
             + "&fechahasta=" + data.fechahasta
+            + "&precio=" + data.tipo
 
-            // + "&pageNumber=" + data.pageNumber
-            // + "&rowPage=" + data.rowPage
+            + "&pageNumber=" + data.pageNumber
+            + "&rowPage=" + data.rowPage
 
         EndPoint.sendGet(url, (responseData, response) => {
             callbackOk(responseData, response);

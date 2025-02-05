@@ -25,6 +25,7 @@ import {
   DialogContentText,
   DialogTitle,
   Button,
+  Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -42,6 +43,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import SelectList from "../Elements/Compuestos/SelectList";
 
 const ITEMS_PER_PAGE = 10;
 const ProductosValorizados = ({
@@ -57,6 +59,10 @@ const ProductosValorizados = ({
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [tipoPrecio, setTipoPrecio] = useState(-1);
+
+  const [totalCosto, setTotalCosto] = useState(0);
+  const [totalVenta, setTotalVenta] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1000);
@@ -84,8 +90,12 @@ const ProductosValorizados = ({
   };
 
   const listarProductos = async () => {
+    if (!startDate || !endDate) return
     showLoading("Cargando productos...")
-    Product.getInstance().getCriticosPaginate({
+    Product.getStockValorizadoPaginado({
+      fechadesde: startDate ? startDate.format("YYYY-MM-DD") : "",
+      fechahasta: endDate ? endDate.format("YYYY-MM-DD") : "",
+      tipo: tipoPrecio === 0 ? "PrecioCosto" : "PrecioVenta",
       pageNumber: currentPage,
       rowPage: ITEMS_PER_PAGE
     }, (prods, response) => {
@@ -95,6 +105,16 @@ const ProductosValorizados = ({
         setPageCount(response.data.cantidadRegistros);
         setPageProduct(response.data.productos);
         setHasResult(response.data.productos.length > 0)
+
+        var totalCostox = 0
+        var totalVentax = 0
+        response.data.productos.forEach((prod)=>{
+          totalCostox += prod.precioCosto
+          totalVentax += prod.precioVenta
+        })
+
+        setTotalCosto(totalCostox)
+        setTotalVenta(totalVentax)
       }
       hideLoading()
     }, (error) => {
@@ -136,11 +156,11 @@ const ProductosValorizados = ({
   }, [refresh]);
 
 
-  useEffect(()=>{
+  useEffect(() => {
     setStartDate(dayjs())
     setEndDate(dayjs())
-    
-  },[])
+    setTipoPrecio(0)
+  }, [])
 
   return (
     <Box sx={{ p: 2, mb: 4 }}>
@@ -157,7 +177,7 @@ const ProductosValorizados = ({
 
           <Grid container spacing={2} sx={{ mt: 2 }}>
 
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} sm={12} md={3} lg={3}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="Fecha Inicio"
@@ -173,7 +193,7 @@ const ProductosValorizados = ({
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} sm={12} md={3} lg={3}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="Fecha Término"
@@ -189,7 +209,21 @@ const ProductosValorizados = ({
                 />
               </LocalizationProvider>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} sm={12} md={3} lg={3}>
+              <SelectList selectItems={[
+                "Precio Costo",
+                "Precio Venta"
+              ]}
+                withLabel={false}
+                styles={{
+                  position: 'relative',
+                  top: "-16px"
+                }}
+                required={true}
+                inputState={[tipoPrecio, setTipoPrecio]}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} md={3} lg={3}>
               <Button
                 sx={{ p: 2, mb: 3 }}
                 variant="contained"
@@ -199,6 +233,13 @@ const ProductosValorizados = ({
                 Buscar
               </Button>
             </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              {tipoPrecio === 0 ? (
+                <Typography variant="p">Total costos: ${System.formatMonedaLocal(totalCosto,false)}</Typography>
+              ) : (
+                <Typography variant="p">Total ventas: ${System.formatMonedaLocal(totalVenta,false)}</Typography>
+              )}
+            </Grid>
           </Grid>
 
           <Table>
@@ -206,8 +247,21 @@ const ProductosValorizados = ({
               <TableRow>
                 <TableCell>Codigo Producto </TableCell>
                 <TableCell>Descripcion</TableCell>
-                <TableCell>Precio costo </TableCell>
-                <TableCell>Precio venta </TableCell>
+
+                {tipoPrecio === 0 && (
+                  <TableCell>Precio costo </TableCell>
+                )}
+                {/* {tipoPrecio === 0 && (
+                  <TableCell>Subtotal costo </TableCell>
+                )} */}
+
+                {tipoPrecio === 1 && (
+                  <TableCell>Precio venta </TableCell>
+                )}
+                {/* {tipoPrecio === 1 && (
+                  <TableCell>Subtotal venta </TableCell>
+                )} */}
+
                 <TableCell>Stock actual</TableCell>
                 <TableCell>Stock critico</TableCell>
               </TableRow>
@@ -220,10 +274,10 @@ const ProductosValorizados = ({
               ) : (
                 pageProduct.map((product, index) => (
                   <ProductoValorizadoItem
+                    tipoPrecio={tipoPrecio}
                     product={product}
                     key={index}
                     index={index}
-                    currentPage={currentPage}
                   />
                 ))
               )}

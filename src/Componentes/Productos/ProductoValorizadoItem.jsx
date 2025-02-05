@@ -10,8 +10,12 @@ import System from "../../Helpers/System";
 const ProductoValorizadoItem = ({
   product,
   index,
-  currentPage
+  tipoPrecio
 }) => {
+
+  useEffect(() => {
+    console.log("llega el item", product)
+  }, [])
 
   return (
     <TableRow key={index}>
@@ -19,11 +23,16 @@ const ProductoValorizadoItem = ({
       <TableCell>
         {product.nombre}
       </TableCell>
+      {/* <TableCell> */}
+      {/* {System.formatMonedaLocal(product.precioCosto, false)} <br /> */}
+      {/* </TableCell> */}
       <TableCell>
-        {System.formatMonedaLocal(product.precioCosto, false)} <br />
-      </TableCell>
-      <TableCell>
-        {System.formatMonedaLocal(product.precioVenta, false)} <br />
+        {tipoPrecio === 0 ? (
+          System.formatMonedaLocal(product.precioCosto, false) 
+        ) : (
+          System.formatMonedaLocal(product.precioVenta, false) 
+        )}
+        < br />
       </TableCell>
       <TableCell>
         {product.stockActual} <br />
