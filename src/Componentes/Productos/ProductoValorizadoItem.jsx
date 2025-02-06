@@ -13,10 +13,6 @@ const ProductoValorizadoItem = ({
   tipoPrecio
 }) => {
 
-  useEffect(() => {
-    console.log("llega el item", product)
-  }, [])
-
   return (
     <TableRow key={index}>
       <TableCell>{product.idProducto}</TableCell>
