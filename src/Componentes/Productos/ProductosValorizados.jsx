@@ -109,8 +109,10 @@ const ProductosValorizados = ({
         var totalCostox = 0
         var totalVentax = 0
         response.data.productos.forEach((prod)=>{
-          totalCostox += prod.precioCosto
-          totalVentax += prod.precioVenta
+          const subtotalCosto = prod.precioCosto * prod.stockActual
+          const subtotalVenta = prod.precioVenta * prod.stockActual
+          totalCostox += subtotalCosto
+          totalVentax += subtotalVenta
         })
 
         setTotalCosto(totalCostox)
@@ -263,7 +265,7 @@ const ProductosValorizados = ({
                 )} */}
 
                 <TableCell>Stock actual</TableCell>
-                <TableCell>Stock critico</TableCell>
+                <TableCell>total</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

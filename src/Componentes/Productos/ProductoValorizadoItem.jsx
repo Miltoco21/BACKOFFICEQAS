@@ -28,9 +28,9 @@ const ProductoValorizadoItem = ({
       {/* </TableCell> */}
       <TableCell>
         {tipoPrecio === 0 ? (
-          System.formatMonedaLocal(product.precioCosto, false) 
+          System.formatMonedaLocal(product.precioCosto, false)
         ) : (
-          System.formatMonedaLocal(product.precioVenta, false) 
+          System.formatMonedaLocal(product.precioVenta, false)
         )}
         < br />
       </TableCell>
@@ -38,7 +38,11 @@ const ProductoValorizadoItem = ({
         {product.stockActual} <br />
       </TableCell>
       <TableCell>
-        {product.stockCritico}
+        {tipoPrecio === 0 ? (
+          System.formatMonedaLocal(product.precioCosto * product.stockActual, false)
+        ) :
+          System.formatMonedaLocal(product.precioVenta * product.stockActual, false)
+        }
       </TableCell>
     </TableRow>
   );
