@@ -26,16 +26,16 @@ import {
 } from "@mui/material";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import ModelConfig from "../Models/ModelConfig";
+import ModelConfig from "../../../Models/ModelConfig";
 import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
-import Product from "../Models/Product";
-import Proveedor from "../Models/Proveedor";
-import { SelectedOptionsContext } from "../Componentes/Context/SelectedOptionsProvider";
-import Validator from "../Helpers/Validator";
-import BoxSelectTipo from "../Componentes/Proveedores/BoxSelectTipo";
-import System from "../Helpers/System";
+import Product from "../../../Models/Product";
+import Proveedor from "../../../Models/Proveedor";
+import { SelectedOptionsContext } from "../../../Componentes/Context/SelectedOptionsProvider";
+import Validator from "../../../Helpers/Validator";
+import BoxSelectTipo from "../../../Componentes/Proveedores/BoxSelectTipo";
+import System from "../../../Helpers/System";
 
-const IngresoDocProvBuscarProductos = ({
+const BuscarProductos = ({
   selectedProveedor,
   associating,
   setAssociating,
@@ -490,4 +490,4 @@ const IngresoDocProvBuscarProductos = ({
   );
 };
 
-export default IngresoDocProvBuscarProductos;
+export default BuscarProductos;

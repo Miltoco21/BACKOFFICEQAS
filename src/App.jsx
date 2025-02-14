@@ -14,16 +14,16 @@ import Login from './Pages/Login';
 import Usuarios from './Pages/Usuarios';
 import Sucursales from './Pages/Sucursales';
 import Precios from './Pages/Precios';
-import Proveedores from './Pages/Proveedores';
+import Proveedores from './Pages/proveedores/Proveedores';
 import Productos from './Pages/Productos';
 import Clientes from './Pages/Clientes';
-import IngresoDocumento from './Pages/IngresoDocumentoProvedor';
+import IngresoDocumento from './Pages/proveedores/ingresoDocumento/Index';
 import Categorias from './Pages/Categoria';
 import SubCategorias from './Pages/SubCategoria';
 import Familias from './Pages/Familias';
 import SubFamilias from './Pages/SubFamilias';
 import ProtectedRoute from './Componentes/ProtectedRoute';
-import ProveedoresDocumentosPorPagar from './Pages/ProveedoresDocumentosPorPagar';
+import ProveedoresDocumentosPorPagar from './Pages/proveedores/documentoPorPagar/DocumentosPorPagar';
 import Reportes from './Pages/Reportes';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fontsource/roboto/300.css';
@@ -87,7 +87,7 @@ function App() {
             <Route path="/productos/familias" element={<Familias />} />
             <Route path="/productos/subfamilias" element={<SubFamilias />} />
             <Route path="/proveedores/ingresodocumento" element={<IngresoDocumento />} />
-            <Route path="/proveedores/reportes" element={<ProveedoresDocumentosPorPagar />} />
+            <Route path="/proveedores/documentosporpagar" element={<ProveedoresDocumentosPorPagar />} />
             <Route path="reportes" element={<Reportes />} />
             <Route path="reportes/cuentacorrienteclientes" element={<ReportesCtaCorriente />} />
             <Route path="reportes/cuentacorrienteproveedores" element={<ReportesCtaCorrienteProv />} />

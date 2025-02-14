@@ -4,10 +4,10 @@ import Box from "@mui/material/Box";
 import Button from "@mui/joy/Button";
 import Add from "@mui/icons-material/Add";
 import Modal from "@mui/joy/Modal";
-import SideBar from "../Componentes/NavBar/SideBar";
-import SearchListProveedores from "../Componentes/Proveedores/SearchListProveedores";
+import SideBar from "../../Componentes/NavBar/SideBar";
+import SearchListProveedores from "./SearchListProveedores";
 import { Dialog } from "@mui/material";
-import FormularioProveedor from "../Componentes/Proveedores/FormularioProveedor";
+import FormularioProveedor from "./FormularioProveedor";
 
 const Proveedores = () => {
   const [open, setOpen] = useState(false);

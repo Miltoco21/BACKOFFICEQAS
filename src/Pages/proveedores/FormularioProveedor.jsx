@@ -27,19 +27,19 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ModelConfig from "../../Models/ModelConfig";
-import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import { SelectedOptionsContext } from "../../Componentes/Context/SelectedOptionsProvider";
 import Proveedor from "../../Models/Proveedor";
 import { Check, Dangerous } from "@mui/icons-material";
 import System from "../../Helpers/System";
-import InputRutProveedor from "../Elements/Compuestos/InputRutProveedor";
-import InputName from "../Elements/Compuestos/InputName";
-import InputEmail from "../Elements/Compuestos/InputEmail";
-import InputPhone from "../Elements/Compuestos/InputPhone";
-import SelectRegion from "../Elements/Compuestos/SelectRegion";
-import SelectComuna from "../Elements/Compuestos/SelectComuna";
-import InputPage from "../Elements/Compuestos/InputPage";
+import InputRutProveedor from "../../Componentes/Elements/Compuestos/InputRutProveedor";
+import InputName from "../../Componentes/Elements/Compuestos/InputName";
+import InputEmail from "../../Componentes/Elements/Compuestos/InputEmail";
+import InputPhone from "../../Componentes/Elements/Compuestos/InputPhone";
+import SelectRegion from "../../Componentes/Elements/Compuestos/SelectRegion";
+import SelectComuna from "../../Componentes/Elements/Compuestos/SelectComuna";
+import InputPage from "../../Componentes/Elements/Compuestos/InputPage";
 import CriterioCosto from "../../definitions/CriterioCosto";
-import BoxOptionList from "../Elements/BoxOptionList";
+import BoxOptionList from "../../Componentes/Elements/BoxOptionList";
 
 const FormularioProveedor = ({
   openDialog,

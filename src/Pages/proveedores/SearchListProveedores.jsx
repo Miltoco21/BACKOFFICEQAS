@@ -34,7 +34,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import EditarProveedor from "./EditarProveedor"; // Assuming you have this component
+import EditarProveedor from "../../Componentes/Proveedores/EditarProveedor"; // Assuming you have this component
 import PaymentsIcon from "@mui/icons-material/Payments";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";

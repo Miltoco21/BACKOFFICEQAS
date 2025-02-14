@@ -31,16 +31,19 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import SideBar from "../Componentes/NavBar/SideBar";
+import SideBar from "../../../Componentes/NavBar/SideBar";
 import axios from "axios";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ModelConfig from "../Models/ModelConfig";
-import User from "../Models/User";
+import ModelConfig from "../../../Models/ModelConfig";
+import User from "../../../Models/User";
+import PagoParcial from "../../../Componentes/ScreenDialog/PagoParcial";
+import PagoTransferencia from "../../../Componentes/ScreenDialog/PagoTransferencia";
+import PagoCheque from "../../../Componentes/ScreenDialog/PagoCheque";
 
 
-const ReportesProv = () => {
+const DocumentosPorPagar = () => {
   const apiUrl = ModelConfig.get().urlBase;
   const [proveedores, setProveedores] = useState([]);
   const [open, setOpen] = useState(false);
@@ -269,14 +272,14 @@ const ReportesProv = () => {
   const handleIndividualPayment = async () => {
     try {
       setLoading(true);
-  
+
       let endpoint = "";
       let requestBody = {};
-  
+
       switch (metodoPago) {
         case "TRANSFERENCIA":
           endpoint = `${apiUrl}/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
-  
+
           if (nombre === "") {
             setTransferenciaError("Por favor, ingresa el nombre.");
             setLoading(false);
@@ -317,7 +320,7 @@ const ReportesProv = () => {
             setLoading(false);
             return;
           }
-  
+
           requestBody = {
             deudaIds: [
               {
@@ -341,10 +344,10 @@ const ReportesProv = () => {
             },
           };
           break;
-  
+
         case "CHEQUE":
           endpoint = `${apiUrl}/Clientes/PostClientePagarDeudaChequeByIdCliente`;
-  
+
           requestBody = {
             deudaIds: [
               {
@@ -359,10 +362,10 @@ const ReportesProv = () => {
             // Add cheque-specific fields here if needed
           };
           break;
-  
+
         case "EFECTIVO":
           endpoint = `${apiUrl}/Proveedores/AddProveedorCompraPagar`;
-  
+
           requestBody = {
             fechaIngreso: new Date().toISOString(),
             codigoUsuario: 0, // Ajusta según tu lógica
@@ -379,31 +382,31 @@ const ReportesProv = () => {
           };
           break;
       }
-  
+
       console.log("Request Body:", requestBody);
-  
+
       const response = await axios.post(endpoint, requestBody);
-  
+
       console.log("Response:", response.data);
       console.log("ResponseStatus:", response.data.statusCode);
-  
-      if (response.data.statusCode === 201 ) {
+
+      if (response.data.statusCode === 201) {
         setSnackbarOpen(true);
         setSnackbarMessage(response.data.descripcion);
         handleClosePaymentProcess();
         setCantidadPagada(0);
-    
+
         handleDetailClose();
         handleTransferenciaModalClose();
         fetchProveedores();
-  
+
         setNombre("");
         setRut("");
         setSelectedBanco("");
         setTipoCuenta("");
         setNroCuenta("");
         setNroOperacion("");
-  
+
         setTimeout(() => {
           handleClosePaymentProcess();
         }, 2000);
@@ -416,7 +419,7 @@ const ReportesProv = () => {
       setLoading(false);
     }
   };
-  
+
 
   const totalGeneral = proveedores.reduce(
     (acc, proveedor) => acc + proveedor.total,
@@ -611,9 +614,8 @@ const ReportesProv = () => {
           },
         };
       } else if (metodoPago === "EFECTIVO") {
-        endpoint = `${
-          apiUrl
-        }/Clientes/PostClientePagarDeudaEfectivoByIdCliente`;
+        endpoint = `${apiUrl
+          }/Clientes/PostClientePagarDeudaEfectivoByIdCliente`;
         requestBody = {
           montoPagado: montoAPagar,
           metodoPago: metodoPago,
@@ -702,15 +704,13 @@ const ReportesProv = () => {
     try {
       setLoading(true);
 
-      let endpoint = `${
-        apiUrl
-      }/Clientes/PostClientePagarDeudaBackOfficeByIdCliente `;
+      let endpoint = `${apiUrl
+        }/Clientes/PostClientePagarDeudaBackOfficeByIdCliente `;
 
-      
+
       if (metodoPago === "TRANSFERENCIA") {
-        endpoint = `${
-          apiUrl
-        }/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
+        endpoint = `${apiUrl
+          }/Clientes/PostClientePagarDeudaTransferenciaByIdCliente`;
 
         if (
           nombre === "" ||
@@ -763,9 +763,9 @@ const ReportesProv = () => {
         metodoPago: metodoPago
       };
 
-      if(metodoPago === "TRANSFERENCIA"){
+      if (metodoPago === "TRANSFERENCIA") {
         requestBody.
-        transferencias  = {
+          transferencias = {
           idCuentaCorrientePago:
             deudaIds.length > 0 ? deudaIds[0].idCuentaCorriente : 0,
           nombre: nombre,
@@ -1002,12 +1002,12 @@ const ReportesProv = () => {
                 <TableCell></TableCell>
               </TableRow>
               <TableRow>
-            <TableCell>
-              <strong>Total General:</strong>
-            </TableCell>
-            <TableCell colSpan={5}>
-              <strong>${totalGeneral.toLocaleString("es-ES")}</strong>
-            </TableCell>
+                <TableCell>
+                  <strong>Total General:</strong>
+                </TableCell>
+                <TableCell colSpan={5}>
+                  <strong>${totalGeneral.toLocaleString("es-ES")}</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -1096,7 +1096,7 @@ const ReportesProv = () => {
                                     style={{
                                       color:
                                         order.field === "folio" &&
-                                        order.direction === "asc"
+                                          order.direction === "asc"
                                           ? "black"
                                           : "dimgrey",
                                     }}
@@ -1106,7 +1106,7 @@ const ReportesProv = () => {
                                     style={{
                                       color:
                                         order.field === "folio" &&
-                                        order.direction === "desc"
+                                          order.direction === "desc"
                                           ? "black"
                                           : "dimgrey",
                                     }}
@@ -1119,7 +1119,7 @@ const ReportesProv = () => {
                                     style={{
                                       color:
                                         order.field === "fechaIngreso" &&
-                                        order.direction === "asc"
+                                          order.direction === "asc"
                                           ? "black"
                                           : "dimgrey",
                                     }}
@@ -1129,7 +1129,7 @@ const ReportesProv = () => {
                                     style={{
                                       color:
                                         order.field === "fechaIngreso" &&
-                                        order.direction === "desc"
+                                          order.direction === "desc"
                                           ? "black"
                                           : "dimgrey",
                                     }}
@@ -1142,7 +1142,7 @@ const ReportesProv = () => {
                                     style={{
                                       color:
                                         order.field === "total" &&
-                                        order.direction === "asc"
+                                          order.direction === "asc"
                                           ? "black"
                                           : "dimgrey",
                                     }}
@@ -1152,7 +1152,7 @@ const ReportesProv = () => {
                                     style={{
                                       color:
                                         order.field === "total" &&
-                                        order.direction === "desc"
+                                          order.direction === "desc"
                                           ? "black"
                                           : "dimgrey",
                                     }}
@@ -1384,8 +1384,8 @@ const ReportesProv = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  disabled={ selectedTotal <= 0 }
-                  onClick={() =>handleOpenGroupPaymentProcess()}
+                  disabled={selectedTotal <= 0}
+                  onClick={() => handleOpenGroupPaymentProcess()}
                 >
                   Pagar Total ${selectedTotal}
                 </Button>
@@ -1440,11 +1440,11 @@ const ReportesProv = () => {
                   }
                 }}
                 disabled={metodoPago !== "EFECTIVO"} // Deshabilitar la edición excepto para el método "EFECTIVO"
-                // inputProps={{
-                //   inputMode: "numeric",
-                //   pattern: "[0-9]*",
-                //   maxLength: 9,
-                // }}
+              // inputProps={{
+              //   inputMode: "numeric",
+              //   pattern: "[0-9]*",
+              //   maxLength: 9,
+              // }}
               />
               <TextField
                 margin="dense"
@@ -1507,9 +1507,9 @@ const ReportesProv = () => {
                       paymentOrigin === "detalleProveedor"
                         ? selectedProveedor.total
                         : groupedProveedores.reduce(
-                            (acc, proveedor) => acc + proveedor.total,
-                            0
-                          )
+                          (acc, proveedor) => acc + proveedor.total,
+                          0
+                        )
                     );
                     handleChequeModalOpen();
                   }}
@@ -1671,9 +1671,9 @@ const ReportesProv = () => {
                       paymentOrigin === "detalleProveedor"
                         ? selectedProveedor.total
                         : groupedProveedores.reduce(
-                            (acc, proveedor) => acc + proveedor.total,
-                            0
-                          )
+                          (acc, proveedor) => acc + proveedor.total,
+                          0
+                        )
                     );
                     handleChequeModalOpen();
                   }}
@@ -1729,674 +1729,72 @@ const ReportesProv = () => {
       </Dialog>
 
 
-      <Dialog open={openPaymentGroupProcess} onClose={handleClosePaymentProcess}>
-        <DialogTitle>Procesamiento de Pagos Grupales</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2} item xs={12} md={6} lg={12}>
-            <Grid item xs={12} md={12} lg={12}>
-              {error && (
-                <Grid item xs={12}>
-                  <Typography variant="body1" color="error">
-                    {error}
-                  </Typography>
-                </Grid>
-              )}
-              <TextField
-                sx={{ marginBottom: "5%" }}
-                margin="dense"
-                label="Monto a Pagar"
-                variant="outlined"
-                // value={getTotalSelected()}
-                value={montoAPagar.toLocaleString("es-CL")}
-                fullWidth
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                }}
-                InputProps={{ readOnly: true }}
-              />
-              <TextField
-                margin="dense"
-                fullWidth
-                label="Cantidad pagada"
-                // value={cantidadPagada.toLocaleString("es-CL")}
-                value={cantidadPagada}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (!value.trim()) {
-                    setCantidadPagada(0);
-                  } else {
-                    setCantidadPagada(parseFloat(value));
-                  }
-                }}
-                disabled={metodoPago !== "EFECTIVO"} // Deshabilitar la edición excepto para el método "EFECTIVO"
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                  maxLength: 9,
-                }}
-              />
-              <TextField
-                margin="dense"
-                fullWidth
-                type="number"
-                label="Faltara pagar"
-                disabled={true}
-                value={Math.max(0, montoAPagar - cantidadPagada).toLocaleString(
-                  "es-CL"
-                )}
-                InputProps={{ readOnly: true }}
-              />
-              {calcularVuelto() > 0 && (
-                <TextField
-                  margin="dense"
-                  fullWidth
-                  type="number"
-                  label="Vuelto"
-                  value={calcularVuelto()}
-                  InputProps={{ readOnly: true }}
-                />
-              )}
-            </Grid>
+      <PagoParcial
+        openPaymentGroupProcess={openPaymentGroupProcess}
+        error={error}
+        handleClosePaymentProcess={handleClosePaymentProcess}
+        montoAPagar={montoAPagar}
+        cantidadPagada={cantidadPagada}
+        setCantidadPagada={setCantidadPagada}
+        metodoPago={metodoPago}
+        setMetodoPago={setMetodoPago}
+        selectedProveedor={selectedProveedor}
+        groupedProveedores={groupedProveedores}
+        handleChequeModalOpen={handleChequeModalOpen}
+        loading={loading}
+        paymentOrigin={paymentOrigin}
+        handleTransferenciaModalOpen2={handleTransferenciaModalOpen2}
+        handleGroupedPayment={handleGroupedPayment}
+        handleClosePaymentGroupProcess={handleClosePaymentGroupProcess}
+      />
 
-            <Grid
-              container
-              spacing={2}
-              item
-              sm={12}
-              md={12}
-              lg={12}
-              sx={{ width: "100%", display: "flex", justifyContent: "center" }}
-            >
-              <Typography sx={{ marginTop: "7%" }} variant="h6">
-                Selecciona Método de Pago:
-              </Typography>
-              <Grid item xs={12} sm={12} md={12}>
-                <Button
-                  sx={{ height: "100%" }}
-                  id="efectivo-btn"
-                  fullWidth
-                  disabled={loading} // Deshabilitar si hay una carga en progreso
-                  variant={metodoPago === "EFECTIVO" ? "contained" : "outlined"}
-                  onClick={() => {
-                    setMetodoPago("EFECTIVO");
-                  }}
-                >
-                  Efectivo
-                </Button>
-              </Grid>
+      <PagoTransferencia
+        openDialog={openTransferenciaModal}
+        setOpenDialog={setOpenTransferenciaModal}
+        onConfirm={(data) => {
+          setNombre(data.nombre)
+          setRut(data.rut)
+          setSelectedBanco(data.banco)
+          handleChangeTipoCuenta(data.tipoCuenta)
+          setNroCuenta(data.nroCuenta)
+          setFecha(data.fecha)
+          setNroOperacion(nroOperacion)
+        }}
+      />
 
-              <Grid item xs={12} sm={12} md={12}>
-                <Button
-                  sx={{ height: "100%" }}
-                  id="credito-btn"
-                  variant={metodoPago === "CHEQUE" ? "contained" : "outlined"}
-                  onClick={() => {
-                    setMetodoPago("CHEQUE");
-                    setCantidadPagada(
-                      paymentOrigin === "detalleProveedor"
-                        ? selectedProveedor.total
-                        : groupedProveedores.reduce(
-                            (acc, proveedor) => acc + proveedor.total,
-                            0
-                          )
-                    );
-                    handleChequeModalOpen();
-                  }}
-                  fullWidth
-                  disabled={loading} // Deshabilitar si hay una carga en progreso
-                >
-                  CHEQUE
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <Button
-                  id="transferencia-btn"
-                  fullWidth
-                  sx={{ height: "100%" }}
-                  variant={
-                    metodoPago === "TRANSFERENCIA" ? "contained" : "outlined"
-                  }
-                  onClick={() => {
-                    handleTransferenciaModalOpen2();
-                  }}
-                  disabled={loading} // Deshabilitar si hay una carga en progreso
-                >
-                  Transferencia
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={12}>
-                <Button
-                  sx={{ height: "100%" }}
-                  variant="contained"
-                  fullWidth
-                  color="secondary"
-                  disabled={!metodoPago || loading}
-                  // onClick={handlePayment}
-                  onClick={handleGroupedPayment}
-                >
-                  {loading ? (
-                    <>
-                      <CircularProgress size={20} /> Procesando...
-                    </>
-                  ) : (
-                    "Pagar"
-                  )}
-                </Button>
-              </Grid>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClosePaymentGroupProcess} disabled={loading}>
-            Cerrar
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <PagoTransferencia
+        openDialog={openTransferenciaModal2}
+        setOpenDialog={setOpenTransferenciaModal2}
+        onConfirm={(data) => {
+          setNombre(data.nombre)
+          setRut(data.rut)
+          setSelectedBanco(data.banco)
+          setTipoCuenta(data.tipoCuenta)
+          setTipoCuenta(data.tipoCuenta)
+          setNroCuenta(data.nroCuenta)
+          setFecha(data.fecha)
+          setNroOperacion(nroOperacion)
+        }}
+      />
 
-      <Dialog
-        open={openTransferenciaModal}
-        onClose={handleTransferenciaModalClose}
-      >
-        <DialogTitle>Transferencia</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-              {errorTransferenciaError && (
-                <p style={{ color: "red" }}> {errorTransferenciaError}</p>
-              )}
-            </Grid>
+      <PagoCheque
+        openDialog={openChequeModal}
+        setOpenDialog={setOpenChequeModal}
+        metodoPago={metodoPago}
+        handlePayment={handlePayment}
+        loading={loading}
+        cantidadPagada={cantidadPagada}
+        onConfirm={(data) => {
+          setNombre(data.nombre)
+          setRut(data.rut)
+          setSelectedBanco(data.banco)
+          setNroCuenta(data.nroCuenta)
+          setFecha(data.fecha)
+          setNroDocumento(data.nroDocumento)
+          setSerieCheque(data.serieCheque)
+        }}
 
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Nombre
-              </InputLabel>
-              <TextField
-                label="Nombre"
-                value={nombre}
-                name="nombre"
-                onChange={(e) => setNombre(e.target.value)}
-                onKeyDown={handleTextOnlyKeyDown}
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa rut sin puntos y con guión
-              </InputLabel>
-              <TextField
-                name="rut"
-                label="ej: 11111111-1"
-                variant="outlined"
-                fullWidth
-                value={rut}
-                onChange={(e) => setRut(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>Ingresa Banco</InputLabel>
-              <TextField
-                select
-                label="Banco"
-                value={selectedBanco}
-                onChange={handleBancoChange}
-                fullWidth
-              >
-                {bancosChile.map((banco) => (
-                  <MenuItem key={banco.id} value={banco.nombre}>
-                    {banco.nombre}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Tipo de Cuenta{" "}
-              </InputLabel>
-              <TextField
-                select
-                label="Tipo de Cuenta"
-                value={tipoCuenta}
-                onChange={handleChangeTipoCuenta}
-                fullWidth
-              >
-                {Object.entries(tiposDeCuenta).map(([key, value]) => (
-                  <MenuItem key={key} value={value}>
-                    {key}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Número de Cuenta{" "}
-              </InputLabel>
-              <TextField
-                name="numeroCuenta"
-                label="Número de cuenta"
-                variant="outlined"
-                fullWidth
-              
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                  maxLength: 12,
-                }}
-                value={nroCuenta}
-                onChange={(e) => setNroCuenta(e.target.value)}
-                onKeyDown={handleNumericKeyDown}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <InputLabel sx={{ marginBottom: "4%" }}>
-                  Selecciona Fecha{" "}
-                </InputLabel>
-                <DatePicker
-                  format="DD-MM-YYYY"
-                  value={fecha}
-                  onChange={(newValue) => {
-                    setFecha(newValue);
-                  }}
-                  minDate={inicioRango}
-                  maxDate={hoy}
-                  textField={(params) => (
-                    <TextField
-                      {...params}
-                      label="Ingresa Fecha"
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            {formatFecha(fecha)}
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Numero Operación
-              </InputLabel>
-              <TextField
-                name="numeroCuenta"
-                label="Numero Operación"
-                variant="outlined"
-     
-                fullWidth
-                value={nroOperacion}
-                onChange={(e) => setNroOperacion(e.target.value)}
-                onKeyDown={handleNumericKeyDown}
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                  maxLength: 12,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <Button
-                sx={{ height: "100%" }}
-                variant="contained"
-                fullWidth
-                color="secondary"
-                disabled={!metodoPago || loading}
-                onClick={handleIndividualPayment}
-              >
-                {loading ? (
-                  <>
-                    <CircularProgress size={20} /> Procesando...
-                  </>
-                ) : (
-                  "Pagar"
-                )}
-              </Button>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleTransferenciaModalClose}>Cerrar</Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={openTransferenciaModal2}
-        onClose={handleTransferenciaModalClose2}
-      >
-        <DialogTitle>Transferencia 2</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-              {errorTransferenciaError && (
-                <p style={{ color: "red" }}> {errorTransferenciaError2}</p>
-              )}
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Nombre
-              </InputLabel>
-              <TextField
-                label="Nombre"
-                value={nombre}
-                name="nombre"
-                onChange={(e) => setNombre(e.target.value)}
-                onKeyDown={handleTextOnlyKeyDown}
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa rut sin puntos y con guión
-              </InputLabel>
-              <TextField
-                name="rut"
-                label="ej: 11111111-1"
-                variant="outlined"
-                fullWidth
-                value={rut}
-                onChange={(e) => setRut(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>Ingresa Banco</InputLabel>
-              <TextField
-                select
-                label="Banco"
-                value={selectedBanco}
-                onChange={handleBancoChange}
-                fullWidth
-              >
-                {bancosChile.map((banco) => (
-                  <MenuItem key={banco.id} value={banco.nombre}>
-                    {banco.nombre}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Tipo de Cuenta{" "}
-              </InputLabel>
-              <TextField
-                select
-                label="Tipo de Cuenta"
-                value={tipoCuenta}
-                onChange={handleChangeTipoCuenta}
-                fullWidth
-              >
-                {Object.entries(tiposDeCuenta).map(([key, value]) => (
-                  <MenuItem key={key} value={value}>
-                    {key}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Número de Cuenta{" "}
-              </InputLabel>
-              <TextField
-                name="numeroCuenta"
-                label="Número de cuenta"
-                variant="outlined"
-                fullWidth
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                  maxLength: "12",
-                }}
-                value={nroCuenta}
-                onChange={(e) => setNroCuenta(e.target.value)}
-                onKeyDown={handleNumericKeyDown}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <InputLabel sx={{ marginBottom: "4%" }}>
-                  Selecciona Fecha{" "}
-                </InputLabel>
-                <DatePicker
-                  format="DD-MM-YYYY"
-                  value={fecha}
-                  onChange={(newValue) => {
-                    setFecha(newValue);
-                  }}
-                  minDate={inicioRango}
-                  maxDate={hoy}
-                  textField={(params) => (
-                    <TextField
-                      {...params}
-                      label="Ingresa Fecha"
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            {formatFecha(fecha)}
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Numero Operación
-              </InputLabel>
-              <TextField
-                name="numeroCuenta"
-                label="Numero Operación"
-                variant="outlined"
-                fullWidth
-                value={nroOperacion}
-                onKeyDown={handleNumericKeyDown}
-                onChange={(e) => setNroOperacion(e.target.value)}
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                  maxLength: "12",
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <Button
-                sx={{ height: "100%" }}
-                variant="contained"
-                fullWidth
-                color="secondary"
-                disabled={!metodoPago || loading}
-                onClick={handleGroupedPayment}
-              >
-                {loading ? (
-                  <>
-                    <CircularProgress size={20} /> Procesando...
-                  </>
-                ) : (
-                  "Pagar"
-                )}
-              </Button>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleTransferenciaModalClose2}>Cerrar</Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={openChequeModal} onClose={handleChequeModalClose}>
-        <DialogTitle>Cheque</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-              {errorTransferenciaError && (
-                <p style={{ color: "red" }}> {errorTransferenciaError}</p>
-              )}
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Nombre
-              </InputLabel>
-              <TextField
-                label="Nombre"
-                value={nombre}
-                name="nombre"
-                onChange={(e) => setNombre(e.target.value)}
-                onKeyDown={(event) => handleKeyDown(event, "nombre")}
-                variant="outlined"
-                fullWidth
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa rut sin puntos y con guión
-              </InputLabel>
-              <TextField
-                name="rut"
-                label="ej: 11111111-1"
-                variant="outlined"
-                fullWidth
-                value={rut}
-                onChange={(e) => setRut(e.target.value)}
-                onKeyDown={(event) => handleKeyDown(event, "rut")}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>Ingresa Banco</InputLabel>
-              <TextField
-                select
-                label="Banco"
-                value={selectedBanco}
-                onChange={handleBancoChange}
-                fullWidth
-              >
-                {bancosChile.map((banco) => (
-                  <MenuItem key={banco.id} value={banco.nombre}>
-                    {banco.nombre}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Serie de Cheque
-              </InputLabel>
-              <TextField
-                name="numeroCuenta"
-                label="Serie de  Cheque"
-                variant="outlined"
-                fullWidth
-                type="number"
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                }}
-                value={serieCheque}
-                onChange={(e) => setSerieCheque(e.target.value)}
-                onKeyDown={(event) => handleKeyDown(event, "numeroCuenta")}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Número de Cuenta{" "}
-              </InputLabel>
-              <TextField
-                name="numeroCuenta"
-                label="Número de cuenta"
-                variant="outlined"
-                fullWidth
-                type="number"
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                }}
-                value={nroCuenta}
-                onChange={(e) => setNroCuenta(e.target.value)}
-                onKeyDown={(event) => handleKeyDown(event, "numeroCuenta")}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <InputLabel sx={{ marginBottom: "4%" }}>
-                  Selecciona Fecha{" "}
-                </InputLabel>
-                <DatePicker
-                  format="DD-MM-YYYY"
-                  value={fecha}
-                  onChange={(newValue) => {
-                    setFecha(newValue);
-                  }}
-                  minDate={inicioRango}
-                  maxDate={hoy}
-                  textField={(params) => (
-                    <TextField
-                      {...params}
-                      label="Ingresa Fecha"
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            {formatFecha(fecha)}
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <InputLabel sx={{ marginBottom: "4%" }}>
-                Ingresa Numero Documento
-              </InputLabel>
-              <TextField
-                name="numeroDocumento"
-                label="Numero Documento"
-                variant="outlined"
-                type="number"
-                fullWidth
-                value={nroDocumento}
-                onChange={(e) => setNroDocumento(e.target.value)}
-                onKeyDown={(event) => handleKeyDown(event, "numeroDocumento")}
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <Button
-                sx={{ height: "100%" }}
-                variant="contained"
-                fullWidth
-                color="secondary"
-                disabled={!metodoPago || cantidadPagada <= 0}
-                onClick={handlePayment}
-              >
-                {loading ? (
-                  <>
-                    <CircularProgress size={20} /> Procesando...
-                  </>
-                ) : (
-                  "Pagar"
-                )}
-              </Button>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleChequeModalClose}>Cerrar</Button>
-        </DialogActions>
-      </Dialog>
+      />
 
       <Snackbar
         open={snackbarOpen}
@@ -2408,4 +1806,4 @@ const ReportesProv = () => {
   );
 };
 
-export default ReportesProv;
+export default DocumentosPorPagar;

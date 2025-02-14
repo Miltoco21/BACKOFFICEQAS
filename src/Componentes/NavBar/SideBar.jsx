@@ -94,7 +94,7 @@ export default function PermanentDrawerLeft() {
           icon: <LocalShippingIcon />,
           subMenuItems: [
             { text: "Ingreso Documento", link: "/proveedores/ingresodocumento", icon: <ReceiptIcon /> },
-            { text: "Documentos por pagar ", link: "/proveedores/reportes", icon: <ReceiptIcon /> },
+            { text: "Documentos por pagar ", link: "/proveedores/documentosporpagar", icon: <ReceiptIcon /> },
           ],
         },
         { text: "Clientes", link: "/clientes", icon: <GroupsIcon/>, subMenuItems: [

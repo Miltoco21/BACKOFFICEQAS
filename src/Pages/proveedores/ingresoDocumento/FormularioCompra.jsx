@@ -28,30 +28,30 @@ import {
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import SideBar from "../Componentes/NavBar/SideBar";
+import SideBar from "../../../Componentes/NavBar/SideBar";
 import Add from "@mui/icons-material/Add";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SearchListDocumento from "./../Componentes/SearchlistDocumento/SearchListDocumento";
-import ModelConfig from "../Models/ModelConfig";
+import SearchListDocumento from "../../../Componentes/SearchlistDocumento/SearchListDocumento";
+import ModelConfig from "../../../Models/ModelConfig";
 import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
-import Product from "../Models/Product";
-import Proveedor from "../Models/Proveedor";
-import { SelectedOptionsContext } from "./../Componentes/Context/SelectedOptionsProvider";
-import Validator from "../Helpers/Validator";
-import BoxSelectTipo from "../Componentes/Proveedores/BoxSelectTipo";
-import PreciosGeneralesProducItem from "../Componentes/Card-Modal/PreciosGeneralesProducItem";
-import AjustePrecios from "../Componentes/ScreenDialog/AjustePrecios";
-import System from "../Helpers/System";
-import IngresoDocProvBuscarProductos from "./IngresoDocProvBuscarProductos";
-import CrearProducto from "./CrearProducto";
-import StepperSI from "../Componentes/Stepper/StepperSI";
-import FormularioProveedor from "../Componentes/Proveedores/FormularioProveedor";
-import CriterioCosto from "../definitions/CriterioCosto";
+import Product from "../../../Models/Product";
+import Proveedor from "../../../Models/Proveedor";
+import { SelectedOptionsContext } from "../../../Componentes/Context/SelectedOptionsProvider";
+import Validator from "../../../Helpers/Validator";
+import BoxSelectTipo from "../../../Componentes/Proveedores/BoxSelectTipo";
+import PreciosGeneralesProducItem from "../../../Componentes/Card-Modal/PreciosGeneralesProducItem";
+import AjustePrecios from "../../../Componentes/ScreenDialog/AjustePrecios";
+import System from "../../../Helpers/System";
+import IngresoDocProvBuscarProductos from "./BuscarProductos";
+import CrearProducto from "../../CrearProducto";
+import StepperSI from "../../../Componentes/Stepper/StepperSI";
+import FormularioProveedor from "../FormularioProveedor";
+import CriterioCosto from "../../../definitions/CriterioCosto";
 
-const IngresoDocCompra = ({
+const FormularioCompra = ({
   openDialog,
   setOpenDialog,
   onClose,
@@ -315,6 +315,8 @@ const IngresoDocCompra = ({
 
 
   const handleSubmit = async () => {
+
+    console.log("handleSubmit")
     setLoading(true);
 
     try {
@@ -354,12 +356,20 @@ const IngresoDocCompra = ({
       }
 
       var noPrice = 0
+      var totalNeto = 0
+      var totalIva = 0
       const proveedorCompraDetalles = selectedProducts.map((product) => {
         if (!product.total) {
           noPrice++
         }
 
         var cantidadProveedor = product.cantidadProveedor
+
+        totalNeto  = totalNeto + (product.precioNeto * (product.cantidad * cantidadProveedor))
+        totalIva = totalIva + (product.ivaValor * (product.cantidad * cantidadProveedor))
+        console.log("producto ingresando 2", product)
+        console.log("totalNeto", totalNeto + 0)
+        console.log("totalIva", totalIva + 0)
         if (!cantidadProveedor) cantidadProveedor = 1
         return {
           codProducto: product.id,
@@ -367,6 +377,8 @@ const IngresoDocCompra = ({
           cantidad: product.cantidad * cantidadProveedor,
           precioUnidad: product.precioVenta,
           costo: product.total,
+          precioNeto: product.precioNeto,
+          precioIva: product.ivaValor,
         }
       });
 
@@ -382,12 +394,14 @@ const IngresoDocCompra = ({
       }
 
       const dataToSend = {
-        fechaIngreso: fecha.toISOString(),
+        fechaIngreso: System.getInstance().getDateForServer(),
         tipoDocumento: tipoDocumento,
         folio: folioDocumento,
         codigoProveedor: selectedProveedor.codigoProveedor,
         total: parseFloat(parseFloat(total).toFixed(2)),
         proveedorCompraDetalles,
+        montoNeto: totalNeto,
+        montoIva: totalIva,
       };
       console.log("Datos a enviar al servidor:", dataToSend);
 
@@ -935,4 +949,4 @@ const IngresoDocCompra = ({
   );
 };
 
-export default IngresoDocCompra;
+export default FormularioCompra;
