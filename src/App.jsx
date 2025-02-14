@@ -17,7 +17,7 @@ import Precios from './Pages/Precios';
 import Proveedores from './Pages/proveedores/Proveedores';
 import Productos from './Pages/Productos';
 import Clientes from './Pages/Clientes';
-import IngresoDocumento from './Pages/proveedores/ingresoDocumento/Index';
+import IngresoDocumento from './Pages/proveedores/ingresoDocumento/Main';
 import Categorias from './Pages/Categoria';
 import SubCategorias from './Pages/SubCategoria';
 import Familias from './Pages/Familias';
