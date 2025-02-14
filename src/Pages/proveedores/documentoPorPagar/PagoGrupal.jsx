@@ -1,74 +1,68 @@
-import React, { useState, useContext, useEffect } from "react";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import React, { useState, useEffect } from "react";
 import {
   Paper,
-  Card,
-  CardContent,
-  Typography,
+  Grid,
   Table,
-  TableHead,
   TableBody,
   TableCell,
-  TableRow,
-  Avatar,
   TableContainer,
-  Grid,
-  Container,
-  useTheme,
-  useMediaQuery,
-
-  IconButton,
-  Menu,
-  TextField,
-  Chip,
-  Box,
-  MenuItem,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
+  TableHead,
+  TableRow,
   Button,
-  ToggleButton,
-  ToggleButtonGroup,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+  Box,
+  Avatar,
+  TextField,
+  CircularProgress,
+  Snackbar,
+  Checkbox,
+  IconButton,
+  Collapse,
   InputLabel,
-  CircularProgress
-
+  MenuItem,
 } from "@mui/material";
-import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
-import System from "../../Helpers/System";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import Validator from "../../Helpers/Validator";
-import IngresarTexto from "./IngresarTexto";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import SideBar from "../../../Componentes/NavBar/SideBar";
+import axios from "axios";
 
-const PagoParcial = ({
-  openPaymentGroupProcess,
-  error,
-  handleClosePaymentProcess,
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ModelConfig from "../../../Models/ModelConfig";
+import User from "../../../Models/User";
+import PagoTransferencia from "../../../Componentes/ScreenDialog/PagoTransferencia";
+import PagoCheque from "../../../Componentes/ScreenDialog/PagoCheque";
+import PagoParcial from "../../../Componentes/ScreenDialog/PagoParcial";
+
+
+const PagoGrupal = ({
+  openPaymentProcess,
   montoAPagar,
   cantidadPagada,
-  setCantidadPagada,
   metodoPago,
+  calcularVuelto,
+  loading,
   setMetodoPago,
+  setCantidadPagada,
   selectedProveedor,
   groupedProveedores,
-  handleChequeModalOpen,
-  loading,
-  paymentOrigin,
   handleTransferenciaModalOpen2,
   handleGroupedPayment,
-  handleClosePaymentGroupProcess
+  handleClosePaymentProcess,
+  error
 }) => {
 
-  const calcularVuelto = () => {
-    return metodoPago === "EFECTIVO" && cantidadPagada > montoAPagar
-      ? cantidadPagada - montoAPagar
-      : 0;
-  };
-
   return (
-    <Dialog open={openPaymentGroupProcess} onClose={handleClosePaymentProcess}>
-      <DialogTitle>Hacer Pago</DialogTitle>
+    <Dialog open={openPaymentProcess} onClose={handleClosePaymentProcess}>
+      <DialogTitle>Procesamiento de Pago Grupales</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} item xs={12} md={6} lg={12}>
           <Grid item xs={12} md={12} lg={12}>
@@ -97,7 +91,6 @@ const PagoParcial = ({
               margin="dense"
               fullWidth
               label="Cantidad pagada"
-              // value={cantidadPagada.toLocaleString("es-CL")}
               value={cantidadPagada}
               onChange={(e) => {
                 const value = e.target.value;
@@ -108,11 +101,6 @@ const PagoParcial = ({
                 }
               }}
               disabled={metodoPago !== "EFECTIVO"} // Deshabilitar la edición excepto para el método "EFECTIVO"
-              inputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9]*",
-                maxLength: 9,
-              }}
             />
             <TextField
               margin="dense"
@@ -210,7 +198,6 @@ const PagoParcial = ({
                 fullWidth
                 color="secondary"
                 disabled={!metodoPago || loading}
-                // onClick={handlePayment}
                 onClick={handleGroupedPayment}
               >
                 {loading ? (
@@ -226,7 +213,7 @@ const PagoParcial = ({
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClosePaymentGroupProcess} disabled={loading}>
+        <Button onClick={handleClosePaymentProcess} disabled={loading}>
           Cerrar
         </Button>
       </DialogActions>
@@ -234,4 +221,4 @@ const PagoParcial = ({
   );
 };
 
-export default PagoParcial;
+export default PagoGrupal;

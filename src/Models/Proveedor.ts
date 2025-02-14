@@ -73,7 +73,7 @@ class Proveedor extends Model {
 
   async update(data, callbackOk, callbackWrong) {
     const url = ModelConfig.get("urlBase") + "/Proveedores/UpdateProveedor"
-    EndPoint.sendPut(url,data, (responseData, response) => {
+    EndPoint.sendPut(url, data, (responseData, response) => {
       callbackOk(responseData, response)
     }, callbackWrong)
   }
@@ -239,6 +239,14 @@ class Proveedor extends Model {
     }, (err) => {
       console.log("error al revisar si existe folio", err)
     })
+  }
+
+
+  static async AddProveedorCompraPagar(datos,callbackOk, callbackWrong) {
+    const url = ModelConfig.get("urlBase") + "/Proveedores/AddProveedorCompraPagar"
+    EndPoint.sendPost(url, datos, (responseData, response) => {
+      callbackOk(responseData, response)
+    }, callbackWrong)
   }
 
 };

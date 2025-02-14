@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Paper,
   Grid,
@@ -41,9 +41,26 @@ import User from "../../../Models/User";
 import PagoParcial from "../../../Componentes/ScreenDialog/PagoParcial";
 import PagoTransferencia from "../../../Componentes/ScreenDialog/PagoTransferencia";
 import PagoCheque from "../../../Componentes/ScreenDialog/PagoCheque";
-
+import { SelectedOptionsContext } from "../../../Componentes/Context/SelectedOptionsProvider";
+import Proveedor from "../../../Models/Proveedor";
+import PagoGeneral from "./PagoGeneral";
+import PagoGrupal from "./PagoGrupal";
+import PagoDetalle from "./PagoDetalle";
+import ItemTablaModalDetalle from "./ItemTablaModalDetalle";
+import TablaDetalles from "./ItemTablaDetalles";
+import ItemListado from "./ItemListado";
+import System from "../../../Helpers/System";
 
 const DocumentosPorPagar = () => {
+
+  const {
+    showLoading,
+    hideLoading,
+    showLoadingDialog,
+    showMessage,
+    showAlert
+  } = useContext(SelectedOptionsContext);
+
   const apiUrl = ModelConfig.get().urlBase;
   const [proveedores, setProveedores] = useState([]);
   const [open, setOpen] = useState(false);
@@ -76,10 +93,18 @@ const DocumentosPorPagar = () => {
     setSelectedItem(null);
   };
 
+
   const [order, setOrder] = useState({
     field: "",
     direction: "asc",
   });
+
+  const handleSort = (field) => {
+    const isAsc = order.field === field && order.direction === "asc";
+    setOrder({ field, direction: isAsc ? "desc" : "asc" });
+  };
+
+
 
   const [sortedProveedores, setSortedProveedores] = useState([]);
   // const [documentCountsByRut, setDocumentCountsByRut] = useState({});
@@ -101,33 +126,12 @@ const DocumentosPorPagar = () => {
   const [nroDocumento, setNroDocumento] = useState("");
   const [serieCheque, setSerieCheque] = useState("");
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-    setSnackbarMessage("");
-  };
-
-  const fetchProveedores = async () => {
-    try {
-      const response = await axios.get(
-        `${apiUrl}/Proveedores/GetProveedorCompra`
-      );
-      setProveedores(response.data.proveedorCompra.proveedorCompraCabeceras);
-    } catch (error) {
-      console.error("Error fetching proveedores:", error);
-    }
-  };
-
   useEffect(() => {
-    fetchProveedores();
+    Proveedor.getCompras((compras) => {
+      setProveedores(compras)
+    }, showMessage)
   }, []);
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     fetchProveedores();
-  //   }, 3000); // Fetch users every 3 seconds
-
-  //   return () => clearInterval(intervalId); // Cleanup interval on component unmount
-  // }, []);
 
   const handleClickOpen = (proveedor) => {
     setSelectedProveedor(proveedor);
@@ -152,7 +156,7 @@ const DocumentosPorPagar = () => {
     setGroupedProveedores([]);
   };
 
-  const handleOpenPaymentProcess = () => {
+  const handleOpenPaymentProcess = (selectedItem) => {
     setError("");
 
     setMontoAPagar(selectedItem.total);
@@ -199,76 +203,7 @@ const DocumentosPorPagar = () => {
       : 0;
   };
 
-  //   setLoading(true);
 
-  //   let compraDeudaIds = [];
-
-  //   // Si hay un proveedor seleccionado, agregamos su detalle de compra
-  //   if (selectedProveedor) {
-  //     compraDeudaIds.push({
-  //       idProveedorCompraCabecera: selectedProveedor.id,
-  //       total: parseInt(Math.round(selectedProveedor.total)),
-  //     });
-  //   }
-
-  //   // Si hay proveedores agrupados, agregamos sus detalles de compra
-  //   if (groupedProveedores.length > 0) {
-  //     groupedProveedores.forEach((proveedor) => {
-  //       compraDeudaIds.push({
-  //         idProveedorCompraCabecera: proveedor.id,
-  //         total: parseInt(Math.round(proveedor.total)),
-  //       });
-  //     });
-  //   }
-
-  //   // if (compraDeudaIds.length === 0) {
-  //   //   alert("No hay solicitudes de pago válidas para procesar.");
-  //   //   setLoading(false);
-  //   //   return;
-  //   // }
-
-  //   // Construye el objeto de datos de pago
-  //   const pagoData = {
-  //     fechaIngreso: new Date().toISOString(),
-  //     codigoUsuario: 0, // Ajusta según tu lógica
-  //     codigoSucursal: 0, // Ajusta según tu lógica
-  //     puntoVenta: "string", // Ajusta según tu lógica
-  //     compraDeudaIds: compraDeudaIds.toString(),
-  //     montoPagado: compraDeudaIds
-  //       .reduce((total, compra) => total + compra.total, 0)
-  //       .toString(),
-  //     metodoPago: metodoPago,
-  //     requestProveedorCompraPagar: "valor requerido", // Ajusta el valor según lo que requiera el servidor
-  //   };
-
-  //   try {
-  //     // Realiza la llamada a la API utilizando Axios
-  //     const response = await axios.post(
-  //       "https://www.easyposdev.somee.com/api/Proveedores/AddProveedorCompraPagar",
-  //       pagoData
-  //     );
-
-  //     // Maneja la respuesta según tu lógica
-  //     console.log("Respuesta de pago:", response.data);
-  //     setSnackbarMessage(response.data.descripcion);
-  //     setSnackbarOpen(true);
-  //     fetchProveedores();
-  //     setMontoAPagar(0);
-  //     setCantidadPagada(0);
-  //     /// Cierra el diálogo de proceso de pago
-  //     handleClose();
-  //     setTimeout(() => {
-  //       handleClosePaymentProcess();
-  //     }, 3000);
-  //   } catch (error) {
-  //     // Maneja los errores
-  //     console.error("Error al procesar el pago:", error);
-  //     setError("Error al procesar el pago. Inténtalo de nuevo más tarde.");
-  //   } finally {
-  //     // Finaliza la carga y actualiza el estado
-  //     setLoading(false);
-  //   }
-  // };
   const handleIndividualPayment = async () => {
     try {
       setLoading(true);
@@ -396,7 +331,7 @@ const DocumentosPorPagar = () => {
         handleClosePaymentProcess();
         setCantidadPagada(0);
 
-        handleDetailClose();
+        // handleDetailClose();
         handleTransferenciaModalClose();
         fetchProveedores();
 
@@ -486,67 +421,9 @@ const DocumentosPorPagar = () => {
     setOpenChequeModal(false);
   };
 
-  const tiposDeCuenta = {
-    "Cuenta Corriente": "Cuenta Corriente",
-    "Cuenta de Ahorro": "Cuenta de Ahorro",
-    "Cuenta Vista": "Cuenta Vista",
-    "Cuenta Rut": "Cuenta Rut",
-    "Cuenta de Depósito a Plazo (CDP)": "Cuenta de Depósito a Plazo (CDP)",
-    "Cuenta de Inversión": "Cuenta de Inversión",
-  };
+
   const handleChangeTipoCuenta = (event) => {
     setTipoCuenta(event.target.value); // Actualizar el estado del tipo de cuenta seleccionado
-  };
-  const bancosChile = [
-    { id: 1, nombre: "Banco de Chile" },
-    { id: 2, nombre: "Banco Santander Chile" },
-    { id: 3, nombre: "Banco Estado" },
-    { id: 4, nombre: "Scotiabank Chile" },
-    { id: 5, nombre: "Banco BCI" },
-    { id: 6, nombre: "Banco Itaú Chile" },
-    { id: 7, nombre: "Banco Security" },
-    { id: 8, nombre: "Banco Falabella" },
-    { id: 9, nombre: "Banco Ripley" },
-    { id: 10, nombre: "Banco Consorcio" },
-    { id: 11, nombre: "Banco Internacional" },
-    { id: 12, nombre: "Banco Edwards Citi" },
-    { id: 13, nombre: "Banco de Crédito e Inversiones" },
-    { id: 14, nombre: "Banco Paris" },
-    { id: 15, nombre: "Banco Corpbanca" },
-    { id: 16, nombre: "Banco BICE" },
-
-    // Agrega más bancos según sea necesario
-  ];
-
-  const handleBancoChange = (event) => {
-    setSelectedBanco(event.target.value);
-  };
-  const hoy = dayjs();
-  const inicioRango = dayjs().subtract(1, "week"); // Resta 1 semanas
-
-  const validarRutChileno = (rut) => {
-    if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rut)) {
-      return false;
-    }
-
-    const partesRut = rut.split("-");
-    const digitoVerificador = partesRut[1].toUpperCase();
-    const numeroRut = partesRut[0];
-
-    if (numeroRut.length < 7) {
-      return false;
-    }
-
-    const calcularDigitoVerificador = (T) => {
-      let M = 0;
-      let S = 1;
-      for (; T; T = Math.floor(T / 10)) {
-        S = (S + (T % 10) * (9 - (M++ % 6))) % 11;
-      }
-      return S ? String(S - 1) : "K";
-    };
-
-    return calcularDigitoVerificador(numeroRut) === digitoVerificador;
   };
 
   const handlePayment = async () => {
@@ -685,7 +562,7 @@ const DocumentosPorPagar = () => {
         handleClosePaymentGroupProcess();
         setCantidadPagada(0);
         fetchClientes();
-        handleDetailClose();
+        // handleDetailClose();
 
         setTimeout(() => {
           handleClosePaymentGroupProcess();
@@ -791,7 +668,7 @@ const DocumentosPorPagar = () => {
         handleClosePaymentProcess();
         setCantidadPagada(0);
         fetchClientes();
-        handleDetailClose();
+        // handleDetailClose();
         handleTransferenciaModalClose2();
         handleClosePaymentGroupProcess();
         handlePagarClose();
@@ -809,19 +686,6 @@ const DocumentosPorPagar = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchProveedores = async () => {
-      try {
-        const response = await axios.get(
-          apiUrl + "/Proveedores/GetProveedorCompra"
-        );
-        setProveedores(response.data.proveedorCompra.proveedorCompraCabeceras);
-      } catch (error) {
-        console.error("Error fetching proveedores:", error);
-      }
-    };
-    fetchProveedores();
-  }, []);
 
   const compareRut = (a, b) => {
     if (!a || !b) return 0;
@@ -835,10 +699,6 @@ const DocumentosPorPagar = () => {
     return new Date(a) - new Date(b);
   };
 
-  const handleSort = (field) => {
-    const isAsc = order.field === field && order.direction === "asc";
-    setOrder({ field, direction: isAsc ? "desc" : "asc" });
-  };
 
   const sortData = (array, field, direction) => {
     const sortedArray = [...array];
@@ -872,862 +732,136 @@ const DocumentosPorPagar = () => {
     acc[item.rut].push(item);
     return acc;
   }, {});
-  console.log(" groupedData", groupedData);
+  // console.log(" groupedData", groupedData);
 
   const filteredGroupKeys = Object.keys(groupedData).filter((rut) =>
     rut.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const sortedGroupKeys = sortData(filteredGroupKeys, "rut", order.direction);
-  // const sortedGroupKeys = sortData(
-  //   Object.keys(groupedData),
-  //   "rut",
-  //   order.direction
-  // );
-
-  const handleNumericKeyDown = (event) => {
-    const key = event.key;
-    const input = event.target.value;
-
-    // Verifica si el carácter es un número, backspace o delete
-    if (
-      !/\d/.test(key) && // números
-      key !== "Backspace" && // backspace
-      key !== "Delete" // delete
-    ) {
-      event.preventDefault();
-    }
-
-    // Previene espacios iniciales y al final de la cadena
-    if (key === " " && (input.length === 0 || input.endsWith(" "))) {
-      event.preventDefault();
-    }
-  };
-
-  const handleTextKeyDown = (event) => {
-    const key = event.key;
-    const input = event.target.value;
-
-    // Verifica si el carácter es alfanumérico o uno de los caracteres permitidos
-    if (
-      !/^[a-zA-Z0-9]$/.test(key) && // letras y números
-      key !== " " && // espacio
-      key !== "Backspace" && // backspace
-      key !== "Delete" // delete
-    ) {
-      event.preventDefault();
-    }
-
-    // Previene espacios iniciales y al final de la cadena
-    if (key === " " && (input.length === 0 || input.endsWith(" "))) {
-      event.preventDefault();
-    }
-  };
-  const handleEmailKeyDown = (event) => {
-    const charCode = event.which ? event.which : event.keyCode;
-
-    // Prevenir espacios en cualquier parte del correo
-    if (charCode === 32) {
-      // 32 es el código de la tecla espacio
-      event.preventDefault();
-    }
-  };
-  const handleRUTKeyDown = (event) => {
-    const key = event.key;
-    const input = event.target.value;
-
-    // Permitir números (0-9), guion (-), backspace y delete
-    if (
-      !isNaN(key) || // números
-      key === "Backspace" || // backspace
-      key === "Delete" || // delete
-      (key === "-" && !input.includes("-")) // guion y no hay guion previamente
-    ) {
-      // Permitir la tecla
-    } else {
-      // Prevenir cualquier otra tecla
-      event.preventDefault();
-    }
-
-    // Prevenir espacios iniciales y asegurar que el cursor no esté en la posición inicial
-    if (
-      key === " " &&
-      (input.length === 0 || event.target.selectionStart === 0)
-    ) {
-      event.preventDefault();
-    }
-  };
-
-  const handleTextOnlyKeyDown = (event) => {
-    const key = event.key;
-    const input = event.target.value;
-
-    // Verifica si el carácter es una letra (mayúscula o minúscula), espacio, backspace o delete
-    if (
-      !/[a-zA-Z]/.test(key) && // letras mayúsculas y minúsculas
-      key !== " " && // espacio
-      key !== "Backspace" && // backspace
-      key !== "Delete" // delete
-    ) {
-      event.preventDefault();
-    }
-
-    // Previene espacios iniciales y al final de la cadena
-    if (key === " " && (input.length === 0 || input.endsWith(" "))) {
-      event.preventDefault();
-    }
-  };
 
   return (
     <div style={{ display: "flex" }}>
       <SideBar />
 
-      <Grid component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <TextField
-          label="Buscar por RUT"
-          variant="outlined"
-          margin="normal"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell>RUT</TableCell>
+      <Grid container sx={{ flexGrow: 1, p: 3 }} spacing={1}>
 
-                <TableCell>Razon Social</TableCell>
-                <TableCell>Documentos</TableCell>
-                <TableCell>Total</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <strong>Total General:</strong>
-                </TableCell>
-                <TableCell colSpan={5}>
-                  <strong>${totalGeneral.toLocaleString("es-ES")}</strong>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sortedGroupKeys.map((rut) => (
-                <React.Fragment key={rut}>
-                  <TableRow>
-                    <TableCell>
-                      <IconButton onClick={() => handleToggle(rut)}>
-                        {openGroups[rut] ? (
-                          <ExpandLessIcon />
-                        ) : (
-                          <ExpandMoreIcon />
-                        )}
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>{rut}</TableCell>
-                    <TableCell>
-                      <strong>{groupedData[rut][0].razonSocial}</strong>
-                    </TableCell>
-                    <TableCell>
-                      Facturas:{" "}
-                      {
-                        groupedData[rut].filter(
-                          (item) => item.tipoDocumento === "Factura"
-                        ).length
-                      }
-                      <br />
-                      Boletas:{" "}
-                      {
-                        groupedData[rut].filter(
-                          (item) => item.tipoDocumento === "Boleta"
-                        ).length
-                      }
-                      <br />
-                      Tickets:{" "}
-                      {
-                        groupedData[rut].filter(
-                          (item) => item.tipoDocumento === "Ticket"
-                        ).length
-                      }
-                      <br />
-                      Ingreso Interno:{" "}
-                      {
-                        groupedData[rut].filter(
-                          (item) => item.tipoDocumento === "Ingreso Interno"
-                        ).length
-                      }
-                    </TableCell>
-                    <TableCell>
-                      $
-                      {groupedData[rut]
-                        .reduce((sum, item) => sum + item.total, 0)
-                        .toLocaleString("es-ES")}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        sx={{ width: "80%" }}
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => handlePagarOpen(rut)}
-                      >
-                        Pagar
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell
-                      colSpan={6}
-                      style={{ paddingBottom: 0, paddingTop: 0 }}
-                    >
-                      <Collapse
-                        in={openGroups[rut]}
-                        timeout="auto"
-                        unmountOnExit
-                      >
-                        <Box margin={1}>
-                          <Table size="small">
-                            <TableHead>
-                              <TableRow>
-                                <TableCell>Razon Social</TableCell>
-                                <TableCell>Tipo Documento</TableCell>
-                                <TableCell onClick={() => handleSort("folio")}>
-                                  Folio
-                                  <ArrowUpwardIcon
-                                    fontSize="small"
-                                    style={{
-                                      color:
-                                        order.field === "folio" &&
-                                          order.direction === "asc"
-                                          ? "black"
-                                          : "dimgrey",
-                                    }}
-                                  />
-                                  <ArrowDownwardIcon
-                                    fontSize="small"
-                                    style={{
-                                      color:
-                                        order.field === "folio" &&
-                                          order.direction === "desc"
-                                          ? "black"
-                                          : "dimgrey",
-                                    }}
-                                  />
-                                </TableCell>
-                                <TableCell onClick={() => handleSort("fecha")}>
-                                  Fecha
-                                  <ArrowUpwardIcon
-                                    fontSize="small"
-                                    style={{
-                                      color:
-                                        order.field === "fechaIngreso" &&
-                                          order.direction === "asc"
-                                          ? "black"
-                                          : "dimgrey",
-                                    }}
-                                  />
-                                  <ArrowDownwardIcon
-                                    fontSize="small"
-                                    style={{
-                                      color:
-                                        order.field === "fechaIngreso" &&
-                                          order.direction === "desc"
-                                          ? "black"
-                                          : "dimgrey",
-                                    }}
-                                  />
-                                </TableCell>
-                                <TableCell onClick={() => handleSort("total")}>
-                                  Total
-                                  <ArrowUpwardIcon
-                                    fontSize="small"
-                                    style={{
-                                      color:
-                                        order.field === "total" &&
-                                          order.direction === "asc"
-                                          ? "black"
-                                          : "dimgrey",
-                                    }}
-                                  />
-                                  <ArrowDownwardIcon
-                                    fontSize="small"
-                                    style={{
-                                      color:
-                                        order.field === "total" &&
-                                          order.direction === "desc"
-                                          ? "black"
-                                          : "dimgrey",
-                                    }}
-                                  />
-                                </TableCell>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
+          <Typography variant="h5">Documentos por pagar</Typography>
+          <br />
+        </Grid>
 
-                                <TableCell>Acciones</TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {sortData(
-                                groupedData[rut],
-                                order.field,
-                                order.direction
-                              ).map((item) => (
-                                <TableRow key={item.id}>
-                                  <TableCell>{item.razonSocial}</TableCell>
-                                  <TableCell>{item.tipoDocumento}</TableCell>
-                                  <TableCell>{item.folio}</TableCell>
-                                  <TableCell>
-                                    {new Date(
-                                      item.fechaIngreso
-                                    ).toLocaleDateString("es-CL")}
-                                  </TableCell>
-                                  <TableCell>
-                                    ${item.total.toLocaleString("es-CL")}
-                                  </TableCell>
-                                  <TableCell>
-                                    <Button
-                                      variant="contained"
-                                      onClick={() => handleDetailOpen(item)}
-                                    >
-                                      Detalle
-                                    </Button>
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </Box>
-                      </Collapse>
-                    </TableCell>
-                  </TableRow>
-                </React.Fragment>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
+          <TextField
+            label="Filtrar por RUT"
+            variant="outlined"
+            margin="normal"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </Grid>
 
-      <Dialog
-        open={detailOpen}
-        onClose={handleDetailClose}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Detalles del Proveedor</DialogTitle>
-        <DialogContent dividers>
-          {selectedItem && (
-            <div>
-              <Paper>
-                <Box
-                  display="flex"
-                  p={1.5}
-                  gap={2}
-                  bgcolor={"#f5f5f5"}
-                  borderRadius={1}
-                  sx={{ alignItems: "center" }}
-                >
-                  <Box>
-                    <Avatar sx={{ borderRadius: 3, width: 48, height: 48 }} />
-                  </Box>
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="body2" sx={{ color: "#696c6f" }}>
-                      ID: {selectedItem.razonSocial}
-                      <br />
-                      {selectedItem.rut}
-                    </Typography>
-                  </Box>
-                  <Grid item xs={12}></Grid>
-                </Box>
-              </Paper>
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Fecha de ingreso</TableCell>
-                      <TableCell>Tipo de documento</TableCell>
-                      <TableCell>Folio</TableCell>
-                      <TableCell>Total</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        {dayjs(selectedItem.fechaIngreso).format("DD-MM-YYYY")}
-                      </TableCell>
-                      <TableCell>{selectedItem.tipoDocumento}</TableCell>
-                      <TableCell>{selectedItem.folio}</TableCell>
-                      <TableCell>${selectedItem.total}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Typography variant="h6" style={{ marginTop: "16px" }}>
-                Detalles de Compra:
-              </Typography>
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Descripción</TableCell>
-                      <TableCell>Cantidad</TableCell>
-                      <TableCell>Precio Unidad</TableCell>
-                      <TableCell>Costo</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {selectedItem.proveedorCompraDetalles &&
-                      selectedItem.proveedorCompraDetalles.map((detalle) => (
-                        <TableRow key={detalle.codProducto}>
-                          <TableCell>{detalle.descripcionProducto}</TableCell>
-                          <TableCell>{detalle.cantidad}</TableCell>
-                          <TableCell>{detalle.precioUnidad}</TableCell>
-                          <TableCell>${detalle.costo}</TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                mt={2}
-              >
-                <Typography variant="h6">
-                  Total Deuda : ${selectedItem.total}
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  // onClick={handleOpenPaymentProcess}
-                  onClick={() => handleOpenPaymentProcess()}
-                >
-                  Pagar Total $ ({selectedItem.total})
-                </Button>
-              </Box>
-            </div>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDetailClose} color="primary">
-            Cerrar
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
+          <br />
+          <Typography variant="p">Total General:</Typography>
+          <Typography variant="p" sx={{
+            margin: "0 20px"
+          }}>
+            <strong>
+              ${System.formatMonedaLocal(totalGeneral,false)}
+            </strong>
+          </Typography>
+          <br />
+          <br />
+        </Grid>
 
-      <Dialog
-        open={openPagar}
-        onClose={handlePagarClose}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Pagos del Proveedor</DialogTitle>
-        <DialogContent dividers>
-          {groupedProveedores.length > 0 && (
-            <div>
-              <Typography variant="h6">
-                Proveedor: {groupedProveedores[0].razonSocial}
-              </Typography>
-              <Typography variant="subtitle1">
-                RUT: {groupedProveedores[0].rut}
-              </Typography>
-              <Typography variant="h6" style={{ marginTop: "16px" }}>
-                Compras:
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          indeterminate={
-                            selectedIds.length > 0 &&
-                            selectedIds.length < groupedProveedores.length
-                          }
-                          checked={allSelected}
-                          onChange={handleSelectAll}
-                        />
-                      </TableCell>
-                      <TableCell>Tipo Documento</TableCell>
-                      <TableCell>Folio</TableCell>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Total</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {groupedProveedores.map((proveedor) => (
-                      <TableRow key={proveedor.id}>
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            checked={selectedIds.includes(proveedor.id)}
-                            onChange={(event) =>
-                              handleSelectOne(event, proveedor.id)
-                            }
-                          />
-                        </TableCell>
-                        <TableCell>{proveedor.tipoDocumento}</TableCell>
-                        <TableCell>{proveedor.folio}</TableCell>
-                        <TableCell>
-                          {dayjs(proveedor.fechaIngreso).format("DD-MM-YYYY")}
-                        </TableCell>
-                        <TableCell> ${proveedor.total}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                mt={2}
-              >
-                <Typography variant="h6">
-                  Total Deuda : {selectedTotal}
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled={selectedTotal <= 0}
-                  onClick={() => handleOpenGroupPaymentProcess()}
-                >
-                  Pagar Total ${selectedTotal}
-                </Button>
-              </Box>
-            </div>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handlePagarClose} color="primary">
-            Cerrar
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Grid item xs={12} sm={12} md={12} lg={12}>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell></TableCell>
+                  <TableCell>RUT</TableCell>
+                  <TableCell>Razon Social</TableCell>
+                  <TableCell>Documentos</TableCell>
+                  <TableCell>Total</TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedGroupKeys.map((rut) => (
+                  <ItemListado
+                    key={rut}
+                    rut={rut}
+                    
+                    groupedData={groupedData}
+                    order={order}
+                    handleSort={handleSort}
+                    sortData={sortData}
 
-      <Dialog open={openPaymentProcess} onClose={handleClosePaymentProcess}>
-        <DialogTitle>Procesamiento de Pago Grupales</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2} item xs={12} md={6} lg={12}>
-            <Grid item xs={12} md={12} lg={12}>
-              {error && (
-                <Grid item xs={12}>
-                  <Typography variant="body1" color="error">
-                    {error}
-                  </Typography>
-                </Grid>
-              )}
-              <TextField
-                sx={{ marginBottom: "5%" }}
-                margin="dense"
-                label="Monto a Pagar"
-                variant="outlined"
-                // value={getTotalSelected()}
-                value={montoAPagar.toLocaleString("es-CL")}
-                fullWidth
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                }}
-                InputProps={{ readOnly: true }}
-              />
-              <TextField
-                margin="dense"
-                fullWidth
-                label="Cantidad pagada"
-                value={cantidadPagada}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (!value.trim()) {
-                    setCantidadPagada(0);
-                  } else {
-                    setCantidadPagada(parseFloat(value));
-                  }
-                }}
-                disabled={metodoPago !== "EFECTIVO"} // Deshabilitar la edición excepto para el método "EFECTIVO"
-              // inputProps={{
-              //   inputMode: "numeric",
-              //   pattern: "[0-9]*",
-              //   maxLength: 9,
-              // }}
-              />
-              <TextField
-                margin="dense"
-                fullWidth
-                type="number"
-                label="Faltara pagar"
-                disabled={true}
-                value={Math.max(0, montoAPagar - cantidadPagada).toLocaleString(
-                  "es-CL"
-                )}
-                InputProps={{ readOnly: true }}
-              />
-              {calcularVuelto() > 0 && (
-                <TextField
-                  margin="dense"
-                  fullWidth
-                  type="number"
-                  label="Vuelto"
-                  value={calcularVuelto()}
-                  InputProps={{ readOnly: true }}
-                />
-              )}
-            </Grid>
+                    handleDetailOpen={handleDetailOpen}
 
-            <Grid
-              container
-              spacing={2}
-              item
-              sm={12}
-              md={12}
-              lg={12}
-              sx={{ width: "100%", display: "flex", justifyContent: "center" }}
-            >
-              <Typography sx={{ marginTop: "7%" }} variant="h6">
-                Selecciona Método de Pago:
-              </Typography>
-              <Grid item xs={12} sm={12} md={12}>
-                <Button
-                  sx={{ height: "100%" }}
-                  id="efectivo-btn"
-                  fullWidth
-                  disabled={loading} // Deshabilitar si hay una carga en progreso
-                  variant={metodoPago === "EFECTIVO" ? "contained" : "outlined"}
-                  onClick={() => {
-                    setMetodoPago("EFECTIVO");
-                  }}
-                >
-                  Efectivo
-                </Button>
-              </Grid>
+                    handlePagarOpen={handlePagarOpen}
 
-              <Grid item xs={12} sm={12} md={12}>
-                <Button
-                  sx={{ height: "100%" }}
-                  id="credito-btn"
-                  variant={metodoPago === "CHEQUE" ? "contained" : "outlined"}
-                  onClick={() => {
-                    setMetodoPago("CHEQUE");
-                    setCantidadPagada(
-                      paymentOrigin === "detalleProveedor"
-                        ? selectedProveedor.total
-                        : groupedProveedores.reduce(
-                          (acc, proveedor) => acc + proveedor.total,
-                          0
-                        )
-                    );
-                    handleChequeModalOpen();
-                  }}
-                  fullWidth
-                  disabled={loading} // Deshabilitar si hay una carga en progreso
-                >
-                  CHEQUE
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <Button
-                  id="transferencia-btn"
-                  fullWidth
-                  sx={{ height: "100%" }}
-                  variant={
-                    metodoPago === "TRANSFERENCIA" ? "contained" : "outlined"
-                  }
-                  onClick={() => {
-                    handleTransferenciaModalOpen2();
-                  }}
-                  disabled={loading} // Deshabilitar si hay una carga en progreso
-                >
-                  Transferencia
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={12}>
-                <Button
-                  sx={{ height: "100%" }}
-                  variant="contained"
-                  fullWidth
-                  color="secondary"
-                  disabled={!metodoPago || loading}
-                  onClick={handleGroupedPayment}
-                >
-                  {loading ? (
-                    <>
-                      <CircularProgress size={20} /> Procesando...
-                    </>
-                  ) : (
-                    "Pagar"
-                  )}
-                </Button>
-              </Grid>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClosePaymentProcess} disabled={loading}>
-            Cerrar
-          </Button>
-        </DialogActions>
-      </Dialog>
+                    handleOpenPaymentProcess={handleOpenPaymentProcess}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-      <Dialog open={openPaymentProcess} onClose={handleClosePaymentProcess}>
-        <DialogTitle>Procesamiento de Pago Detalle</DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2} item xs={12} md={6} lg={12}>
-            <Grid item xs={12} md={12} lg={12}>
-              {error && (
-                <Grid item xs={12}>
-                  <Typography variant="body1" color="error">
-                    {error}
-                  </Typography>
-                </Grid>
-              )}
-              <TextField
-                sx={{ marginBottom: "5%" }}
-                margin="dense"
-                label="Monto a Pagar"
-                variant="outlined"
-                // value={getTotalSelected()}
-                value={montoAPagar.toLocaleString("es-CL")}
-                fullWidth
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                }}
-                InputProps={{ readOnly: true }}
-              />
-              <TextField
-                margin="dense"
-                fullWidth
-                label="Cantidad pagada"
-                // value={cantidadPagada.toLocaleString("es-CL")}
-                value={cantidadPagada}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (!value.trim()) {
-                    setCantidadPagada(0);
-                  } else {
-                    setCantidadPagada(parseFloat(value));
-                  }
-                }}
-                disabled={metodoPago !== "EFECTIVO"} // Deshabilitar la edición excepto para el método "EFECTIVO"
-                inputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                  maxLength: 10,
-                }}
-              />
-              <TextField
-                margin="dense"
-                fullWidth
-                type="number"
-                label="Faltara pagar"
-                disabled={true}
-                value={Math.max(0, montoAPagar - cantidadPagada).toLocaleString(
-                  "es-CL"
-                )}
-                InputProps={{ readOnly: true }}
-              />
-              {calcularVuelto() > 0 && (
-                <TextField
-                  margin="dense"
-                  fullWidth
-                  type="number"
-                  label="Vuelto"
-                  value={calcularVuelto()}
-                  InputProps={{ readOnly: true }}
-                />
-              )}
-            </Grid>
+        </Grid >
+      </Grid >
 
-            <Grid
-              container
-              spacing={2}
-              item
-              sm={12}
-              md={12}
-              lg={12}
-              sx={{ width: "100%", display: "flex", justifyContent: "center" }}
-            >
-              <Typography sx={{ marginTop: "7%" }} variant="h6">
-                Selecciona Método de Pago:
-              </Typography>
-              <Grid item xs={12} sm={12} md={12}>
-                <Button
-                  sx={{ height: "100%" }}
-                  id="efectivo-btn"
-                  fullWidth
-                  disabled={loading} // Deshabilitar si hay una carga en progreso
-                  variant={metodoPago === "EFECTIVO" ? "contained" : "outlined"}
-                  onClick={() => {
-                    setMetodoPago("EFECTIVO");
-                  }}
-                >
-                  Efectivo
-                </Button>
-              </Grid>
+      
 
-              <Grid item xs={12} sm={12} md={12}>
-                <Button
-                  sx={{ height: "100%" }}
-                  id="credito-btn"
-                  variant={metodoPago === "CHEQUE" ? "contained" : "outlined"}
-                  onClick={() => {
-                    setMetodoPago("CHEQUE");
-                    setCantidadPagada(
-                      paymentOrigin === "detalleProveedor"
-                        ? selectedProveedor.total
-                        : groupedProveedores.reduce(
-                          (acc, proveedor) => acc + proveedor.total,
-                          0
-                        )
-                    );
-                    handleChequeModalOpen();
-                  }}
-                  fullWidth
-                  disabled={loading} // Deshabilitar si hay una carga en progreso
-                >
-                  CHEQUE
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <Button
-                  id="transferencia-btn"
-                  fullWidth
-                  sx={{ height: "100%" }}
-                  variant={
-                    metodoPago === "TRANSFERENCIA" ? "contained" : "outlined"
-                  }
-                  onClick={() => {
-                    handleTransferenciaModalOpen();
-                  }}
-                  disabled={loading} // Deshabilitar si hay una carga en progreso
-                >
-                  Transferencia
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={12}>
-                <Button
-                  sx={{ height: "100%" }}
-                  variant="contained"
-                  fullWidth
-                  color="secondary"
-                  disabled={!metodoPago || loading}
-                  // onClick={handlePayment}
-                  onClick={handleIndividualPayment}
-                >
-                  {loading ? (
-                    <>
-                      <CircularProgress size={20} /> Procesando...
-                    </>
-                  ) : (
-                    "Pagar"
-                  )}
-                </Button>
-              </Grid>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClosePaymentProcess} disabled={loading}>
-            Cerrar
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <PagoGeneral
+        openPagar={openPagar}
+        handlePagarClose={handlePagarClose}
+        groupedProveedores={groupedProveedores}
+        allSelected={allSelected}
+        handleSelectAll={handleSelectAll}
+        handleSelectOne={handleSelectOne}
+        selectedTotal={selectedTotal}
+        selectedIds={selectedIds}
+        handleOpenGroupPaymentProcess={handleOpenGroupPaymentProcess}
+      />
 
+      {/* <PagoGrupal
+        openPaymentProcess={openPaymentProcess}
+        montoAPagar={montoAPagar}
+        cantidadPagada={cantidadPagada}
+        metodoPago={metodoPago}
+        calcularVuelto={calcularVuelto}
+        loading={loading}
+        setMetodoPago={setMetodoPago}
+        setCantidadPagada={setCantidadPagada}
+        selectedProveedor={selectedProveedor}
+        groupedProveedores={groupedProveedores}
+        handleTransferenciaModalOpen2={handleTransferenciaModalOpen2}
+        handleGroupedPayment={handleGroupedPayment}
+        handleClosePaymentProcess={handleClosePaymentProcess}
+        error={error}
+      /> */}
+
+
+      <PagoDetalle
+        openPaymentProcess={openPaymentProcess}
+        montoAPagar={montoAPagar}
+        cantidadPagada={cantidadPagada}
+        setCantidadPagada={setCantidadPagada}
+        calcularVuelto={calcularVuelto}
+        metodoPago={metodoPago}
+        setMetodoPago={setMetodoPago}
+        selectedProveedor={selectedProveedor}
+        groupedProveedores={groupedProveedores}
+        loading={loading}
+        handleTransferenciaModalOpen={handleTransferenciaModalOpen}
+        handleIndividualPayment={handleIndividualPayment}
+        handleClosePaymentProcess={handleClosePaymentProcess}
+        paymentOrigin={paymentOrigin}
+        handleChequeModalOpen={handleChequeModalOpen}
+        error={error}
+      />
 
       <PagoParcial
         openPaymentGroupProcess={openPaymentGroupProcess}
@@ -1793,16 +927,8 @@ const DocumentosPorPagar = () => {
           setNroDocumento(data.nroDocumento)
           setSerieCheque(data.serieCheque)
         }}
-
       />
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      />
-    </div>
+    </div >
   );
 };
 
