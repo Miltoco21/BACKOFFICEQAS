@@ -38,8 +38,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ModelConfig from "../../../Models/ModelConfig";
 import User from "../../../Models/User";
-import PagoTransferencia from "../../../Componentes/ScreenDialog/PagoTransferencia";
-import PagoCheque from "../../../Componentes/ScreenDialog/PagoCheque";
+import PagoTransferencia from "../../../Componentes/ScreenDialog/FormularioTransferencia";
+import PagoCheque from "../../../Componentes/ScreenDialog/FormularioCheque";
 import PagoParcial from "../../../Componentes/ScreenDialog/PagoParcial";
 import System from "../../../Helpers/System";
 import ItemTablaModalDetalle from "./ItemTablaModalDetalle";
@@ -47,16 +47,12 @@ import ItemTablaItemDetalle from "./ItemTablaItemDetalle";
 
 
 const ItemTablaDetalles = ({
+  dataItem,
+
   handleSort,
   order,
   sortData,
-  groupedData,
-  rut,
-  handleOpenPaymentProcess
 }) => {
-
-  const [detailOpen, setDetailOpen] = useState(false);
-
 
   return (
     <Table size="small">
@@ -139,14 +135,13 @@ const ItemTablaDetalles = ({
       </TableHead>
       <TableBody>
         {sortData(
-          groupedData[rut],
+          dataItem,
           order.field,
           order.direction
         ).map((item) => (
           <ItemTablaItemDetalle
             key={item.id}
             item={item}
-            handleOpenPaymentProcess={handleOpenPaymentProcess}
           />
         ))}
         <TableRow>

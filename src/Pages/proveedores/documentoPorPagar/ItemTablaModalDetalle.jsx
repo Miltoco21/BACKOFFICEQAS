@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Paper,
   Grid,
@@ -38,18 +38,77 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ModelConfig from "../../../Models/ModelConfig";
 import User from "../../../Models/User";
-import PagoTransferencia from "../../../Componentes/ScreenDialog/PagoTransferencia";
-import PagoCheque from "../../../Componentes/ScreenDialog/PagoCheque";
+import PagoTransferencia from "../../../Componentes/ScreenDialog/FormularioTransferencia";
+import PagoCheque from "../../../Componentes/ScreenDialog/FormularioCheque";
 import PagoParcial from "../../../Componentes/ScreenDialog/PagoParcial";
 import System from "../../../Helpers/System";
+import PagoSimple from "./PagoSimple";
+import { transferenciaDefault } from "../../../definitions/Transferencia";
+import { chequeDefault } from "../../../definitions/Cheque";
 
+import { SelectedOptionsContext } from "./../../../Componentes/Context/SelectedOptionsProvider";
+import Proveedor from "../../../Models/Proveedor";
 
 const ItemTablaModalDetalle = ({
   detailOpen,
   handleDetailClose,
   selectedItem,
-  handleOpenPaymentProcess
 }) => {
+
+  const {
+      showMessage,
+      showAlert,
+      showLoading,
+      hideLoading
+    } = useContext(SelectedOptionsContext);
+
+  const [showModalPago, setShowModalPago] = useState(false);
+  const [montoAPagar, setMontoAPagar] = useState("");
+  const [cantidadPagada, setCantidadPagada] = useState(0);
+
+  const prepararPago = () => {
+    setMontoAPagar(selectedItem.total);
+    setCantidadPagada(selectedItem.total);
+
+    // console.log(montoAPagar);
+
+    // Resetear la cantidad pagada al abrir el diálogo
+    setShowModalPago(true);
+  };
+
+
+
+  //cuando pago un solo item del listado del detalle
+  const procesarPago = async ({metodoPago, dataTransferencia, dataCheque}) => {
+    showLoading()
+
+    var itemsPagos = []
+      itemsPagos.push({
+        "idProveedorCompraCabecera": selectedItem.id,
+        "total": selectedItem.total
+      })
+
+    var requestBody = {
+      "fechaIngreso": System.getInstance().getDateForServer(),
+      "codigoUsuario": User.getInstance().getFromSesion().codigoUsuario,
+      "codigoSucursal": "0",
+      "puntoVenta": "0",
+      "compraDeudaIds": itemsPagos,
+      "montoPagado": cantidadPagada,
+      "metodoPago": metodoPago
+    }
+
+    // console.log("Request Body antes de enviar:", requestBody);
+    Proveedor.AddProveedorCompraPagar(requestBody, (responseData, response) => {
+      hideLoading()
+      showMessage("Realizado correctamente")
+    }, (err) => {
+      hideLoading()
+      showAlert(err)
+    })
+
+  };
+
 
 
   return (
@@ -82,7 +141,6 @@ const ItemTablaModalDetalle = ({
                     {selectedItem.rut}
                   </Typography>
                 </Box>
-                <Grid item xs={12}></Grid>
               </Box>
             </Paper>
             <TableContainer>
@@ -102,7 +160,7 @@ const ItemTablaModalDetalle = ({
                     </TableCell>
                     <TableCell>{selectedItem.tipoDocumento}</TableCell>
                     <TableCell>{selectedItem.folio}</TableCell>
-                    <TableCell>${System.formatMonedaLocal(selectedItem.total,false)}</TableCell>
+                    <TableCell>${System.formatMonedaLocal(selectedItem.total)}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -126,8 +184,8 @@ const ItemTablaModalDetalle = ({
                       <TableRow key={detalle.codProducto}>
                         <TableCell>{detalle.descripcionProducto}</TableCell>
                         <TableCell>{detalle.cantidad}</TableCell>
-                        <TableCell>{detalle.precioUnidad}</TableCell>
-                        <TableCell>${System.formatMonedaLocal(detalle.costo,false)}</TableCell>
+                        <TableCell>${System.formatMonedaLocal(detalle.precioUnidad)}</TableCell>
+                        <TableCell>${System.formatMonedaLocal(detalle.costo)}</TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
@@ -140,18 +198,32 @@ const ItemTablaModalDetalle = ({
               mt={2}
             >
               <Typography variant="h6">
-                Total Deuda : ${System.formatMonedaLocal(selectedItem.total,false)}
+                Total Deuda : ${System.formatMonedaLocal(selectedItem.total)}
               </Typography>
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => handleOpenPaymentProcess(selectedItem)}
+                onClick={prepararPago}
               >
-                Pagar Total $ ({System.formatMonedaLocal(selectedItem.total,false)})
+                Pagar Total $ ({System.formatMonedaLocal(selectedItem.total)})
               </Button>
             </Box>
           </div>
         )}
+
+        <PagoSimple
+          openDialog={showModalPago}
+          setOpenDialog={setShowModalPago}
+
+          montoAPagar={montoAPagar}
+          cantidadPagada={cantidadPagada}
+          setCantidadPagada={setCantidadPagada}
+
+          onChangeMetod={(metodoPago) => {
+          }}
+
+          onConfirm={procesarPago}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleDetailClose} color="primary">

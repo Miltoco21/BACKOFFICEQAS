@@ -38,20 +38,20 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ModelConfig from "../../../Models/ModelConfig";
 import User from "../../../Models/User";
-import PagoTransferencia from "../../../Componentes/ScreenDialog/PagoTransferencia";
-import PagoCheque from "../../../Componentes/ScreenDialog/PagoCheque";
+import PagoTransferencia from "../../../Componentes/ScreenDialog/FormularioTransferencia";
+import PagoCheque from "../../../Componentes/ScreenDialog/FormularioCheque";
 import PagoParcial from "../../../Componentes/ScreenDialog/PagoParcial";
 import System from "../../../Helpers/System";
 import ItemTablaModalDetalle from "./ItemTablaModalDetalle";
 
 
 const ItemTablaItemDetalle = ({
-  item,
-  handleOpenPaymentProcess
+  item
 }) => {
 
   const [detailOpen, setDetailOpen] = useState(false);
 
+  
 
   return (
     <TableRow>
@@ -79,9 +79,10 @@ const ItemTablaItemDetalle = ({
           handleDetailClose={() => { setDetailOpen(false) }}
 
           selectedItem={item}
-
-          handleOpenPaymentProcess={handleOpenPaymentProcess}
+          // handleOpenPaymentProcess={handleOpenPaymentProcess}
         />
+
+
 
 
       </TableCell>

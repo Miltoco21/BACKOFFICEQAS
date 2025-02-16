@@ -206,9 +206,9 @@ class System {
             // console.log(contInput.querySelector("input"))
             const inp = contInput.querySelector("input")
             if (inp) {
-                contInput.querySelector("input").focus()
+                if(contInput.querySelector("input"))contInput.querySelector("input").focus()
             } else {
-                textInfoRef.current.focus()
+                if(textInfoRef.current)textInfoRef.current.focus()
             }
         }
     }
@@ -239,6 +239,10 @@ class System {
         // console.log("devuelve cortado", txt)
         // console.log("largo cortado", txt.length)
         return txt
+    }
+
+    static camelToUnderscore(key) {
+        return key.replace(/([A-Z])/g, "_$1").toLowerCase();
     }
 
     static onlyTime(datetime) {

@@ -44,7 +44,6 @@ import IngresarTexto from "./IngresarTexto";
 const PagoParcial = ({
   openPaymentGroupProcess,
   error,
-  handleClosePaymentProcess,
   montoAPagar,
   cantidadPagada,
   setCantidadPagada,
@@ -55,7 +54,7 @@ const PagoParcial = ({
   handleChequeModalOpen,
   loading,
   paymentOrigin,
-  handleTransferenciaModalOpen2,
+  handleTransferenciaModalOpen,
   handleGroupedPayment,
   handleClosePaymentGroupProcess
 }) => {
@@ -67,7 +66,7 @@ const PagoParcial = ({
   };
 
   return (
-    <Dialog open={openPaymentGroupProcess} onClose={handleClosePaymentProcess}>
+    <Dialog open={openPaymentGroupProcess} onClose={handleClosePaymentGroupProcess}>
       <DialogTitle>Hacer Pago</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} item xs={12} md={6} lg={12}>
@@ -196,7 +195,7 @@ const PagoParcial = ({
                   metodoPago === "TRANSFERENCIA" ? "contained" : "outlined"
                 }
                 onClick={() => {
-                  handleTransferenciaModalOpen2();
+                  handleTransferenciaModalOpen();
                 }}
                 disabled={loading} // Deshabilitar si hay una carga en progreso
               >

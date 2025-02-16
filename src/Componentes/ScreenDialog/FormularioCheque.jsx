@@ -41,18 +41,11 @@ import dayjs from "dayjs";
 import Validator from "../../Helpers/Validator";
 import IngresarTexto from "./IngresarTexto";
 
-const PagoCheque = ({
+const FormularioCheque = ({
   openDialog,
   setOpenDialog,
-  metodoPago,
-  handlePayment,
-  loading,
-  cantidadPagada,
   onConfirm
 }) => {
-
-
-
 
   const {
     showMessage
@@ -63,9 +56,9 @@ const PagoCheque = ({
 
   const [nombre, setNombre] = useState(""); // Estado para almacenar el nombre
   const [rut, setRut] = useState(""); // Estado para almacenar el rut
-  const [nroCuenta, setNroCuenta] = useState(""); // Estado para almacenar el número de cuenta
-  
-  const [serieCheque, setSerieCheque] = useState("");
+  const [nroCheque, setNroCheque] = useState(""); // Estado para almacenar el número de cuenta
+
+  const [nroSerie, setNroSerie] = useState("");
   const [nroDocumento, setNroDocumento] = useState("");
   const [fecha, setFecha] = useState("");
   const [banco, setBanco] = useState("");
@@ -159,8 +152,8 @@ const PagoCheque = ({
                 inputMode: "numeric",
                 pattern: "[0-9]*",
               }}
-              value={serieCheque}
-              onChange={(e) => setSerieCheque(e.target.value)}
+              value={nroSerie}
+              onChange={(e) => setNroSerie(e.target.value)}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -177,8 +170,8 @@ const PagoCheque = ({
                 inputMode: "numeric",
                 pattern: "[0-9]*",
               }}
-              value={nroCuenta}
-              onChange={(e) => setNroCuenta(e.target.value)}
+              value={nroCheque}
+              onChange={(e) => setNroCheque(e.target.value)}
             // onKeyDown={(event) => handleKeyDown(event, "numeroCuenta")}
             />
           </Grid>
@@ -219,16 +212,21 @@ const PagoCheque = ({
               variant="contained"
               fullWidth
               color="secondary"
-              disabled={!metodoPago || cantidadPagada <= 0}
-              onClick={handlePayment}
+              // disabled={!metodoPago}
+              onClick={() => {
+                onConfirm({
+                  idCuentaCorrientePago: 0,
+                  rut,
+                  banco,
+                  nroDocumento,
+                  nombre,
+                  nroCheque,
+                  fecha,
+                  nroSerie,
+                })
+              }}
             >
-              {loading ? (
-                <>
-                  <CircularProgress size={20} /> Procesando...
-                </>
-              ) : (
-                "Pagar"
-              )}
+              Pagar
             </Button>
           </Grid>
         </Grid>
@@ -244,4 +242,4 @@ const PagoCheque = ({
   );
 };
 
-export default PagoCheque;
+export default FormularioCheque;

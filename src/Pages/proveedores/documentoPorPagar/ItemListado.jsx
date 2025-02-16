@@ -38,29 +38,47 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ModelConfig from "../../../Models/ModelConfig";
 import User from "../../../Models/User";
-import PagoTransferencia from "../../../Componentes/ScreenDialog/PagoTransferencia";
-import PagoCheque from "../../../Componentes/ScreenDialog/PagoCheque";
+import PagoTransferencia from "../../../Componentes/ScreenDialog/FormularioTransferencia";
+import PagoCheque from "../../../Componentes/ScreenDialog/FormularioCheque";
 import PagoParcial from "../../../Componentes/ScreenDialog/PagoParcial";
 import TablaDetalles from "./ItemTablaDetalles";
 import System from "../../../Helpers/System";
 import ItemTablaModalDetalle from "./ItemTablaModalDetalle";
+import PagoGeneral from "./PagoGeneral";
+import Proveedor from "../../../Models/Proveedor";
+import { transferenciaDefault } from "../../../definitions/Transferencia";
+import PagoDetalle from "./PagoSimple";
+import FormularioTransferencia from "../../../Componentes/ScreenDialog/FormularioTransferencia";
 
 
 const ItemListado = ({
+  dataItem,
   rut,
-  groupedData,
+
   order,
   handleSort,
   sortData,
-  handleDetailOpen,
-  handlePagarOpen,
 
-  handleOpenPaymentProcess
-  
+  proveedores,
+  onRequireRefresh
 }) => {
 
   const [verDetalles, setVerDetalles] = useState(false);
-  
+  const [openPagar, setOpenPagar] = useState(false);
+  const [groupedProveedores, setGroupedProveedores] = useState([]);
+
+  const handlePagarOpen = (rut) => {
+    const filteredProveedores = proveedores.filter(
+      (proveedor) => proveedor.rut === rut
+    );
+    setGroupedProveedores(filteredProveedores);
+    setOpenPagar(true);
+  };
+
+  const handlePagarClose = () => {
+    setOpenPagar(false);
+    setGroupedProveedores([]);
+  };
 
   return (
     <React.Fragment>
@@ -76,40 +94,40 @@ const ItemListado = ({
         </TableCell>
         <TableCell>{rut}</TableCell>
         <TableCell>
-          <strong>{groupedData[rut][0].razonSocial}</strong>
+          <strong>{dataItem[0].razonSocial}</strong>
         </TableCell>
         <TableCell>
           Facturas:{" "}
           {
-            groupedData[rut].filter(
+            dataItem.filter(
               (item) => item.tipoDocumento === "Factura"
             ).length
           }
           <br />
           Boletas:{" "}
           {
-            groupedData[rut].filter(
+            dataItem.filter(
               (item) => item.tipoDocumento === "Boleta"
             ).length
           }
           <br />
           Tickets:{" "}
           {
-            groupedData[rut].filter(
+            dataItem.filter(
               (item) => item.tipoDocumento === "Ticket"
             ).length
           }
           <br />
           Ingreso Interno:{" "}
           {
-            groupedData[rut].filter(
+            dataItem.filter(
               (item) => item.tipoDocumento === "Ingreso Interno"
             ).length
           }
         </TableCell>
         <TableCell>
           $
-          {System.formatMonedaLocal(groupedData[rut]
+          {System.formatMonedaLocal(dataItem
             .reduce((sum, item) => sum + item.total, 0))}
         </TableCell>
         <TableCell>
@@ -119,7 +137,7 @@ const ItemListado = ({
             color="secondary"
             onClick={() => handlePagarOpen(rut)}
           >
-            Pagar
+            PAGAR TOTAL
           </Button>
         </TableCell>
       </TableRow>
@@ -139,13 +157,19 @@ const ItemListado = ({
                 order={order}
                 handleSort={handleSort}
                 sortData={sortData}
-                groupedData={groupedData}
-                rut={rut}
-                handleOpenPaymentProcess={handleOpenPaymentProcess}
+                dataItem={dataItem}
               />
 
             </Box>
           </Collapse>
+
+          <PagoGeneral
+            openPagar={openPagar}
+            handlePagarClose={handlePagarClose}
+            compras={groupedProveedores}
+
+            onFinishPago={onRequireRefresh}
+          />
 
         </TableCell>
       </TableRow>

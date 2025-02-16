@@ -40,7 +40,7 @@ import dayjs from "dayjs";
 import Validator from "../../Helpers/Validator";
 import IngresarTexto from "./IngresarTexto";
 
-const PagoTransferencia = ({
+const FormularioTransferencia = ({
   openDialog,
   setOpenDialog,
   onConfirm
@@ -78,7 +78,6 @@ const PagoTransferencia = ({
 
   useEffect(()=>{
     if(!openDialog) return
-
 
     setFecha(dayjs().format("YYYY-MM-DD"))
   },[openDialog])
@@ -317,4 +316,4 @@ const PagoTransferencia = ({
   );
 };
 
-export default PagoTransferencia;
+export default FormularioTransferencia;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Paper,
   Grid,
@@ -38,23 +38,103 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ModelConfig from "../../../Models/ModelConfig";
 import User from "../../../Models/User";
-import PagoTransferencia from "../../../Componentes/ScreenDialog/PagoTransferencia";
-import PagoCheque from "../../../Componentes/ScreenDialog/PagoCheque";
+import PagoTransferencia from "../../../Componentes/ScreenDialog/FormularioTransferencia";
+import PagoCheque from "../../../Componentes/ScreenDialog/FormularioCheque";
 import PagoParcial from "../../../Componentes/ScreenDialog/PagoParcial";
 import System from "../../../Helpers/System";
+import PagoSimple from "./PagoSimple";
+import { SelectedOptionsContext } from "./../../../Componentes/Context/SelectedOptionsProvider";
+import Proveedor from "../../../Models/Proveedor";
 
 
 const PagoGeneral = ({
   openPagar,
   handlePagarClose,
-  groupedProveedores,
-  allSelected,
-  handleSelectAll,
-  handleSelectOne,
-  selectedTotal,
-  selectedIds,
-  handleOpenGroupPaymentProcess
+  compras,
+
+  onFinishPago = ()=>{}
 }) => {
+
+  const {
+    showMessage,
+    showAlert,
+    showLoading,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
+
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  const selectedTotal = compras
+    .filter((proveedor) => selectedIds.includes(proveedor.id))
+    .reduce((total, proveedor) => total + proveedor.total, 0);
+
+
+
+  const allSelected = selectedIds.length === compras.length;
+
+
+  const [showModalPago, setShowModalPago] = useState(false);
+  const [montoAPagar, setMontoAPagar] = useState("");
+  const [cantidadPagada, setCantidadPagada] = useState(0);
+
+  const handleSelectOne = (event, id) => {
+    if (event.target.checked) {
+      setSelectedIds((prevSelected) => [...prevSelected, id]);
+    } else {
+      setSelectedIds((prevSelected) =>
+        prevSelected.filter((selectedId) => selectedId !== id)
+      );
+    }
+  };
+
+  const selectAll = () => {
+    const allIds = compras.map((proveedor) => proveedor.id);
+    setSelectedIds(allIds);
+  };
+
+  const handleSelectAll = (event) => {
+    if (event.target.checked) {
+      selectAll()
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+
+
+  useEffect(() => {
+    selectAll()
+  }, [openPagar])
+
+  const procesarPago = async ({ metodoPago, cantidadPagada }) => {
+    showLoading()
+    var itemsPagos = []
+    compras.forEach((compra) => {
+      itemsPagos.push({
+        "idProveedorCompraCabecera": compra.id,
+        "total": compra.total
+      })
+    })
+
+    var requestBody = {
+      "fechaIngreso": System.getInstance().getDateForServer(),
+      "codigoUsuario": User.getInstance().getFromSesion().codigoUsuario,
+      "codigoSucursal": "0",
+      "puntoVenta": "0",
+      "compraDeudaIds": itemsPagos,
+      "montoPagado": cantidadPagada,
+      "metodoPago": metodoPago
+    }
+    // console.log("Request Body antes de enviar:", requestBody);
+    Proveedor.AddProveedorCompraPagar(requestBody, (responseData, response) => {
+      hideLoading()
+      showMessage("Realizado correctamente")
+      onFinishPago(requestBody, responseData)
+    }, (err) => {
+      hideLoading()
+      showAlert(err)
+    })
+  };
 
 
   return (
@@ -66,13 +146,13 @@ const PagoGeneral = ({
     >
       <DialogTitle>Pagos del Proveedor</DialogTitle>
       <DialogContent dividers>
-        {groupedProveedores.length > 0 && (
+        {compras.length > 0 && (
           <div>
             <Typography variant="h6">
-              Proveedor: {groupedProveedores[0].razonSocial}
+              Proveedor: {compras[0].razonSocial}
             </Typography>
             <Typography variant="subtitle1">
-              RUT: {groupedProveedores[0].rut}
+              RUT: {compras[0].rut}
             </Typography>
             <Typography variant="h6" style={{ marginTop: "16px" }}>
               Compras:
@@ -81,33 +161,33 @@ const PagoGeneral = ({
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell padding="checkbox">
-                      <Checkbox
+                    {/* <TableCell padding="checkbox"> */}
+                    {/* <Checkbox
                         indeterminate={
                           selectedIds.length > 0 &&
-                          selectedIds.length < groupedProveedores.length
+                          selectedIds.length < compras.length
                         }
                         checked={allSelected}
                         onChange={handleSelectAll}
-                      />
-                    </TableCell>
+                      /> */}
+                    {/* </TableCell> */}
                     <TableCell>Tipo Documento</TableCell>
                     <TableCell>Folio</TableCell>
                     <TableCell>Fecha</TableCell>
-                    <TableCell>Total</TableCell>
+                    <TableCell>Monto</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {groupedProveedores.map((proveedor) => (
+                  {compras.map((proveedor) => (
                     <TableRow key={proveedor.id}>
-                      <TableCell padding="checkbox">
+                      {/* <TableCell padding="checkbox">
                         <Checkbox
                           checked={selectedIds.includes(proveedor.id)}
-                          onChange={(event) =>
-                            handleSelectOne(event, proveedor.id)
-                          }
+                          onChange={(event) =>{
+                            // handleSelectOne(event, proveedor.id)
+                          }}
                         />
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell>{proveedor.tipoDocumento}</TableCell>
                       <TableCell>{proveedor.folio}</TableCell>
                       <TableCell>
@@ -132,13 +212,37 @@ const PagoGeneral = ({
                 variant="contained"
                 color="primary"
                 disabled={selectedTotal <= 0}
-                onClick={() => handleOpenGroupPaymentProcess()}
+                onClick={() => {
+                  setMontoAPagar(selectedTotal);
+                  setCantidadPagada(selectedTotal);
+                  setShowModalPago(true)
+                }}
               >
                 Pagar Total ${System.formatMonedaLocal(selectedTotal)}
               </Button>
             </Box>
           </div>
         )}
+
+        <PagoSimple
+          openDialog={showModalPago}
+          setOpenDialog={setShowModalPago}
+
+          montoAPagar={montoAPagar}
+          puedePagarParcial={false}
+
+          onChangeMetod={(metodoPago) => {
+
+          }}
+
+          onConfirm={procesarPago}
+        />
+
+
+
+
+
+
       </DialogContent>
       <DialogActions>
         <Button onClick={handlePagarClose} color="primary">
