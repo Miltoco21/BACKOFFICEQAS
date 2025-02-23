@@ -12,6 +12,7 @@ import LongClick from '../../Helpers/LongClick';
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import System from '../../Helpers/System';
 import RefreshInfoControl from '../Elements/RefreshInfoControl';
+import Sucursal from '../../Models/Sucursal';
 
 
 export default function ({
@@ -25,19 +26,86 @@ export default function ({
 
   const [usuariosActivos, setUsuariosActivos] = useState([])
 
-  const  fetchInfo = () => {
-    // console.log("fetchInfo")
+  const [sucursalesInfo, setSucursalesInfo] = useState(null)
+  const [sucursales, setSucursales] = useState([])
+  const [cajas, setCajas] = useState([])
+
+  
+
+  const cargarSucursales = (onFinish = () => { }) => {
+    Sucursal.getAll((responseData) => {
+      setSucursalesInfo(responseData)
+
+      var sucursalesx = []
+      var cajasx = []
+
+      responseData.forEach((sucursalInfo, ix) => {
+        sucursalesx.push({
+          id: sucursalInfo.idSucursal + "",
+          value: sucursalInfo.descripcionSucursal
+        })
+
+        sucursalInfo.puntoVenta.forEach((cajaItem, ix2) => {
+          cajasx.push({
+            id: cajaItem.idCaja + "",
+            value: cajaItem.sPuntoVenta,
+            tipo: cajaItem.idSucursalPvTipo
+          })
+        })
+      })
+
+
+      setSucursales(sucursalesx)
+      setCajas(cajasx)
+
+      onFinish()
+
+
+      console.log("fin carga sucursales", responseData)
+    }, (error) => {
+
+    })
+  }
+
+  const buscarNombreSucursal = (idSucursal) => {
+    var nombre = idSucursal + ""
+    sucursalesInfo.forEach((sucItem, ix) => {
+      if (sucItem.idSucursal == idSucursal) {
+        nombre = sucItem.descripcionSucursal
+      }
+    })
+
+    return nombre
+  }
+
+  const buscarNombreCaja = (idCaja) => {
+
+    console.log("buscarNombreCaja para idCaja", idCaja)
+    var nombre = idCaja + ""
+    cajas.forEach((cajaItem, ix) => {
+      if (cajaItem.id == idCaja) {
+        nombre = cajaItem.value
+      }
+    })
+
+    return nombre
+  }
+
+
+
+  const fetchInfo = () => {
+    console.log("fetchInfo de card usuarios")
     return User.getActivos((usuariosx) => {
       setUsuariosActivos(usuariosx)
       setActivos(usuariosx)
-    }, () => {})
+    }, () => { })
   }
 
   useEffect(() => {
-    fetchInfo()
+    cargarSucursales(() => fetchInfo())
   }, [])
 
-  
+
 
   return (usuariosActivos.length > 0 ? (
     <Box
@@ -50,14 +118,15 @@ export default function ({
         position: "relative"
       }}
     >
-      <RefreshInfoControl 
-        variableEnSesion = { "dashboardRefreshUsuarios" }
+      <RefreshInfoControl
+        variableEnSesion={"dashboardRefreshUsuarios"}
         fetchInfo={fetchInfo}
       />
 
       <Typography variant='h5'>Usuarios Activos</Typography>
       {
         usuariosActivos.map((usu, ix) => {
+          console.log("usuarios activo", usu)
           const longBoleta = new LongClick(1);
           longBoleta.onClick(() => {
             // alert("click normal")
@@ -100,10 +169,10 @@ export default function ({
                 Cod. {usu.codigoUsuario}
               </Typography>
               <Typography variant='p' sx={{ display: "block" }}>
-                Sucursal {usu.codigoSucursal}
+                Sucursal {buscarNombreSucursal(usu.codigoSucursal)}
               </Typography>
               <Typography variant='p' sx={{ display: "block" }}>
-                Caja {usu.puntoVenta}
+                Caja{buscarNombreCaja(usu.puntoVenta)}
               </Typography>
             </Typography>)
         }
