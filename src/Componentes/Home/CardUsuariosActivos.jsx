@@ -30,7 +30,7 @@ export default function ({
   const [sucursales, setSucursales] = useState([])
   const [cajas, setCajas] = useState([])
 
-  
+  const [funFetch, setFunFetch] = useState(null)
 
   const cargarSucursales = (onFinish = () => { }) => {
     Sucursal.getAll((responseData) => {
@@ -60,8 +60,7 @@ export default function ({
 
       onFinish()
 
-
-      console.log("fin carga sucursales", responseData)
+      // console.log("fin carga sucursales", responseData)
     }, (error) => {
 
     })
@@ -79,8 +78,7 @@ export default function ({
   }
 
   const buscarNombreCaja = (idCaja) => {
-
-    console.log("buscarNombreCaja para idCaja", idCaja)
+    // console.log("buscarNombreCaja para idCaja", idCaja)
     var nombre = idCaja + ""
     cajas.forEach((cajaItem, ix) => {
       if (cajaItem.id == idCaja) {
@@ -91,18 +89,18 @@ export default function ({
     return nombre
   }
 
-
-
-  const fetchInfo = () => {
-    console.log("fetchInfo de card usuarios")
+  const fetchInfoUsuarios = async () => {
     return User.getActivos((usuariosx) => {
       setUsuariosActivos(usuariosx)
       setActivos(usuariosx)
-    }, () => { })
+    }, (error) => {
+      console.error("Error al buscar datos:", error);
+
+    })
   }
 
   useEffect(() => {
-    cargarSucursales(() => fetchInfo())
+    cargarSucursales(() => { fetchInfoUsuarios() })
   }, [])
 
 
@@ -118,15 +116,16 @@ export default function ({
         position: "relative"
       }}
     >
-      <RefreshInfoControl
-        variableEnSesion={"dashboardRefreshUsuarios"}
-        fetchInfo={fetchInfo}
-      />
+
+        <RefreshInfoControl
+          variableEnSesion={"dashboardRefreshUsuarios"}
+          fetchInfo={fetchInfoUsuarios}
+        />
 
       <Typography variant='h5'>Usuarios Activos</Typography>
       {
         usuariosActivos.map((usu, ix) => {
-          console.log("usuarios activo", usu)
+          // console.log("usuarios activo", usu)
           const longBoleta = new LongClick(1);
           longBoleta.onClick(() => {
             // alert("click normal")
@@ -137,7 +136,7 @@ export default function ({
               user.fill(usu)
               user.doLogoutInServer(() => {
                 showMessage("Realizado correctamente")
-                fetchInfo()
+                fetchInfoUsuarios()
               }, () => {
                 showMessage("no se pudo realizar")
               })

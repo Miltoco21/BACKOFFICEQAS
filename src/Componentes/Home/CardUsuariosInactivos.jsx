@@ -75,9 +75,9 @@ export default function ({
       }}
     >
 
-      <RefreshInfoControl
+      {/* <RefreshInfoControl
         variableEnSesion={"dashboardRefreshUsuarios"}
-      />
+      /> */}
 
 
       <Typography variant='h5'>Usuarios inactivos</Typography>

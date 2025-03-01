@@ -25,7 +25,7 @@ import dayjs from "dayjs";
 
 const RefreshInfoControl = ({
   variableEnSesion,
-  fetchInfo = () => { }//fun async
+  fetchInfo,// = () => { console.log("fetch vacio original") }//fun async
 }) => {
 
 
@@ -47,29 +47,39 @@ const RefreshInfoControl = ({
     }
   }, [tiempoRefresh])
 
-  const cicloTiempoRefresh = () => {
+  const cicloTiempoRefresh = async () => {
     if (cargandoInfo) {
       setTimeout(() => {
         cicloTiempoRefresh()
       }, 1 * 1000);
       return
     }
-    // console.log("cicloTiempoRefresh", tiempoRefresh)
     var nuevoTiempo = tiempoRefresh - 1
+
+    // console.log("nuevoTiempo", nuevoTiempo)
     if (nuevoTiempo < 0) {
       setCargandoInfo(true)
 
-      try {
-        fetchInfo().finally(() => { })
-      } catch (err) {
-      } finally {
-        setTimeout(() => {
-          setCargandoInfo(false)
-          nuevoTiempo = ModelConfig.get(variableEnSesion)
-          setTiempoRefresh(nuevoTiempo)
-        }, 1 * 1000);
+      if (typeof (fetchInfo) == "function") {
+        await fetchInfo()
       }
-      return
+
+      setCargandoInfo(false)
+      nuevoTiempo = await ModelConfig.get(variableEnSesion)
+
+      // try {
+      //   console.log("typeof(fetchInfo)", typeof(fetchInfo))
+      //   // await fetchInfo().finally(() => { })
+      // } catch (err) {
+      //   // console.log("error fetch refresh", err)
+      // } finally {
+      //   setTimeout(() => {
+      //     setCargandoInfo(false)
+      //     nuevoTiempo = ModelConfig.get(variableEnSesion)
+      //     setTiempoRefresh(nuevoTiempo)
+      //   }, 1 * 1000);
+      // }
+      // return
     }
     // console.log("cicloTiempoRefresh..nuevoTiempo", nuevoTiempo)
 
@@ -143,7 +153,7 @@ const RefreshInfoControl = ({
         openDialog={showCambiar}
         setOpenDialog={setShowCambiar}
         nameConfig={variableEnSesion}
-        label={"Tiempo recargar info usuarios"}
+        label={"Tiempo recargar info"}
         onChange={(nv) => {
           // setTiempoRefresh(0)
           // cicloTiempoRefresh()
