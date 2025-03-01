@@ -6,218 +6,218 @@ import ModelConfig from './ModelConfig.ts';
 import EndPoint from './EndPoint.ts';
 
 
-class User extends Model{
+class User extends Model {
     codigoUsuario: number;
     rut: string;
     clave: string;
 
     deudaIds: any
-    idUsuario:number
+    idUsuario: number
 
     static instance: User | null = null;
 
-    static getInstance():User{
-        if(User.instance == null){
+    static getInstance(): User {
+        if (User.instance == null) {
             User.instance = new User();
         }
 
         return User.instance;
     }
 
-    saveInSesion(data){
+    saveInSesion(data) {
         this.sesion.guardar(data)
         // localStorage.setItem('userData', JSON.stringify(data));
         return data;
     }
 
-    getFromSesion(){
+    getFromSesion() {
         return this.sesion.cargar(1)
         // var dt = localStorage.getItem('userData') || "{}";
         // return JSON.parse(dt);
     }
 
-    setRutFrom = (input:string)=>{
-        if(input.indexOf("-")>-1){
+    setRutFrom = (input: string) => {
+        if (input.indexOf("-") > -1) {
             this.rut = input;
-        }else{
+        } else {
             this.rut = "";
         }
         return this.rut;
     }
 
-    setUserCodeFrom = (input:string)=>{
-        if(input.indexOf("-") == -1){
+    setUserCodeFrom = (input: string) => {
+        if (input.indexOf("-") == -1) {
             this.codigoUsuario = parseInt(input);
-        }else{
+        } else {
             this.codigoUsuario = 0;
         }
         return this.codigoUsuario;
     }
 
-    async doLogoutInServer(callbackOk, callbackWrong){
-        try{
+    async doLogoutInServer(callbackOk, callbackWrong) {
+        try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            +"/Usuarios/LoginUsuarioSetInactivo"
+                + "/Usuarios/LoginUsuarioSetInactivo"
 
             const data = this.getFillables()
             data.puntoVenta = parseInt(data.puntoVenta) + ""
-           
+
             const response = await axios.post(
                 url,
                 data
             );
 
-            if(response.data.status == 200){
+            if (response.data.status == 200) {
                 callbackOk(response)
-            }else{
+            } else {
                 callbackOk(response.data.descripcion)
             }
-        }catch(error){
+        } catch (error) {
             console.log(error)
             if (error.response) {
                 callbackWrong(
-                  "Credenciales incorrectas. Por favor, verifica tu nombre de usuario y contraseña." +
+                    "Credenciales incorrectas. Por favor, verifica tu nombre de usuario y contraseña." +
                     error.message
                 );
-              } else if (error.response && error.response.status === 500) {
+            } else if (error.response && error.response.status === 500) {
                 callbackWrong(
-                  "Error interno del servidor. Por favor, inténtalo de nuevo más tarde."
+                    "Error interno del servidor. Por favor, inténtalo de nuevo más tarde."
                 );
-              } else if(error.message != ""){
+            } else if (error.message != "") {
                 callbackWrong(error.message)
-              }else {
+            } else {
                 callbackWrong(
-                  "Error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde."
+                    "Error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde."
                 );
-              }
+            }
         }
     }
 
-    async existRut({rut},callbackOk, callbackWrong){
+    async existRut({ rut }, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/Usuarios/GetUsuarioByRut?rutUsuario=" + rut
+                + "/Usuarios/GetUsuarioByRut?rutUsuario=" + rut
             const response = await axios.get(url);
             if (
-            response.data.statusCode === 200
-            || response.data.statusCode === 201
+                response.data.statusCode === 200
+                || response.data.statusCode === 201
             ) {
-            // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
-            callbackOk(response.data.usuarios, response)
+                // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
+                callbackOk(response.data.usuarios, response)
             } else {
-            callbackWrong("Respuesta desconocida del servidor")
+                callbackWrong("Respuesta desconocida del servidor")
             }
         } catch (error) {
             callbackWrong(error)
         }
     }
 
-    async add(data,callbackOk, callbackWrong){
+    async add(data, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/Usuarios/AddUsuario"
-            const response = await axios.post(url,data);
+                + "/Usuarios/AddUsuario"
+            const response = await axios.post(url, data);
             if (
-            response.status === 200
-            || response.status === 201
+                response.status === 200
+                || response.status === 201
             ) {
-            // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
-            callbackOk(response.data.usuarios, response)
+                // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
+                callbackOk(response.data.usuarios, response)
             } else {
-            callbackWrong("Respuesta desconocida del servidor")
+                callbackWrong("Respuesta desconocida del servidor")
             }
         } catch (error) {
             if (error.response && error.response.status && error.response.status === 409) {
                 callbackWrong(error.response.descripcion)
             } else {
                 callbackWrong(error.message)
-              }
+            }
 
 
         }
     }
 
-    async edit(data,callbackOk, callbackWrong){
+    async edit(data, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
-            + "/Usuarios/UpdateUsuario"
-            const response = await axios.put(url,data);
+                + "/Usuarios/UpdateUsuario"
+            const response = await axios.put(url, data);
             if (
-            response.data.statusCode === 200
-            || response.data.statusCode === 201
+                response.data.statusCode === 200
+                || response.data.statusCode === 201
             ) {
-            // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
-            callbackOk(response.data, response)
+                // Restablecer estados y cerrar diálogos después de realizar el pago exitosamente
+                callbackOk(response.data, response)
             } else {
-            callbackWrong("Respuesta desconocida del servidor")
+                callbackWrong("Respuesta desconocida del servidor")
             }
         } catch (error) {
             if (error.response && error.response.status && error.response.status === 409) {
                 callbackWrong(error.response.descripcion)
             } else {
                 callbackWrong(error.message)
-              }
+            }
 
 
         }
     }
 
-    static async getAll(callbackOk, callbackWrong){
+    static async getAll(callbackOk, callbackWrong) {
         const configs = ModelConfig.get()
         var url = configs.urlBase
-        +"/Usuarios/GetAllUsuarios"
+            + "/Usuarios/GetAllUsuarios"
 
-        EndPoint.sendGet(url,(responseData, response)=>{
+        EndPoint.sendGet(url, (responseData, response) => {
             callbackOk(responseData.usuarios, response);
-        },callbackWrong)
+        }, callbackWrong)
     }
 
-    async getAll(callbackOk, callbackWrong){
-        User.getAll(callbackOk,callbackWrong)
+    async getAll(callbackOk, callbackWrong) {
+        User.getAll(callbackOk, callbackWrong)
     }
 
 
-    static async doLoginServer(data,callbackOk, callbackWrong){
+    static async doLoginServer(data, callbackOk, callbackWrong) {
         const configs = ModelConfig.get()
         var url = configs.urlBase
-        +"/Usuarios/LoginUsuario"
+            + "/Usuarios/LoginUsuario"
 
-        EndPoint.sendPost(url,data,(responseData, response)=>{
+        EndPoint.sendPost(url, data, (responseData, response) => {
             if (response.data.responseUsuario && response.data.responseUsuario.codigoUsuario !== -1) {
                 callbackOk(responseData, response);
-            }else{
-                if(responseData.descripcion){
+            } else {
+                if (responseData.descripcion) {
                     callbackWrong(responseData.descripcion)
-                }else{
+                } else {
                     callbackWrong("Usuario incorrecto")
                 }
             }
-        },callbackWrong)
+        }, callbackWrong)
     }
 
-    static async getActivos(callbackOk, callbackWrong){
+    static async getActivos(callbackOk, callbackWrong) {
         const configs = ModelConfig.get()
         var url = configs.urlBase
-        +"/Usuarios/GetUsuariosActivos"
+            + "/Usuarios/GetUsuariosActivos"
 
-        EndPoint.sendGet(url,(responseData, response)=>{
+        EndPoint.sendGet(url, (responseData, response) => {
             callbackOk(responseData.usuariosActivos, response);
-        },callbackWrong)
+        }, callbackWrong)
     }
 
-    static async getRoles(callbackOk,callbackWrong){
+    static async getRoles(callbackOk, callbackWrong) {
 
         const configs = ModelConfig.get()
         var url = configs.urlBase
-        +"/Usuarios/GetAllRolUsuario"
+            + "/Usuarios/GetAllRolUsuario"
 
-        EndPoint.sendGet(url,(responseData, response)=>{
+        EndPoint.sendGet(url, (responseData, response) => {
             callbackOk(responseData.usuarios, response);
-        },callbackWrong)
+        }, callbackWrong)
     }
 
 };
