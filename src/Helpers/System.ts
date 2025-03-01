@@ -206,9 +206,9 @@ class System {
             // console.log(contInput.querySelector("input"))
             const inp = contInput.querySelector("input")
             if (inp) {
-                if(contInput.querySelector("input"))contInput.querySelector("input").focus()
+                if (contInput.querySelector("input")) contInput.querySelector("input").focus()
             } else {
-                if(textInfoRef.current)textInfoRef.current.focus()
+                if (textInfoRef.current) textInfoRef.current.focus()
             }
         }
     }
@@ -314,6 +314,24 @@ class System {
         }
 
         return pagina
+    }
+
+    static armarStringDesdeArrayObjetos(arrObjetos, propiedad, separacion = ", ") {
+
+        console.log("armarStringDesdeArrayObjetos..arrObjetos", arrObjetos)
+        console.log("armarStringDesdeArrayObjetos..propiedad", propiedad)
+
+        var resu = ""
+
+        if (arrObjetos) {
+            arrObjetos.forEach(element => {
+                if (resu != "")
+                    resu += separacion
+                resu += element[propiedad]
+            });
+        }
+
+        return resu
     }
 
 }
