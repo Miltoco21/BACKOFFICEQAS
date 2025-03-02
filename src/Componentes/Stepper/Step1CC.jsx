@@ -174,6 +174,18 @@ const Step1CC = ({ data, onNext, setStepData }) => {
   }
 
 
+  const cargaAnteriorDeSesion = async(funSet,propiedad)=>{
+    // console.log("cargaAnteriorDeSesion")
+    // if(!cambioAlgo){
+      const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
+      if(anterior !== null){
+        // console.log("devuelvo", anterior)
+        funSet(anterior)
+      }
+    // }
+  }
+
+
   const cambioDesCorta = (e)=>{
     setDescripcionCorta(e.target.value)
   }
@@ -191,7 +203,7 @@ const Step1CC = ({ data, onNext, setStepData }) => {
   useEffect(() => {
     Product.getInstance().getCategories((cats)=>{
       setCategories(cats);
-      setCategoryId(Model.getInstance().cargarDeSesion1("ultimaCategoriaGuardada"))
+      cargaAnteriorDeSesion(setCategoryId,"ultimaCategoriaGuardada")
     },(err)=>{
       showMessage("No se pudo cargar categorias")
     })
@@ -217,7 +229,8 @@ const Step1CC = ({ data, onNext, setStepData }) => {
       Product.getInstance().getSubCategories(categoryId,(subs)=>{
         setSubCategories(subs)
         if(!cambioAlgo) {
-          setSubCategoryId(Model.getInstance().cargarDeSesion1("ultimaSubcategoriaGuardada"))
+          cargaAnteriorDeSesion(setSubCategoryId,'ultimaSubcategoriaGuardada')
+          // setSubCategoryId(Model.getInstance().cargarDeSesion1("ultimaSubcategoriaGuardada"))
         }else{
           setSubCategoryId("")
         }
@@ -236,7 +249,8 @@ const Step1CC = ({ data, onNext, setStepData }) => {
         setFamilies(fams)
 
         if(!cambioAlgo) {
-          setFamilyId(Model.getInstance().cargarDeSesion1("ultimaFamiliaGuardada"))
+          cargaAnteriorDeSesion(setFamilyId,"ultimaFamiliaGuardada")
+          // setFamilyId(Model.getInstance().cargarDeSesion1("ultimaFamiliaGuardada"))
         }else{
           setFamilyId("")
         }
@@ -257,7 +271,8 @@ const Step1CC = ({ data, onNext, setStepData }) => {
         },(subs)=>{
           setSubFamilies(subs)
           if(!cambioAlgo){
-            setSubFamilyId(Model.getInstance().cargarDeSesion1("ultimaSubfamiliaGuardada"))
+            cargaAnteriorDeSesion(setSubFamilyId,"ultimaSubfamiliaGuardada")
+            // setSubFamilyId(Model.getInstance().cargarDeSesion1("ultimaSubfamiliaGuardada"))
           }else{
             setSubFamilyId("")
           }
