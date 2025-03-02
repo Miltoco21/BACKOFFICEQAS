@@ -35,13 +35,20 @@ class Model extends Singleton{
         return values
     }
 
-    cargarDeSesion1(nombre){
-        var sesion1 = this.sesion.cargar(1)
+    async cargarDeSesion1(nombre){
+
+        // console.log("cargarDeSesion1.. sesion", this.sesion)
+        // console.log("cargarDeSesion1.. nombre", nombre)
+        var sesion1 = await this.sesion.cargar(1)
         if(sesion1){
             if(sesion1[nombre]){
-            return sesion1[nombre]
+                // console.log("cargarDeSesion1.. devuelvo", sesion1[nombre])
+                return sesion1[nombre]
             }
         }
+        
+        // console.log("cargarDeSesion1.. devuelvo", null)
+        return null
     }
 
     static async getConexion(callbackOk, callbackWrong){
