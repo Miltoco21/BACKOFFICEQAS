@@ -265,7 +265,7 @@ const FormularioCompra = ({
 
         product = Product.iniciarLogicaPrecios(product)
         product = Product.logicaPrecios(product)
-      }else{
+      } else {
         product = Product.iniciarLogicaPrecios(product)
       }
 
@@ -365,7 +365,7 @@ const FormularioCompra = ({
 
         var cantidadProveedor = product.cantidadProveedor
 
-        totalNeto  = totalNeto + (product.precioNeto * (product.cantidad * cantidadProveedor))
+        totalNeto = totalNeto + (product.precioNeto * (product.cantidad * cantidadProveedor))
         totalIva = totalIva + (product.ivaValor * (product.cantidad * cantidadProveedor))
         console.log("producto ingresando 2", product)
         console.log("totalNeto", totalNeto + 0)
@@ -845,6 +845,7 @@ const FormularioCompra = ({
                 <Button
                   variant="contained"
                   color="secondary"
+                  disabled={ !selectedProveedor}
                   onClick={() => {
                     if (associating && !countPackage) {
                       showMessage("Ingresar la cantidad por paquete antes de crear un producto")
