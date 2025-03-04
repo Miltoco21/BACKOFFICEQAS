@@ -80,7 +80,7 @@ const RankingLibroVentasDetalle = ({
                         {pago.nroComprobante.toLocaleString("es-CL")}
                       </TableCell>
                       <TableCell>
-                        { System.armarStringDesdeArrayObjetos(selectedProduct.medioDePagos,"metodoPago")}
+                        {( pago.metodoPago ? pago.metodoPago : System.armarStringDesdeArrayObjetos(selectedProduct.medioDePagos,"metodoPago")) }
                       </TableCell>
                       <TableCell>
                         {pago.rdcTransactionId.toLocaleString(
