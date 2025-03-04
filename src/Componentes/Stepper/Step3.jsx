@@ -37,7 +37,8 @@ const Step3Component = ({
   data,
   onNext,
   stepData,
-  onSuccessAdd
+  onSuccessAdd,
+  onBack
 }) => {
 
   const {
@@ -89,12 +90,12 @@ const Step3Component = ({
 
   const handleUnidadVentaSelect = (selectedUnidadId) => {
     setSelectedUnidadVentaId(selectedUnidadId === "" ? 0 : selectedUnidadId);
-    console.log("Unidad seleccionada:", selectedUnidadId);
+    // console.log("Unidad seleccionada:", selectedUnidadId);
   };
 
   useEffect(() => {
-    console.log("cambio unidad de venta")
-    console.log(selectedUnidadVentaId)
+    // console.log("cambio unidad de venta")
+    // console.log(selectedUnidadVentaId)
     if (selectedUnidadVentaId == 10) { //|| selectedUnidadVentaId == 5){
       setEsPesable(true)
     } else {
@@ -169,68 +170,82 @@ const Step3Component = ({
       ...requestData.step5,
     }
 
-    try {
+    showLoading("Creando producto " + step1Data.nombre)
+
+    Product.addFull(requestData, (responseData, response) => {
+      hideLoading()
+
+      prodNuevo.idProducto = response.data.codigoProducto
+      prodNuevo.codigoProducto = response.data.codigoProducto
+      if (onSuccessAdd) onSuccessAdd(prodNuevo, response)
+      console.log("Productos", product)
+
+
+      const sesion = Model.getInstance().sesion
+      console.log("sesion", sesion)
+      var sesion1 = sesion.cargar(1)
+      if (!sesion1) sesion1 = {
+        id: 1
+      }
+      sesion1.ultimoIdCreado = response.data.codigoProducto
+      sesion.guardar(sesion1)
+
+      onNext(requestData, 3);
+    }, (err) => {
+      showMessage(err)
+      hideLoading()
+    })
+
+    // try {
       // Enviar la petición POST al endpoint con los datos combinados
-      const response = await axios.post(
-        `${apiUrl}/ProductosTmp/AddProducto`,
-        requestData
-      );
+      // const response = await axios.post(
+      //   `${apiUrl}/ProductosTmp/AddProducto`,
+      //   requestData
+      // );
 
       // Manejar la respuesta de la API
-      console.log("Response PROD GAURDADO:", response.data);
-      if (response.status === 201) {
-        setEmptyFieldsMessage("Producto guardado exitosamente");
-        setOpenSnackbar(true);
-        prodNuevo.idProducto = response.data.codigoProducto
-        prodNuevo.codigoProducto = response.data.codigoProducto
-        if (onSuccessAdd) onSuccessAdd(prodNuevo, response)
-        console.log("Productos", product)
+      // console.log("Response PROD GAURDADO:", response.data);
+      // if (response.status === 201) {
+      //   setEmptyFieldsMessage("Producto guardado exitosamente");
+      //   setOpenSnackbar(true);
+      //   prodNuevo.idProducto = response.data.codigoProducto
+      //   prodNuevo.codigoProducto = response.data.codigoProducto
+      //   if (onSuccessAdd) onSuccessAdd(prodNuevo, response)
+      //   console.log("Productos", product)
 
 
-        const sesion = Model.getInstance().sesion
-        console.log("sesion", sesion)
-        var sesion1 = sesion.cargar(1)
-        if (!sesion1) sesion1 = {
-          id: 1
-        }
-        sesion1.ultimoIdCreado = response.data.codigoProducto
-        sesion.guardar(sesion1)
+      //   const sesion = Model.getInstance().sesion
+      //   console.log("sesion", sesion)
+      //   var sesion1 = sesion.cargar(1)
+      //   if (!sesion1) sesion1 = {
+      //     id: 1
+      //   }
+      //   sesion1.ultimoIdCreado = response.data.codigoProducto
+      //   sesion.guardar(sesion1)
 
-
-
-      }
+      // }
 
       // Llamar a la función onNext para continuar con el siguiente paso
-      onNext(requestData, 3);
-    } catch (error) {
-      showMessage("Error al guardar el producto");
-      setOpenSnackbar(true);
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
+      // onNext(requestData, 3);
+    // } catch (error) {
+    //   showMessage("Error al guardar el producto");
+    //   setOpenSnackbar(true);
+    //   console.error("Error:", error);
+    // } finally {
+    //   setLoading(false);
+    //   setTimeout(() => {
+    //     hideLoading()
+    //   }, 3000);
+    // }
   };
 
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
-  const handleOpenDialog1 = () => {
-    setOpenDialog1(true);
-  };
-  const handleCloseDialog1 = () => {
-    setOpenDialog1(false);
-  };
 
   const handleUnidadSelect = (selectedUnidadId) => {
     setSelectedUnidadId(selectedUnidadId === "" ? 0 : selectedUnidadId);
-    console.log("Unidad seleccionada:", selectedUnidadId);
-  };
-  const handleCreateUnidad = () => {
-    // Implement the logic to create a new category here.
-    // You can use the newCategory state to get the input value.
-
-    // After creating the category, you can close the dialog.
-    setOpenDialog1(false);
+    // console.log("Unidad seleccionada:", selectedUnidadId);
   };
 
   const validateFields = () => {
@@ -379,9 +394,9 @@ const Step3Component = ({
       tmpProduct.ivaValor = 0
       tmpProduct.precioNeto = 0
 
-      console.log("caso 2..envia logica 2:", System.clone(tmpProduct))
+      // console.log("caso 2..envia logica 2:", System.clone(tmpProduct))
       Product.logicaPrecios(tmpProduct, "costo")
-      console.log("caso 2..devuelve logica 2:", System.clone(tmpProduct))
+      // console.log("caso 2..devuelve logica 2:", System.clone(tmpProduct))
       setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
       setPrecioCosto(tmpProduct.precioCosto.toFixed(0))
 
@@ -790,7 +805,7 @@ const Step3Component = ({
           </Grid>
 
 
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={12} md={8} lg={8}>
             <Button
               fullWidth
               variant="contained"
@@ -801,6 +816,13 @@ const Step3Component = ({
               {loading ? "Guardando..." : "Guardar Producto"}
             </Button>
           </Grid>
+          <Grid item xs={12} sm={12} md={4} lg={4}>
+            <Button variant="contained" onClick={onBack} fullWidth >
+              Volver
+            </Button>
+          </Grid>
+
+
           <Grid item xs={12} md={8}>
             <Box mt={2}>
               {
@@ -818,25 +840,7 @@ const Step3Component = ({
           message={emptyFieldsMessage}
         />
       </form>
-      <Dialog open={openDialog1} onClose={handleCloseDialog1}>
-        <DialogTitle>Crear Unidad de Compra</DialogTitle>
-        <DialogContent sx={{ marginTop: "9px" }}>
-          <TextField
-            label="Ingresa Unidad de Compra"
-            fullWidth
-            value={newUnidad}
-            onChange={(e) => setNewUnidad(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog1} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleCreateUnidad} color="primary">
-            Crear
-          </Button>
-        </DialogActions>
-      </Dialog>
+
     </Paper>
   );
 };

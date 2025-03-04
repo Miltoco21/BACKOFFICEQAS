@@ -698,6 +698,20 @@ class Product extends Model {
         }
     }
 
+    static async addFull(data, callbackOk, callbackWrong) {
+
+        var url = ModelConfig.get("urlBase")
+            + "/ProductosTmp/AddProducto"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+        EndPoint.sendPost(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+
+    }
+
 };
 
 

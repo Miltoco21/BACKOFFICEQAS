@@ -3,45 +3,44 @@ import React, { useState, useContext, useEffect } from "react";
 import {
   TextField,
   InputAdornment,
-  InputLabel
+  InputLabel,
+  Typography
 } from "@mui/material";
 import { SelectedOptionsContext } from "../../Context/SelectedOptionsProvider";
-import ModelConfig from "../../../Models/ModelConfig";
-import { Check, Dangerous } from "@mui/icons-material";
-import User from "../../../Models/User";
 import Validator from "../../../Helpers/Validator";
+import Product from "../../../Models/Product";
+import { Check, Dangerous } from "@mui/icons-material";
 
 
-const InputName = ({
+const InputCodigoBarras = ({
   inputState,
-  validationState,
+  validationState = null,
   withLabel = true,
   autoFocus = false,
-  fieldName = "name",
+  fieldName = "number",
   label = fieldName[0].toUpperCase() + fieldName.substr(1),
   minLength = null,
   canAutoComplete = false,
   maxLength = 20,
   required = false,
-  vars = null,
-  onEnter = () => { }
+  vars = null
 }) => {
 
   const {
     showMessage
   } = useContext(SelectedOptionsContext);
 
-  const [name, setName] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
+
+  const [number, setNumber] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
   const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
+
   const [keyPressed, setKeyPressed] = useState(false)
-  
-  const [lastKeyPressed, setLastKeyPressed] = useState(null)
+  const [codigoNoRepetido, setCodigoNoRepetido] = useState(null)
+  const [largo, setLargo] = useState(0)
 
 
   const validate = () => {
-    // console.log("validate de:" + fieldName)
-    const len = name.length
-    // console.log("len:", len)
+    const len = (number + "").length
     const reqOk = (!required || (required && len > 0))
     var badMinlength = false
     var badMaxlength = false
@@ -71,27 +70,22 @@ const InputName = ({
       "allOk": (reqOk && !badMinlength && !badMaxlength),
       "message": message
     }
-    // console.log("vale:", vl)
     setValidation(vl)
   }
-  const checkKeyDown = (event) => {
-    // console.log("checkKeyDown:", event)
-    setLastKeyPressed(event.key)
 
-    if (Validator.isTeclaControl(event)) {
-      setKeyPressed(true)
-      return
-    }
+  const checkKeyDown = (event) => {
     if (!canAutoComplete && event.key == "Unidentified") {
       event.preventDefault();
-      setLastKeyPressed(null)
       return false
     } else {
       setKeyPressed(true)
     }
-
-    if (event.key == "Enter") {
-      onEnter()
+    if (Validator.isTeclaControl(event)) {
+      return
+    }
+    if (!Validator.isNumeric(event.key)) {
+      event.preventDefault();
+      return false
     }
   }
 
@@ -101,40 +95,51 @@ const InputName = ({
     }
     const value = event.target.value
     if (value == " ") {
-      showMessage("Valor erroneo")
+      showMessage(":Valor erroneo")
+
       return false
     }
-    if (Validator.isNombre(value)) {
-      // console.log(value + " es valido")
-      setName(value);
-    } else {
-      if(lastKeyPressed == "Backspace" ){
-      setName(value);
-      }else{
-        showMessage("Valor erroneo")
-      }
+    setNumber(value);
 
-    }
+    setCodigoNoRepetido(null)
   }
 
   const checkChangeBlur = (event) => {
-    if (name.substr(-1) == " ") {
-      setName(name.trim())
+    if (typeof (number) == "string" && number.substr(-1) == " ") {
+      setNumber(number.trim())
     }
+
+    checkCodigo()
+  }
+
+  const checkCodigo = () => {
+    // console.log("checkCodigo")
+    if (number === "") return
+    Product.getInstance().findByCodigoBarras({
+      codigoProducto: number
+    }, (prods) => {
+      // console.log(prods)
+      if (prods.length > 0) {
+        showMessage("Ya existe el codigo ingresado")
+        setCodigoNoRepetido(false)
+      } else {
+        showMessage("Codigo correcto")
+        setCodigoNoRepetido(true)
+      }
+    }, (err) => {
+
+    })
   }
 
   useEffect(() => {
-    // console.log("cambio inputState")
-    // console.log(inputState)
     validate()
   }, [])
 
 
   useEffect(() => {
-    // console.log("cambio name")
-    // console.log(name)
     validate()
-  }, [name])
+    setLargo(number.length)
+  }, [number])
 
   return (
     <>
@@ -150,13 +155,35 @@ const InputName = ({
         required={required}
         type="text"
         label={label}
-        value={name}
+        value={number}
         onChange={checkChange}
         onBlur={checkChangeBlur}
         onKeyDown={checkKeyDown}
+
+        InputProps={{
+          inputMode: "numeric", // Establece el modo de entrada como numérico
+          pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
+          endAdornment: (
+            <InputAdornment position="end">
+              <Check sx={{
+                color: "#06AD16",
+                display: (codigoNoRepetido && number != "" ? "flex" : "none"),
+                marginRight: "10px"
+              }} />
+
+              <Dangerous sx={{
+                color: "#CD0606",
+                display: ((codigoNoRepetido !== null && codigoNoRepetido === false) ? "flex" : "none")
+              }} />
+
+              <Typography>{largo}</Typography>
+            </InputAdornment>
+          ),
+
+        }}
       />
     </>
   );
 };
 
-export default InputName;
+export default InputCodigoBarras;

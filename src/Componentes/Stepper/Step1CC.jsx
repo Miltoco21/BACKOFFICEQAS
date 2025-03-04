@@ -22,322 +22,117 @@ import {
   Radio,
   InputAdornment,
 } from "@mui/material";
- 
+
 import ModelConfig from "../../Models/ModelConfig";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import ProductStepper from "../../Models/ProductStepper";
 import Product from "../../Models/Product";
 import { Check, Dangerous, Percent } from "@mui/icons-material";
 import Model from "../../Models/Model";
+import InputCodigoBarras from "../Elements/Compuestos/InputCodigoBarras";
+import SelectFetchDependiente from "../Elements/Compuestos/SelectFetchDependiente";
+import SelectFetch from "../Elements/Compuestos/SelectFetch";
+import InputName from "../Elements/Compuestos/InputName";
+import System from "../../Helpers/System";
 
-const Step1CC = ({ data, onNext, setStepData }) => {
+const Step1CC = ({
+  data,
+  onNext,
+  setStepData
+}) => {
   const {
-    userData, 
+    userData,
     showMessage
   } = useContext(SelectedOptionsContext);
 
-  const apiUrl = ModelConfig.get().urlBase;
+  const [selectedCategoryId, setSelectedCategoryId] = useState(-1);
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState(-1);
+  const [selectedFamilyId, setSelectedFamilyId] = useState(-1);
+  const [selectedSubFamilyId, setSelectedSubFamilyId] = useState(-1);
 
-  const [categoryId, setCategoryId] = useState(0);
-  const [subCategoryId, setSubCategoryId] = useState(0);
-  const [familyId, setFamilyId] = useState(0);
-  const [subFamilyId, setSubFamilyId] = useState(0);
-
-  const [categories, setCategories] = useState([]);
-  const [subcategories, setSubCategories] = useState([]);
-  const [families, setFamilies] = useState([]);
-  const [subfamilies, setSubFamilies] = useState([]);
-  
   const [nombre, setNombre] = useState(data.nombre || "");
   const [marca, setMarca] = useState(data.marca || "");
   const [codigoBarras, setCodigoBarras] = useState(data.codBarra || "");
   const [descripcionCorta, setDescripcionCorta] = useState(data.DescCorta || "");
-  
+
   const [puedeAvanzar, setPuedeAvanzar] = useState(false);
-  const [codigoNoRepetido, setCodigoNoRepetido] = useState(null);
-  
   const [cambioAlgo, setCambioAlgo] = useState(false);
 
-  const validateFields = (showError = true) => {
-
-    if (codigoBarras==="") {
-      if(showError)showMessage("Falta completar codigo.");
-      return false;
-    }
-
-    if (categoryId == 0) {
-      if(showError)showMessage("Debe seleccionar una Categoría.");
-      return false;
-    }
-    if (subCategoryId == 0) {
-      if(showError)showMessage("Debe seleccionar una Subcategoría.");
-      return false;
-    }
-    if (familyId == 0) {
-      if(showError)showMessage("Debe seleccionar una Familia.");
-      return false;
-    }
-    if (subFamilyId == 0) {
-      if(showError)showMessage("Debe seleccionar una Subfamilia.");
-      return false;
-    }
-    if (nombre==="") {
-      if(showError)showMessage("Falta completar la descricion.");
-      return false;
-    }
-
-    if (!/^[a-zA-Z0-9\s]*[a-zA-Z0-9][a-zA-Z0-9\s]*$/.test(nombre.trim()) || /^\s{1,}/.test(nombre)) {
-      if(showError)showMessage("Ingresar nombre válido.");
-      return false;
-    }
-
-    if (descripcionCorta==="") {
-      if(showError)showMessage("Falta completar la descripcion corta.");
-      return false;
-    }
-
-    if (descripcionCorta.length>50) {
-      if(showError)showMessage("La descripcion corta debe tener 50 caracteres o menos");
-      return false;
-    }
-    
-    if (marca==="") {
-      if(showError)showMessage("Falta completar marca.");
-      return false;
-    }
-
-    if (!/^[a-zA-Z0-9\s]*[a-zA-Z0-9][a-zA-Z0-9\s]*$/.test(marca.trim()) || /^\s{1,}/.test(marca)) {
-      if(showError)showMessage("Ingresar marca válida.");
-      return false;
-    }
-    
-    // Si todos los campos están llenos y se ha seleccionado al menos una opción para cada nivel, limpiar los mensajes de error
-    return true;
+  var validatorStates = {
+    codigoBarras: useState(null),
+    nombre: useState(null),
+    descripcionCorta: useState(null),
+    marca: useState(null),
+    categoryId: useState(null),
+    subCategoryId: useState(null),
+    familyId: useState(null),
+    subFamilyId: useState(null),
   };
-  
-
- 
 
   const handleNext = () => {
-    const isValid = validateFields();
-    if (isValid) {
-      // Resto del código para continuar si los campos son válidos
-      const step1Data = {
-        categoryId,
-        subCategoryId,
-        familyId,
-        subFamilyId,
-        marca,
-        codBarra: codigoBarras,
-        descripcionCorta,
-        nombre,
-      };
-      ProductStepper.getInstance().sesion.guardar({
-        "step1": step1Data
-      })
-      setStepData((prevData) => ({ ...prevData, ...step1Data }));
 
-      const sesion = Model.getInstance().sesion
-      console.log("sesion",sesion)
-      var sesion1 = sesion.cargar(1)
-      if(!sesion1) sesion1 = {
-        id:1
-      }
-      sesion1.ultimaCategoriaGuardada = categoryId
-      sesion1.ultimaSubcategoriaGuardada = subCategoryId
-      sesion1.ultimaFamiliaGuardada = familyId
-      sesion1.ultimaSubfamiliaGuardada = subFamilyId
-      sesion1.ultimaMarcaGuardada = marca
-      sesion.guardar(sesion1)
-
-      onNext();
+    if (!System.allValidationOk(validatorStates, showMessage)) {
+      return false;
     }
+
+    // Resto del código para continuar si los campos son válidos
+    const step1Data = {
+      selectedCategoryId,
+      selectedSubCategoryId,
+      selectedFamilyId,
+      selectedSubFamilyId,
+      marca,
+      codBarra: codigoBarras,
+      descripcionCorta,
+      nombre,
+    };
+    ProductStepper.getInstance().sesion.guardar({
+      "step1": step1Data
+    })
+    setStepData((prevData) => ({ ...prevData, ...step1Data }));
+
+    const sesion = Model.getInstance().sesion
+    console.log("sesion", sesion)
+    var sesion1 = sesion.cargar(1)
+    if (!sesion1) sesion1 = {
+      id: 1
+    }
+    sesion1.ultimaCategoriaGuardada = selectedCategoryId
+    sesion1.ultimaSubcategoriaGuardada = selectedSubCategoryId
+    sesion1.ultimaFamiliaGuardada = selectedFamilyId
+    sesion1.ultimaSubfamiliaGuardada = selectedSubFamilyId
+    sesion1.ultimaMarcaGuardada = marca
+    sesion.guardar(sesion1)
+
+    onNext();
+
   };
 
-  const checkCodigo = ()=>{
-    // console.log("checkCodigo")
-    if(codigoBarras === "") return
-    Product.getInstance().findByCodigoBarras({
-      codigoProducto: codigoBarras
-    },(prods)=>{
-      // console.log(prods)
-      if(prods.length>0){
-        showMessage("Ya existe el codigo ingresado")
-        setCodigoNoRepetido(false)
-      }else{
-        showMessage("Codigo correcto")
-        setCodigoNoRepetido(true)
-      }
-    }, (err)=>{
-
-    })
-  }
-
-
-  const cargaAnteriorDeSesion = async(funSet,propiedad)=>{
+  const cargaAnteriorDeSesion = async (funSet, propiedad) => {
     // console.log("cargaAnteriorDeSesion")
-    // if(!cambioAlgo){
-      const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
-      if(anterior !== null){
-        // console.log("devuelvo", anterior)
-        funSet(anterior)
-      }
-    // }
-  }
-
-
-  const cambioDesCorta = (e)=>{
-    setDescripcionCorta(e.target.value)
-  }
-
-
-  const cambioNombre = (e)=>{
-    setNombre(e.target.value)
-
-    if(descripcionCorta.length<50){
-      cambioDesCorta(e)
+    const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
+    if (anterior !== null) {
+      // console.log("devuelvo", anterior)
+      funSet(anterior)
     }
   }
 
+  useEffect(() => {
+
+    if(window.location.href.indexOf("stockmobile")>-1){
+      cargaAnteriorDeSesion(setCodigoBarras, "ultimaBusquedaStockMobile")
+    }
+
+    cargaAnteriorDeSesion(setMarca, "ultimaMarcaGuardada")
+  }, [])
+
 
   useEffect(() => {
-    Product.getInstance().getCategories((cats)=>{
-      setCategories(cats);
-      cargaAnteriorDeSesion(setCategoryId,"ultimaCategoriaGuardada")
-    },(err)=>{
-      showMessage("No se pudo cargar categorias")
-    })
-
-    // if(window.location.href.indexOf("stockmobile")>-1){
-      const sesion = Model.getInstance().sesion
-      var sesion1 = sesion.cargar(1)
-      if(sesion1){
-        if(sesion1.ultimaBusquedaStockMobile){
-          setCodigoBarras(sesion1.ultimaBusquedaStockMobile)
-        }
-
-        if(sesion1.ultimaMarcaGuardada){
-          setMarca(sesion1.ultimaMarcaGuardada)
-        }
-      }
-    // }
-
-  }, []);
-
-  useEffect(() => {
-    if (categoryId >0) {
-      Product.getInstance().getSubCategories(categoryId,(subs)=>{
-        setSubCategories(subs)
-        if(!cambioAlgo) {
-          cargaAnteriorDeSesion(setSubCategoryId,'ultimaSubcategoriaGuardada')
-          // setSubCategoryId(Model.getInstance().cargarDeSesion1("ultimaSubcategoriaGuardada"))
-        }else{
-          setSubCategoryId("")
-        }
-
-      },(err)=>{
-        showMessage("No se pudo cargar subcategorias")
-      })
+    if (nombre.length <= 50) {
+      setDescripcionCorta(nombre)
     }
-  }, [categoryId]);
+  }, [nombre])
 
-  useEffect(() => {
-    if (subCategoryId >0 && categoryId >0) {
-      Product.getInstance().getFamiliaBySubCat({
-        categoryId,subcategoryId : subCategoryId
-      },(fams)=>{
-        setFamilies(fams)
-
-        if(!cambioAlgo) {
-          cargaAnteriorDeSesion(setFamilyId,"ultimaFamiliaGuardada")
-          // setFamilyId(Model.getInstance().cargarDeSesion1("ultimaFamiliaGuardada"))
-        }else{
-          setFamilyId("")
-        }
-      },(err)=>{
-        showMessage("No se pudo cargar familias")
-      })
-    }
-  }, [categoryId, subCategoryId]);
-
-  useEffect(() => {
-      if (
-        familyId >0 &&
-        categoryId >0 &&
-        subCategoryId >0
-      ) {
-        Product.getInstance().getSubFamilia({
-          categoryId,subcategoryId : subCategoryId,familyId
-        },(subs)=>{
-          setSubFamilies(subs)
-          if(!cambioAlgo){
-            cargaAnteriorDeSesion(setSubFamilyId,"ultimaSubfamiliaGuardada")
-            // setSubFamilyId(Model.getInstance().cargarDeSesion1("ultimaSubfamiliaGuardada"))
-          }else{
-            setSubFamilyId("")
-          }
-
-        },(erro)=>{
-          showMessage("No se pudo cargar subfamilias")
-        })
-      }
-  }, [familyId, categoryId, subCategoryId]);
-
-  const handleKeyDown = (event, field) => {
-    if (
-      event.key !== "Backspace" || event.key !== ""
-    ) {
-      // console.log("paso")
-      return
-    }
-
-    if (field === "nombre" ) {
-      const regex = /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s]+$/;// Al menos un carácter alfanumérico
-      if (
-        !regex.test(event.key) &&
-        event.key !== "Backspace" &&
-        event.key !== " "
-      ) {
-        event.preventDefault();
-        showMessage("El nombre no puede consistir únicamente en espacios en blanco.");
-        setSnackbarOpen(true);
-      }
-    }
-    if ( field === "marca") {
-      const regex = /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s]*$/; // Al menos un carácter alfanumérico
-      if (
-        !regex.test(event.key) &&
-        event.key !== "Backspace" &&
-        event.key !== " "
-      ) {
-        event.preventDefault();
-        showMessage("La marca no puede consistir únicamente en espacios en blanco.");
-        setSnackbarOpen(true);
-      }
-    }
-    
-    if (field === "telefono") {
-      if (event.key === "-" && formData.telefono === "") {
-        event.preventDefault();
-      }
-    }
-  };
-
-
-  // useEffect(() => {
-  //   console.log("puede avanzar??")
-  //   console.log("codigoNoRepetido", codigoNoRepetido)
-  //   console.log("validateFields(false)", validateFields(false))
-  //   setPuedeAvanzar( validateFields(false) && codigoNoRepetido )
-  // }, [codigoBarras, 
-  //   codigoNoRepetido,
-  //   categoryId, 
-  //   subCategoryId, 
-  //   familyId, 
-  //   subFamilyId,
-  //   nombre,
-  //   descripcionCorta,
-  //   marca]);
 
   return (
     <Paper
@@ -348,180 +143,147 @@ const Step1CC = ({ data, onNext, setStepData }) => {
       }}
     >
       <Grid container spacing={2} item xs={12} md={12}>
-      <Grid item xs={12} md={12}>
-        <InputLabel>C&oacute;digo</InputLabel>
-        <TextField
-          fullWidth
-          // label="Ingresar c&oacute;digo"
-          value={codigoBarras}
-          onClick={(e) => { 
-            setCodigoNoRepetido(null)
-          }}
-          onChange={(e) => setCodigoBarras(e.target.value)}
-          onKeyDown={(event) => handleKeyDown(event, "codigoBarras")}
-          onBlur={checkCodigo}
 
-          sx={{
-            paddingLeft:"10px"
-          }}
-
-          InputProps={{
-            inputMode: "numeric", // Establece el modo de entrada como numérico
-            pattern: "[0-9]*", // Asegura que solo se puedan ingresar números
-            startAdornment: (
-              <InputAdornment position="end">
-                <Check sx={{
-                  color:"#06AD16",
-                  display: (codigoNoRepetido && codigoBarras!="" ? "flex" : "none"),
-                  marginRight:"10px"
-                }} />
-
-                <Dangerous sx={{
-                  color:"#CD0606",
-                  display: ( ( codigoNoRepetido !== null && codigoNoRepetido === false ) ? "flex" : "none")
-                }} />
-              </InputAdornment>
-            ),
-          }}
-
-        />
-        </Grid>
-
-
-        <Grid item xs={12} md={6}>
-          <InputLabel>Seleccionar Categoría</InputLabel>
-          <Select
-            fullWidth
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            label="Seleccionar Categoría"
-            onClick={()=>{
-              setCambioAlgo(true)
-            }}
-          >
-            <MenuItem value={0}>Sin categoría</MenuItem>
-            {categories.map((category) => (
-              <MenuItem key={category.idCategoria} value={category.idCategoria}>
-                {category.descripcion}
-              </MenuItem>
-            ))}
-          </Select>
-        </Grid>
-
-    
-
-        <Grid item xs={12} md={6}>
-          <InputLabel>Seleccionar Subcategoría</InputLabel>
-          <Select
-            fullWidth
-            value={subCategoryId}
-           
-            onChange={(e) => setSubCategoryId(e.target.value)}
-            label="Seleccionar Sub-Categoría"
-            onClick={()=>{
-              setCambioAlgo(true)
-            }}
-          >
-            <MenuItem value={0}>Sin subcategoría</MenuItem>
-            {subcategories.map((subcategory) => (
-              <MenuItem
-                key={subcategory.idSubcategoria}
-                value={subcategory.idSubcategoria}
-              >
-                {subcategory.descripcion}
-              </MenuItem>
-            ))}
-          </Select>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <InputLabel>Seleccionar Familia</InputLabel>
-          <Select
-            fullWidth
-            value={familyId}
-            onChange={(e) => setFamilyId(e.target.value)}
-            label="Seleccionar Familia"
-            onClick={()=>{
-              setCambioAlgo(true)
-            }}
-          >
-            <MenuItem value={0}>Sin familia</MenuItem>
-            {families.map((family) => (
-              <MenuItem key={family.idFamilia} value={family.idFamilia}>
-                {family.descripcion}
-              </MenuItem>
-            ))}
-          </Select>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <InputLabel>Seleccionar Subfamilia</InputLabel>
-          <Select
-            fullWidth
-            value={subFamilyId}
-            onChange={(e) => setSubFamilyId(e.target.value)}
-            label="Seleccionar Subfamilia"
-            onClick={()=>{
-              setCambioAlgo(true)
-            }}
-          >
-            <MenuItem value={0}>Sin subfamilia</MenuItem>
-            {subfamilies.map((subfamily) => (
-              <MenuItem
-                key={subfamily.idSubFamilia}
-                value={subfamily.idSubFamilia}
-              >
-                {subfamily.descripcion}
-              </MenuItem>
-            ))}
-          </Select>
-        </Grid>
         <Grid item xs={12} md={12}>
-        <InputLabel>Descripci&oacute;n</InputLabel>
-          <TextField
-            fullWidth
-            // label="Ingresar Descripci&oacute;n"
-            value={nombre}
-            onChange={(e) => cambioNombre(e)}
-            onKeyDown={(event) => handleKeyDown(event, "nombre")}
+          <InputCodigoBarras
+            inputState={[codigoBarras, setCodigoBarras]}
+            validationState={validatorStates.codigoBarras}
+            fieldName="codigoBarras"
+            required={true}
           />
         </Grid>
 
         <Grid item xs={12} md={6}>
-        <InputLabel>Desc. corta</InputLabel>
-          <TextField
-            fullWidth
-            // label="Ingresar Desc. corta"
-            value={descripcionCorta}
-            onChange={(e) => cambioDesCorta(e)}
-            onKeyDown={(event) => handleKeyDown(event, "descripcionCorta")}
+          <SelectFetch
+            inputState={[selectedCategoryId, setSelectedCategoryId]}
+            validationState={validatorStates.categoryId}
+            fetchFunction={Product.getInstance().getCategories}
+            fetchDataShow={"descripcion"}
+            fetchDataId={"idCategoria"}
+            fieldName={"Categoria"}
+            required={true}
+
+            onFinishFetch={async () => {
+              cargaAnteriorDeSesion(setSelectedCategoryId, "ultimaCategoriaGuardada")
+            }}
+          />
+        </Grid>
+
+
+        <Grid item xs={12} md={6}>
+          <SelectFetchDependiente
+            inputState={[selectedSubCategoryId, setSelectedSubCategoryId]}
+            inputOtherState={[selectedCategoryId, setSelectedCategoryId]}
+            validationState={validatorStates.subCategoryId}
+            fetchFunction={(cok, cwr) => {
+              Product.getInstance().getSubCategories(selectedCategoryId, cok, cwr)
+            }}
+            fetchDataShow={"descripcion"}
+            fetchDataId={"idSubcategoria"}
+            fieldName={"SubCategoria"}
+            required={true}
+            onFinishFetch={async () => {
+
+              cargaAnteriorDeSesion(setSelectedSubCategoryId, "ultimaSubcategoriaGuardada")
+            }}
+          />
+
+        </Grid>
+
+
+        <Grid item xs={12} md={6}>
+          <SelectFetchDependiente
+            inputState={[selectedFamilyId, setSelectedFamilyId]}
+            inputOtherState={[selectedSubCategoryId, setSelectedCategoryId]}
+            validationState={validatorStates.familyId}
+            fetchFunction={(cok, cwr) => {
+              Product.getInstance().getFamiliaBySubCat({
+                categoryId: selectedCategoryId,
+                subcategoryId: selectedSubCategoryId
+              }, cok, cwr)
+            }}
+            fetchDataShow={"descripcion"}
+            fetchDataId={"idFamilia"}
+            fieldName={"Familia"}
+            required={true}
+
+            onFinishFetch={async () => {
+              cargaAnteriorDeSesion(setSelectedFamilyId, "ultimaFamiliaGuardada")
+            }}
+          />
+
+        </Grid>
+
+
+        <Grid item xs={12} md={6}>
+          <SelectFetchDependiente
+            inputState={[selectedSubFamilyId, setSelectedSubFamilyId]}
+            inputOtherState={[selectedFamilyId, setSelectedFamilyId]}
+            validationState={validatorStates.subFamilyId}
+            fetchFunction={(cok, cwr) => {
+              Product.getInstance().getSubFamilia({
+                categoryId: selectedCategoryId,
+                subcategoryId: selectedSubCategoryId,
+                familyId: selectedFamilyId
+              }, cok, cwr)
+            }}
+            fetchDataShow={"descripcion"}
+            fetchDataId={"idSubFamilia"}
+            fieldName={"Sub Familia"}
+            required={true}
+
+            onFinishFetch={async () => {
+              cargaAnteriorDeSesion(setSelectedSubFamilyId, "ultimaSubfamiliaGuardada")
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={12} md={12}>
+          <InputName
+            inputState={[nombre, setNombre]}
+            validationState={validatorStates.nombre}
+            fieldName={"descripcion"}
+            maxLength={50}
+            required={true}
           />
         </Grid>
 
         <Grid item xs={12} md={6}>
-        <InputLabel>Marca</InputLabel>
-          <TextField
-            fullWidth
-            type="text"
-            // label="Ingresar Marca"
-            value={marca}
-            onChange={(e) => setMarca(e.target.value)}
-            onKeyDown={(event) => handleKeyDown(event, "marca")}
+          <InputName
+            inputState={[descripcionCorta, setDescripcionCorta]}
+            validationState={validatorStates.descripcionCorta}
+            fieldName={"Desc. Corta"}
+            maxLength={50}
+            required={true}
           />
         </Grid>
+
+        <Grid item xs={12} md={6}>
+          <InputName
+            inputState={[marca, setMarca]}
+            validationState={validatorStates.marca}
+            fieldName={"Marca"}
+            maxLength={50}
+            required={true}
+          />
+        </Grid>
+
+
         <Grid item xs={12} md={12}>
           <Button
-              // fullWidth
-              variant="contained"
-              color="secondary"
-              onClick={handleNext}
-              // disabled={!puedeAvanzar}
-              sx={{
-                width:"50%",
-                height:"55px",
-                margin: "0 25%"
-              }}
-            >
-              Continuar
-            </Button>
+            // fullWidth
+            variant="contained"
+            color="secondary"
+            onClick={handleNext}
+            // disabled={!puedeAvanzar}
+            sx={{
+              width: "50%",
+              height: "55px",
+              margin: "0 25%"
+            }}
+          >
+            Continuar
+          </Button>
 
 
         </Grid>

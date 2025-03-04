@@ -30,18 +30,22 @@ import Product from "../../Models/Product";
 import CONSTANTS from "../../definitions/Constants";
 import System from "../../Helpers/System";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
+import Model from "../../Models/Model";
 
 
 const Step3CC = ({
   data,
   onNext,
-  onSuccessAdd
+  onSuccessAdd,
+  onBack
 }) => {
 
   const {
-      userData, 
-      showMessage
-    } = useContext(SelectedOptionsContext);
+    userData,
+    showMessage,
+    showLoading,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
 
 
   const apiUrl = ModelConfig.get().urlBase;
@@ -149,39 +153,33 @@ const Step3CC = ({
       ...requestData.step5,
     }
 
-
-
-
     console.log("Datos objeto productos", requestData);
-    try {
-      // Enviar la petición POST al endpoint con los datos combinados
-      const response = await axios.post(
-        `${apiUrl}/ProductosTmp/AddProducto`,
-        requestData
-      );
+    showLoading("Creando producto " + step1Data.nombre)
 
-      // Manejar la respuesta de la API
-      console.log("Response PROD GAURDADO:", response.data);
-      if (response.status === 201) {
-        setEmptyFieldsMessage("Producto guardado exitosamente");
-        setOpenSnackbar(true);
+    Product.addFull(requestData, (responseData, response) => {
+      hideLoading()
 
-        prodNuevo.idProducto = prodNuevo.codBarra
-        prodNuevo.codigoProducto = prodNuevo.codBarra
-        prodNuevo.codigoProductoInterno = response.data.codigoProducto
-        if (onSuccessAdd) onSuccessAdd(prodNuevo, response)
-        console.log("Productos", product)
+      prodNuevo.idProducto = response.data.codigoProducto
+      prodNuevo.codigoProducto = response.data.codigoProducto
+      if (onSuccessAdd) onSuccessAdd(prodNuevo, response)
+      console.log("Productos", product)
+
+
+      const sesion = Model.getInstance().sesion
+      console.log("sesion", sesion)
+      var sesion1 = sesion.cargar(1)
+      if (!sesion1) sesion1 = {
+        id: 1
       }
+      sesion1.ultimoIdCreado = response.data.codigoProducto
+      sesion.guardar(sesion1)
 
-      // Llamar a la función onNext para continuar con el siguiente paso
       onNext(requestData, 3);
-    } catch (error) {
-      showMessage("Error al guardar el producto");
-      setOpenSnackbar(true);
-      console.error("Error:", error);
-    } finally {
+    }, (err) => {
       setLoading(false);
-    }
+      showMessage(err)
+      hideLoading()
+    })
   };
 
   const handleSnackbarClose = () => {
@@ -279,7 +277,7 @@ const Step3CC = ({
   const logicaPrecios = () => {
     // console.log("logicaPrecios")
     if (ultimoFoco != "precioVenta" && precioCosto > 0) {
-      
+
       // console.log("caso 1")
       if (fijarVenta || fijarCosto) {
         // console.log("caso 11")
@@ -287,7 +285,7 @@ const Step3CC = ({
         tmpProduct.ivaPorcentaje = iva
         tmpProduct.precioVenta = parseFloat(precioVenta)
         tmpProduct.precioCosto = parseFloat(precioCosto)
-        
+
         Product.calcularMargen(tmpProduct)
         setValorIva(tmpProduct.ivaValor.toFixed(0))
         setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
@@ -296,7 +294,7 @@ const Step3CC = ({
         return
       }
       // console.log("caso 12")
-      
+
       const tmpProduct = {}
       tmpProduct.precioVenta = 0
       tmpProduct.precioCosto = precioCosto
@@ -305,24 +303,24 @@ const Step3CC = ({
       tmpProduct.gananciaValor = 0
       tmpProduct.ivaValor = 0
       tmpProduct.precioNeto = 0
-      
+
       Product.logicaPrecios(tmpProduct)
-      
+
       setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
       setPrecioVenta(tmpProduct.precioVenta.toFixed(0))
-      
+
       setValorIva(tmpProduct.ivaValor.toFixed(0))
       setValorMargenGanancia(tmpProduct.gananciaValor.toFixed(0))
     } else if (ultimoFoco != "precioCosto" && precioVenta > 0) {
       // console.log("caso 2")
-      
+
       if (fijarVenta || fijarCosto) {
         // console.log("caso 21")
         const tmpProduct = {}
         tmpProduct.ivaPorcentaje = iva
         tmpProduct.precioVenta = parseFloat(precioVenta)
         tmpProduct.precioCosto = parseFloat(precioCosto)
-        
+
         Product.calcularMargen(tmpProduct)
         setValorIva(tmpProduct.ivaValor.toFixed(0))
         setPrecioNeto(tmpProduct.precioNeto.toFixed(0))
@@ -331,7 +329,7 @@ const Step3CC = ({
         return
       }
       // console.log("caso 22")
-      
+
       const tmpProduct = {}
       tmpProduct.precioVenta = precioVenta
       tmpProduct.precioCosto = 0
@@ -362,7 +360,7 @@ const Step3CC = ({
     // Eliminar caracteres especiales específicos
     // console.log("event.target.value", event.target.value + '')
     var newValue = event.target.value.replace(/[^0000000-9]/g, 0);
-    if(newValue.substr(0,1) === "0" && newValue.length > 1){
+    if (newValue.substr(0, 1) === "0" && newValue.length > 1) {
       newValue = newValue.substr(1)
     }
 
@@ -397,7 +395,7 @@ const Step3CC = ({
       setEsPesable(false)
     }
   }, [selectedUnidadVentaId])
-  
+
   useEffect(() => {
     System.intentarFoco(refPrecioVenta)
     setUltimoFoco("precioVenta")
@@ -746,23 +744,33 @@ const Step3CC = ({
             </Box>
           </Grid>
 
-          <Grid item xs={12}>
+
+
+          <Grid item xs={12} sm={12} md={8} lg={8}>
             <Button
-              // fullWidth
+              fullWidth
               variant="contained"
               color="secondary"
               onClick={handleNext}
               disabled={loading}
 
               sx={{
-                width: "50%",
-                height: "55px",
-                margin: "0 25%"
+                // width: "50%",
+                // height: "55px",
+                // margin: "0 25%"
               }}
             >
               {loading ? "Guardando..." : "Guardar Producto"}
             </Button>
           </Grid>
+
+
+          <Grid item xs={12} sm={12} md={4} lg={4}>
+            <Button variant="contained" onClick={onBack} fullWidth >
+              Volver
+            </Button>
+          </Grid>
+
           <Grid item xs={12} md={8}>
             <Box mt={2}>
               {

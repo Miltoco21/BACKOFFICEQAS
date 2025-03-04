@@ -39,7 +39,7 @@ class Validator {
         var newValue = newValuex+""
         
         if(!newValue){
-            console.log("es tecla especial??")
+            // console.log("es tecla especial??")
             return true//caracter especial, ej: borrar, supr,etc
         }
         // var rex = /^[A-Za-z\s\-]+$/g

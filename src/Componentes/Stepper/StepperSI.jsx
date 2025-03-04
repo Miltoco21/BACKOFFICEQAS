@@ -6,7 +6,7 @@ import {
   StepLabel,
   Stepper,
   Paper,
-  Typography 
+  Typography
 } from "@mui/material";
 import axios from "axios";
 import Step1 from "./Step1";
@@ -26,7 +26,7 @@ const StepperSI = ({
   onSuccessAdd
 }) => {
   const [activeStep, setActiveStep] = useState(0);
-  const [title, setTitle] = useState("Ingreso producto")
+  const [title, setTitle] = useState("")
 
   const [stepData, setStepData] = useState({
     selectedCategoryId: "",
@@ -35,10 +35,10 @@ const StepperSI = ({
     selectedSubFamilyId: "",
     marca: "",
     nombre: "",
-    selectedUnidadId:"",
-    precioCosto:"",
-    stockInicial:"",
-    precioVenta:"",
+    selectedUnidadId: "",
+    precioCosto: "",
+    stockInicial: "",
+    precioVenta: "",
 
     // Otros campos necesarios para el paso 3
   });
@@ -51,9 +51,12 @@ const StepperSI = ({
       setStepData(parsedData.step3 || {});
     }
 
-    if(conCodigo){
+    if (conCodigo) {
       setTitle("Ingreso producto con código")
+    } else {
+      setTitle("Ingreso producto")
     }
+
   }, []);
 
   // useEffect(() => {
@@ -62,59 +65,66 @@ const StepperSI = ({
   //     setData(JSON.parse(storedData));
   //   }
   // }, []);
-  
+
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setStepData((prevData) => ({ ...prevData,  }));
-   
+    setStepData((prevData) => ({ ...prevData, }));
+
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setStepData((prevData) => ({ ...prevData, }));
   };
 
   const getStepContent = (step) => {
     console.log("getStepContent..concodigo?", conCodigo)
-    if(conCodigo){
+    if (conCodigo) {
       switch (step) {
         case 0:
           return <Step1CC data={stepData} onNext={handleNext} setStepData={setStepData} />;
-          case 1:
-            return <Step3CC 
-              data={stepData} 
-              onNext={handleNext}
-              setStepData={setStepData}
-              onSuccessAdd = {onSuccessAdd}
-            />;
-            case 2:
+        case 1:
+          return <Step3CC
+            data={stepData}
+            onNext={handleNext}
+            setStepData={setStepData}
+            onSuccessAdd={onSuccessAdd}
+            onBack={handleBack}
+          />;
+        case 2:
       }
-    }else{
+    } else {
       switch (step) {
         case 0:
           return <Step1 data={stepData} onNext={handleNext} setStepData={setStepData} />;
-          case 1:
-            return <Step3 
-              data={stepData} 
-              onNext={handleNext}
-              setStepData={setStepData}
-              onSuccessAdd = {onSuccessAdd}
-            />;
-            case 2:
+        case 1:
+          return <Step3
+            data={stepData}
+            onNext={handleNext}
+            setStepData={setStepData}
+            onSuccessAdd={onSuccessAdd}
+            onBack={handleBack}
+          />;
+        case 2:
       }
     }
 
   };
 
-  const [ultimoIdCreado,setUltimoIdCreado] = useState(null)
+  const [ultimoIdCreado, setUltimoIdCreado] = useState(null)
 
-  useEffect(()=>{
-    if(activeStep === steps.length){
+  useEffect(() => {
+    if (activeStep === steps.length) {
       const sesion = Model.getInstance().sesion
-      console.log("sesion",sesion)
+      console.log("sesion", sesion)
       var sesion1 = sesion.cargar(1)
-      if(sesion1) {
+      if (sesion1) {
         setUltimoIdCreado(sesion1.ultimoIdCreado)
       }
-    }else{
+    } else {
       setUltimoIdCreado(null)
     }
-  },[activeStep])
+  }, [activeStep])
 
   return (
     <Container>
@@ -133,31 +143,31 @@ const StepperSI = ({
       <div>
         {activeStep === steps.length ? (
           <div style={{
-            marginTop:"60px",
-            width:"100%",
-            textAlign:"center"
+            marginTop: "60px",
+            width: "100%",
+            textAlign: "center"
           }}>
             <p>Todos los pasos han sido completados!!.</p>
 
-            { ultimoIdCreado && (
+            {ultimoIdCreado && (
               <Typography variant="h3">
-              
-              <Typography sx={{
-                fontSize:"18px"
-              }}>
-                C&oacute;digo generado
+
+                <Typography sx={{
+                  fontSize: "18px"
+                }}>
+                  C&oacute;digo generado
+                </Typography>
+
+
+                <Typography sx={{
+                  fontSize: "20px"
+                }}>{ultimoIdCreado} </Typography>
+
+
               </Typography>
+            )}
 
 
-              <Typography sx={{
-                fontSize:"20px"
-              }}>{ultimoIdCreado} </Typography>
-
-
-              </Typography>
-            ) }
-
-            
 
 
 
