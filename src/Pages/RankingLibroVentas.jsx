@@ -35,6 +35,10 @@ import System from "../Helpers/System";
 import RankingLibroVentasDetalle from "./RankingLibroVentasDetalle";
 import User from "../Models/User";
 
+import { saveAs } from "file-saver";
+import * as xlsx from "xlsx/xlsx.mjs";
+import SmallButton from "../Componentes/Elements/SmallButton";
+
 const RankingLibroVentas = () => {
 
   const {
@@ -57,7 +61,7 @@ const RankingLibroVentas = () => {
   const [tipo, setTipo] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  
+
   const [totalValues, setTotalValues] = useState(0);
   const [totalIVA, setTotalIVA] = useState(0);
   const [cantidad, setCantidad] = useState(0);
@@ -65,13 +69,83 @@ const RankingLibroVentas = () => {
   const [totalValuesCaja, setTotalValuesCaja] = useState(0);
   const [totalIVACaja, setTotalIVACaja] = useState(0);
   const [cantidadCaja, setCantidadCaja] = useState(0);
-  
+
   const [cajas, setCajas] = useState([]);
   const [cajaSel, setCajaSel] = useState(null);
   const [users, setUsers] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [userSel, setUserSel] = useState(null);
   const [ventasPorCaja, setVentaPorCaja] = useState([]);
+
+
+
+
+  const exportExcel = () => {
+    const jsonData = [
+      // {
+      //   Fecha: "razonSocial",
+      //   Descripcion: "giro",
+      //   FolioDocumento: "email",
+      //   ValorNeto	: "direccion",
+      //   IVADF: "telefono",
+      //   Total: "comuna",
+      // },
+    ];
+
+    /*
+    
+    <TableCell>
+      {new Date(producto.fechaIngreso).toLocaleDateString(
+        "es-CL"
+      )}
+    </TableCell>
+    <TableCell>{producto.descripcionComprobante}</TableCell>
+    <TableCell>
+      {producto.nroComprobante.toLocaleString("es-CL")}
+    </TableCell>
+    <TableCell>
+      {producto.montoNeto.toLocaleString("es-CL")}
+    </TableCell>
+    <TableCell>
+      {producto.montoIVA.toLocaleString("es-CL")}
+    </TableCell>
+    <TableCell>
+      {producto.total.toLocaleString("es-CL")}
+    </TableCell>
+    <TableCell>
+                    
+                    */
+
+    ventasPorCaja.forEach((venta) => {
+      jsonData.push({
+        Fecha: dayjs(venta.fechaIngreso).format("DD/MM/YYYY HH:mm:ss"),
+        Descripcion: venta.descripcionComprobante,
+        FolioDocumento: venta.nroComprobante,
+        ValorNeto: venta.montoNeto,
+        IVADF: venta.montoIVA,
+        Total: venta.total,
+      })
+    })
+
+    const worksheet = xlsx.utils.json_to_sheet(jsonData);
+    const workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, worksheet, "Hoja 1");
+    const excelBuffer = xlsx.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const excelBlob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(excelBlob, "reporte-ventas-" + dayjs().format("DD_MM_YYYY-HH_mm_ss") + ".xlsx");
+  };
+
+
+
+
+  useEffect(() => {
+    // exportExcel()
+  }, [])
 
   const fetchData = async () => {
     setLoading(true);
@@ -83,7 +157,7 @@ const RankingLibroVentas = () => {
       fechadesde: startDate ? startDate.format("YYYY-MM-DD") : "",
       fechahasta: endDate ? endDate.format("YYYY-MM-DD") : "",
       tipoComprobante: tipo.join(","),
-    },(response)=>{
+    }, (response) => {
       setCantidad(response.data.cantidad);
 
       if (response.data.cantidad > 0 && response.data.ventaCabeceraReportes) {
@@ -115,7 +189,7 @@ const RankingLibroVentas = () => {
       setUserSel(null)
 
       setLoading(false);
-    },(error)=>{
+    }, (error) => {
 
       console.error("Error al buscar datos:", error);
       setError("Error fetching data");
@@ -126,7 +200,7 @@ const RankingLibroVentas = () => {
       setSnackbarOpen(true);
       setLoading(false);
     })
-    
+
   };
 
   const handleBuscarClick = () => {
@@ -164,18 +238,18 @@ const RankingLibroVentas = () => {
   };
 
   const handleBorradoLogico = (venta) => {
-    showConfirm("Cancelar la venta?",()=>{
-      pedirSupervision("borrar una venta", ()=>{
-          Sale.borradoLogico(selectedProduct,(resul)=>{
-            showMessage(resul.descripcion)
-            setSelectedProduct(null)
-            setOpenDialog(false)
-            fetchData()
-          },(error)=>{
-            showMessage(error)
-          })
-      },selectedProduct)
-    },()=>{})
+    showConfirm("Cancelar la venta?", () => {
+      pedirSupervision("borrar una venta", () => {
+        Sale.borradoLogico(selectedProduct, (resul) => {
+          showMessage(resul.descripcion)
+          setSelectedProduct(null)
+          setOpenDialog(false)
+          fetchData()
+        }, (error) => {
+          showMessage(error)
+        })
+      }, selectedProduct)
+    }, () => { })
   };
 
   const handleCheckboxChange = (event) => {
@@ -187,11 +261,11 @@ const RankingLibroVentas = () => {
     );
   };
 
-  const getUserInfo = (fieldValue, nameField = "codigoUsuario")=>{
+  const getUserInfo = (fieldValue, nameField = "codigoUsuario") => {
     // console.log("getUserInfo")
     var info = null
-    allUsers.forEach((user)=>{
-      if(user[nameField] === fieldValue){
+    allUsers.forEach((user) => {
+      if (user[nameField] === fieldValue) {
         info = user
       }
     })
@@ -200,12 +274,12 @@ const RankingLibroVentas = () => {
   }
 
 
-  const agruparPorCaja = ()=>{
+  const agruparPorCaja = () => {
     console.log("agruparPorCaja")
     var usersx = []
     var prodCaja = []
-    data.forEach((prod)=>{
-      if(!prodCaja.includes(prod.puntoVenta)){
+    data.forEach((prod) => {
+      if (!prodCaja.includes(prod.puntoVenta)) {
         prodCaja.push(prod.puntoVenta)
       }
 
@@ -214,7 +288,7 @@ const RankingLibroVentas = () => {
       // console.log("info", info)
       // console.log("userName", userName)
 
-      if( userName && !usersx.includes(userName)){
+      if (userName && !usersx.includes(userName)) {
         usersx.push(userName)
       }
     })
@@ -228,17 +302,17 @@ const RankingLibroVentas = () => {
     // console.log("cajas", prodCaja)
   }
 
-  const cargarVentasPorCaja = (caja)=>{
+  const cargarVentasPorCaja = (caja) => {
     var ventas = []
     var cantCaja = 0
     var totCaja = 0
     var totIvaCaja = 0
 
-    data.forEach((venta)=>{
-      if(venta.puntoVenta == caja || caja == "Todas"){
+    data.forEach((venta) => {
+      if (venta.puntoVenta == caja || caja == "Todas") {
         ventas.push(venta)
 
-        cantCaja ++
+        cantCaja++
         totCaja += venta.total
         totIvaCaja += venta.montoIVA
       }
@@ -251,58 +325,58 @@ const RankingLibroVentas = () => {
 
 
 
-  const cargarVentasPorUsuarioYCaja = ()=>{
+  const cargarVentasPorUsuarioYCaja = () => {
     var ventas = []
     var cantCaja = 0
     var totCaja = 0
     var totIvaCaja = 0
 
     var ventasIds = []
-    System.clone(data).forEach((venta,keyIdUnico)=>{
-      if( 
-        (venta.puntoVenta == cajas[cajaSel] || cajas[cajaSel] == "Todas") 
-      ){
+    System.clone(data).forEach((venta, keyIdUnico) => {
+      if (
+        (venta.puntoVenta == cajas[cajaSel] || cajas[cajaSel] == "Todas")
+      ) {
         const infoUser = getUserInfo(venta.idUsuario)
         const userName = infoUser ? infoUser.nombres + " " + infoUser.apellidos : ""
 
-        if(userSel === null || users[userSel] == "Todos" || userName == users[userSel]){
+        if (userSel === null || users[userSel] == "Todos" || userName == users[userSel]) {
           const nroComprobante = venta.nroComprobante
-          if(!ventasIds.includes(venta.nroComprobante)){
+          if (!ventasIds.includes(venta.nroComprobante)) {
             ventasIds.push(venta.nroComprobante)
 
             venta.pagos = []
             venta.pagos.push({
               nroComprobante: venta.nroComprobante,
-              metodoPago:venta.metodoPago,
-              fechaIngreso:venta.fechaIngreso,
-              rdcTransactionId:venta.rdcTransactionId,
-              montoIVA:venta.montoIVA,
-              montoNeto:venta.montoNeto,
-              total:venta.total,
-              descripcionComprobante:venta.descripcionComprobante
+              metodoPago: venta.metodoPago,
+              fechaIngreso: venta.fechaIngreso,
+              rdcTransactionId: venta.rdcTransactionId,
+              montoIVA: venta.montoIVA,
+              montoNeto: venta.montoNeto,
+              total: venta.total,
+              descripcionComprobante: venta.descripcionComprobante
             })
             ventas.push(venta)
-            cantCaja ++
+            cantCaja++
             totCaja += venta.total
             totIvaCaja += venta.montoIVA
-          }else{
+          } else {
             var index = -1
-            ventas.forEach((venta2,ix)=>{
-              if(ix != keyIdUnico && nroComprobante == venta2.nroComprobante){
+            ventas.forEach((venta2, ix) => {
+              if (ix != keyIdUnico && nroComprobante == venta2.nroComprobante) {
                 index = ix
               }
             })
-            if(index>-1){
+            if (index > -1) {
               ventas[index].total = ventas[index].total + venta.total
               ventas[index].pagos.push({
                 nroComprobante: venta.nroComprobante,
-                metodoPago:venta.metodoPago,
-                fechaIngreso:venta.fechaIngreso,
-                rdcTransactionId:venta.rdcTransactionId,
-                montoIVA:venta.montoIVA,
-                montoNeto:venta.montoNeto,
-                total:venta.total,
-                descripcionComprobante:venta.descripcionComprobante
+                metodoPago: venta.metodoPago,
+                fechaIngreso: venta.fechaIngreso,
+                rdcTransactionId: venta.rdcTransactionId,
+                montoIVA: venta.montoIVA,
+                montoNeto: venta.montoNeto,
+                total: venta.total,
+                descripcionComprobante: venta.descripcionComprobante
               })
             }
           }
@@ -310,42 +384,42 @@ const RankingLibroVentas = () => {
       }
     })
     setVentaPorCaja(ventas)
-    console.log("las ventas quedaron asi",ventas)
+    console.log("las ventas quedaron asi", ventas)
     setCantidadCaja(cantCaja)
     setTotalValuesCaja(totCaja)
     setTotalIVACaja(totIvaCaja)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setStartDate(dayjs())
     setEndDate(dayjs())
     setTipo([
-      0,1,2
+      0, 1, 2
     ])
 
-    User.getAll((usersServer)=>{
+    User.getAll((usersServer) => {
       setAllUsers(usersServer)
-    },(error)=>{
+    }, (error) => {
       console.log("no se pudo cargar los usuarios")
     })
-  },[])
+  }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     agruparPorCaja()
-  },[data])
+  }, [data])
 
-  useEffect(()=>{
+  useEffect(() => {
     cargarVentasPorUsuarioYCaja()
-  },[userSel, cajaSel])
+  }, [userSel, cajaSel])
 
   return (
     <div style={{ display: "flex" }}>
       <SideBar />
       <Grid component="main" sx={{ flexGrow: 1, p: 2 }}>
         <Grid container spacing={1} alignItems="center">
-        Libro de Ventas
+          Libro de Ventas
           <Grid container spacing={2} sx={{ mt: 2 }}>
-         
+
             <Grid item xs={12} md={3}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -426,9 +500,9 @@ const RankingLibroVentas = () => {
             </Grid>
           </Grid>
           <Grid container spacing={2} sx={{
-            margin:"10px 0",
-            padding:"10px 0",
-            textAlign:"left",
+            margin: "10px 0",
+            padding: "10px 0",
+            textAlign: "left",
             // backgroundColor:"red"
           }}>
 
@@ -450,7 +524,7 @@ const RankingLibroVentas = () => {
               <BoxSelectList
                 listValues={cajas}
                 selected={cajaSel}
-                setSelected={(sel)=>{
+                setSelected={(sel) => {
                   setCajaSel(sel)
                 }}
               />
@@ -463,7 +537,7 @@ const RankingLibroVentas = () => {
               <BoxSelectList
                 listValues={users}
                 selected={userSel}
-                setSelected={(sel)=>{
+                setSelected={(sel) => {
                   setUserSel(sel)
                 }}
               />
@@ -500,7 +574,21 @@ const RankingLibroVentas = () => {
                   <TableCell>Valor Neto</TableCell>
                   <TableCell>IVA DF</TableCell>
                   <TableCell>Total</TableCell>
-                  <TableCell>Acciones</TableCell>
+                  <TableCell>Acciones
+
+                    {ventasPorCaja.length > 0 && (
+                      <SmallButton
+                        style={{
+                          backgroundColor: "#005D25CC"
+                        }}
+                        textButton={"Exportar a Excel"}
+                        actionButton={() => {
+                          exportExcel()
+                        }}
+                      />
+                    )}
+
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -550,7 +638,7 @@ const RankingLibroVentas = () => {
         onClose={() => setSnackbarOpen(false)}
         message={snackbarMessage}
       />
-      
+
       <RankingLibroVentasDetalle
         openDialog={openDialog}
         onClose={handleDialogClose}
