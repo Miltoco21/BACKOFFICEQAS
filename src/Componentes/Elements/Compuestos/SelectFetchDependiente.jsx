@@ -103,7 +103,7 @@ const SelectFetchDependiente = ({
         
         setTimeout(() => {
           onFinishFetch()
-        }, 500);
+        }, 700);
       }, (error) => {
       setCargando(false)
       // console.log(error)
