@@ -7,6 +7,11 @@ import EndPoint from './EndPoint.ts';
 
 
 class User extends Model {
+
+    static roles = []
+    static buscandoRoles = false
+
+
     codigoUsuario: number;
     rut: string;
     clave: string;
@@ -210,15 +215,123 @@ class User extends Model {
     }
 
     static async getRoles(callbackOk, callbackWrong) {
-
         const configs = ModelConfig.get()
         var url = configs.urlBase
             + "/Usuarios/GetAllRolUsuario"
 
-        EndPoint.sendGet(url, (responseData, response) => {
+        if (User.buscandoRoles) return
+        User.buscandoRoles = true
+        await EndPoint.sendGet(url, (responseData, response) => {
+            User.buscandoRoles = false
+            User.roles = responseData.usuarios
+            // console.log("callbackOk de getRoles")
             callbackOk(responseData.usuarios, response);
+        }, (err) => {
+            // console.log("callbackWrong de getRoles")
+            callbackWrong(err)
+            User.buscandoRoles = false
+        })
+    }
+
+    //devuelve un numero id o id fijo default(cajero)
+    static async findRolIdOrName(idOrName) {
+        const idOrNameNumeric = parseInt(idOrName + "")
+        const esNumero = !isNaN(idOrNameNumeric)
+
+        if (esNumero) {
+            return idOrNameNumeric
+        }
+
+        var rolEncontrado = 4//     4 -> cajero/usuario
+
+        var rolesServidor = User.roles
+        if (rolesServidor.length < 1) {
+            return rolEncontrado
+        }
+
+        rolesServidor.forEach((rolServidor: any) => {
+            if (esNumero && idOrNameNumeric == rolServidor.idRol) {
+                rolEncontrado = rolServidor.idRol
+            }
+
+            if (!esNumero && idOrName == rolServidor.rol) {
+                rolEncontrado = rolServidor.idRol
+            }
+
+        })
+
+        // console.log("findRolIdOrName devuelve  ", rolEncontrado)
+        return rolEncontrado
+    }
+
+
+    //devuelve un string del rol
+    static async findRolNameById(idOrName) {
+        // console.log("findRolNameById para ", idOrName)
+        const idOrNameNumeric = parseInt(idOrName)
+
+        var rolesServidor = User.roles
+        var rolEncontrado = "Cajero"
+
+        if (rolesServidor.length < 1) {
+            // console.log("findRolIdOrName devuelvo ", rolEncontrado)
+            return rolEncontrado
+        }
+
+        // console.log("rolesServidor", rolesServidor)
+
+        const esNumero = !isNaN(idOrNameNumeric)
+
+        rolesServidor.forEach((rolServidor: any) => {
+            if (esNumero && idOrNameNumeric == rolServidor.idRol) {
+                // console.log("encuentra por id", idOrNameNumeric)
+                rolEncontrado = rolServidor.rol
+            }
+            if (!esNumero && idOrName == rolServidor.rol) {
+                // console.log("encuentra por nombre ", idOrName)
+                rolEncontrado = rolServidor.rol
+            }
+        })
+        // console.log("findRolIdOrName devuelvo ", rolEncontrado)
+        return rolEncontrado
+    }
+
+
+    static async intentarBuscarRolId(rolNumericOrString, onFind = (x) => { }) {
+        if (User.roles.length < 1) {
+            // console.log("search list item User.roles.length < 1", User.roles.length < 1)
+            if (!User.buscandoRoles) {
+                // console.log("search list item !User.buscandoRoles", !User.buscandoRoles)
+                User.getRoles(() => {
+                    // console.log("search list deberia volver a hacer buscarRolId del usuario ", user.nombres + ' ' +user.apellidos)
+                    User.intentarBuscarRolId(rolNumericOrString, onFind)
+                }, () => { })
+                return
+            } else {
+                setTimeout(() => {
+                    // console.log("search list deberia 2 volver a hacer buscarRolId del usuario ", user.nombres + ' ' +user.apellidos)
+                    User.intentarBuscarRolId(rolNumericOrString, onFind)
+                }, 200);
+                return
+            }
+        }
+
+        onFind(await User.findRolIdOrName(rolNumericOrString))
+    }
+
+    static async delete(codigoUsuario, callbackOk, callbackWrong) {
+        const configs = ModelConfig.get()
+        var url = configs.urlBase
+            + "/Usuarios/DeleteUsuarioByCodigo"// + "?CodigoUsuario=" + codigoUsuario
+
+        EndPoint.sendDelete(url, {
+            CodigoUsuario: codigoUsuario
+        }, (responseData, response) => {
+            callbackOk(responseData, response);
         }, callbackWrong)
     }
+
+
 
 };
 

@@ -16,18 +16,16 @@ import {
   DialogActions,
   Snackbar,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditUsuario from "./Edit";
-import PaymentsIcon from "@mui/icons-material/Payments";
 import SideBar from "../../NavBar/SideBar"
 import ModelConfig from "../../../Models/ModelConfig";
-import HowToRegIcon from '@mui/icons-material/HowToReg';
-import GenerarAutorizacion from "../GenerarAutorizacion";
-import QrAutorizacion from "../QrAutorizacion";
-import {SelectedOptionsContext} from "../../Context/SelectedOptionsProvider";
+import { SelectedOptionsContext } from "../../Context/SelectedOptionsProvider";
+import User from "../../../Models/User";
+import SearchListItem from "./SearchListItem";
+import InputName from "../../Elements/Compuestos/InputName";
 
-const SearchList = () => {
+const SearchList = ({
+  refresh = false
+}) => {
 
   const {
     userData,
@@ -43,160 +41,123 @@ const SearchList = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState([]);
   const [modalEditOpen, setModalOpen] = useState(false);
-  const [refresh, setRefresh] = useState(false);
+  const [doRefresh, setDoRefresh] = useState(false);
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState("");
   const perPage = 5;
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [openDialogAutorizacion, setOpenDialogAutorizacion] = useState(false)
-  
+
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const apiUrl = ModelConfig.get().urlBase;
-  
-   const [verAutorizacion, setVerAutorizacion] = useState(false)
-   const [qrAutorizacion, setQrAutorizacion] = useState("")
+
+  const [verAutorizacion, setVerAutorizacion] = useState(false)
+  const [qrAutorizacion, setQrAutorizacion] = useState("")
+
+  // Filter users based on search term
+
+  // Pagination
+  const startIndex = (currentPage - 1) * perPage;
+  const endIndex = startIndex + perPage;
+
+
+  const [filteredUsers, setfilteredUsers] = useState([]);
+  const [paginatedUsers, setpaginatedUsers] = useState([]);
+  const [totalPages, settotalPages] = useState(0);
 
 
   const fetchUsers = async () => {
-    try {
-      const response = await axios.get(
-        apiUrl + `/Usuarios/GetAllUsuarios`
-      );
-      // console.log("API response:", response.data);
-      setUsers(response.data.usuarios);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
-
-  const getQrAutorizacion = async (code) => {
-    showLoading("cargando imagen")
-    try {
-      const response = await axios.get(
-        apiUrl + `/Usuarios/CrearQRAutorizador?code=` + code );
-      // console.log("API response:", response.data);
-      if(response.data.autorizacion!=""){
-        setQrAutorizacion(response.data.autorizacion);
-        setVerAutorizacion(true)
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      showMessage("No se pudo cargar")
-    } finally{
-      hideLoading()
-    }
+    // console.log("fetchUsers")
+    User.getAll((usuarios) => {
+      setUsers(usuarios)
+      filtrarUsuarios(usuarios)
+    }, showMessage)
   };
 
   useEffect(() => {
+    console.log("cambio doRefresh", doRefresh)
     fetchUsers();
-  }, [refresh]);
+  }, [doRefresh]);
 
-  useEffect(() => {
-    // const intervalId = setInterval(() => {
-    //   fetchUsers();
-    // }, 3000); // Fetch users every 3 seconds
+  // useEffect(() => {
+  //   console.log("carga inicial")
+  //   fetchUsers()
+  // }, []);
 
-    // return () => clearInterval(intervalId); // Cleanup interval on component unmount
-    fetchUsers()
-  }, []);
+  // useEffect(() => {
+  // console.log("cambio users", users)
+  // filtrarUsuarios()
+  // }, [ [...users] ])
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   const handleSearch = (event) => {
+    // console.log("handleSearch", event)
+    if (
+      event.nativeEvent.inputType != 'insertText'
+      && event.nativeEvent.inputType != 'deleteContentBackward'
+    ) return
     setSearchTerm(event.target.value);
-  };
-
-  const handleDeleteConfirmationOpen = (user) => {
-    setUserToDelete(user);
-    setDeleteConfirmationOpen(true);
-  };
-
-  const handleDeleteConfirmationClose = () => {
-    setUserToDelete(null);
-    setDeleteConfirmationOpen(false);
-  };
-  const handleDelete = async () => {
-    if (!userToDelete) return; // Verificar si hay un usuario seleccionado para eliminar
-    const userId = userToDelete.codigoUsuario;
-    console.log("ID de usuario a eliminar:", userId);
-    try {
-      const response = await axios.delete(
-        apiUrl + `/Usuarios/DeleteUsuarioByCodigo?CodigoUsuario=${userId}`
-      );
-
-      if (
-        response.status === 200 &&
-        response.data.descripcion === "Usuario Eliminado."
-      ) {
-        console.log("Usuario eliminado exitosamente:", response.data);
-        setRefresh(!refresh); // Refresh the users list after deletion
-        setDeleteConfirmationOpen(false); // Cerrar el diálogo de confirmación después de eliminar
-        setSnackbarMessage("Usuario eliminado exitosamente.");
-        setSnackbarOpen(true);
-      } else {
-        console.error(
-          "Error inesperado en la respuesta de eliminación:",
-          response.data
-        );
-        setSnackbarMessage("Error inesperado al eliminar usuario.");
-        setSnackbarOpen(true);
-      }
-    } catch (error) {
-      console.error("Error eliminando usuario:", error);
-      setSnackbarMessage("Error eliminando usuario.");
-      setSnackbarOpen(true);
-    }
   };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
 
-  const handleEdit = (user) => {
-    setSelectedUser(user);
-    setModalOpen(true);
-  };
 
-  const handleAutorizacion = (user) => {
-    setSelectedUser(user);
-    setOpenDialogAutorizacion(true);
-  };
+  const filtrarUsuarios = (usersList) => {
+    // console.log("filtrarUsuarios users esta asi", usersList)
+    const filteredUsersx = usersList.filter((useritem) =>
+      useritem.nombres.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-  const handleCloseEditModal = () => {
-    setModalOpen(false);
-    setRefresh(!refresh); // Refresh the users list after editing
-  };
+    // console.log("filteredUsers queda asi", filteredUsersx)
+    setfilteredUsers(filteredUsersx)
+    const paginatedUsersx = filteredUsersx.slice(startIndex, endIndex);
+    setpaginatedUsers(paginatedUsersx)
 
-  // Filter users based on search term
-  const filteredUsers = users.filter((user) =>
-    user.nombres.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    // console.log("paginatedUsers queda asi", paginatedUsers)
+    const totalPagesx = Math.ceil(filteredUsersx.length / perPage);
+    settotalPages(totalPagesx)
+    // console.log("totalPages queda asi", totalPagesx)
+  }
 
-  // Pagination
-  const startIndex = (currentPage - 1) * perPage;
-  const endIndex = startIndex + perPage;
-  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(filteredUsers.length / perPage);
+
+  useEffect(() => {
+    setDoRefresh(refresh)
+  }, [refresh])
+
+  useEffect(() => {
+    // console.log("cambio searchTerm o users")
+    // console.log("cambio searchTerm", searchTerm)
+    // console.log("cambio users", users)
+    filtrarUsuarios(users)
+  }, [searchTerm])
+  // }, [searchTerm, [...users]])
+
+
 
   return (
     <Box sx={{ p: 2, mb: 4, border: "4px" }}>
-      <SideBar/>
+      <SideBar />
 
-       <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={16000}
-          onClose={handleSnackbarClose}
-          message={snackbarMessage}
-        
-          action={
-            <Button color="inherit" size="small" onClick={handleSnackbarClose}>
-              Cerrar
-            </Button>
-          }
-        />
-      <TextField label="Buscar..." value={searchTerm} onChange={handleSearch} />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={16000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+
+        action={
+          <Button color="inherit" size="small" onClick={handleSnackbarClose}>
+            Cerrar
+          </Button>
+        }
+      />
+
+      <TextField placeholder="Buscar..." value={searchTerm} onChange={handleSearch} />
+
       <Table sx={{ border: "1px ", borderRadius: "8px" }}>
         <TableHead>
           <TableRow>
@@ -215,56 +176,14 @@ const SearchList = () => {
               <TableCell colSpan={6}>No se encontraron usuarios</TableCell>
             </TableRow>
           ) : (
-            paginatedUsers.map((user) => (
-              <TableRow key={user.codigoUsuario}>
-                <TableCell>
-                  {user.codigoUsuario}
-                  {user.autorizacion &&(
-                    <Button onClick={() => {
-                      getQrAutorizacion(user.autorizacion)
-                    }}>
-                      <HowToRegIcon/>
-                    </Button>
-                  )}
-                  </TableCell>
-                <TableCell>
-                  <span style={{ color: "purple" }}>{user.nombres}</span>
-                  <br />
-                  <span>{user.apellidos}</span>
-                  <br />
-                  <span>{user.correo}</span>
-                  <br />
-                  <span>Rol: {user.rol}</span>
-                </TableCell>
-                <TableCell>{user.rut}</TableCell>
-                <TableCell>
-                  {user.direccion}
-                  <br />
-                  {user.comuna}
-                  <br />
-                  {user.region}
-                </TableCell>
-                <TableCell>{user.telefono}</TableCell>
-                <TableCell>{user.credito}</TableCell>
-                <TableCell>
-                  { (userData.rol === 1 || ( parseInt(userData.rol) < parseInt(user.rol) )) && (
-                    <>
-                    <Button onClick={() => handleDeleteConfirmationOpen(user)}>
-                    <DeleteIcon />
-                  </Button>
-
-                  <Button onClick={() => handleEdit(user)}>
-                    <EditIcon />
-                  </Button>
-
-                  <Button onClick={() => handleAutorizacion(user)}>
-                    <HowToRegIcon/>
-                  </Button>
-                    </>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))
+            paginatedUsers.map((user, ix) => (
+              <SearchListItem
+                user={user}
+                key={ix}
+                onNeedRefresh={() => {
+                  setDoRefresh(!doRefresh)
+                }}
+              />))
           )}
         </TableBody>
       </Table>
@@ -276,11 +195,7 @@ const SearchList = () => {
           mt: 2,
         }}
       >
-        <GenerarAutorizacion
-        selectedUser={selectedUser}
-        openDialog={openDialogAutorizacion} 
-        setOpenDialog={setOpenDialogAutorizacion}
-        />
+
         <Typography variant="body2">
           Página {currentPage} de {totalPages}
         </Typography>
@@ -298,47 +213,9 @@ const SearchList = () => {
             Siguiente
           </Button>
         </Box>
-       
+
       </Box>
 
-      {modalEditOpen ? (
-        <EditUsuario
-          selectedUser={selectedUser}
-          openDialog={modalEditOpen}
-          setOpenDialog={setModalOpen}
-          onClose={handleCloseEditModal}
-        />
-      ) : (
-        <></>
-      )}
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={deleteConfirmationOpen}
-        onClose={handleDeleteConfirmationClose}
-        aria-labelledby="delete-confirmation-dialog-title"
-      >
-        <DialogTitle id="delete-confirmation-dialog-title">
-          Confirmación de eliminación
-        </DialogTitle>
-        <DialogContent>
-          ¿Estás seguro de que deseas eliminar este usuario?
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteConfirmationClose} color="primary">
-            Cancelar
-          </Button>
-          <Button onClick={handleDelete} color="primary" autoFocus>
-            Eliminar
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <QrAutorizacion
-        openDialog={verAutorizacion}
-        setOpenDialog={setVerAutorizacion}
-        qrAutorizacion={qrAutorizacion}
-      />
     </Box>
   );
 };

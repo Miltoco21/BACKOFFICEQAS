@@ -26,7 +26,7 @@ const EditUsuario = ({
   selectedUser, 
   openDialog, 
   setOpenDialog,
-  onClose
+  onSave = ()=>{}
 }) => {
   const {
     showLoading,
@@ -127,7 +127,7 @@ const EditUsuario = ({
       showMessage(resData.descripcion);
       setTimeout(() => {
         setOpenDialog(false)
-        onClose();
+        onSave(usuario);
       }, 3000);
     },(error)=>{
       hideLoading()
@@ -145,7 +145,6 @@ const EditUsuario = ({
   return (
     <Dialog open={openDialog} onClose={()=>{
       setOpenDialog(false)
-      onClose()
       }} maxWidth="lg">
       <DialogTitle>Editar Usuario</DialogTitle>
       <DialogContent>
@@ -294,7 +293,6 @@ const EditUsuario = ({
         <DialogActions>
           <Button onClick={()=>{
             setOpenDialog(false)
-            onClose()
           }}>Cancelar</Button>
           <SendingButton
               textButton="Guardar"

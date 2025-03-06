@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Button,Dialog,Grid, Typography } from "@mui/material";
-import IngresoUsuarios from "../Componentes/ScreenDialog/Users/Create";
+import { Button, Dialog, Grid, Typography } from "@mui/material";
+import IngresoUsuarios from "../Componentes/ScreenDialog/Users/UserFormDialog";
 import Add from "@mui/icons-material/Add";
 
 import SideBar from "../Componentes/NavBar/SideBar";
@@ -15,20 +15,14 @@ export const defaultTheme = createTheme();
 
 export default function Usuarios() {
   const [open, setOpen] = useState(false);
-  const handleOpenModal = () => {
-    setOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpen(false);
-  };
+  const [refreshList, setRefreshList] = useState(false);
 
   return (
     <ThemeProvider theme={defaultTheme}>
-    <CssBaseline />
+      <CssBaseline />
       <Box sx={{ display: "flex" }}>
-        <SideBar  />
-        <Box sx={{  flex: 1 }}>
+        <SideBar />
+        <Box sx={{ flex: 1 }}>
           <Button
             variant="outlined"
             sx={{
@@ -36,29 +30,33 @@ export default function Usuarios() {
               mx: 2,
             }}
             startIcon={<Add />}
-            onClick={handleOpenModal}
+            onClick={()=>{
+              setOpen(true)
+            }}
           >
             Crear usuario
           </Button>
-          <SearchList />
+          <SearchList refresh={refreshList} />
         </Box>
       </Box>
 
       {open ? (
         <IngresoUsuarios
-        openDialog={open}
-        setOpendialog={setOpen}
-        onClose={handleCloseModal}
-      />
+          openDialog={open}
+          setOpendialog={setOpen}
+          onSave={()=>{
+            setRefreshList(!refreshList)
+          }}
+        />
       ) : (
         <></>
       )}
 
 
 
-      
 
-  </ThemeProvider>
+
+    </ThemeProvider>
 
   );
 }

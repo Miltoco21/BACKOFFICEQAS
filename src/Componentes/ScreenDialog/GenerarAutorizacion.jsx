@@ -26,7 +26,8 @@ import dayjs from "dayjs";
 const GenerarAutorizacion = ({
   selectedUser,
   openDialog,
-  setOpenDialog
+  setOpenDialog,
+  onCreate
 }) => {
   const {
     showLoading,
@@ -98,6 +99,7 @@ const GenerarAutorizacion = ({
       hideLoading()
       setVerGenerado(true)
       verDiv(res.autorizacion)
+      onCreate()
       // document.querySelectorAll(".divAutorizacion").forEach((div)=>{
         //   console.log("div", div)
         //   if(div){

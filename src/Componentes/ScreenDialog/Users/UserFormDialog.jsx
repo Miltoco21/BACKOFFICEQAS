@@ -24,10 +24,12 @@ import System from "../../../Helpers/System";
 import FormUsuario from "./FormUsuario";
 export const defaultTheme = createTheme();
 
-export default function Ingreso({
+export default function UserFormDialog({
   onSave,
   openDialog,
-  setOpendialog
+  setOpendialog,
+  isEdit = false,
+  editInfo = null
 }) {
   const {
     showLoading,
@@ -43,6 +45,8 @@ export default function Ingreso({
 
       <Paper elevation={16} square>
         <FormUsuario
+          isEdit={isEdit}
+          dataInitial={editInfo}
           onSave={() => {
             setOpendialog(false)
             onSave()

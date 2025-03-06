@@ -89,9 +89,18 @@ const InputPassword = ({
   }
 
   const checkChange = (event) => {
+    // console.log("checkChange de ", label)
     if (!canAutoComplete && !keyPressed) {
       return
     }
+
+    // console.log("event.nativeEvent.inputType", event.nativeEvent.inputType)
+    if(
+      event.nativeEvent.inputType != 'insertText'
+      && event.nativeEvent.inputType != 'deleteContentBackward'
+    ) return
+
+
     const value = event.target.value
     if (value == " ") {
       showMessage(fieldName + ":Valor erroneo")
