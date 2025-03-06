@@ -108,9 +108,18 @@ const Step1CC = ({
 
   };
 
+
+  const [yaCargoDeSesion, setYaCargoDeSesion] = useState(false)
+
   const cargaAnteriorDeSesion = async (funSet, propiedad) => {
-    // console.log("cargaAnteriorDeSesion")
+    console.log("cargaAnteriorDeSesion.. propiedad", propiedad)
+    
+    if(yaCargoDeSesion){
+      console.log("cargaAnteriorDeSesion.. ya cargo.. salgo")
+      return
+    }
     const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
+    console.log("cargaAnteriorDeSesion.. anterior", anterior)
     if (anterior !== null) {
       // console.log("devuelvo", anterior)
       funSet(anterior)
@@ -119,7 +128,7 @@ const Step1CC = ({
 
   useEffect(() => {
 
-    if(window.location.href.indexOf("stockmobile")>-1){
+    if (window.location.href.indexOf("stockmobile") > -1) {
       cargaAnteriorDeSesion(setCodigoBarras, "ultimaBusquedaStockMobile")
     }
 
@@ -132,7 +141,6 @@ const Step1CC = ({
       setDescripcionCorta(nombre)
     }
   }, [nombre])
-
 
   return (
     <Paper
@@ -183,8 +191,9 @@ const Step1CC = ({
             fieldName={"SubCategoria"}
             required={true}
             onFinishFetch={async () => {
-
-              cargaAnteriorDeSesion(setSelectedSubCategoryId, "ultimaSubcategoriaGuardada")
+              if(selectedSubCategoryId == -1){
+                cargaAnteriorDeSesion(setSelectedSubCategoryId, "ultimaSubcategoriaGuardada")
+              }
             }}
           />
 
@@ -234,9 +243,13 @@ const Step1CC = ({
 
             onFinishFetch={async () => {
               cargaAnteriorDeSesion(setSelectedSubFamilyId, "ultimaSubfamiliaGuardada")
+
+              if(selectedSubFamilyId != -1){
+                setYaCargoDeSesion(true)
+              }
             }}
           />
-        </Grid>
+        </Grid> 
 
         <Grid item xs={12} md={12}>
           <InputName

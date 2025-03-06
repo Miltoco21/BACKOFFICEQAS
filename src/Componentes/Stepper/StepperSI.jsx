@@ -78,7 +78,7 @@ const StepperSI = ({
   };
 
   const getStepContent = (step) => {
-    console.log("getStepContent..concodigo?", conCodigo)
+    // console.log("getStepContent..concodigo?", conCodigo)
     if (conCodigo) {
       switch (step) {
         case 0:

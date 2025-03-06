@@ -25,7 +25,7 @@ const SelectFetchDependiente = ({
   fetchFunction,
   fetchDataShow,
   fetchDataId,
-  onFinishFetch = ()=>{},
+  onFinishFetch = () => { },
 
   withLabel = true,
   autoFocus = false,
@@ -43,12 +43,9 @@ const SelectFetchDependiente = ({
   const [selected, setSelected] = useState(-1)
   const [selectedOther, setSelectedOther] = inputOtherState
   
-  const [selectedOriginal, setSelectedOriginal] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
   const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
   
-  const [needLoadList, setNeedLoadList] = useState(false)
-  
-  const [cambioAlgunaVez, setCambioAlgunaVez] = useState(false)
+  const [cargando, setCargando] = useState(false)
 
   const validate = () => {
     // console.log("validate de:" + fieldName)
@@ -76,7 +73,6 @@ const SelectFetchDependiente = ({
 
   const checkChange = (event) => {
     setSelected(event.target.value)
-    setSelectedOriginal(event.target.value)
   }
   const checkChangeBlur = (event) => {
 
@@ -84,123 +80,94 @@ const SelectFetchDependiente = ({
 
   const loadList = async () => {
     // console.log("loadList de ", label)
-    setNeedLoadList(false)
-    if (selectedOther < 1) {
-      // console.log("sale por que region es incorrecto")
+
+    if (!fetchDataShow || !fetchDataId || !fetchFunction) {
+      // console.log("no hago loadlist porque falta alguno de estos datos: fetchDataShow,fetchDataId,fetchFunction..",
+        // fetchDataShow, "..",
+        // fetchDataId, "..",
+        // fetchFunction)
       return
     }
+
     // console.log("loadList2 de ", label)
     // console.log("loadList  de ", label)
     // Comuna.getInstance().findByRegion(selectedOther, (comunas) => {
-    fetchFunction((fetchData) => {
-      // console.log("loadList3 de ", label)
-      // console.log("selectedOther",selectedOther)
-      // console.log("fetchData",fetchData)
-      setSelectList(fetchData)
-
-      onFinishFetch()
-    }, (error) => {
-      console.log(error)
+      setCargando(true)
+      fetchFunction((fetchData) => {
+        setCargando(false)
+        // console.log("loadList3 de ", label)
+        // console.log("selectedOther",selectedOther)
+        // console.log("fetchData",fetchData)
+        setSelectList(fetchData) 
+        setSelected(-1)
+        
+        setTimeout(() => {
+          onFinishFetch()
+        }, 500);
+      }, (error) => {
+      setCargando(false)
+      // console.log(error)
       // console.log("loadList4 de ", label)
     })
 
     // console.log("loadList5 de ", label)
   }
 
-  const setByString = (valueString) => {
-    var finded = false
-    selectList.forEach((comuna) => {
-      if (comuna.comunaNombre == valueString) {
-        setSelected(comuna.id)
-        setSelectedOriginal(comuna.id)
-        finded = true
-      }
-    })
+  // const setByString = (valueString) => {
+  //   var finded = false
+  //   selectList.forEach((comuna) => {
+  //     if (comuna.comunaNombre == valueString) {
+  //       setSelected(comuna.id)
+  //       setSelectedOriginal(comuna.id)
+  //       finded = true
+  //     }
+  //   })
 
-    // console.log( (finded ? "Se" : "No se" ) + " encontro")
-  }
+  //   // console.log( (finded ? "Se" : "No se" ) + " encontro")
+  // }
 
   // useEffect(() => {
-  //   console.log("cambio selectedOriginal de ", label, ' a el valor ', selectedOriginal)
+    // console.log("cambio selectedOriginal de ", label, ' a el valor ', selectedOriginal)
   // },[selectedOriginal])
 
   useEffect(() => {
     // console.log("")
 
     validate()
-    setSelected(-1)
+    // setSelected(-1)
     // console.log(inputOtherState)
     // console.log("carga inicial comuna")
   }, [])
 
   useEffect(() => {
-    // console.log("")
-    // console.log("selectedOther es:", (selectedOther + ""))
-    // console.log("selectedOther !isNaN(" + selectedOther + "):", !isNaN(selectedOther) )
-    if (selectedOther !== -1 && !isNaN(selectedOther)) {
-      // console.log("selectedOther entra en el if")
-      setSelected(-1)
-      setSelectList([])
-      setNeedLoadList(true)
-    }
-
+    // console.log("cambio el selectedOther de", label, " al valor ", selectedOther)
+    loadList()
   }, [selectedOther])
 
 
-  useEffect(() => {
-    // console.log("")
-    // console.log("cambio algo de", label)
-    // console.log("cambio algo de", label, '..selected',selected)
-    // console.log("cambio algo de", label, '..selectedOriginal',selectedOriginal)
-    // console.log("cambio algo de", label, '..selectList',selectList)
-    // console.log("cambio algo de", label, '..selectList.length',selectList.length)
-    // console.log("cambio algo de", label, '..isNaN(selectedOther)',isNaN(selectedOther))
-
-
-    if (isNaN(selectedOther)) return
-    if (selected === -1 && selectList.length === 0) {
-      // console.log("debe cargar")
-      setNeedLoadList(true)
-
-      // console.log("cambio algo de", label, '..entra 1')
-    }
-    
-    if (selectList.length > 0 && selectedOriginal !== "" && selected === -1 && !cambioAlgunaVez) {
-      // console.log("cambio algo de", label, '..entra 2')
-      if (Validator.isNumeric(selectedOriginal)) {
-        // console.log("cambio algo de", label, '..entra 3')
-        // console.log("todo numero..")
-        setSelected(selectedOriginal)
-      } else {
-        // console.log("cambio algo de", label, '..entra 4')
-        // console.log("no es todo numero..")
-        // console.log("carga original",selectedOriginal)
-        setByString(selectedOriginal)
-      }
-    } else {
-      // console.log("cambio algo de", label, '..entra 5')
-      validate()
-    }
-    // console.log("selected es:", selected)
-  }, [selected, selectList.length])
-
-
-  useEffect(() => {
-    // console.log("cambio needLoadList", needLoadList)
-    // console.log("cambio fetchDataShow", fetchDataShow)
-    // console.log("cambio fetchDataId", fetchDataId)
-    // console.log("cambio fetchFunction", fetchFunction)
-    if (fetchDataShow && fetchDataId && needLoadList && fetchFunction) {
-      loadList()
-    }
-  }, [fetchFunction, fetchDataShow, fetchDataId, needLoadList])
+  // useEffect(() => {
+  //   // console.log("cambio needLoadList", needLoadList)
+  //   // console.log("cambio fetchDataShow", fetchDataShow)
+  //   // console.log("cambio fetchDataId", fetchDataId)
+  //   // console.log("cambio fetchFunction", fetchFunction)
+  //   // if (fetchDataShow && fetchDataId && fetchFunction) {
+  //     loadList()
+  //   // }
+  // }, [fetchFunction, fetchDataShow, fetchDataId])
 
 
 
   useEffect(() => {
     // console.log("cambio selected de", label, " al valor ", selected)
-    if(selected != -1) setCambioAlgunaVez(true)
+    inputState[1](selected)
+    validate()
   }, [selected])
+
+
+  useEffect(() => {
+    // console.log("cambio selected desde afuera de", label, " al valor ", inputState[0])
+    setSelected(inputState[0])
+  }, [inputState[0]])
 
 
   return (
@@ -227,7 +194,8 @@ const SelectFetchDependiente = ({
           key={-1}
           value={-1}
         >
-          SELECCIONAR
+          { cargando ? "Cargando..." : "SELECCIONAR" }
+          
         </MenuItem>
 
         {selectList.map((selectOption, ix) => (
