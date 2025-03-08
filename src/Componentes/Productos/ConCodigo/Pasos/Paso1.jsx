@@ -20,43 +20,29 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  InputAdornment,
 } from "@mui/material";
 
-import ModelConfig from "../../Models/ModelConfig";
-import Model from "../../Models/Model";
-import Product from "../../Models/Product";
-import SelectFetch from "../Elements/Compuestos/SelectFetch";
-import SelectFetchDependiente from "../Elements/Compuestos/SelectFetchDependiente";
-import InputName from "../Elements/Compuestos/InputName";
-import System from "../../Helpers/System";
+import ModelConfig from "../../../../Models/ModelConfig";
+import { SelectedOptionsContext } from "../../../Context/SelectedOptionsProvider";
+import ProductStepper from "../../../../Models/ProductStepper";
+import Product from "../../../../Models/Product";
+import { Check, Dangerous, Percent } from "@mui/icons-material";
+import Model from "../../../../Models/Model";
+import InputCodigoBarras from "../../../Elements/Compuestos/InputCodigoBarras";
+import SelectFetchDependiente from "../../../Elements/Compuestos/SelectFetchDependiente";
+import SelectFetch from "../../../Elements/Compuestos/SelectFetch";
+import InputName from "../../../Elements/Compuestos/InputName";
+import System from "../../../../Helpers/System";
 
-import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
-
-
-const Step1Component = ({
-  dataSteps = null,
+const Step1CC = ({
   onNext = () => { },
-  isActive,
-  setStepData = () => { }
+  isActive
 }) => {
-
   const {
-    showLoading,
-    hideLoading,
-    showLoadingDialog,
+    userData,
     showMessage
   } = useContext(SelectedOptionsContext);
-
-
-
-  var validatorStates = {
-    nombre: useState(null),
-    marca: useState(null),
-    categoryId: useState(null),
-    subCategoryId: useState(null),
-    familyId: useState(null),
-    subFamilyId: useState(null),
-  };
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(-1);
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState(-1);
@@ -65,13 +51,28 @@ const Step1Component = ({
 
   const [nombre, setNombre] = useState("");
   const [marca, setMarca] = useState("");
+  const [codigoBarras, setCodigoBarras] = useState("");
+  const [descripcionCorta, setDescripcionCorta] = useState("");
+
+  const [puedeAvanzar, setPuedeAvanzar] = useState(false);
+  const [cambioAlgo, setCambioAlgo] = useState(false);
+
+  var validatorStates = {
+    codigoBarras: useState(null),
+    nombre: useState(null),
+    descripcionCorta: useState(null),
+    marca: useState(null),
+    categoryId: useState(null),
+    subCategoryId: useState(null),
+    familyId: useState(null),
+    subFamilyId: useState(null),
+  };
 
   const handleNext = () => {
 
     if (!System.allValidationOk(validatorStates, showMessage)) {
       return false;
     }
-
 
     // Resto del código para continuar si los campos son válidos
     const step1Data = {
@@ -80,10 +81,13 @@ const Step1Component = ({
       selectedFamilyId,
       selectedSubFamilyId,
       marca,
+      codBarra: codigoBarras,
+      descripcionCorta,
       nombre,
     };
-
-    setStepData((prevData) => ({ ...prevData, ...step1Data }));
+    ProductStepper.getInstance().sesion.guardar({
+      "step1": step1Data
+    })
 
     const sesion = Model.getInstance().sesion
     var sesion1 = sesion.cargar(1)
@@ -98,35 +102,43 @@ const Step1Component = ({
     sesion1.ultimaMarcaGuardada = marca
     sesion.guardar(sesion1)
 
-
     onNext(step1Data);
 
   };
 
 
-  const [cambioAlgo, setCambioAlgo] = useState(false)
+  const [yaCargoDeSesion, setYaCargoDeSesion] = useState(false)
 
   const cargaAnteriorDeSesion = async (funSet, propiedad) => {
-    // console.log("cargaAnteriorDeSesion")
-    if (!cambioAlgo) {
-      const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
-      if (anterior !== null) {
-        // console.log("devuelvo", anterior)
-        funSet(anterior)
-      }
+    // console.log("cargaAnteriorDeSesion.. propiedad", propiedad)
+    
+    if(yaCargoDeSesion){
+      // console.log("cargaAnteriorDeSesion.. ya cargo.. salgo")
+      return
+    }
+    const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
+    // console.log("cargaAnteriorDeSesion.. anterior", anterior)
+    if (anterior !== null) {
+      // console.log("devuelvo", anterior)
+      funSet(anterior)
     }
   }
 
   useEffect(() => {
+
+    if (window.location.href.indexOf("stockmobile") > -1) {
+      cargaAnteriorDeSesion(setCodigoBarras, "ultimaBusquedaStockMobile")
+    }
+
     cargaAnteriorDeSesion(setMarca, "ultimaMarcaGuardada")
   }, [])
 
 
   useEffect(() => {
-    if (isActive) {
-      // console.log("activo paso 1 .. dataSteps",dataSteps)
+    if (nombre.length <= 50) {
+      setDescripcionCorta(nombre)
     }
-  }, [isActive])
+  }, [nombre])
 
   return (
     <Paper
@@ -137,6 +149,15 @@ const Step1Component = ({
       }}
     >
       <Grid container spacing={2} item xs={12} md={12}>
+
+        <Grid item xs={12} md={12}>
+          <InputCodigoBarras
+            inputState={[codigoBarras, setCodigoBarras]}
+            validationState={validatorStates.codigoBarras}
+            fieldName="codigoBarras"
+            required={true}
+          />
+        </Grid>
 
         <Grid item xs={12} md={6}>
           <SelectFetch
@@ -154,6 +175,7 @@ const Step1Component = ({
           />
         </Grid>
 
+
         <Grid item xs={12} md={6}>
           <SelectFetchDependiente
             inputState={[selectedSubCategoryId, setSelectedSubCategoryId]}
@@ -167,8 +189,9 @@ const Step1Component = ({
             fieldName={"SubCategoria"}
             required={true}
             onFinishFetch={async () => {
-
-              cargaAnteriorDeSesion(setSelectedSubCategoryId, "ultimaSubcategoriaGuardada")
+              if(selectedSubCategoryId == -1){
+                cargaAnteriorDeSesion(setSelectedSubCategoryId, "ultimaSubcategoriaGuardada")
+              }
             }}
           />
 
@@ -218,16 +241,29 @@ const Step1Component = ({
 
             onFinishFetch={async () => {
               cargaAnteriorDeSesion(setSelectedSubFamilyId, "ultimaSubfamiliaGuardada")
+
+              if(selectedSubFamilyId != -1){
+                setYaCargoDeSesion(true)
+              }
             }}
           />
-        </Grid>
+        </Grid> 
 
-
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={12}>
           <InputName
             inputState={[nombre, setNombre]}
             validationState={validatorStates.nombre}
-            fieldName={"nombre"}
+            fieldName={"descripcion"}
+            maxLength={50}
+            required={true}
+          />
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <InputName
+            inputState={[descripcionCorta, setDescripcionCorta]}
+            validationState={validatorStates.descripcionCorta}
+            fieldName={"Desc. Corta"}
             maxLength={50}
             required={true}
           />
@@ -246,19 +282,26 @@ const Step1Component = ({
 
         <Grid item xs={12} md={12}>
           <Button
+            // fullWidth
             variant="contained"
             color="secondary"
             onClick={handleNext}
-            fullWidth
+            // disabled={!puedeAvanzar}
+            sx={{
+              width: "50%",
+              height: "55px",
+              margin: "0 25%"
+            }}
           >
-            Guardar y continuar
+            Continuar
           </Button>
-        </Grid>
 
+
+        </Grid>
       </Grid>
 
     </Paper>
   );
 };
 
-export default Step1Component;
+export default Step1CC;

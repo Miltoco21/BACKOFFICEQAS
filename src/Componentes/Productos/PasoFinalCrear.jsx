@@ -34,7 +34,7 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import SmallButton from "../Elements/SmallButton";
 
 
-const StepFinish = ({
+const PasoFinalCrear = ({
   dataSteps = null,
   mostrarBotones = false
 }) => {
@@ -50,7 +50,7 @@ const StepFinish = ({
 
   useEffect(() => {
     const sesion = Model.getInstance().sesion
-    console.log("sesion", sesion)
+    // console.log("sesion", sesion)
     var sesion1 = sesion.cargar(1)
     if (sesion1) {
       setUltimoIdCreado(sesion1.ultimoIdCreado)
@@ -96,4 +96,4 @@ const StepFinish = ({
   );
 };
 
-export default StepFinish;
+export default PasoFinalCrear;

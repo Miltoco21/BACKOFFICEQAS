@@ -6,10 +6,10 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Add from "@mui/icons-material/Add";
 import Modal from "@mui/joy/Modal";
-import StepperSI from "../Componentes/Stepper/StepperSI";
 import SearchListProducts from "../Componentes/Productos/SearchListProduct";
 import { HorizontalSplit } from "@mui/icons-material";
-import CrearProductosSinCodigo from "../Componentes/Elements/CrearProductosSinCodigo";
+import CrearProductosSinCodigo from "../Componentes/Productos/SinCodigo/Crear";
+import CrearProductosConCodigo from "../Componentes/Productos/ConCodigo/Crear";
 
 const Productos = () => {
 
@@ -113,7 +113,8 @@ const Productos = () => {
               margin:"2.5% auto"
             }}
           >
-            <StepperSI conCodigo={true} onSuccessAdd={()=>{ setRefresh(!refresh) }} />
+            {/* <StepperSI conCodigo={true} onSuccessAdd={()=>{ setRefresh(!refresh) }} /> */}
+            <CrearProductosConCodigo onSuccessAdd={()=>{ setRefresh(!refresh) }}/> 
           </Box>
         </Modal>
     </div>

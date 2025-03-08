@@ -3,13 +3,6 @@
 import React, { useState } from "react";
 import SideBar from "../Componentes/NavBar/SideBar";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Add from "@mui/icons-material/Add";
-import Modal from "@mui/joy/Modal";
-import StepperSI from "../Componentes/Stepper/StepperSI";
-import SearchListProducts from "../Componentes/Productos/SearchListProduct";
-import { HorizontalSplit } from "@mui/icons-material";
-import ProductosCriticos from "../Componentes/Productos/ProductosCriticos";
 import ProductosValorizados from "../Componentes/Productos/ProductosValorizados";
 
 const ReporteStockValorizado = () => {

@@ -1,17 +1,14 @@
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext, useEffect } from "react";
-import SideBar from "../Componentes/NavBar/SideBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Add from "@mui/icons-material/Add";
-import Modal from "@mui/joy/Modal";
 import { SelectedOptionsContext } from "../Componentes/Context/SelectedOptionsProvider";
-import StepperSI from "../Componentes/Stepper/StepperSI";
 import { HorizontalSplit } from "@mui/icons-material";
-import Product from "../Models/Product";
 import { Dialog, DialogContent, TextField } from "@mui/material";
-import EditarProducto from "../Componentes/Productos/EditarProducto";
+import CrearProductosSinCodigo from "../Componentes/Productos/SinCodigo/Crear";
+import CrearProductosConCodigo from "../Componentes/Productos/ConCodigo/Crear";
 
 const CrearProducto = ({
   openAdd,
@@ -25,27 +22,27 @@ const CrearProducto = ({
     hideLoading
   } = useContext(SelectedOptionsContext);
 
-  
-  
+
+
   const [openAddWithCode, setOpenAddWithCode] = useState(false);
   const [openAddNoCode, setOpenAddNoCode] = useState(false);
-  
+
 
 
 
 
   return (
-    <div style={{ 
+    <div style={{
       display: "flex",
-      
-      }}>
 
-      <Dialog open={openAdd} maxWidth="md" fullWidth onClose={()=>{
-          setopenAdd(false)
-        }}
-        >
-          <DialogContent>
-            
+    }}>
+
+      <Dialog open={openAdd} maxWidth="md" fullWidth onClose={() => {
+        setopenAdd(false)
+      }}
+      >
+        <DialogContent>
+
           <Box
             sx={{
               // position: "absolute",
@@ -58,54 +55,54 @@ const CrearProducto = ({
               overflow: "auto", // Added scrollable feature
               // maxHeight: "100vh", // Adjust as needed
               // maxWidth: "180vw", // Adjust as needed
-              height:"40%",
-              minHeight:"400px",
-              paddingTop:"10px",
-              width:"85%",
-              margin:"2.5% auto"
+              height: "40%",
+              minHeight: "400px",
+              paddingTop: "10px",
+              width: "85%",
+              margin: "2.5% auto"
             }}
           >
             <Button
-          size="large"
-          variant="outlined"
-          style={{ marginLeft: "18px", padding: "14px", marginTop: "6px" }}
-          onClick={()=>{
-            setOpenAddNoCode(true)
-          }}
-        >
-          <Add/>
-          Producto sin código
-        </Button>
-        <Button
-          size="large"
-          variant="outlined"
-          style={{ marginLeft: "18px", padding: "14px", marginTop: "6px" }}
-          
-          onClick={()=>{
-            setOpenAddWithCode(true)
+              size="large"
+              variant="outlined"
+              style={{ marginLeft: "18px", padding: "14px", marginTop: "6px" }}
+              onClick={() => {
+                setOpenAddNoCode(true)
+              }}
+            >
+              <Add />
+              Producto sin código
+            </Button>
+            <Button
+              size="large"
+              variant="outlined"
+              style={{ marginLeft: "18px", padding: "14px", marginTop: "6px" }}
 
-          }}
-        >
-          <HorizontalSplit sx={{transform: "rotate(270deg)"}}/>
-          <Add sx={{
+              onClick={() => {
+                setOpenAddWithCode(true)
+
+              }}
+            >
+              <HorizontalSplit sx={{ transform: "rotate(270deg)" }} />
+              <Add sx={{
                 width: "15px",
                 position: "relative",
                 left: "-7px"
-          }}/>
-          Producto con código
-        </Button>
+              }} />
+              Producto con código
+            </Button>
 
 
           </Box>
 
-          </DialogContent>
-        </Dialog>
+        </DialogContent>
+      </Dialog>
 
-        <Dialog open={openAddNoCode} maxWidth="lg" onClose={()=>{
-          setOpenAddNoCode(false)
-        }}
-        >
-          <DialogContent>
+      <Dialog open={openAddNoCode} maxWidth="lg" onClose={() => {
+        setOpenAddNoCode(false)
+      }}
+      >
+        <DialogContent>
           <Box
             sx={{
               // position: "absolute",
@@ -118,49 +115,50 @@ const CrearProducto = ({
               overflow: "auto", // Added scrollable feature
               // maxHeight: "100vh", // Adjust as needed
               // maxWidth: "180vw", // Adjust as needed
-              height:"80%",
-              paddingTop:"10px",
-              width:"85%",
-              margin:"2.5% auto"
+              height: "80%",
+              paddingTop: "10px",
+              width: "85%",
+              margin: "2.5% auto"
             }}
           >
-           <StepperSI
-            onSuccessAdd = {onSuccessAdd}
-           /> 
-          </Box>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={openAddWithCode} maxWidth="lg" onClose={()=>{
-          setOpenAddWithCode(false)
-        }}
-        >
-          <DialogContent>
-          <Box
-            sx={{
-              // position: "absolute",
-              // top: "50%",
-              // left: "50%",
-              // transform: "translate(-50%, -50%)",
-              bgcolor: "background.paper",
-              boxShadow: 24,
-              // p: 4,
-              overflow: "auto", // Added scrollable feature
-              // maxHeight: "100vh", // Adjust as needed
-              // maxWidth: "180vw", // Adjust as needed
-              height:"90%",
-              paddingTop:"10px",
-              width:"85%",
-              margin:"2.5% auto"
-            }}
-          >
-            <StepperSI 
-              conCodigo={true}
-              onSuccessAdd = {onSuccessAdd}
+            <CrearProductosSinCodigo
+              onSuccessAdd={onSuccessAdd}
             />
           </Box>
-          </DialogContent>
-        </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openAddWithCode} maxWidth="lg" onClose={() => {
+        setOpenAddWithCode(false)
+      }}
+      >
+        <DialogContent>
+          <Box
+            sx={{
+              // position: "absolute",
+              // top: "50%",
+              // left: "50%",
+              // transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              // p: 4,
+              overflow: "auto", // Added scrollable feature
+              // maxHeight: "100vh", // Adjust as needed
+              // maxWidth: "180vw", // Adjust as needed
+              height: "90%",
+              paddingTop: "10px",
+              width: "85%",
+              margin: "2.5% auto"
+            }}
+          >
+           
+            <CrearProductosConCodigo
+              onSuccessAdd={onSuccessAdd}
+            />
+
+          </Box>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
