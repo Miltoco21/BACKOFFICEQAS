@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, Dialog, Box } from "@mui/material";
 import SideBar from "../Componentes/NavBar/SideBar.jsx";
-import AjusteInventario from  "../Componentes/Stock/AjusteInventario.jsx";
+import AjusteInventario from "../Componentes/Stock/AjusteInventario.jsx";
 import StockModel from "../Models/Stock";
 import QrStockMobile from "../Componentes/ScreenDialog/QrStockMobile.jsx";
 import NivelesUnidades from "../Componentes/Stock/NivelesUnidades.jsx";
+import { Typography } from "@mui/joy";
 
 const Stock = () => {
   // Estado para controlar la apertura/cierre del modal de Ajuste de Inventario
@@ -12,6 +13,7 @@ const Stock = () => {
   const [openNiveles, setOpenNiveles] = useState(false);
   const [showQrStockMobile, setShowQrStockMobile] = useState(false);
   const [qrLink, setQrLink] = useState("");
+  const [linkUrl, setLinkUrl] = useState("")
 
   // Función para abrir el modal
   const handleOpenAjusteInventario = () => {
@@ -23,18 +25,20 @@ const Stock = () => {
     setOpenAjusteInventario(false);
   };
 
-  const loadQrLink = ()=>{
-    StockModel.getQrMobileLink((responseData)=>{
+  const loadQrLink = () => {
+    StockModel.getQrMobileLink((responseData) => {
       console.log("response data", responseData)
       setQrLink(responseData.qr)
-    },()=>{
+    }, () => {
       console.log("no se pudo cargar el qr")
     })
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     loadQrLink()
-  },[])
+
+    setLinkUrl( window.location.href + "mobile" )
+  }, [])
 
   return (
     <>
@@ -57,34 +61,46 @@ const Stock = () => {
         </Button>
 
         <Button
-              variant="outlined"
-              sx={{
-                my: 1,
-                mx: 2,
-              }}
-              onClick={()=>{
-                setOpenNiveles(true)
-              }} // Abre el modal al hacer clic en el botón
-            >
-              Niveles Unidades
-            </Button>
+          variant="outlined"
+          sx={{
+            my: 1,
+            mx: 2,
+          }}
+          onClick={() => {
+            setOpenNiveles(true)
+          }} // Abre el modal al hacer clic en el botón
+        >
+          Niveles Unidades
+        </Button>
 
-          { qrLink !="" && (
-            <Button
-              variant="outlined"
-              sx={{
-                my: 1,
-                mx: 2,
-              }}
-              onClick={()=>{
-                setShowQrStockMobile(true)
-              }} // Abre el modal al hacer clic en el botón
-            >
-              Stock Mobile
-            </Button>
+        {qrLink != "" && (
+          <Button
+            variant="outlined"
+            sx={{
+              my: 1,
+              mx: 2,
+            }}
+            onClick={() => {
+              setShowQrStockMobile(true)
+            }} // Abre el modal al hacer clic en el botón
+          >
+            Stock Mobile
+          </Button>
 
-          )}
-          <QrStockMobile openDialog={showQrStockMobile} setOpenDialog={setShowQrStockMobile} qrLink={qrLink} />
+        )}
+
+        {linkUrl != "" && (
+          <div style={{
+            padding:"15px",
+            border:"1px solid #ccc",
+            borderRadius:"8px",
+            margin:"10px"
+          }}>
+            <Typography>Link directo a stock mobile</Typography>
+            <Typography><a href={linkUrl}>Hacer click en este boton</a></Typography>
+          </div>
+        )}
+        <QrStockMobile openDialog={showQrStockMobile} setOpenDialog={setShowQrStockMobile} qrLink={qrLink} />
 
 
       </Box>
@@ -103,13 +119,13 @@ const Stock = () => {
       {/* Dialog para niveles de unidades de stock */}
       <Dialog
         open={openNiveles}
-        onClose={()=>{
+        onClose={() => {
           setOpenNiveles(false)
         }}
         maxWidth="lg"
         fullWidth
       >
-        <NivelesUnidades onClose={()=>{
+        <NivelesUnidades onClose={() => {
           setOpenNiveles(false)
         }} />
       </Dialog>
