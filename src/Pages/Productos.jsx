@@ -9,6 +9,7 @@ import Modal from "@mui/joy/Modal";
 import StepperSI from "../Componentes/Stepper/StepperSI";
 import SearchListProducts from "../Componentes/Productos/SearchListProduct";
 import { HorizontalSplit } from "@mui/icons-material";
+import CrearProductosSinCodigo from "../Componentes/Elements/CrearProductosSinCodigo";
 
 const Productos = () => {
 
@@ -87,7 +88,8 @@ const Productos = () => {
               margin:"2.5% auto"
             }}
           >
-           <StepperSI onSuccessAdd={()=>{ setRefresh(!refresh) }}/> 
+           {/* <StepperSI onSuccessAdd={()=>{ setRefresh(!refresh) }}/>  */}
+           <CrearProductosSinCodigo onSuccessAdd={()=>{ setRefresh(!refresh) }}/> 
           </Box>
         </Modal>
 

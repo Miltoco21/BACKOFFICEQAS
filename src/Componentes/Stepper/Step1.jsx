@@ -34,9 +34,10 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
 
 const Step1Component = ({
-  data,
-  onNext,
-  setStepData
+  dataSteps = null,
+  onNext = () => { },
+  isActive,
+  setStepData = () => { }
 }) => {
 
   const {
@@ -45,6 +46,8 @@ const Step1Component = ({
     showLoadingDialog,
     showMessage
   } = useContext(SelectedOptionsContext);
+
+
 
   var validatorStates = {
     nombre: useState(null),
@@ -60,8 +63,8 @@ const Step1Component = ({
   const [selectedFamilyId, setSelectedFamilyId] = useState(-1);
   const [selectedSubFamilyId, setSelectedSubFamilyId] = useState(-1);
 
-  const [nombre, setNombre] = useState(data.nombre || "");
-  const [marca, setMarca] = useState(data.marca || "");
+  const [nombre, setNombre] = useState("");
+  const [marca, setMarca] = useState("");
 
   const handleNext = () => {
 
@@ -83,8 +86,8 @@ const Step1Component = ({
     setStepData((prevData) => ({ ...prevData, ...step1Data }));
 
     const sesion = Model.getInstance().sesion
-    console.log("sesion", sesion)
     var sesion1 = sesion.cargar(1)
+    console.log("sesion", sesion1)
     if (!sesion1) sesion1 = {
       id: 1
     }
@@ -96,27 +99,34 @@ const Step1Component = ({
     sesion.guardar(sesion1)
 
 
-    onNext();
+    onNext(step1Data);
 
   };
 
 
   const [cambioAlgo, setCambioAlgo] = useState(false)
 
-  const cargaAnteriorDeSesion = async(funSet,propiedad)=>{
+  const cargaAnteriorDeSesion = async (funSet, propiedad) => {
     // console.log("cargaAnteriorDeSesion")
-    if(!cambioAlgo){
+    if (!cambioAlgo) {
       const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
-      if(anterior !== null){
+      if (anterior !== null) {
         // console.log("devuelvo", anterior)
         funSet(anterior)
       }
     }
   }
 
-  useEffect(()=>{
-    cargaAnteriorDeSesion(setMarca,"ultimaMarcaGuardada")
-  },[])
+  useEffect(() => {
+    cargaAnteriorDeSesion(setMarca, "ultimaMarcaGuardada")
+  }, [])
+
+
+  useEffect(() => {
+    if (isActive) {
+      // console.log("activo paso 1 .. dataSteps",dataSteps)
+    }
+  }, [isActive])
 
   return (
     <Paper
@@ -139,7 +149,7 @@ const Step1Component = ({
             required={true}
 
             onFinishFetch={async () => {
-              cargaAnteriorDeSesion(setSelectedCategoryId,"ultimaCategoriaGuardada")
+              cargaAnteriorDeSesion(setSelectedCategoryId, "ultimaCategoriaGuardada")
             }}
           />
         </Grid>
@@ -158,7 +168,7 @@ const Step1Component = ({
             required={true}
             onFinishFetch={async () => {
 
-              cargaAnteriorDeSesion(setSelectedSubCategoryId,"ultimaSubcategoriaGuardada")
+              cargaAnteriorDeSesion(setSelectedSubCategoryId, "ultimaSubcategoriaGuardada")
             }}
           />
 
@@ -182,7 +192,7 @@ const Step1Component = ({
             required={true}
 
             onFinishFetch={async () => {
-              cargaAnteriorDeSesion(setSelectedFamilyId,"ultimaFamiliaGuardada")
+              cargaAnteriorDeSesion(setSelectedFamilyId, "ultimaFamiliaGuardada")
             }}
           />
 
@@ -207,7 +217,7 @@ const Step1Component = ({
             required={true}
 
             onFinishFetch={async () => {
-              cargaAnteriorDeSesion(setSelectedSubFamilyId,"ultimaSubfamiliaGuardada")
+              cargaAnteriorDeSesion(setSelectedSubFamilyId, "ultimaSubfamiliaGuardada")
             }}
           />
         </Grid>

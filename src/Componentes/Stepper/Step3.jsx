@@ -34,9 +34,9 @@ import Model from "../../Models/Model";
 
 
 const Step3Component = ({
-  data,
+  dataSteps = [],
   onNext,
-  stepData,
+  isActive,
   onSuccessAdd,
   onBack
 }) => {
@@ -48,28 +48,22 @@ const Step3Component = ({
     showConfirm
   } = useContext(SelectedOptionsContext);
 
-
-  const apiUrl = ModelConfig.get().urlBase;
-  ;
-
   const refPrecioVenta = useRef(null)
 
-  const [newUnidad, setNewUnidad] = useState("");
   const [stockCritico, setStockCritico] = useState(1);
   const [stockInicial, setStockInicial] = useState(1);
   const [precioCosto, setPrecioCosto] = useState(1);
   const [precioNeto, setPrecioNeto] = useState(0);
 
-  const [selectedUnidadId, setSelectedUnidadId] = useState(
-    data.selectedUnidadId || "1"
-  );
-
+  
   var ivas = [
     { idUnidad: 0, descripcion: "Sin iva" },
     { idUnidad: ModelConfig.get().iva, descripcion: ModelConfig.get().iva + "%" }
   ];
-
+  
+  const [selectedUnidadId, setSelectedUnidadId] = useState(1);
   const [selectedUnidadVentaId, setSelectedUnidadVentaId] = useState(1);
+
   const [ultimoFoco, setUltimoFoco] = useState("");
   const [iva, setIva] = useState(ModelConfig.get().iva)
   const [margenGanancia, setMargenGanancia] = useState(ModelConfig.get().margenGanancia);
@@ -115,15 +109,16 @@ const Step3Component = ({
     // setLoading(true);
 
     // Crear objeto con los datos del paso 1
+    // console.log("dataSteps", dataSteps)
     const step1Data = {
       respuestaSINO: "",
       pesoSINO: (esPesable ? "SI" : "NO"),
-      marca: data.marca,
-      categoriaID: data.selectedCategoryId || 0, // Utilizamos 0 si el valor es undefined
-      subCategoriaID: data.selectedSubCategoryId || 0,
-      familiaID: data.selectedFamilyId || 0,
-      subFamilia: data.selectedSubFamilyId || 0,
-      nombre: data.nombre, // Debes proporcionar un valor adecuado aquí
+      marca: dataSteps[0].marca,
+      categoriaID: dataSteps[0].selectedCategoryId,
+      subCategoriaID: dataSteps[0].selectedSubCategoryId,
+      familiaID: dataSteps[0].selectedFamilyId,
+      subFamilia: dataSteps[0].selectedSubFamilyId,
+      nombre: dataSteps[0].nombre,
     };
 
     // Crear objeto con los datos del paso 3
@@ -144,7 +139,7 @@ const Step3Component = ({
     };
 
     // Combinar todos los pasos en un solo objeto
-    const requestData = {
+    const productoNuevo = {
       name: "string", // Debes proporcionar un valor adecuado aquí
       step1: step1Data,
       step2: {
@@ -161,23 +156,18 @@ const Step3Component = ({
       },
     };
 
-    console.log("Datos objeto productos", requestData);
-    const prodNuevo = {
-      ...requestData.step1,
-      ...requestData.step2,
-      ...requestData.step3,
-      ...requestData.step4,
-      ...requestData.step5,
-    }
+    // console.log("Datos dataSteps", dataSteps);
+    // console.log("Datos productoNuevo", productoNuevo);
+    // return
 
     showLoading("Creando producto " + step1Data.nombre)
 
-    Product.addFull(requestData, (responseData, response) => {
+    Product.addFull(productoNuevo, (responseData, response) => {
       hideLoading()
 
-      prodNuevo.idProducto = response.data.codigoProducto
-      prodNuevo.codigoProducto = response.data.codigoProducto
-      if (onSuccessAdd) onSuccessAdd(prodNuevo, response)
+      productoNuevo.idProducto = response.data.codigoProducto
+      productoNuevo.codigoProducto = response.data.codigoProducto
+      if (onSuccessAdd) onSuccessAdd(productoNuevo, response)
       console.log("Productos", product)
 
 
@@ -190,53 +180,12 @@ const Step3Component = ({
       sesion1.ultimoIdCreado = response.data.codigoProducto
       sesion.guardar(sesion1)
 
-      onNext(requestData, 3);
+      onNext(productoNuevo, 3);
     }, (err) => {
       showMessage(err)
       hideLoading()
     })
 
-    // try {
-      // Enviar la petición POST al endpoint con los datos combinados
-      // const response = await axios.post(
-      //   `${apiUrl}/ProductosTmp/AddProducto`,
-      //   requestData
-      // );
-
-      // Manejar la respuesta de la API
-      // console.log("Response PROD GAURDADO:", response.data);
-      // if (response.status === 201) {
-      //   setEmptyFieldsMessage("Producto guardado exitosamente");
-      //   setOpenSnackbar(true);
-      //   prodNuevo.idProducto = response.data.codigoProducto
-      //   prodNuevo.codigoProducto = response.data.codigoProducto
-      //   if (onSuccessAdd) onSuccessAdd(prodNuevo, response)
-      //   console.log("Productos", product)
-
-
-      //   const sesion = Model.getInstance().sesion
-      //   console.log("sesion", sesion)
-      //   var sesion1 = sesion.cargar(1)
-      //   if (!sesion1) sesion1 = {
-      //     id: 1
-      //   }
-      //   sesion1.ultimoIdCreado = response.data.codigoProducto
-      //   sesion.guardar(sesion1)
-
-      // }
-
-      // Llamar a la función onNext para continuar con el siguiente paso
-      // onNext(requestData, 3);
-    // } catch (error) {
-    //   showMessage("Error al guardar el producto");
-    //   setOpenSnackbar(true);
-    //   console.error("Error:", error);
-    // } finally {
-    //   setLoading(false);
-    //   setTimeout(() => {
-    //     hideLoading()
-    //   }, 3000);
-    // }
   };
 
   const handleSnackbarClose = () => {
@@ -285,17 +234,7 @@ const Step3Component = ({
       return false;
     }
 
-    // if (isNaN(parseFloat(precioVenta)) || parseFloat(precioVenta) === 0) {
-    //   setEmptyFieldsMessage("El precio de venta no puede ser cero.");
-    //   return false;
-    // }
-    // if (parseFloat(precioVenta) < parseFloat(precioCosto)) {
-    //   setEmptyFieldsMessage(
-    //     "El precio de venta debe ser al menos igual al precio de costo."
-    //   );
-    //   return false;
-    // }
-
+    
     if (stockCritico === "") {
       setEmptyFieldsMessage("Favor completar Stock Inicial.");
       return false;
@@ -310,21 +249,7 @@ const Step3Component = ({
     return true;
   };
 
-  // useEffect(() => {
-  //   async function fetchBodegas() {
-  //     try {
-  //       const response = await axios.get(
-  //         "https://www.easypos.somee.com/api/NivelMercadoLogicos/GetAllBodegas"
-  //       );
-  //       setBodegas(response.data.categorias);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-
-  //   fetchBodegas();
-  // }, []);
-
+ 
   const handleKeyDown = (event, field) => {
     // Verificar en qué campo se está escribiendo
     if (field === "precio") {
@@ -414,11 +339,21 @@ const Step3Component = ({
     logicaPrecios()
   }, [precioCosto, precioVenta, margenGanancia, iva])
 
+
+  const [ asignePrecioVenta0, setAsignePrecioVenta0 ] = useState(false)
+
   useEffect(() => {
-    System.intentarFoco(refPrecioVenta)
-    setUltimoFoco("precioVenta")
-    setPrecioVenta(0)
-  }, [])
+    if (isActive) {
+      // console.log("activo paso 3..dataSteps", dataSteps)
+      System.intentarFoco(refPrecioVenta)
+      setUltimoFoco("precioVenta")
+      if(!asignePrecioVenta0){
+        setPrecioVenta(0)
+        setAsignePrecioVenta0(true)
+      }
+    }
+  }, [isActive])
+
 
   const handleChange = (event, field) => {
     // Asegurar que el valor solo contenga números
@@ -463,7 +398,7 @@ const Step3Component = ({
 
   const handleIvaSelect = (selectedUnidadId) => {
     setIva(selectedUnidadId === "" ? 0 : selectedUnidadId);
-    console.log("Unidad seleccionada:", selectedUnidadId);
+    // console.log("Unidad seleccionada:", selectedUnidadId);
   };
 
   return (
@@ -811,6 +746,9 @@ const Step3Component = ({
               variant="contained"
               color="secondary"
               onClick={handleNext}
+              // onClick={()=>{
+              // onNext("nada")
+              // }}
               disabled={loading}
             >
               {loading ? "Guardando..." : "Guardar Producto"}
