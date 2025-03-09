@@ -783,11 +783,41 @@ class Product extends Model {
         // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
+        EndPoint.sendPut(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+    }
+
+
+    static async addFamily(data: { idCategoria, idSubcategoria, descripcionFamilia }, callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/AddFamilia"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+        EndPoint.sendPost(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+
+    }
+
+    static async editFamily(data: {
+        idCategoria,
+        idSubcategoria,
+        descripcionFamilia,
+        idFamilia,
+    },
+        callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/UpdateFamilia"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
         EndPoint.sendPut(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong)
-
     }
 
 

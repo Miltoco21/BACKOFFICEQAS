@@ -106,11 +106,6 @@ const SearchListSubCategories = ({
     setSearchTerm(event.target.value);
   };
 
-  const handleCategoryChange = (event) => {
-    setSelectedCategoryId(event.target.value);
-  };
-
-
   return (
     <Box sx={{ p: 2, mb: 4 }}>
       <TextField label="Buscar..." value={searchTerm} onChange={handleSearch} />

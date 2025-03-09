@@ -2,38 +2,33 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-unused-vars */
 
-import React,{useState} from 'react'
+import React, { useState } from 'react'
 import Box from "@mui/material/Box";
-import {Button} from "@mui/material";
+import { Button } from "@mui/material";
 import { Modal } from "@mui/material";
 import SideBar from '../Componentes/NavBar/SideBar'
 import Add from "@mui/icons-material/Add";
 import IngresoFamilia from '../Componentes/Productos/IngresoFamilia';
 
-import SearchListFamilias from '../Componentes/ListaBuscadora/SearchListFamilias';
-
-
-
-
+import SearchListFamilias from '../Componentes/Productos/SearchListFamilias';
+import FormFamilia from '../Componentes/Productos/FormFamilia';
+import DialogSimple from '../Componentes/Dialogs/DialogSimple';
 
 const Familias = () => {
 
   const [open, setOpen] = useState(false);
-  const handleOpenModal = () => {
-    setOpen(true);
-  };
+  const [refreshList, setRefreshList] = useState(false);
 
-  // Event handler to close the IngresoPV modal
-  const handleCloseModal = () => {
-    setOpen(false);
-  };
+  const [catId, setCatId] = useState(-1);
+  const [subcatId, setSubCatId] = useState(-1);
+
   return (
     <div style={{ display: "flex" }}>
-      
+
       <SideBar />
 
-      <Box  sx={{ flexGrow: 1, p: 3 }}>
-      <Button
+      <Box sx={{ flexGrow: 1, p: 3 }}>
+        <Button
           variant="outlined"
           color="primary"
           sx={{
@@ -41,42 +36,41 @@ const Familias = () => {
             mx: 2,
           }}
           startIcon={<Add />}
-          onClick={handleOpenModal}
+          onClick={() => {
+            setOpen(true)
+          }}
         >
           Familia
         </Button>
-        <SearchListFamilias/>
-       
-        <Modal open={open} onClose={handleCloseModal}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              bgcolor: "background.paper",
-              boxShadow: 24,
-              p: 4,
-              overflow: "auto", // Added scrollable feature
-              maxHeight: "90vh", // Adjust as needed
-              maxWidth: "90vw", // Adjust as needed
+        <SearchListFamilias
+          refresh={refreshList}
+          onChageCategory={(catIdx) => {
+            setCatId(catIdx)
+          }} />
+
+
+        <DialogSimple openDialog={open} setOpenDialog={setOpen}>
+          <FormFamilia
+            idCategoria={catId}
+            idSubcategoria={subcatId}
+            onSubmitSuccess={() => {
+              setRefreshList(!refreshList)
+              setOpen(false)
             }}
-          >
-          <IngresoFamilia onClose={handleCloseModal}/>
-          </Box>
-        </Modal>
+          />
+        </DialogSimple>
 
 
-       
-       
-        
-        
-        
 
-       
-        
 
-       
+
+
+
+
+
+
+
+
       </Box>
     </div>
   )

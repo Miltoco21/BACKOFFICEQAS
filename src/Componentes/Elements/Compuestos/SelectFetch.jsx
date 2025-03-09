@@ -153,6 +153,12 @@ const SelectFetch = ({
   }, [selected])
 
 
+
+  useEffect(() => {
+    // console.log("cambio selected desde afuera de", label, " al valor ", inputState[0])
+    setSelected(inputState[0])
+  }, [inputState[0]])
+
   return (
     <>
       {withLabel && (
