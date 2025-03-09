@@ -712,6 +712,85 @@ class Product extends Model {
 
     }
 
+
+    static async addCategory(data: { descripcionCategoria }, callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/AddCategoria"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+
+        EndPoint.sendPost(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+
+    }
+
+
+    static async editCategory(data: { idCategoria, descripcionCategoria }, callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/UpdateCategoria"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+
+        EndPoint.sendPut(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+
+    }
+
+
+    static async deleteCategory(data: { idCategoria }, callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/DeleteCategoria"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+
+        EndPoint.sendDelete(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+    }
+
+
+    static async addSubCategory(data: { idCategoria, descripcionSubCategoria }, callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/AddSubCategoria"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+
+        EndPoint.sendPost(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+
+    }
+
+    static async editSubCategory(data: {
+        idCategoria,
+        idSubCategoria,
+        descripcionSubCategoria
+    },
+        callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/UpdateSubCategoria"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+
+        EndPoint.sendPut(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+
+    }
+
+
 };
 
 
