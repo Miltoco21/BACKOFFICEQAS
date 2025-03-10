@@ -24,7 +24,6 @@ import DialogSimple from "../Dialogs/DialogSimple";
 import FormSubCategoria from "./FormSubCategoria";
 
 
-const ITEMS_PER_PAGE = 10;
 const SearchListSubCategoriesItem = ({
   item,
   onUpdate = () => { },
@@ -47,6 +46,7 @@ const SearchListSubCategoriesItem = ({
         subcategoriaid: item.idSubcategoria
       }, () => {
         showMessage("Eliminado correctamente")
+        onDelete()
       }, showMessage)
     })
   }
@@ -59,9 +59,9 @@ const SearchListSubCategoriesItem = ({
         <IconButton onClick={() => setShowEdit(true)}>
           <EditIcon />
         </IconButton>
-        {/* <IconButton onClick={handleDelete}>
+        <IconButton onClick={handleDelete}>
           <DeleteIcon />
-        </IconButton> */}
+        </IconButton>
 
         <DialogSimple openDialog={showEdit} setOpenDialog={setShowEdit}>
           <FormSubCategoria onSubmitSuccess={(guardado) => {

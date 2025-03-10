@@ -743,8 +743,8 @@ class Product extends Model {
     }
 
 
-    static async deleteCategory(data: { 
-        Categoriaid 
+    static async deleteCategory(data: {
+        Categoriaid
     }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/DeleteCategoria"
@@ -755,13 +755,13 @@ class Product extends Model {
 
         EndPoint.sendDelete(url, data, (responseData, response) => {
             callbackOk(responseData, response);
-        }, callbackWrong)
+        }, callbackWrong, true)
     }
 
-    static async deleteSubCategory(data: { 
+    static async deleteSubCategory(data: {
         categoriaid,
         subcategoriaid
-     }, callbackOk, callbackWrong) {
+    }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/DeleteSubCategoria"
 
@@ -771,14 +771,14 @@ class Product extends Model {
 
         EndPoint.sendDelete(url, data, (responseData, response) => {
             callbackOk(responseData, response);
-        }, callbackWrong)
+        }, callbackWrong, true)
     }
 
-    static async deleteFamiliy(data: { 
+    static async deleteFamiliy(data: {
         categoriaid,
         subcategoriaid,
         familiaid
-     }, callbackOk, callbackWrong) {
+    }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/DeleteFamilia"
 
@@ -788,15 +788,15 @@ class Product extends Model {
 
         EndPoint.sendDelete(url, data, (responseData, response) => {
             callbackOk(responseData, response);
-        }, callbackWrong)
+        }, callbackWrong, true)
     }
 
-    static async deleteSubFamily(data: { 
+    static async deleteSubFamily(data: {
         categoriaid,
         subcategoriaid,
         familiaid,
         subfamiliaid,
-     }, callbackOk, callbackWrong) {
+    }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/DeleteSubFamilia"
 
@@ -806,7 +806,7 @@ class Product extends Model {
 
         EndPoint.sendDelete(url, data, (responseData, response) => {
             callbackOk(responseData, response);
-        }, callbackWrong)
+        }, callbackWrong, true)
     }
 
 
@@ -874,11 +874,11 @@ class Product extends Model {
     }
 
 
-    static async addSubFamily(data: { 
-        idCategoria, 
-        idSubcategoria, 
-        idFamilia, 
-        descripcionSubFamilia 
+    static async addSubFamily(data: {
+        idCategoria,
+        idSubcategoria,
+        idFamilia,
+        descripcionSubFamilia
     }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/AddSubFamilia"

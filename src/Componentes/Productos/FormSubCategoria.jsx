@@ -103,7 +103,7 @@ const FormSubCategoria = ({
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <h4>{!isEdit ? "Ingreso" : "Editar"} Categoria</h4>
+      <h4>{!isEdit ? "Ingreso" : "Editar"} Subcategoria</h4>
       <Box>
         <Grid container spacing={2}>
 

@@ -150,7 +150,7 @@ const FormSubFamilia = ({
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <h4>{!isEdit ? "Ingreso" : "Editar"} Sub Familia</h4>
+      <h4>{!isEdit ? "Ingreso" : "Editar"} Subfamilia</h4>
       <Box>
         <Grid container spacing={2}>
 

@@ -27,8 +27,6 @@ import DialogSimple from "../Dialogs/DialogSimple";
 import FormFamilia from "./FormFamilia";
 import Product from "../../Models/Product";
 
-const ITEMS_PER_PAGE = 10;
-
 const SearchListFamiliasItem = ({
   item,
   onUpdate = () => { },
@@ -52,6 +50,7 @@ const SearchListFamiliasItem = ({
         familiaid: item.idFamilia
       }, () => {
         showMessage("Eliminado correctamente")
+        onDelete()
       }, showMessage)
     })
   }
@@ -63,9 +62,9 @@ const SearchListFamiliasItem = ({
         <IconButton onClick={() => setShowEdit(true)}>
           <EditIcon />
         </IconButton>
-        {/* <IconButton onClick={() => handleDelete(item.idFamilia)}>
+        <IconButton onClick={() => handleDelete(item.idFamilia)}>
           <DeleteIcon />
-        </IconButton> */}
+        </IconButton>
 
         <DialogSimple openDialog={showEdit} setOpenDialog={setShowEdit}>
           <FormFamilia onSubmitSuccess={(guardado) => {

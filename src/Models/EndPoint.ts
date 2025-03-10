@@ -86,9 +86,23 @@ class EndPoint extends Singleton {
     }
   }
 
-  static async sendDelete(url, data, callbackOk, callbackWrong) {
+  static async sendDelete(url, data, callbackOk, callbackWrong, pasarAUrl = false) {
     try {
       console.log("ya envio la data", data)
+
+      if(pasarAUrl){
+        var aUrl = ""
+        const keys = Object.keys(data)
+        keys.forEach((key)=>{
+          if(aUrl != "") aUrl += "&"
+          aUrl +=  key +  "=" + data[key]
+        })
+        if(aUrl != "") {
+          aUrl = "?" + aUrl
+          url += aUrl
+        }
+        // console.log("aUrl", aUrl)
+      }
       const response = await axios.delete(url,
         {
           data: data,

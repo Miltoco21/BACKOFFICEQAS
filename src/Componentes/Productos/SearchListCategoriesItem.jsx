@@ -23,7 +23,6 @@ import FormCategoria from "./FormCategoria";
 import DialogSimple from "../Dialogs/DialogSimple";
 
 
-const ITEMS_PER_PAGE = 10;
 const SearchListCategoriesItem = ({
   item,
   onUpdate = () => { },
@@ -45,6 +44,7 @@ const SearchListCategoriesItem = ({
         Categoriaid:item.idCategoria
       }, () => {
         showMessage("Eliminado correctamente")
+        onDelete()
       }, showMessage)
     })
   }
@@ -57,9 +57,9 @@ const SearchListCategoriesItem = ({
         <IconButton onClick={() => setShowEdit(true)}>
           <EditIcon />
         </IconButton>
-        {/* <IconButton onClick={handleDelete}>
+        <IconButton onClick={handleDelete}>
           <DeleteIcon />
-        </IconButton> */}
+        </IconButton>
 
         <DialogSimple openDialog={showEdit} setOpenDialog={setShowEdit}>
           <FormCategoria onSubmitSuccess={(guardado) => {
