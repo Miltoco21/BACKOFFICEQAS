@@ -25,6 +25,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import DialogSimple from "../Dialogs/DialogSimple";
 import FormFamilia from "./FormFamilia";
+import Product from "../../Models/Product";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -36,14 +37,20 @@ const SearchListFamiliasItem = ({
 
   const {
     showLoading,
-    hideLoading
+    hideLoading,
+    showConfirm,
+    showMessage
   } = useContext(SelectedOptionsContext);
 
   const [showEdit, setShowEdit] = useState(false)
 
   const handleDelete = () => {
     showConfirm("Eliminar " + item.descripcion + "?", () => {
-      Product.deleteCategory(item, () => {
+      Product.deleteFamiliy({
+        categoriaid: item.idCategoria,
+        subcategoriaid: item.idSubcategoria,
+        familiaid: item.idFamilia
+      }, () => {
         showMessage("Eliminado correctamente")
       }, showMessage)
     })
@@ -57,8 +64,8 @@ const SearchListFamiliasItem = ({
           <EditIcon />
         </IconButton>
         {/* <IconButton onClick={() => handleDelete(item.idFamilia)}>
-                    <DeleteIcon />
-                  </IconButton> */}
+          <DeleteIcon />
+        </IconButton> */}
 
         <DialogSimple openDialog={showEdit} setOpenDialog={setShowEdit}>
           <FormFamilia onSubmitSuccess={(guardado) => {

@@ -16,7 +16,7 @@ import {
   Pagination,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-
+import DeleteIcon from "@mui/icons-material/Delete";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import Product from "../../Models/Product";
 import FormCategoria from "./FormCategoria";
@@ -39,11 +39,13 @@ const SearchListCategoriesItem = ({
 
   const [showEdit, setShowEdit] = useState(false)
 
-  const handleDelete = ()=>{
-    showConfirm("Eliminar " + item.descripcion + "?", ()=>{
-      Product.deleteCategory(item,()=>{
+  const handleDelete = () => {
+    showConfirm("Eliminar " + item.descripcion + "?", () => {
+      Product.deleteCategory({
+        Categoriaid:item.idCategoria
+      }, () => {
         showMessage("Eliminado correctamente")
-      },showMessage)
+      }, showMessage)
     })
   }
 
@@ -55,9 +57,7 @@ const SearchListCategoriesItem = ({
         <IconButton onClick={() => setShowEdit(true)}>
           <EditIcon />
         </IconButton>
-        {/* <IconButton
-          onClick={handleDelete}
-        >
+        {/* <IconButton onClick={handleDelete}>
           <DeleteIcon />
         </IconButton> */}
 

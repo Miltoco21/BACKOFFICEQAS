@@ -18,14 +18,11 @@ import {
   InputLabel,
   Pagination,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import EditarSubFamilia from "../ListaBuscadora/EditarSubFamilia"; // Make sure to provide the correct path
 import ModelConfig from "../../Models/ModelConfig";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import Product from "../../Models/Product";
 import SelectFetchDependiente from "../Elements/Compuestos/SelectFetchDependiente";
 import SelectFetch from "../Elements/Compuestos/SelectFetch";
-import SearchListFamiliasItem from "./SearchListFamiliasItem";
 import SearchListSubFamiliasItem from "./SearchListSubFamiliasItem";
 
 const ITEMS_PER_PAGE = 10;

@@ -743,9 +743,62 @@ class Product extends Model {
     }
 
 
-    static async deleteCategory(data: { idCategoria }, callbackOk, callbackWrong) {
+    static async deleteCategory(data: { 
+        Categoriaid 
+    }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/DeleteCategoria"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+
+        EndPoint.sendDelete(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+    }
+
+    static async deleteSubCategory(data: { 
+        categoriaid,
+        subcategoriaid
+     }, callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/DeleteSubCategoria"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+
+        EndPoint.sendDelete(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+    }
+
+    static async deleteFamiliy(data: { 
+        categoriaid,
+        subcategoriaid,
+        familiaid
+     }, callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/DeleteFamilia"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+
+        EndPoint.sendDelete(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+    }
+
+    static async deleteSubFamily(data: { 
+        categoriaid,
+        subcategoriaid,
+        familiaid,
+        subfamiliaid,
+     }, callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/DeleteSubFamilia"
 
         // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
