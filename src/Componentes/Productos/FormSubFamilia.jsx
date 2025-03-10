@@ -225,6 +225,7 @@ const FormSubFamilia = ({
               validationState={validatorStates.nombre}
               fieldName="Descripcion"
               required={true}
+              maxLength={100}
             />
           </Grid>
           <Button

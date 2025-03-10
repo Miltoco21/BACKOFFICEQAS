@@ -100,6 +100,7 @@ const FormCategoria = ({
               validationState={validatorStates.nombre}
               fieldName="Descripcion"
               required={true}
+              maxLength={100}
             />
           </Grid>
           <Button

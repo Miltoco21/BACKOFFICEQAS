@@ -91,7 +91,7 @@ const SelectFetch = ({
 
     fetchFunction((dataFetch) => {
       // console.log("fin del fetch de ", fieldName, ".. asignando", dataFetch)
-      setSelectList(dataFetch)
+      setSelectList([...dataFetch])
     }, (error) => {
       console.log(error)
     })
@@ -116,10 +116,11 @@ const SelectFetch = ({
   }, [selectList])
 
   useEffect(() => {
-    // console.log("cambio selected de", label, " al valor ", selected)
-    inputState[1](selected)
-    validate()
-    if (selected != -1) setCambioAlgunaVez(true)
+    if (selected != null && typeof(selected) == "number") {
+      inputState[1](selected)
+      validate()
+      if (selected != -1) setCambioAlgunaVez(true)
+    }
   }, [selected])
 
 

@@ -45,6 +45,8 @@ const FormSubCategoria = ({
     hideLoading
   } = useContext(SelectedOptionsContext);
 
+  const [categoriesLoaded, setCategoriesLoaded] = useState(false)
+
   var states = {
     nombre: useState(""),
     selectedCategoryId: useState(""),
@@ -88,17 +90,19 @@ const FormSubCategoria = ({
 
 
   useEffect(() => {
+    if(!categoriesLoaded) return
     if (isEdit && editData) {
       states.nombre[1](editData.descripcion)
       states.selectedCategoryId[1](editData.idCategoria)
     }
-  }, [isEdit, editData])
+  }, [isEdit, editData, categoriesLoaded])
 
   useEffect(() => {
+    if(!categoriesLoaded) return
     if (idCategoria != null) {
       states.selectedCategoryId[1](idCategoria)
     }
-  }, [idCategoria])
+  }, [idCategoria, categoriesLoaded])
 
   return (
     <ThemeProvider theme={theme}>
@@ -118,7 +122,7 @@ const FormSubCategoria = ({
               required={true}
 
               onFinishFetch={async () => {
-                // cargaAnteriorDeSesion(setSelectedCategoryId, "ultimaCategoriaGuardada")
+                setCategoriesLoaded(true)
               }}
             />
           </Grid>
@@ -130,6 +134,7 @@ const FormSubCategoria = ({
               validationState={validatorStates.nombre}
               fieldName="Descripcion"
               required={true}
+              maxLength={100}
             />
           </Grid>
           <Button

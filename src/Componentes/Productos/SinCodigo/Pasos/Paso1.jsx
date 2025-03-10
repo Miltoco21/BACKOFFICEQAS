@@ -125,16 +125,16 @@ const Step1Component = ({
   const [refreshSubFamilies, setRefreshSubFamilies] = useState(null)
 
   const cargaAnteriorDeSesion = async (funSet, propiedad) => {
-    console.log("cargaAnteriorDeSesion para ", propiedad)
+    // console.log("cargaAnteriorDeSesion para ", propiedad)
     if (yaCargoDeSesion) {
-      console.log("cargaAnteriorDeSesion.. ya cargo ", propiedad, ".. salgo")
+      // console.log("cargaAnteriorDeSesion.. ya cargo ", propiedad, ".. salgo")
       return
     }
 
     const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
     if (anterior !== null) {
       // console.log("devuelvo", anterior)
-      console.log("carga de sesion.. para ", propiedad, ".. anterior", anterior)
+      // console.log("carga de sesion.. para ", propiedad, ".. anterior", anterior)
       funSet(anterior)
     }
   }
@@ -181,7 +181,7 @@ const Step1Component = ({
               // console.log("onFinishFetch de Categoria..createdCategoryId", createdCategoryId)
               cargaAnteriorDeSesion(setSelectedCategoryId, "ultimaCategoriaGuardada")
               if (createdCategoryId !== null) {
-                console.log("asignando nuevo valor..", createdCategoryId)
+                // console.log("asignando nuevo valor..", createdCategoryId)
                 setSelectedCategoryId(createdCategoryId + 0)
                 setCreatedCategoryId(null)
               }
@@ -359,7 +359,7 @@ const Step1Component = ({
 
         <DialogSimple openDialog={createCategory} setOpenDialog={setCreateCategory}>
           <FormCategoria onSubmitSuccess={(newObj) => {
-            console.log("newObj", newObj)
+            // console.log("newObj", newObj)
             setCreateCategory(false)
             setCreatedCategoryId(newObj.idCategoria)
             setRefreshCategories(!refreshCategories)
@@ -368,9 +368,9 @@ const Step1Component = ({
 
         <DialogSimple openDialog={createSubCategory} setOpenDialog={setCreateSubCategory}>
           <FormSubCategoria
-            idCategoria={selectedCategoryId}
+            idCategoria={  parseInt(selectedCategoryId)}
             onSubmitSuccess={(newObj) => {
-              console.log("newObj", newObj)
+              // console.log("newObj", newObj)
               setCreateSubCategory(false)
               setCreatedSubCategoryId(newObj.idSubcategoria)
               setRefreshSubCategories(!refreshSubCategories)
@@ -395,7 +395,7 @@ const Step1Component = ({
             idSubcategoria={selectedSubCategoryId}
             idFamilia={selectedFamilyId}
             onSubmitSuccess={(newObj) => {
-              console.log("newObj", newObj)
+              // console.log("newObj", newObj)
               setCreateSubFamily(false)
               setCreatedSubFamilyId(newObj.idSubFamilia)
               setRefreshSubFamilies(!refreshSubFamilies)
