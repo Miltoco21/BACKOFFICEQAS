@@ -22,7 +22,6 @@ import Categorias from './Pages/Categoria';
 import SubCategorias from './Pages/SubCategoria';
 import Familias from './Pages/Familias';
 import SubFamilias from './Pages/SubFamilias';
-import ProtectedRoute from './Componentes/ProtectedRoute';
 import ProveedoresDocumentosPorPagar from './Pages/proveedores/documentoPorPagar/DocumentosPorPagar';
 import Reportes from './Pages/Reportes';
 import 'bootstrap/dist/css/bootstrap.min.css';

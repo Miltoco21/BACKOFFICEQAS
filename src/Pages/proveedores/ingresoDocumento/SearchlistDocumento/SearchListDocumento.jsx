@@ -33,7 +33,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import axios from "axios";
 import EditDialog from "./EditDialog";
 import ProductDialog from "./ProductDialog";
-import ModelConfig from "../../Models/ModelConfig";
+import ModelConfig from "../../../../Models/ModelConfig";
 
 const validateDateInput = (e) => {
   const allowedKeys = [

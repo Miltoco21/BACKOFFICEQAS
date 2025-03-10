@@ -27,7 +27,7 @@ import {
 } from "@mui/material";
 import SideBar from "../../../Componentes/NavBar/SideBar";
 import Add from "@mui/icons-material/Add";
-import SearchListDocumento from "../../../Componentes/SearchlistDocumento/SearchListDocumento";
+import SearchListDocumento from "./SearchlistDocumento/SearchListDocumento";
 import IngresoDocCompra from "./FormularioCompra";
 
 const Index = () => {
