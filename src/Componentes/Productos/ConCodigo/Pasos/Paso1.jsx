@@ -111,8 +111,8 @@ const Step1CC = ({
 
   const cargaAnteriorDeSesion = async (funSet, propiedad) => {
     // console.log("cargaAnteriorDeSesion.. propiedad", propiedad)
-    
-    if(yaCargoDeSesion){
+
+    if (yaCargoDeSesion) {
       // console.log("cargaAnteriorDeSesion.. ya cargo.. salgo")
       return
     }
@@ -189,7 +189,7 @@ const Step1CC = ({
             fieldName={"SubCategoria"}
             required={true}
             onFinishFetch={async () => {
-              if(selectedSubCategoryId == -1){
+              if (selectedSubCategoryId == -1) {
                 cargaAnteriorDeSesion(setSelectedSubCategoryId, "ultimaSubcategoriaGuardada")
               }
             }}
@@ -242,12 +242,16 @@ const Step1CC = ({
             onFinishFetch={async () => {
               cargaAnteriorDeSesion(setSelectedSubFamilyId, "ultimaSubfamiliaGuardada")
 
-              if(selectedSubFamilyId != -1){
+              if (
+                selectedCategoryId != -1
+                && selectedSubCategoryId != -1
+                && selectedFamilyId != -1
+              ) {
                 setYaCargoDeSesion(true)
               }
             }}
           />
-        </Grid> 
+        </Grid>
 
         <Grid item xs={12} md={12}>
           <InputName

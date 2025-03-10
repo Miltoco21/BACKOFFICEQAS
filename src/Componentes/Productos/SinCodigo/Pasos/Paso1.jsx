@@ -33,6 +33,9 @@ import System from "../../../../Helpers/System";
 import { SelectedOptionsContext } from "../../../Context/SelectedOptionsProvider";
 import DialogSimple from "../../../Dialogs/DialogSimple";
 import FormCategoria from "../../FormCategoria";
+import FormSubCategoria from "../../FormSubCategoria";
+import FormFamilia from "../../FormFamilia";
+import FormSubFamilia from "../../FormSubFamilia";
 
 
 const Step1Component = ({
@@ -104,18 +107,35 @@ const Step1Component = ({
   };
 
 
-  const [cambioAlgo, setCambioAlgo] = useState(false)
-  const [createCategory, setCreateCategory] = useState(false)
+  const [yaCargoDeSesion, setYaCargoDeSesion] = useState(false)
 
+  const [createCategory, setCreateCategory] = useState(false)
+  const [createSubCategory, setCreateSubCategory] = useState(false)
+  const [createFamily, setCreateFamily] = useState(false)
+  const [createSubFamily, setCreateSubFamily] = useState(false)
+
+  const [createdCategoryId, setCreatedCategoryId] = useState(null)
+  const [createdSubCategoryId, setCreatedSubCategoryId] = useState(null)
+  const [createdFamilyId, setCreatedFamilyId] = useState(null)
+  const [createdSubFamilyId, setCreatedSubFamilyId] = useState(null)
+
+  const [refreshCategories, setRefreshCategories] = useState(null)
+  const [refreshSubCategories, setRefreshSubCategories] = useState(null)
+  const [refreshFamilies, setRefreshFamilies] = useState(null)
+  const [refreshSubFamilies, setRefreshSubFamilies] = useState(null)
 
   const cargaAnteriorDeSesion = async (funSet, propiedad) => {
-    // console.log("cargaAnteriorDeSesion")
-    if (!cambioAlgo) {
-      const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
-      if (anterior !== null) {
-        // console.log("devuelvo", anterior)
-        funSet(anterior)
-      }
+    console.log("cargaAnteriorDeSesion para ", propiedad)
+    if (yaCargoDeSesion) {
+      console.log("cargaAnteriorDeSesion.. ya cargo ", propiedad, ".. salgo")
+      return
+    }
+
+    const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
+    if (anterior !== null) {
+      // console.log("devuelvo", anterior)
+      console.log("carga de sesion.. para ", propiedad, ".. anterior", anterior)
+      funSet(anterior)
     }
   }
 
@@ -130,6 +150,10 @@ const Step1Component = ({
     }
   }, [isActive])
 
+  useEffect(() => {
+    // console.log("cambio selectedCategoryId al valor", selectedCategoryId)
+  }, [selectedCategoryId])
+
   return (
     <Paper
       elevation={3}
@@ -139,6 +163,7 @@ const Step1Component = ({
       }}
     >
       <Grid container spacing={2} item xs={12} md={12}>
+
 
         <Grid item xs={12} sm={12} md={6} lg={6}>
           <SelectFetch
@@ -150,8 +175,16 @@ const Step1Component = ({
             fieldName={"Categoria"}
             required={true}
 
+            refreshList={refreshCategories}
+
             onFinishFetch={async () => {
+              // console.log("onFinishFetch de Categoria..createdCategoryId", createdCategoryId)
               cargaAnteriorDeSesion(setSelectedCategoryId, "ultimaCategoriaGuardada")
+              if (createdCategoryId !== null) {
+                console.log("asignando nuevo valor..", createdCategoryId)
+                setSelectedCategoryId(createdCategoryId + 0)
+                setCreatedCategoryId(null)
+              }
             }}
           />
         </Grid>
@@ -168,9 +201,16 @@ const Step1Component = ({
             fetchDataId={"idSubcategoria"}
             fieldName={"SubCategoria"}
             required={true}
-            onFinishFetch={async () => {
 
+            refreshList={refreshSubCategories}
+
+            onFinishFetch={async () => {
+              // console.log("onFinishFetch de SubCategoria..createdSubCategoryId", createdSubCategoryId)
               cargaAnteriorDeSesion(setSelectedSubCategoryId, "ultimaSubcategoriaGuardada")
+              if (createdSubCategoryId !== null) {
+                setSelectedSubCategoryId(createdSubCategoryId)
+                setCreatedSubCategoryId(null)
+              }
             }}
           />
 
@@ -192,9 +232,15 @@ const Step1Component = ({
             fetchDataId={"idFamilia"}
             fieldName={"Familia"}
             required={true}
+            refreshList={refreshFamilies}
 
             onFinishFetch={async () => {
+              // console.log("onFinishFetch de Familia ..createdFamilyId", createdFamilyId)
               cargaAnteriorDeSesion(setSelectedFamilyId, "ultimaFamiliaGuardada")
+              if (createdFamilyId !== null) {
+                setSelectedFamilyId(createdFamilyId)
+                setCreatedFamilyId(null)
+              }
             }}
           />
 
@@ -217,9 +263,23 @@ const Step1Component = ({
             fetchDataId={"idSubFamilia"}
             fieldName={"Sub Familia"}
             required={true}
-
+            refreshList={refreshSubFamilies}
             onFinishFetch={async () => {
+              // console.log("onFinishFetch de SubFamilia ..createdSubFamilyId", createdSubFamilyId)
               cargaAnteriorDeSesion(setSelectedSubFamilyId, "ultimaSubfamiliaGuardada")
+
+              if (
+                selectedCategoryId != -1
+                && selectedSubCategoryId != -1
+                && selectedFamilyId != -1
+              ) {
+                setYaCargoDeSesion(true)
+              }
+
+              if (createdSubFamilyId !== null) {
+                setSelectedSubFamilyId(createdSubFamilyId)
+                setCreatedSubFamilyId(null)
+              }
             }}
           />
         </Grid>
@@ -263,7 +323,7 @@ const Step1Component = ({
             variant="outlined"
             color="primary"
             onClick={() => {
-              setCreateCategory(true)
+              setCreateSubCategory(true)
             }}
             fullWidth
           >
@@ -276,7 +336,7 @@ const Step1Component = ({
             variant="outlined"
             color="primary"
             onClick={() => {
-              setCreateCategory(true)
+              setCreateFamily(true)
             }}
             fullWidth
           >
@@ -289,7 +349,7 @@ const Step1Component = ({
             variant="outlined"
             color="primary"
             onClick={() => {
-              setCreateCategory(true)
+              setCreateSubFamily(true)
             }}
             fullWidth
           >
@@ -298,9 +358,48 @@ const Step1Component = ({
         </Grid>
 
         <DialogSimple openDialog={createCategory} setOpenDialog={setCreateCategory}>
-          <FormCategoria onSubmitSuccess={() => {
-            //  setRefreshList(!refreshList)
+          <FormCategoria onSubmitSuccess={(newObj) => {
+            console.log("newObj", newObj)
+            setCreateCategory(false)
+            setCreatedCategoryId(newObj.idCategoria)
+            setRefreshCategories(!refreshCategories)
           }} />
+        </DialogSimple>
+
+        <DialogSimple openDialog={createSubCategory} setOpenDialog={setCreateSubCategory}>
+          <FormSubCategoria
+            idCategoria={selectedCategoryId}
+            onSubmitSuccess={(newObj) => {
+              console.log("newObj", newObj)
+              setCreateSubCategory(false)
+              setCreatedSubCategoryId(newObj.idSubcategoria)
+              setRefreshSubCategories(!refreshSubCategories)
+            }} />
+        </DialogSimple>
+
+        <DialogSimple openDialog={createFamily} setOpenDialog={setCreateFamily}>
+          <FormFamilia
+            idCategoria={selectedCategoryId}
+            idSubcategoria={selectedSubCategoryId}
+            onSubmitSuccess={(newObj) => {
+              console.log("newObj", newObj)
+              setCreateFamily(false)
+              setCreatedFamilyId(newObj.idFamilia)
+              setRefreshFamilies(!refreshFamilies)
+            }} />
+        </DialogSimple>
+
+        <DialogSimple openDialog={createSubFamily} setOpenDialog={setCreateSubFamily}>
+          <FormSubFamilia
+            idCategoria={selectedCategoryId}
+            idSubcategoria={selectedSubCategoryId}
+            idFamilia={selectedFamilyId}
+            onSubmitSuccess={(newObj) => {
+              console.log("newObj", newObj)
+              setCreateSubFamily(false)
+              setCreatedSubFamilyId(newObj.idSubFamilia)
+              setRefreshSubFamilies(!refreshSubFamilies)
+            }} />
         </DialogSimple>
 
 

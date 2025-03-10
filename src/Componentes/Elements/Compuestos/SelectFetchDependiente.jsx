@@ -27,6 +27,9 @@ const SelectFetchDependiente = ({
   fetchDataId,
   onFinishFetch = () => { },
 
+  refreshList = null,
+
+
   withLabel = true,
   autoFocus = false,
   fieldName = "select",
@@ -42,9 +45,9 @@ const SelectFetchDependiente = ({
   const [selectList, setSelectList] = useState([])
   const [selected, setSelected] = useState(-1)
   const [selectedOther, setSelectedOther] = inputOtherState
-  
+
   const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
-  
+
   const [cargando, setCargando] = useState(false)
 
   const validate = () => {
@@ -82,80 +85,47 @@ const SelectFetchDependiente = ({
     // console.log("loadList de ", label)
 
     if (!fetchDataShow || !fetchDataId || !fetchFunction) {
-      // console.log("no hago loadlist porque falta alguno de estos datos: fetchDataShow,fetchDataId,fetchFunction..",
-        // fetchDataShow, "..",
-        // fetchDataId, "..",
-        // fetchFunction)
       return
     }
 
-    // console.log("loadList2 de ", label)
-    // console.log("loadList  de ", label)
-    // Comuna.getInstance().findByRegion(selectedOther, (comunas) => {
-      setCargando(true)
-      fetchFunction((fetchData) => {
-        setCargando(false)
-        // console.log("loadList3 de ", label)
-        // console.log("selectedOther",selectedOther)
-        // console.log("fetchData",fetchData)
-        setSelectList(fetchData) 
-        setSelected(-1)
-        
-        setTimeout(() => {
-          onFinishFetch()
-        }, 700);
-      }, (error) => {
+    setCargando(true)
+    fetchFunction((fetchData) => {
       setCargando(false)
-      // console.log(error)
-      // console.log("loadList4 de ", label)
+      setSelectList(fetchData)
+    }, (error) => {
+      setCargando(false)
     })
-
-    // console.log("loadList5 de ", label)
   }
 
-  // const setByString = (valueString) => {
-  //   var finded = false
-  //   selectList.forEach((comuna) => {
-  //     if (comuna.comunaNombre == valueString) {
-  //       setSelected(comuna.id)
-  //       setSelectedOriginal(comuna.id)
-  //       finded = true
-  //     }
-  //   })
-
-  //   // console.log( (finded ? "Se" : "No se" ) + " encontro")
-  // }
-
-  // useEffect(() => {
-    // console.log("cambio selectedOriginal de ", label, ' a el valor ', selectedOriginal)
-  // },[selectedOriginal])
-
   useEffect(() => {
-    // console.log("")
-
     validate()
-    // setSelected(-1)
-    // console.log(inputOtherState)
-    // console.log("carga inicial comuna")
   }, [])
 
   useEffect(() => {
     // console.log("cambio el selectedOther de", label, " al valor ", selectedOther)
-    loadList()
+    setSelected(-1)
+    if (selectedOther == -1) {
+      if (selectList.length > 0) {
+        setSelectList([])
+      }
+    } else {
+      loadList()
+    }
   }, [selectedOther])
 
+  useEffect(() => {
+    if (refreshList !== null) {
+      loadList()
+    }
+  }, [refreshList])
 
-  // useEffect(() => {
-  //   // console.log("cambio needLoadList", needLoadList)
-  //   // console.log("cambio fetchDataShow", fetchDataShow)
-  //   // console.log("cambio fetchDataId", fetchDataId)
-  //   // console.log("cambio fetchFunction", fetchFunction)
-  //   // if (fetchDataShow && fetchDataId && fetchFunction) {
-  //     loadList()
-  //   // }
-  // }, [fetchFunction, fetchDataShow, fetchDataId])
-
-
+  useEffect(() => {
+    // console.log("cambio selectList de ", fieldName, " vale ", selectList)
+    if (selectList.length > 0) {
+      // console.log("haciendo el finfetch de ", fieldName)
+      onFinishFetch()
+    }
+  }, [selectList])
 
   useEffect(() => {
     // console.log("cambio selected de", label, " al valor ", selected)
@@ -194,8 +164,8 @@ const SelectFetchDependiente = ({
           key={-1}
           value={-1}
         >
-          { cargando ? "Cargando..." : "SELECCIONAR" }
-          
+          {cargando ? "Cargando..." : "SELECCIONAR"}
+
         </MenuItem>
 
         {selectList.map((selectOption, ix) => (

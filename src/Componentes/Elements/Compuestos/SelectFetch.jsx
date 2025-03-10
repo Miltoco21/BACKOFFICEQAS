@@ -24,6 +24,7 @@ const SelectFetch = ({
   fetchDataId,
 
   onFinishFetch = () => { },
+  refreshList = null,
 
   withLabel = true,
   autoFocus = false,
@@ -40,10 +41,7 @@ const SelectFetch = ({
   const [selectList, setSelectList] = useState([])
   const [selected, setSelected] = useState(-1)
 
-  const [selectedOriginal, setSelectedOriginal] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
   const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
-
-  const [correccionIsNaN, setCorreccionIsNaN] = useState(null)
 
   const [cambioAlgunaVez, setCambioAlgunaVez] = useState(false)
 
@@ -73,7 +71,7 @@ const SelectFetch = ({
 
   const checkChange = (event) => {
     setSelected(event.target.value)
-    setSelectedOriginal(event.target.value)
+    // setSelectedOriginal(event.target.value)
   }
 
   const checkChangeBlur = (event) => {
@@ -85,70 +83,42 @@ const SelectFetch = ({
   }
 
   const loadList = async () => {
-    // Region.getInstance().getAll((regiones) => {
+    // console.log("loadList de ", fieldName)
+
+    if (!fetchDataShow || !fetchDataId || !fetchFunction) {
+      return
+    }
+
     fetchFunction((dataFetch) => {
+      // console.log("fin del fetch de ", fieldName, ".. asignando", dataFetch)
       setSelectList(dataFetch)
-
-      onFinishFetch()
-
-      // console.log("loadList..selectedOriginal",selectedOriginal)
     }, (error) => {
       console.log(error)
     })
 
   }
 
-
-
-  useEffect(() => {
-    // console.log("cambio selectedOriginal o selectList.length")
-    // console.log("cambio selectedOriginal", selectedOriginal)
-    if (isNaN(selectedOriginal)) {
-      setCorreccionIsNaN(selectedOriginal)
-    }
-
-    if (selectList.length > 0 && correccionIsNaN !== null) {
-      corregirIsNaN(selectList)
-    }
-  }, [selectedOriginal, selectList.length])
   useEffect(() => {
     validate()
-    // console.log("cargo region", selected)
   }, [])
 
   useEffect(() => {
-    if (fetchDataShow && fetchDataId && fetchFunction) {
-      loadList()
-    }
-  }, [fetchFunction, fetchDataShow, fetchDataId])
+    // console.log("cambio refreshList", refreshList)
+    loadList()
+  }, [refreshList])
 
   useEffect(() => {
-
-    if (isNaN(selected)) {
-      // console.log("es NAN")
-      // console.log("selected", selected)
-      return
+    // console.log("cambio selectList de ", fieldName, " vale ", selectList)
+    if (selectList.length > 0) {
+      // console.log("haciendo el finishfetch ")
+      onFinishFetch()
     }
-
-
-    if (selectList.length > 0 && (selectedOriginal !== "" && !isNaN(selectedOriginal)) && selected === -1 && !cambioAlgunaVez) {
-      setSelected(parseInt(selectedOriginal + ""))
-      setSelectedOriginal(parseInt(selectedOriginal + ""))
-    } else {
-      validate()
-    }
-    // console.log("region selected es:", selected)
-  }, [selected, selectList.length])
-
-
-
-  // useEffect(() => {
-  //   console.log("cambio selected de", label," al valor ", selected)
-  // }, [selected])
-
+  }, [selectList])
 
   useEffect(() => {
     // console.log("cambio selected de", label, " al valor ", selected)
+    inputState[1](selected)
+    validate()
     if (selected != -1) setCambioAlgunaVez(true)
   }, [selected])
 
