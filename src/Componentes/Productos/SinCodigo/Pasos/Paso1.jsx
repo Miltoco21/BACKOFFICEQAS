@@ -143,17 +143,6 @@ const Step1Component = ({
     cargaAnteriorDeSesion(setMarca, "ultimaMarcaGuardada")
   }, [])
 
-
-  useEffect(() => {
-    if (isActive) {
-      // console.log("activo paso 1 .. dataSteps",dataSteps)
-    }
-  }, [isActive])
-
-  useEffect(() => {
-    // console.log("cambio selectedCategoryId al valor", selectedCategoryId)
-  }, [selectedCategoryId])
-
   return (
     <Paper
       elevation={3}

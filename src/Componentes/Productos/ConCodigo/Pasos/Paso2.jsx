@@ -98,15 +98,16 @@ const Step3CC = ({
     setLoading(true);
 
     // Crear objeto con los datos del paso 1
+    console.log("dataSteps", dataSteps)
     const step1Data = {
       codBarra: dataSteps[0].codBarra,
       respuestaSINO: "NO",
       pesoSINO: (esPesable ? "SI" : "NO"),
       marca: dataSteps[0].marca,
-      categoriaID: dataSteps[0].categoryId || 0, // Utilizamos 0 si el valor es undefined
-      subCategoriaID: dataSteps[0].subCategoryId || 0,
-      familiaID: dataSteps[0].familyId || 0,
-      subFamilia: dataSteps[0].subFamilyId || 0,
+      categoriaID: dataSteps[0].selectedCategoryId, // Utilizamos 0 si el valor es undefined
+      subCategoriaID: dataSteps[0].selectedSubCategoryId,
+      familiaID: dataSteps[0].selectedFamilyId,
+      subFamilia: dataSteps[0].selectedSubFamilyId,
       nombre: dataSteps[0].nombre, // Debes proporcionar un valor adecuado aquí
     };
 

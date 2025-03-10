@@ -34,6 +34,11 @@ import SelectFetchDependiente from "../../../Elements/Compuestos/SelectFetchDepe
 import SelectFetch from "../../../Elements/Compuestos/SelectFetch";
 import InputName from "../../../Elements/Compuestos/InputName";
 import System from "../../../../Helpers/System";
+import DialogSimple from "../../../Dialogs/DialogSimple";
+import FormCategoria from "../../FormCategoria";
+import FormSubCategoria from "../../FormSubCategoria";
+import FormFamilia from "../../FormFamilia";
+import FormSubFamilia from "../../FormSubFamilia";
 
 const Step1CC = ({
   onNext = () => { },
@@ -109,6 +114,23 @@ const Step1CC = ({
 
   const [yaCargoDeSesion, setYaCargoDeSesion] = useState(false)
 
+  const [createCategory, setCreateCategory] = useState(false)
+  const [createSubCategory, setCreateSubCategory] = useState(false)
+  const [createFamily, setCreateFamily] = useState(false)
+  const [createSubFamily, setCreateSubFamily] = useState(false)
+
+  const [createdCategoryId, setCreatedCategoryId] = useState(null)
+  const [createdSubCategoryId, setCreatedSubCategoryId] = useState(null)
+  const [createdFamilyId, setCreatedFamilyId] = useState(null)
+  const [createdSubFamilyId, setCreatedSubFamilyId] = useState(null)
+
+  const [refreshCategories, setRefreshCategories] = useState(null)
+  const [refreshSubCategories, setRefreshSubCategories] = useState(null)
+  const [refreshFamilies, setRefreshFamilies] = useState(null)
+  const [refreshSubFamilies, setRefreshSubFamilies] = useState(null)
+
+
+
   const cargaAnteriorDeSesion = async (funSet, propiedad) => {
     // console.log("cargaAnteriorDeSesion.. propiedad", propiedad)
 
@@ -140,6 +162,8 @@ const Step1CC = ({
     }
   }, [nombre])
 
+
+
   return (
     <Paper
       elevation={3}
@@ -169,8 +193,16 @@ const Step1CC = ({
             fieldName={"Categoria"}
             required={true}
 
+            refreshList={refreshCategories}
+
             onFinishFetch={async () => {
+              // console.log("onFinishFetch de Categoria..createdCategoryId", createdCategoryId)
               cargaAnteriorDeSesion(setSelectedCategoryId, "ultimaCategoriaGuardada")
+              if (createdCategoryId !== null) {
+                // console.log("asignando nuevo valor..", createdCategoryId)
+                setSelectedCategoryId(createdCategoryId + 0)
+                setCreatedCategoryId(null)
+              }
             }}
           />
         </Grid>
@@ -188,9 +220,14 @@ const Step1CC = ({
             fetchDataId={"idSubcategoria"}
             fieldName={"SubCategoria"}
             required={true}
+            refreshList={refreshSubCategories}
+
             onFinishFetch={async () => {
-              if (selectedSubCategoryId == -1) {
-                cargaAnteriorDeSesion(setSelectedSubCategoryId, "ultimaSubcategoriaGuardada")
+              // console.log("onFinishFetch de SubCategoria..createdSubCategoryId", createdSubCategoryId)
+              cargaAnteriorDeSesion(setSelectedSubCategoryId, "ultimaSubcategoriaGuardada")
+              if (createdSubCategoryId !== null) {
+                setSelectedSubCategoryId(createdSubCategoryId)
+                setCreatedSubCategoryId(null)
               }
             }}
           />
@@ -214,8 +251,15 @@ const Step1CC = ({
             fieldName={"Familia"}
             required={true}
 
+            refreshList={refreshFamilies}
+
             onFinishFetch={async () => {
+              // console.log("onFinishFetch de Familia ..createdFamilyId", createdFamilyId)
               cargaAnteriorDeSesion(setSelectedFamilyId, "ultimaFamiliaGuardada")
+              if (createdFamilyId !== null) {
+                setSelectedFamilyId(createdFamilyId)
+                setCreatedFamilyId(null)
+              }
             }}
           />
 
@@ -239,7 +283,9 @@ const Step1CC = ({
             fieldName={"Sub Familia"}
             required={true}
 
+            refreshList={refreshSubFamilies}
             onFinishFetch={async () => {
+              // console.log("onFinishFetch de SubFamilia ..createdSubFamilyId", createdSubFamilyId)
               cargaAnteriorDeSesion(setSelectedSubFamilyId, "ultimaSubfamiliaGuardada")
 
               if (
@@ -248,6 +294,11 @@ const Step1CC = ({
                 && selectedFamilyId != -1
               ) {
                 setYaCargoDeSesion(true)
+              }
+
+              if (createdSubFamilyId !== null) {
+                setSelectedSubFamilyId(createdSubFamilyId)
+                setCreatedSubFamilyId(null)
               }
             }}
           />
@@ -282,6 +333,104 @@ const Step1CC = ({
             required={true}
           />
         </Grid>
+
+
+        <Grid item xs={12} sm={12} md={3} lg={3}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              setCreateCategory(true)
+            }}
+            fullWidth
+          >
+            Crear categoria
+          </Button>
+        </Grid>
+
+        <Grid item xs={12} sm={12} md={3} lg={3}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              setCreateSubCategory(true)
+            }}
+            fullWidth
+          >
+            Crear subcategoria
+          </Button>
+        </Grid>
+
+        <Grid item xs={12} sm={12} md={3} lg={3}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              setCreateFamily(true)
+            }}
+            fullWidth
+          >
+            Crear familia
+          </Button>
+        </Grid>
+
+        <Grid item xs={12} sm={12} md={3} lg={3}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              setCreateSubFamily(true)
+            }}
+            fullWidth
+          >
+            Crear subfamilia
+          </Button>
+        </Grid>
+
+        <DialogSimple openDialog={createCategory} setOpenDialog={setCreateCategory}>
+          <FormCategoria onSubmitSuccess={(newObj) => {
+            // console.log("newObj", newObj)
+            setCreateCategory(false)
+            setCreatedCategoryId(newObj.idCategoria)
+            setRefreshCategories(!refreshCategories)
+          }} />
+        </DialogSimple>
+
+        <DialogSimple openDialog={createSubCategory} setOpenDialog={setCreateSubCategory}>
+          <FormSubCategoria
+            idCategoria={parseInt(selectedCategoryId)}
+            onSubmitSuccess={(newObj) => {
+              // console.log("newObj", newObj)
+              setCreateSubCategory(false)
+              setCreatedSubCategoryId(newObj.idSubcategoria)
+              setRefreshSubCategories(!refreshSubCategories)
+            }} />
+        </DialogSimple>
+
+        <DialogSimple openDialog={createFamily} setOpenDialog={setCreateFamily}>
+          <FormFamilia
+            idCategoria={selectedCategoryId}
+            idSubcategoria={selectedSubCategoryId}
+            onSubmitSuccess={(newObj) => {
+              console.log("newObj", newObj)
+              setCreateFamily(false)
+              setCreatedFamilyId(newObj.idFamilia)
+              setRefreshFamilies(!refreshFamilies)
+            }} />
+        </DialogSimple>
+
+        <DialogSimple openDialog={createSubFamily} setOpenDialog={setCreateSubFamily}>
+          <FormSubFamilia
+            idCategoria={selectedCategoryId}
+            idSubcategoria={selectedSubCategoryId}
+            idFamilia={selectedFamilyId}
+            onSubmitSuccess={(newObj) => {
+              // console.log("newObj", newObj)
+              setCreateSubFamily(false)
+              setCreatedSubFamilyId(newObj.idSubFamilia)
+              setRefreshSubFamilies(!refreshSubFamilies)
+            }} />
+        </DialogSimple>
 
 
         <Grid item xs={12} md={12}>
