@@ -46,7 +46,12 @@ const Familias = () => {
           refresh={refreshList}
           onChageCategory={(catIdx) => {
             setCatId(catIdx)
-          }} />
+          }}
+
+          onChageSubCategory={(subid) => {
+            setSubCatId(subid)
+          }}
+          />
 
 
         <DialogSimple openDialog={open} setOpenDialog={setOpen}>

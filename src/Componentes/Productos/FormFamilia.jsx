@@ -92,14 +92,17 @@ const FormFamilia = ({
   const [finCargaInicialSubCats, setfinCargaInicialSubCats] = useState(false)
 
   useEffect(() => {
-    if (idCategoria != null) {
+    if (idCategoria != null && finCargaInicialCats) {
       states.selectedCategoryId[1](idCategoria)
     }
-
-    if (idSubcategoria != null) {
+  }, [idCategoria, finCargaInicialCats])
+  
+  
+  useEffect(() => {
+    if (idSubcategoria != null && finCargaInicialSubCats) {
       states.selectedSubCategoryId[1](idSubcategoria)
     }
-  }, [idCategoria, idSubcategoria])
+  }, [idSubcategoria, finCargaInicialSubCats])
 
   useEffect(() => {
     if (isEdit && editData) {

@@ -61,8 +61,8 @@ const SearchListFamiliasItem = ({
                   </IconButton> */}
 
         <DialogSimple openDialog={showEdit} setOpenDialog={setShowEdit}>
-          <FormFamilia onSubmitSuccess={(cat) => {
-            onUpdate(cat)
+          <FormFamilia onSubmitSuccess={(guardado) => {
+            onUpdate(guardado)
             setShowEdit(false)
           }} isEdit={true} editData={item} />
         </DialogSimple>

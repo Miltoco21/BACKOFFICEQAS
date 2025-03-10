@@ -2,32 +2,33 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-unused-vars */
 
-import React,{useState} from 'react'
+import React, { useState } from 'react'
 import Box from "@mui/material/Box";
-import {Button} from "@mui/material";
+import { Button } from "@mui/material";
 import { Modal } from "@mui/material";
 import SideBar from '../Componentes/NavBar/SideBar'
 import Add from "@mui/icons-material/Add";
 import IngresoSubFamilias from '../Componentes/Productos/IngresoSubFamilia';
-import SearchListSubFamilias from '../Componentes/ListaBuscadora/SearchListSubFamilias';
+import SearchListSubFamilias from '../Componentes/Productos/SearchListSubFamilias';
+import FormSubFamilia from '../Componentes/Productos/FormSubFamilia';
+import DialogSimple from '../Componentes/Dialogs/DialogSimple';
 
 const SubFamilias = () => {
   const [open, setOpen] = useState(false);
-  const handleOpenModal = () => {
-    setOpen(true);
-  };
 
-  // Event handler to close the modal
-  const handleCloseModal = () => {
-    setOpen(false);
-  };
+  const [refreshList, setRefreshList] = useState(false);
+
+  const [catId, setCatId] = useState(-1);
+  const [subcatId, setSubCatId] = useState(-1);
+  const [famId, setFamId] = useState(-1);
+
   return (
     <div style={{ display: "flex" }}>
-      
+
       <SideBar />
 
-      <Box  sx={{ flexGrow: 1, p: 3 }}>
-      <Button
+      <Box sx={{ flexGrow: 1, p: 3 }}>
+        <Button
           variant="outlined"
           color="primary"
           sx={{
@@ -35,42 +36,49 @@ const SubFamilias = () => {
             mx: 2,
           }}
           startIcon={<Add />}
-          onClick={handleOpenModal}
+          onClick={() => { setOpen(true) }}
         >
           Sub-Familia
         </Button>
-        <SearchListSubFamilias/> 
-       
-        <Modal open={open} onClose={handleCloseModal}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              bgcolor: "background.paper",
-              boxShadow: 24,
-              p: 4,
-              overflow: "auto", // Added scrollable feature
-              maxHeight: "90vh", // Adjust as needed
-              maxWidth: "90vw", // Adjust as needed
+        <SearchListSubFamilias
+          refresh={refreshList}
+
+          onChageCategory={(catIdx) => {
+            setCatId(catIdx)
+          }}
+          
+          onChageSubCategory={(catIdx) => {
+            setSubCatId(catIdx)
+          }}
+
+          onChageFamily={(famIdx) => {
+            setFamId(famIdx)
+          }}
+          
+          />
+
+
+        <DialogSimple openDialog={open} setOpenDialog={setOpen}>
+          <FormSubFamilia
+            idCategoria={catId}
+            idSubcategoria={subcatId}
+            idFamilia={famId}
+            onSubmitSuccess={() => {
+              setRefreshList(!refreshList)
+              setOpen(false)
             }}
-          >
-          <IngresoSubFamilias onClose={handleCloseModal}/>
-          </Box>
-        </Modal>
+          />
+        </DialogSimple>
 
 
-       
-       
-        
-        
-        
 
-       
-        
 
-       
+
+
+
+
+
+
       </Box>
     </div>
   )

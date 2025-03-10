@@ -31,6 +31,8 @@ import InputName from "../../../Elements/Compuestos/InputName";
 import System from "../../../../Helpers/System";
 
 import { SelectedOptionsContext } from "../../../Context/SelectedOptionsProvider";
+import DialogSimple from "../../../Dialogs/DialogSimple";
+import FormCategoria from "../../FormCategoria";
 
 
 const Step1Component = ({
@@ -103,6 +105,8 @@ const Step1Component = ({
 
 
   const [cambioAlgo, setCambioAlgo] = useState(false)
+  const [createCategory, setCreateCategory] = useState(false)
+
 
   const cargaAnteriorDeSesion = async (funSet, propiedad) => {
     // console.log("cargaAnteriorDeSesion")
@@ -136,7 +140,7 @@ const Step1Component = ({
     >
       <Grid container spacing={2} item xs={12} md={12}>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <SelectFetch
             inputState={[selectedCategoryId, setSelectedCategoryId]}
             validationState={validatorStates.categoryId}
@@ -152,7 +156,7 @@ const Step1Component = ({
           />
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <SelectFetchDependiente
             inputState={[selectedSubCategoryId, setSelectedSubCategoryId]}
             inputOtherState={[selectedCategoryId, setSelectedCategoryId]}
@@ -173,7 +177,7 @@ const Step1Component = ({
         </Grid>
 
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <SelectFetchDependiente
             inputState={[selectedFamilyId, setSelectedFamilyId]}
             inputOtherState={[selectedSubCategoryId, setSelectedCategoryId]}
@@ -197,7 +201,7 @@ const Step1Component = ({
         </Grid>
 
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <SelectFetchDependiente
             inputState={[selectedSubFamilyId, setSelectedSubFamilyId]}
             inputOtherState={[selectedFamilyId, setSelectedFamilyId]}
@@ -221,7 +225,7 @@ const Step1Component = ({
         </Grid>
 
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <InputName
             inputState={[nombre, setNombre]}
             validationState={validatorStates.nombre}
@@ -231,7 +235,7 @@ const Step1Component = ({
           />
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <InputName
             inputState={[marca, setMarca]}
             validationState={validatorStates.marca}
@@ -240,6 +244,64 @@ const Step1Component = ({
             required={true}
           />
         </Grid>
+
+        <Grid item xs={12} sm={12} md={3} lg={3}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              setCreateCategory(true)
+            }}
+            fullWidth
+          >
+            Crear categoria
+          </Button>
+        </Grid>
+
+        <Grid item xs={12} sm={12} md={3} lg={3}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              setCreateCategory(true)
+            }}
+            fullWidth
+          >
+            Crear subcategoria
+          </Button>
+        </Grid>
+
+        <Grid item xs={12} sm={12} md={3} lg={3}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              setCreateCategory(true)
+            }}
+            fullWidth
+          >
+            Crear familia
+          </Button>
+        </Grid>
+
+        <Grid item xs={12} sm={12} md={3} lg={3}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              setCreateCategory(true)
+            }}
+            fullWidth
+          >
+            Crear subfamilia
+          </Button>
+        </Grid>
+
+        <DialogSimple openDialog={createCategory} setOpenDialog={setCreateCategory}>
+          <FormCategoria onSubmitSuccess={() => {
+            //  setRefreshList(!refreshList)
+          }} />
+        </DialogSimple>
 
 
         <Grid item xs={12} md={12}>

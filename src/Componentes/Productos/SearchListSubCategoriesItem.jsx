@@ -63,8 +63,8 @@ const SearchListSubCategoriesItem = ({
         </IconButton> */}
 
         <DialogSimple openDialog={showEdit} setOpenDialog={setShowEdit}>
-          <FormSubCategoria onSubmitSuccess={(cat) => {
-            onUpdate(cat)
+          <FormSubCategoria onSubmitSuccess={(guardado) => {
+            onUpdate(guardado)
             setShowEdit(false)
           }} isEdit={true} editData={item} />
         </DialogSimple>

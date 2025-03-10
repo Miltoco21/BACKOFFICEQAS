@@ -821,6 +821,44 @@ class Product extends Model {
     }
 
 
+    static async addSubFamily(data: { 
+        idCategoria, 
+        idSubcategoria, 
+        idFamilia, 
+        descripcionSubFamilia 
+    }, callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/AddSubFamilia"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+        EndPoint.sendPost(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+
+    }
+
+    static async editSubFamily(data: {
+        idCategoria,
+        idSubcategoria,
+        idFamilia,
+        idSubFamilia,
+        descripcionSubFamilia,
+    },
+        callbackOk, callbackWrong) {
+        var url = ModelConfig.get("urlBase")
+            + "/NivelMercadoLogicos/UpdateSubFamilia"
+
+        // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
+        // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
+
+        EndPoint.sendPut(url, data, (responseData, response) => {
+            callbackOk(responseData, response);
+        }, callbackWrong)
+    }
+
+
 };
 
 

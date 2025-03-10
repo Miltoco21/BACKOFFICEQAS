@@ -38,7 +38,10 @@ const Categorias = () => {
         <SearchListCategories refresh={refreshList} />
 
         <DialogSimple openDialog={open} setOpenDialog={setOpen}>
-          <IngresoCategorias onSubmitSuccess={() => { setRefreshList(!refreshList) }} />
+          <IngresoCategorias onSubmitSuccess={() => { 
+            setRefreshList(!refreshList)
+            setOpen(false)
+            }} />
         </DialogSimple>
       </Box>
     </div>

@@ -2,6 +2,7 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
+
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
@@ -12,65 +13,63 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  MenuItem,
   IconButton,
+  Grid,
+  Select,
+  InputLabel,
   Pagination,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
-import Product from "../../Models/Product";
-import FormCategoria from "./FormCategoria";
 import DialogSimple from "../Dialogs/DialogSimple";
-
+import FormSubFamilia from "./FormSubFamilia";
 
 const ITEMS_PER_PAGE = 10;
-const SearchListCategoriesItem = ({
+
+const SearchListSubFamiliasItem = ({
   item,
   onUpdate = () => { },
   onDelete = () => { },
 }) => {
 
   const {
-    showMessage,
     showLoading,
-    hideLoading,
-    showConfirm
+    hideLoading
   } = useContext(SelectedOptionsContext);
 
   const [showEdit, setShowEdit] = useState(false)
 
-  const handleDelete = ()=>{
-    showConfirm("Eliminar " + item.descripcion + "?", ()=>{
-      Product.deleteCategory(item,()=>{
+  const handleDelete = () => {
+    showConfirm("Eliminar " + item.descripcion + "?", () => {
+      Product.deleteCategory(item, () => {
         showMessage("Eliminado correctamente")
-      },showMessage)
+      }, showMessage)
     })
   }
-
   return (
-    <TableRow>
-      <TableCell>{item.idCategoria}</TableCell>
-      <TableCell>{item.descripcion.trim()}</TableCell>
+    <TableRow key={item.idSubFamilia}>
+      <TableCell>{item.idSubFamilia}</TableCell>
+      <TableCell>{item.descripcion}</TableCell>
       <TableCell>
+
         <IconButton onClick={() => setShowEdit(true)}>
           <EditIcon />
         </IconButton>
-        {/* <IconButton
-          onClick={handleDelete}
-        >
-          <DeleteIcon />
-        </IconButton> */}
+        {/* <IconButton onClick={() => handleDelete(item.idFamilia)}>
+                    <DeleteIcon />
+                  </IconButton> */}
 
         <DialogSimple openDialog={showEdit} setOpenDialog={setShowEdit}>
-          <FormCategoria onSubmitSuccess={(guardado) => {
+          <FormSubFamilia onSubmitSuccess={(guardado) => {
             onUpdate(guardado)
             setShowEdit(false)
           }} isEdit={true} editData={item} />
         </DialogSimple>
-
       </TableCell>
     </TableRow>
   );
 };
 
-export default SearchListCategoriesItem;
+export default SearchListSubFamiliasItem;
