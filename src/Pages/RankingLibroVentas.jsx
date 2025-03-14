@@ -45,7 +45,9 @@ const RankingLibroVentas = () => {
     userData,
     showMessage,
     showConfirm,
-    pedirSupervision
+    pedirSupervision,
+    showLoading,
+    hideLoading
   } = useContext(SelectedOptionsContext);
 
 
@@ -82,6 +84,7 @@ const RankingLibroVentas = () => {
 
   const exportExcel = () => {
 
+    showLoading("Preparando excel...")
 
     const cabeceraArray = [];
     const detallesArray = [];
@@ -96,29 +99,29 @@ const RankingLibroVentas = () => {
         IVADF: venta.montoIVA,
         Total: venta.total,
       })
-      
-      venta.ventaDetalleReportes.forEach((detalle)=>{
+
+      venta.ventaDetalleReportes.forEach((detalle) => {
         detallesArray.push({
           FolioDocumento: venta.nroComprobante,
-          CodigoProducto:detalle.codProducto,
-          Descripcion:detalle.descripcion,
-          PrecioUnidad:detalle.precioUnidad,
-          Cantidad:detalle.cantidad,
-          Costo:detalle.costo,
+          CodigoProducto: detalle.codProducto,
+          Descripcion: detalle.descripcion,
+          PrecioUnidad: detalle.precioUnidad,
+          Cantidad: detalle.cantidad,
+          Costo: detalle.costo,
           Monto: (detalle.precioUnidad * detalle.cantidad)
         })
       })
 
-      venta.medioDePagos.forEach((pago)=>{
+      venta.medioDePagos.forEach((pago) => {
         pagosArray.push({
           FolioDocumento: venta.nroComprobante,
-          Metodo:pago.metodoPago,
-          Monto:pago.montoMedioPago
+          Metodo: pago.metodoPago,
+          Monto: pago.montoMedioPago
         })
       })
 
     })
-    
+
     const worksheet = xlsx.utils.json_to_sheet(cabeceraArray);
     const worksheet2 = xlsx.utils.json_to_sheet(detallesArray);
     const worksheet3 = xlsx.utils.json_to_sheet(pagosArray);
@@ -127,7 +130,7 @@ const RankingLibroVentas = () => {
     xlsx.utils.book_append_sheet(workbook, worksheet, "Cabeceras Ventas");
     xlsx.utils.book_append_sheet(workbook, worksheet2, "Detalles Ventas");
     xlsx.utils.book_append_sheet(workbook, worksheet3, "Metodos de Pagos");
-    
+
     const excelBuffer = xlsx.write(workbook, {
       bookType: "xlsx",
       type: "array",
@@ -135,7 +138,11 @@ const RankingLibroVentas = () => {
     const excelBlob = new Blob([excelBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    saveAs(excelBlob, "reporte-ventas-" + dayjs().format("DD_MM_YYYY-HH_mm_ss") + ".xlsx");
+
+    hideLoading()
+    setTimeout(() => {
+      saveAs(excelBlob, "reporte-ventas-" + dayjs().format("DD_MM_YYYY-HH_mm_ss") + ".xlsx");
+    }, 300);
   };
 
 

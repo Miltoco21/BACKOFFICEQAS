@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Grid,
   Button,
@@ -34,7 +34,19 @@ import SmallSuccessButton from "../Componentes/Elements/SmallSuccessButton";
 import { saveAs } from "file-saver";
 import * as xlsx from "xlsx/xlsx.mjs";
 
+import { SelectedOptionsContext } from "../Componentes/Context/SelectedOptionsProvider";
+
 const RankingProductos = () => {
+
+  const {
+    userData,
+    showMessage,
+    showConfirm,
+    pedirSupervision,
+    showLoading,
+    hideLoading
+  } = useContext(SelectedOptionsContext);
+
   const apiUrl = ModelConfig.get().urlBase;
 
   const [startDate, setStartDate] = useState(null);
@@ -128,6 +140,8 @@ const RankingProductos = () => {
 
     const productosArray = [];
 
+    showLoading("Preparando excel...")
+
     data.forEach((prod) => {
       productosArray.push({
         Codigo: prod.codigoProducto,
@@ -154,7 +168,11 @@ const RankingProductos = () => {
     const excelBlob = new Blob([excelBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    saveAs(excelBlob, "ranking-ventas-productos-" + dayjs().format("DD_MM_YYYY-HH_mm_ss") + ".xlsx");
+
+    hideLoading()
+    setTimeout(() => {
+      saveAs(excelBlob, "ranking-ventas-productos-" + dayjs().format("DD_MM_YYYY-HH_mm_ss") + ".xlsx");
+    }, 300);
   };
 
   const handleChangePage = (event, newPage) => {
