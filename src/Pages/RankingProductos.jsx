@@ -31,6 +31,9 @@ import SmallDangerButton from "../Componentes/Elements/SmallDangerButton";
 import { height } from "@mui/system";
 import SmallSuccessButton from "../Componentes/Elements/SmallSuccessButton";
 
+import { saveAs } from "file-saver";
+import * as xlsx from "xlsx/xlsx.mjs";
+
 const RankingProductos = () => {
   const apiUrl = ModelConfig.get().urlBase;
 
@@ -118,6 +121,40 @@ const RankingProductos = () => {
     }
 
     fetchData();
+  };
+
+
+  const exportExcel = () => {
+
+    const productosArray = [];
+
+    data.forEach((prod) => {
+      productosArray.push({
+        Codigo: prod.codigoProducto,
+        Descripcion: prod.descripcion,
+        PrecioCosto: prod.precioCosto,
+        PrecioVenta: prod.precioVenta,
+        StockActual: prod.stockActual,
+        Cantidad: prod.cantidad,
+        SumaTotal: prod.sumaTotal,
+        Ranking: prod.ranking,
+      })
+
+    })
+
+    const worksheet = xlsx.utils.json_to_sheet(productosArray);
+
+    const workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, worksheet, "Ranking ventas de productos");
+
+    const excelBuffer = xlsx.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const excelBlob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(excelBlob, "ranking-ventas-productos-" + dayjs().format("DD_MM_YYYY-HH_mm_ss") + ".xlsx");
   };
 
   const handleChangePage = (event, newPage) => {
@@ -234,6 +271,9 @@ const RankingProductos = () => {
               onEnter={filtrar}
               withLabel={false}
             />
+
+
+
           </Grid>
           <Grid item xs={12} sm={12} md={6} lg={6}>
             <SmallSuccessButton
@@ -251,6 +291,18 @@ const RankingProductos = () => {
                 style={{
                   marginTop: "12px",
                   height: "50px"
+                }}
+              />
+            )}
+
+            {data.length > 0 && (
+              <SmallButton
+                style={{
+                  backgroundColor: "#005D25CC"
+                }}
+                textButton={"Exportar a Excel"}
+                actionButton={() => {
+                  exportExcel()
                 }}
               />
             )}
