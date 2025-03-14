@@ -81,43 +81,14 @@ const RankingLibroVentas = () => {
 
 
   const exportExcel = () => {
-    const jsonData = [
-      // {
-      //   Fecha: "razonSocial",
-      //   Descripcion: "giro",
-      //   FolioDocumento: "email",
-      //   ValorNeto	: "direccion",
-      //   IVADF: "telefono",
-      //   Total: "comuna",
-      // },
-    ];
 
-    /*
-    
-    <TableCell>
-      {new Date(producto.fechaIngreso).toLocaleDateString(
-        "es-CL"
-      )}
-    </TableCell>
-    <TableCell>{producto.descripcionComprobante}</TableCell>
-    <TableCell>
-      {producto.nroComprobante.toLocaleString("es-CL")}
-    </TableCell>
-    <TableCell>
-      {producto.montoNeto.toLocaleString("es-CL")}
-    </TableCell>
-    <TableCell>
-      {producto.montoIVA.toLocaleString("es-CL")}
-    </TableCell>
-    <TableCell>
-      {producto.total.toLocaleString("es-CL")}
-    </TableCell>
-    <TableCell>
-                    
-                    */
 
+    const cabeceraArray = [];
+    const detallesArray = [];
+    const pagosArray = [];
     ventasPorCaja.forEach((venta) => {
-      jsonData.push({
+
+      cabeceraArray.push({
         Fecha: dayjs(venta.fechaIngreso).format("DD/MM/YYYY HH:mm:ss"),
         Descripcion: venta.descripcionComprobante,
         FolioDocumento: venta.nroComprobante,
@@ -125,11 +96,38 @@ const RankingLibroVentas = () => {
         IVADF: venta.montoIVA,
         Total: venta.total,
       })
-    })
+      
+      venta.ventaDetalleReportes.forEach((detalle)=>{
+        detallesArray.push({
+          FolioDocumento: venta.nroComprobante,
+          CodigoProducto:detalle.codProducto,
+          Descripcion:detalle.descripcion,
+          PrecioUnidad:detalle.precioUnidad,
+          Cantidad:detalle.cantidad,
+          Costo:detalle.costo,
+          Monto: (detalle.precioUnidad * detalle.cantidad)
+        })
+      })
 
-    const worksheet = xlsx.utils.json_to_sheet(jsonData);
+      venta.medioDePagos.forEach((pago)=>{
+        pagosArray.push({
+          FolioDocumento: venta.nroComprobante,
+          Metodo:pago.metodoPago,
+          Monto:pago.montoMedioPago
+        })
+      })
+
+    })
+    
+    const worksheet = xlsx.utils.json_to_sheet(cabeceraArray);
+    const worksheet2 = xlsx.utils.json_to_sheet(detallesArray);
+    const worksheet3 = xlsx.utils.json_to_sheet(pagosArray);
+
     const workbook = xlsx.utils.book_new();
-    xlsx.utils.book_append_sheet(workbook, worksheet, "Hoja 1");
+    xlsx.utils.book_append_sheet(workbook, worksheet, "Cabeceras Ventas");
+    xlsx.utils.book_append_sheet(workbook, worksheet2, "Detalles Ventas");
+    xlsx.utils.book_append_sheet(workbook, worksheet3, "Metodos de Pagos");
+    
     const excelBuffer = xlsx.write(workbook, {
       bookType: "xlsx",
       type: "array",
