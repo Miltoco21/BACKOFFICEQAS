@@ -399,7 +399,7 @@ const RankingLibroVentas = () => {
     setStartDate(dayjs())
     setEndDate(dayjs())
     setTipo([
-      0, 1, 2
+      0, 1, 2, 4
     ])
 
     User.getAll((usersServer) => {
@@ -489,6 +489,17 @@ const RankingLibroVentas = () => {
                       />
                     }
                     label="Factura"
+                  />
+
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={tipo.includes(4)}
+                        onChange={handleCheckboxChange}
+                        value={4}
+                      />
+                    }
+                    label="Comprobante MP"
                   />
                 </FormControl>
               </FormControl>
