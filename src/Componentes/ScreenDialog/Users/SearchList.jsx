@@ -44,7 +44,7 @@ const SearchList = ({
   const [doRefresh, setDoRefresh] = useState(false);
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState("");
-  const perPage = 5;
+  const perPage = 15;
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [openDialogAutorizacion, setOpenDialogAutorizacion] = useState(false)
 
