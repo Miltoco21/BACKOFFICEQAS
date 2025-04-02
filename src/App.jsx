@@ -38,6 +38,7 @@ import RankingVentas from './Pages/RankingVentas';
 import RankingProductos from './Pages/RankingProductos';
 import RankingLibroVentas from './Pages/RankingLibroVentas';
 import RankingLibroCompras from './Pages/RankingLibroCompras';
+import ReporteMaestroProductos from './Pages/ReporteMaestroProductos';
 import Stock from './Pages/Stock/';
 import EntradaSalidaStock from './Pages/EntradaSalidaStock';
 
@@ -102,6 +103,7 @@ function App() {
             <Route path="reportes/reportez" element={<ReporteZ />} />
             <Route path="reportes/reportecierrez" element={<ReporteCierreZ />} />
             <Route path="reportes/reportestockvalorizado" element={<ReporteStockValorizado />} />
+            <Route path="reportes/maestro-productos" element={<ReporteMaestroProductos />} />
           </Routes>
         </SelectedOptionsProvider>
       </LocalizationProvider>

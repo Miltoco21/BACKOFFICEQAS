@@ -131,6 +131,7 @@ export default function PermanentDrawerLeft() {
 
           icon: <FactCheckIcon />,
           subMenuItems: [
+            { text: "Maestro de productos", link: "/reportes/maestro-productos",icon: <SummarizeIcon />},
             { text: "Cuentas corrientes clientes", link: "/reportes/cuentacorrienteclientes",icon: <SummarizeIcon />},
             { text: "Cuentas corrientes proveedores", link: "/reportes/cuentacorrienteproveedores",icon: <SummarizeIcon />},
             { text: "Ranking de Venta por forma de pago", link: "/reportes/rankingventas",icon: <SummarizeIcon />},
