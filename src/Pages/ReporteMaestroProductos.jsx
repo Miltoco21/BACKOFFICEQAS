@@ -119,8 +119,7 @@ const ReporteMaestroProductos = ({
       <Grid component="main" sx={{ flexGrow: 1, p: 2 }}>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs={12} sm={12} md={12} lg={12}>
-            <br />
-            <br />
+            {/* <br /><br /> */}
             <Typography variant="h5">
               Reporte maestro productos
             </Typography>

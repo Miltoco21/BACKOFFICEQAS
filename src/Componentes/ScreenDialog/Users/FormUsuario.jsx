@@ -289,13 +289,13 @@ export default function ({
           label="remuneracion"
           fieldName="remuneracionTipo"
           vars={[states, validatorStates]}
-          required={true}
+          // required={true}
         />
       </Grid>
       <Grid item xs={12} md={4}>
         <InputNumber
           inputState={states.credit}
-          required={true}
+          // required={true}
           fieldName="credito"
           validationState={validatorStates.credit}
         />
