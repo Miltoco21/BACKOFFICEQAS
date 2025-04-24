@@ -15,6 +15,7 @@ import System from "../Helpers/System";
 import Model from "../Models/Model";
 import CrearSinCodigo from "../Componentes/Productos/SinCodigo/Crear";
 import CrearConCodigo from "../Componentes/Productos/ConCodigo/Crear";
+import StockMobileQR from "./StockMobileQR";
 
 const StockMobile = () => {
 
@@ -138,6 +139,8 @@ const StockMobile = () => {
     setSearchTerm("")
   }
 
+  const [showQrReader, setShowQRReader] = useState(false)
+
   return (
     <div style={{ display: "flex" }}>
       <GeneralElements />
@@ -257,6 +260,41 @@ const StockMobile = () => {
             </Button>
 
           </Grid>
+
+
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+
+            <Button
+              size="large"
+              variant="outlined"
+              style={{
+                marginLeft: "10%",
+                padding: "14px",
+                marginTop: "6px",
+                width: "80%"
+              }}
+
+              onClick={() => {
+                console.log("asd")
+                setShowQRReader(true)
+              }}
+            >
+              <HorizontalSplit sx={{ transform: "rotate(270deg)" }} />
+              <Add sx={{
+                width: "15px",
+                position: "relative",
+                left: "-7px"
+              }} />
+              Scan
+            </Button>
+
+            {showQrReader && (
+              <StockMobileQR />
+            )}
+
+          </Grid>
+
+
         </Grid>
 
         {/* </Box> */}
