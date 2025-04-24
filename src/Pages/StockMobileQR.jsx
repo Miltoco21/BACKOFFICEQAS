@@ -68,7 +68,7 @@ const StockMobileQR = () => {
       },
       (errorMessage) => {
         // parse error, ignore it.
-        showAlert("callbackfail:" + errorMessage)
+        // showAlert("callbackfail:" + errorMessage)
       })
       .catch((err) => {
         // Start failed, handle it.
