@@ -5,6 +5,7 @@ import { SelectedOptionsContext } from "../Componentes/Context/SelectedOptionsPr
 
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { Button } from "@mui/material";
+import System from "../Helpers/System";
 
 const StockMobileQR = () => {
   const {
@@ -59,28 +60,36 @@ const StockMobileQR = () => {
 
 
   const doScan = () => {
+    showMessage("doScan")
     // try {
     //   controllerCam.stop()
     // } catch (e) {
     // }
-    controllerCam.start(
-      camIdSelected,
-      {
-        fps: 10,    // Optional, frame per seconds for qr code scanning
-        qrbox: { width: 250, height: 250 }  // Optional, if you want bounded box UI
-      },
-      (decodedText, decodedResult) => {
-        // do something when code is read
-        showAlert(decodedText)
-      },
-      (errorMessage) => {
-        // parse error, ignore it.
-        // showAlert("callbackfail:" + errorMessage)
-      })
-      .catch((err) => {
-        // Start failed, handle it.
-        showAlert("catch:" + err)
-      });
+    try {
+
+      controllerCam.start(
+        camIdSelected,
+        {
+          fps: 10,    // Optional, frame per seconds for qr code scanning
+          qrbox: { width: 250, height: 250 }  // Optional, if you want bounded box UI
+        },
+        (decodedText, decodedResult) => {
+          // do something when code is read
+          showAlert(decodedText)
+        },
+        (errorMessage) => {
+          // parse error, ignore it.
+          // showAlert("callbackfail:" + errorMessage)
+        })
+        .catch((err) => {
+          // Start failed, handle it.
+          showAlert("catch:" + err)
+        });
+    } catch (ers) {
+      setTimeout(() => {
+        showMessage("catch de start:" + ers)
+      }, 1000);
+    }
   }
   const [controllerCam, setControllerCam] = useState(null)
 
@@ -115,6 +124,10 @@ const StockMobileQR = () => {
     if (camIdSelected) {
       doScan()
     }
+    setTimeout(() => {
+      showMessage("cambio camIdSelected:" + camIdSelected)
+
+    }, 500);
   }, [camIdSelected])
 
 
@@ -130,7 +143,15 @@ const StockMobileQR = () => {
         console.log("proxid", proxid)
         showMessage("cambiando camara " + (proxid + 1) + "/" + (camIds.length) + " a:" + camIds[proxid])
         setCamIdSelected(camIds[proxid])
-        controllerCam.stop()
+        console.log("controllerCam.isScanning", System.clone(controllerCam.isScanning))
+        try {
+          controllerCam.stop()
+        } catch (er) {
+          console.log("catch de stop..", er)
+          setTimeout(() => {
+            showMessage(er)
+          }, 1000);
+        }
       }}>cambiar camara</Button>
       <div id="reader" width="600px"></div>
     </div>
