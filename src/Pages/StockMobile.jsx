@@ -288,9 +288,16 @@ const StockMobile = () => {
               Scan
             </Button>
 
-            {showQrReader && (
-              <StockMobileQR />
-            )}
+            <StockMobileQR
+              openDialog={showQrReader}
+              setOpenDialog={setShowQRReader}
+              onCapture={(info) => {
+                setSearchTerm(info)
+                setTimeout(() => {
+                  doSearch()
+                }, 500);
+              }}
+            />
 
           </Grid>
 
