@@ -75,6 +75,25 @@ const StockMobileQR = ({
   }
 
 
+  const salir = () => {
+    setOpenDialog(false)
+
+    try {
+      if (controllerCam.isScanning) {
+        controllerCam.stop()
+      }
+    } catch (er) {
+      console.log("catch de stop..", er)
+      // setTimeout(() => {
+      //   showMessage(er)
+      // }, 1000);
+    }
+
+  }
+
+
+
+
   const doScan = () => {
     showMessage("doScan")
     // try {
@@ -91,8 +110,9 @@ const StockMobileQR = ({
         },
         (decodedText, decodedResult) => {
           // do something when code is read
-          showAlert(decodedText)
+          // showAlert(decodedText)
           onCapture(decodedText)
+          salir()
         },
         (errorMessage) => {
           // parse error, ignore it.
@@ -136,7 +156,7 @@ const StockMobileQR = ({
   }, [intentDiv])
 
   useEffect(() => {
-    console.log("controllerCam", controllerCam)
+    // console.log("controllerCam", controllerCam)
     if (controllerCam) {
       getCams()
     }
@@ -148,7 +168,7 @@ const StockMobileQR = ({
       doScan()
     }
     setTimeout(() => {
-      showMessage("cambio camIdSelected:" + camIdSelected)
+      // showMessage("cambio camIdSelected:" + camIdSelected)
 
     }, 500);
   }, [camIdSelected])
@@ -171,17 +191,19 @@ const StockMobileQR = ({
             var proxid = currentId + 1
             if (proxid >= camIds.length) proxid = 0
             setCurrentId(proxid)
-            console.log("proxid", proxid)
-            showMessage("cambiando camara " + (proxid + 1) + "/" + (camIds.length) + " a:" + camIds[proxid])
+            // console.log("proxid", proxid)
+            // showMessage("cambiando camara " + (proxid + 1) + "/" + (camIds.length) + " a:" + camIds[proxid])
             setCamIdSelected(camIds[proxid])
-            console.log("controllerCam.isScanning", System.clone(controllerCam.isScanning))
+            // console.log("controllerCam.isScanning", System.clone(controllerCam.isScanning))
             try {
-              controllerCam.stop()
+              if (controllerCam.isScanning) {
+                controllerCam.stop()
+              }
             } catch (er) {
               console.log("catch de stop..", er)
-              setTimeout(() => {
-                showMessage(er)
-              }, 1000);
+              // setTimeout(() => {
+              //   showMessage(er)
+              // }, 1000);
             }
           }}
             textButton={(<Typography>
@@ -197,7 +219,7 @@ const StockMobileQR = ({
 
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpenDialog(false)} color="primary">
+        <Button onClick={() => salir} color="primary">
           Cancelar
         </Button>
         {/* <Button onClick={handleLogout} color="primary">
