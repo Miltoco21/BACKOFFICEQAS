@@ -61,7 +61,7 @@ const StockMobileQR = ({
         })
         if (ids.length > 0) {
           setCamIdSelected(ids[0])
-          showMessage("hay " + (ids.length) + " camaras..asigna camara a:" + ids[0])
+          // showMessage("hay " + (ids.length) + " camaras..asigna camara a:" + ids[0])
           if (ids.length >= 2) {
             setCamIdSelected(ids[1])//la segunda camara es mejor
           }
@@ -89,13 +89,14 @@ const StockMobileQR = ({
       // }, 1000);
     }
 
+
   }
 
 
 
 
   const doScan = () => {
-    showMessage("doScan")
+    // showMessage("doScan")
     // try {
     //   controllerCam.stop()
     // } catch (e) {
@@ -134,6 +135,12 @@ const StockMobileQR = ({
   useEffect(() => {
     console.log("cambio opendialog", openDialog)
     if (!openDialog) return
+
+
+    console.log("intentDiv",intentDiv)
+    console.log("controllerCam",controllerCam)
+    console.log("camIds",camIds)
+    console.log("camIdSelected",camIdSelected)
     setIntentDiv(intentDiv + 1)
   }, [openDialog])
 
@@ -141,6 +148,10 @@ const StockMobileQR = ({
     if (!openDialog) return
     console.log('document.querySelector("#reader")', document.querySelector("#reader"))
     if (document.querySelector("#reader")) {
+      if(controllerCam){
+        doScan()
+        return
+      }
       setControllerCam(new Html5Qrcode("reader", {
         formatsToSupport: [
           Html5QrcodeSupportedFormats.QR_CODE,
@@ -156,7 +167,7 @@ const StockMobileQR = ({
   }, [intentDiv])
 
   useEffect(() => {
-    // console.log("controllerCam", controllerCam)
+    console.log("controllerCam", controllerCam)
     if (controllerCam) {
       getCams()
     }
@@ -167,15 +178,10 @@ const StockMobileQR = ({
     if (camIdSelected) {
       doScan()
     }
-    setTimeout(() => {
+    // setTimeout(() => {
       // showMessage("cambio camIdSelected:" + camIdSelected)
-
-    }, 500);
+    // }, 500);
   }, [camIdSelected])
-
-
-
-
 
   return (
     <Dialog
@@ -219,7 +225,7 @@ const StockMobileQR = ({
 
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => salir} color="primary">
+        <Button onClick={salir} color="primary">
           Cancelar
         </Button>
         {/* <Button onClick={handleLogout} color="primary">
