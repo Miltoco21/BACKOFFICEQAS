@@ -137,16 +137,16 @@ const StockMobileQR = ({
     if (!openDialog) return
 
 
-    console.log("intentDiv",intentDiv)
-    console.log("controllerCam",controllerCam)
-    console.log("camIds",camIds)
-    console.log("camIdSelected",camIdSelected)
+    // console.log("intentDiv",intentDiv)
+    // console.log("controllerCam",controllerCam)
+    // console.log("camIds",camIds)
+    // console.log("camIdSelected",camIdSelected)
     setIntentDiv(intentDiv + 1)
   }, [openDialog])
 
   useEffect(() => {
     if (!openDialog) return
-    console.log('document.querySelector("#reader")', document.querySelector("#reader"))
+    // console.log('document.querySelector("#reader")', document.querySelector("#reader"))
     if (document.querySelector("#reader")) {
       if(controllerCam){
         doScan()
@@ -154,8 +154,8 @@ const StockMobileQR = ({
       }
       setControllerCam(new Html5Qrcode("reader", {
         formatsToSupport: [
-          // Html5QrcodeSupportedFormats.QR_CODE,
-          Html5QrcodeSupportedFormats.EAN_13
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8,
         ]
       }))
     } else {
