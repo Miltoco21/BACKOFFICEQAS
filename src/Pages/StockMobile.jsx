@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import Add from "@mui/icons-material/Add";
 import Modal from "@mui/joy/Modal";
 import { SelectedOptionsContext } from "./../Componentes/Context/SelectedOptionsProvider";
-import { Check, HorizontalSplit, Search } from "@mui/icons-material";
+import { Check, HorizontalSplit, LinkedCamera, Search } from "@mui/icons-material";
 import Product from "../Models/Product";
 import { Grid, InputAdornment, TextField } from "@mui/material";
 import EditarProducto from "./../Componentes/Productos/EditarProducto";
@@ -140,7 +140,12 @@ const StockMobile = () => {
   }
 
   const [showQrReader, setShowQRReader] = useState(false)
+  const [intentSearch, setIntentSearch] = useState(false)
 
+  
+  useEffect(() => {
+    doSearch()
+  }, [intentSearch])
   return (
     <div style={{ display: "flex" }}>
       <GeneralElements />
@@ -271,7 +276,7 @@ const StockMobile = () => {
                 marginLeft: "10%",
                 padding: "14px",
                 marginTop: "6px",
-                width: "80%"
+                width: "80%",
               }}
 
               onClick={() => {
@@ -279,13 +284,13 @@ const StockMobile = () => {
                 setShowQRReader(true)
               }}
             >
-              <HorizontalSplit sx={{ transform: "rotate(270deg)" }} />
-              <Add sx={{
-                width: "15px",
-                position: "relative",
-                left: "-7px"
-              }} />
-              Scan
+
+              <LinkedCamera sx={{ 
+                left:"-5px",
+                top:"-2px",
+                position:"relative"
+                }} />
+              Capturar código
             </Button>
 
             <StockMobileQR
@@ -294,7 +299,7 @@ const StockMobile = () => {
               onCapture={(info) => {
                 setSearchTerm(info)
                 setTimeout(() => {
-                  doSearch()
+                  setIntentSearch(!intentSearch)
                 }, 500);
               }}
             />
