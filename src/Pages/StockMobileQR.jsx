@@ -124,11 +124,11 @@ const StockMobileQR = () => {
   return (
     <div>
       <Button onClick={() => {
-        var proxid = currentId
+        var proxid = currentId + 1
         if (proxid >= camIds.length) proxid = 0
         setCurrentId(proxid)
         console.log("proxid", proxid)
-        showMessage("cambiando camara " + (proxid + 1) + "/" + (camIds.length)  + " a:" + camIds[proxid])
+        showMessage("cambiando camara " + (proxid + 1) + "/" + (camIds.length) + " a:" + camIds[proxid])
         setCamIdSelected(camIds[proxid])
       }}>cambiar camara</Button>
       <div id="reader" width="600px"></div>
