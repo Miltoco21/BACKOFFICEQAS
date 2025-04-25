@@ -59,6 +59,10 @@ const StockMobileQR = () => {
 
 
   const doScan = () => {
+    try {
+      controllerCam.stop()
+    } catch (e) {
+    }
     controllerCam.start(
       camIdSelected,
       {
@@ -124,7 +128,7 @@ const StockMobileQR = () => {
         if (proxid >= camIds.length) proxid = 0
         setCurrentId(proxid)
         console.log("proxid", proxid)
-        showMessage("cambiando camara a:" + camIds[proxid])
+        showMessage("cambiando camara " + (proxid + 1) + "/" + (camIds.length)  + " a:" + camIds[proxid])
         setCamIdSelected(camIds[proxid])
       }}>cambiar camara</Button>
       <div id="reader" width="600px"></div>
