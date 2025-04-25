@@ -154,7 +154,7 @@ const StockMobileQR = ({
       }
       setControllerCam(new Html5Qrcode("reader", {
         formatsToSupport: [
-          Html5QrcodeSupportedFormats.QR_CODE,
+          // Html5QrcodeSupportedFormats.QR_CODE,
           Html5QrcodeSupportedFormats.EAN_13
         ]
       }))
