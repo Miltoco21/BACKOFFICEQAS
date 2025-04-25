@@ -45,7 +45,10 @@ const StockMobileQR = () => {
         devices.forEach((dev) => {
           ids.push(dev.id)
         })
-        if (ids.length > 0) setCamIdSelected(ids[0])
+        if (ids.length > 0) {
+          setCamIdSelected(ids[0])
+          showMessage("hay " + (ids.length) + " camaras..asigna camara a:" + ids[0])
+        }
         setCamIds(ids)
       }
     }).catch(err => {
@@ -120,6 +123,9 @@ const StockMobileQR = () => {
         var proxid = currentId
         if (proxid >= camIds.length) proxid = 0
         setCurrentId(proxid)
+        console.log("proxid", proxid)
+        showMessage("cambiando camara a:" + camIds[proxid])
+        setCamIdSelected(camIds[proxid])
       }}>cambiar camara</Button>
       <div id="reader" width="600px"></div>
     </div>

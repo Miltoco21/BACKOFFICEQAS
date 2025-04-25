@@ -54,7 +54,7 @@ const StockMobile = () => {
   }
 
   useEffect(() => {
-    checkFoco()
+    // checkFoco()
   }, [open, open2, openAdd, openEdit])
 
 
@@ -165,7 +165,7 @@ const StockMobile = () => {
               ref={refInputBuscar}
 
               onBlur={() => {
-                checkFoco()
+                // checkFoco()
               }}
 
 
