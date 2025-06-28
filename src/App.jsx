@@ -41,6 +41,7 @@ import RankingLibroCompras from './Pages/RankingLibroCompras';
 import ReporteMaestroProductos from './Pages/ReporteMaestroProductos';
 import Stock from './Pages/Stock/';
 import EntradaSalidaStock from './Pages/EntradaSalidaStock';
+import Preventas from './Pages/Preventas';
 
 import { SelectedOptionsProvider } from "./Componentes/Context/SelectedOptionsProvider";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -104,6 +105,7 @@ function App() {
             <Route path="reportes/reportecierrez" element={<ReporteCierreZ />} />
             <Route path="reportes/reportestockvalorizado" element={<ReporteStockValorizado />} />
             <Route path="reportes/maestro-productos" element={<ReporteMaestroProductos />} />
+            <Route path="reportes/preventas" element={<Preventas />} />
           </Routes>
         </SelectedOptionsProvider>
       </LocalizationProvider>

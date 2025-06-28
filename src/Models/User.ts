@@ -29,6 +29,10 @@ class User extends Model {
         return User.instance;
     }
 
+    static mostrarNombre(usuario){
+        return usuario.nombres + " " + usuario.apellidos
+    }
+
     saveInSesion(data) {
         this.sesion.guardar(data)
         // localStorage.setItem('userData', JSON.stringify(data));
