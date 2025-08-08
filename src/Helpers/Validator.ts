@@ -87,8 +87,9 @@ class Validator {
     }
 
     static isPreEmail(email){
+        console.log("is pre email")
         var newValue = email+""
-
+        
         if(!newValue)return true//caracter especial, ej: borrar, supr,etc
 
         // Expresión regular para validar el formato de correo electrónico
@@ -99,11 +100,12 @@ class Validator {
     
     static isEmail(email){
         var newValue = email+""
+        console.log("is email")
 
         if(!newValue)return true//caracter especial, ej: borrar, supr,etc
 
         // Expresión regular para validar el formato de correo electrónico
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailPattern = /^[^\s@\-]+@[^\s@]+\.[^\s@]+$/;
 
         if (newValue.trim() == "") {
             return false;
@@ -231,6 +233,7 @@ class Validator {
         if(
             Validator.isTeclaControl(event)
             || Validator.isNumericOAlpha(key)
+            || (key=="-" && all.length>0)
             || (key=="_" && all.length>0)
             || (key=="@" && all.indexOf("@") === -1)
             || key=="."
