@@ -54,6 +54,10 @@ const AdminConfig = ({
     }
   };
 
+  const closeModal = () => {
+    setOpenDialog(false)
+  }
+
   useEffect(() => {
     if (!openDialog) return
     setSomeChange(false)
@@ -86,18 +90,16 @@ const AdminConfig = ({
           </Grid>
 
           <Grid item xs={12}>
-            <AdminConfigTabGeneral tabNumber={tabNumber} setSomeChange={setSomeChange} />
-            <AdminConfigTabComercio tabNumber={tabNumber} setSomeChange={setSomeChange} />
-            <AdminConfigTabImpresion tabNumber={tabNumber} setSomeChange={setSomeChange} />
-            <AdminConfigTabSimpleApi tabNumber={tabNumber} setSomeChange={setSomeChange} />
+            <AdminConfigTabGeneral tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
+            <AdminConfigTabComercio tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
+            <AdminConfigTabImpresion tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
+            <AdminConfigTabSimpleApi tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
           </Grid>
 
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => {
-          setOpenDialog(false)
-        }}>Atras</Button>
+        <Button onClick={closeModal}>Atras</Button>
       </DialogActions>
     </Dialog>
   );

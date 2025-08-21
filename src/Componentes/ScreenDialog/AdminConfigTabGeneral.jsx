@@ -21,7 +21,8 @@ import CriterioCosto from "../../definitions/CriterioCosto";
 
 const AdminConfigTabGeneral = ({
   tabNumber,
-  setSomeChange
+  setSomeChange,
+  closeModal = () => { }
 }) => {
 
   const {
@@ -41,13 +42,13 @@ const AdminConfigTabGeneral = ({
 
 
   const loadConfigSesion = () => {
-    setUrlBase(ModelConfig.get("urlBase") )
-    setIva(ModelConfig.get("iva") )
-    setPorcentajeMargen(ModelConfig.get("porcentajeMargen") )
-    setCriterioCostoComercio(ModelConfig.get("criterioCostoComercio") )
+    setUrlBase(ModelConfig.get("urlBase"))
+    setIva(ModelConfig.get("iva"))
+    setPorcentajeMargen(ModelConfig.get("porcentajeMargen"))
+    setCriterioCostoComercio(ModelConfig.get("criterioCostoComercio"))
   }
 
-  const confirmSave = () => {
+  const confirmSave = (close = false) => {
     ModelConfig.change("urlBase", urlBase);
     ModelConfig.change("iva", iva)
     ModelConfig.change("porcentajeMargen", porcentajeMargen)
@@ -55,6 +56,9 @@ const AdminConfigTabGeneral = ({
 
     showMessage("Guardado correctamente")
     setSomeChange(false)
+    if (close) {
+      closeModal();
+    }
   }
 
   useEffect(() => {
@@ -108,7 +112,7 @@ const AdminConfigTabGeneral = ({
             optionSelected={criterioCostoComercio}
             setOptionSelected={setCriterioCostoComercio}
             options={
-              Object.keys(CriterioCosto).map((key)=>{
+              Object.keys(CriterioCosto).map((key) => {
                 return {
                   id: CriterioCosto[key],
                   value: key
@@ -125,6 +129,7 @@ const AdminConfigTabGeneral = ({
 
 
         <SmallButton textButton="Guardar" actionButton={confirmSave} />
+        <SmallButton textButton="Guardar y salir" actionButton={()=>confirmSave(true)} />
 
       </Grid>
 
