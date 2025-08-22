@@ -21,12 +21,8 @@ import AdminConfigTabImpresion from "./AdminConfigTabImpresion";
 
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import AdminConfigTabSimpleApi from "./AdminConfigTabSimpleApi";
+import AdminConfigTabShop from "./AdminConfigTabShop";
 
-
-var prods = [];
-for (let index = 1; index <= 5; index++) {
-  prods.push(index);
-}
 
 const AdminConfig = ({
   openDialog,
@@ -86,6 +82,7 @@ const AdminConfig = ({
               <Tab label="Comercio" />
               <Tab label="Impresion" />
               <Tab label="Simple Api" />
+              <Tab label="Tienda" />
             </Tabs>
           </Grid>
 
@@ -94,6 +91,7 @@ const AdminConfig = ({
             <AdminConfigTabComercio tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
             <AdminConfigTabImpresion tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
             <AdminConfigTabSimpleApi tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
+            <AdminConfigTabShop tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
           </Grid>
 
         </Grid>
