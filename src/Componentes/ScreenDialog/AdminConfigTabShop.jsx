@@ -20,6 +20,8 @@ import CriterioCosto from "../../definitions/CriterioCosto";
 import StorageSesion from "../../Helpers/StorageSesion";
 import Shop from "../../Models/Shop";
 import InputFile from "../Elements/Compuestos/InputFile";
+import System from "../../Helpers/System";
+import { width } from "@mui/system";
 
 
 const AdminConfigTabShop = ({
@@ -44,6 +46,8 @@ const AdminConfigTabShop = ({
   const [linkToConnectMp, setLinkToConnectMp] = useState("")
   const [checkingConnectMp, setCheckingConnectMp] = useState(false)
 
+  const [cambioAlgo, setCambioAlgo] = useState(false)
+
   const achicarInfo = (infoCompleta) => {
     const infoMin = {}
     infoCompleta.forEach((con, ix) => {
@@ -54,6 +58,12 @@ const AdminConfigTabShop = ({
     return infoMin
   }
 
+  const showMessageLoading = (err) => {
+    showMessage(err)
+    hideLoading()
+  }
+
+
   const getInfoComercio = (callbackOk) => {
     var comSes = new StorageSesion("comercio")
     if (!comSes.hasOne()) {
@@ -63,10 +73,7 @@ const AdminConfigTabShop = ({
         hideLoading()
         comSes.guardar(infoMin)
         callbackOk(infoMin)
-      }, (err) => {
-        showMessage(err)
-        hideLoading()
-      })
+      }, showMessageLoading)
     } else {
       callbackOk(comSes.cargar(1))
     }
@@ -84,18 +91,38 @@ const AdminConfigTabShop = ({
         hideLoading()
         // console.log("respuesta de softus", response)
         setInfoComercio(response.info)
-      }, (err) => {
-        hideLoading()
-        showMessage(err)
-      })
+      }, showMessageLoading)
     })
 
   }
 
   const cambiaInfoComercio = (campo, valor) => {
     infoComercio[campo] = valor
+
+    const cp = System.clone(infoComercio)
+    delete (infoComercio.campo)
+
     setInfoComercio(infoComercio)
+    setTimeout(() => {
+      setInfoComercio(cp)
+    }, 10);
+
   }
+
+  const actualizarInfoComercio = () => {
+    showLoading("Actualizando informacion del comercio")
+    Shop.actualizarInfoComercio(infoComercio, (resp) => {
+      showMessage("Realizado correctamente")
+      hideLoading()
+      setCambioAlgo(false)
+    }, showMessageLoading)
+
+  }
+
+
+  useEffect(() => {
+    setCambioAlgo(true)
+  }, [infoComercio])
 
   const enviarImagen = () => {
     showLoading("Subiendo imagen")
@@ -232,6 +259,15 @@ const AdminConfigTabShop = ({
               <TextField
                 margin="normal"
                 fullWidth
+                label={"url de la tienda"}
+                type="text" // Cambia dinámicamente el tipo del campo de contraseña
+                value={infoComercio.url}
+                onChange={(e) => cambiaInfoComercio("url", e.target.value)}
+              />
+
+              <TextField
+                margin="normal"
+                fullWidth
                 label={"Descripcion"}
                 type="text" // Cambia dinámicamente el tipo del campo de contraseña
                 value={infoComercio.description}
@@ -248,6 +284,12 @@ const AdminConfigTabShop = ({
               />
 
 
+              <SmallButton
+                textButton={"Actualizar informacion"}
+                style={{ width: "250px" }}
+                isDisabled={!cambioAlgo}
+                actionButton={actualizarInfoComercio}
+              />
 
 
             </div>
