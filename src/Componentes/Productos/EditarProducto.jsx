@@ -26,6 +26,12 @@ import Product from "../../Models/Product";
 import System from "../../Helpers/System";
 import PropertyImage from "../Elements/ExtendProperty/PropertyImage";
 import PropertyText from "../Elements/ExtendProperty/PropertyText";
+import PropertyCheck from "../Elements/ExtendProperty/PropertyCheck";
+import SmallButton from "../Elements/SmallButton";
+import { height, width } from "@mui/system";
+import SmallSecondaryButton from "../Elements/SmallSecondaryButton";
+import AsignaIngredientes from "../ScreenDialog/AsignaIngredientes";
+import AsignaAgregados from "../ScreenDialog/AsignaAgregados";
 
 const EditarProducto = ({
   product,
@@ -47,6 +53,9 @@ const EditarProducto = ({
   const [errorMessage, setErrorMessage] = useState("");
 
   const [esPesable, setEsPesable] = useState(false);
+
+  const [verIngredientes, setVerIngredientes] = useState(false);
+  const [verAgregados, setVerAgregados] = useState(false);
 
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -280,7 +289,7 @@ const EditarProducto = ({
           marginTop: "-10px"
         }}>
 
-          
+
 
           <Grid item xs={12} sm={12} md={8} lg={8}>
             <TextField
@@ -297,9 +306,32 @@ const EditarProducto = ({
             />
           </Grid>
 
-          <Grid item xs={12} sm={12} md={12} lg={12}>
+          <Grid item xs={12} sm={12} md={9} lg={9}>
 
             <PropertyImage topic={"producto"} unique={product.idProducto} />
+
+          </Grid>
+          <Grid item xs={12} sm={12} md={3} lg={3}>
+            <SmallButton
+              textButton={"Ingredientes"}
+              style={{ width: "100%", height: "45px" }}
+              actionButton={() => setVerIngredientes(true)}
+            />
+            <SmallSecondaryButton
+              textButton={"Agregados"}
+              style={{ width: "100%", height: "45px" }}
+              actionButton={() => setVerAgregados(true)}
+            />
+
+            <AsignaIngredientes
+              producto={product}
+              openDialog={verIngredientes}
+              setOpenDialog={setVerIngredientes} />
+
+            <AsignaAgregados
+              producto={product}
+              openDialog={verAgregados}
+              setOpenDialog={setVerAgregados} />
 
           </Grid>
 
@@ -615,6 +647,26 @@ const EditarProducto = ({
             <PropertyText
               name={"tiempo_empaquetado"}
               label={"Tiempo empaquetado(en min)"}
+              topic={"producto"}
+              unique={product.idProducto}
+            />
+          </Grid>
+
+
+          <Grid item xs={12} sm={12} md={6} lg={6}>
+            <PropertyCheck
+              name={"es_vendible"}
+              label={"Disponible para venta"}
+              topic={"producto"}
+              unique={product.idProducto}
+            />
+          </Grid>
+
+
+          <Grid item xs={12} sm={12} md={6} lg={6}>
+            <PropertyCheck
+              name={"es_materia_prima"}
+              label={"Es materia prima"}
               topic={"producto"}
               unique={product.idProducto}
             />

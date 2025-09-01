@@ -13,7 +13,7 @@ import {
   DialogTitle,
   Grid,
   InputAdornment,
-   Table,
+  Table,
   TableBody,
   TableCell,
   TableContainer,
@@ -26,7 +26,11 @@ import ModelConfig from "../../../Models/ModelConfig";
 import { SelectedOptionsContext } from "../../Context/SelectedOptionsProvider";
 import Product from "../../../Models/Product";
 
-const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
+const SearchProducts = ({
+  onProductSelect,
+  labelInput = "Buscar producto...",
+  textButton = "Buscar"
+}) => {
   const { showLoading, hideLoading } = useContext(SelectedOptionsContext);
   const apiUrl = ModelConfig.get().urlBase;
   const [searchTerm, setSearchTerm] = useState("");
@@ -112,7 +116,7 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
           <TextField
             fullWidth
             margin="dense"
-            label="Buscar productos..."
+            label={labelInput}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={checkEnterSearch}
@@ -132,7 +136,7 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
                     startIcon={<SearchIcon />}
                     sx={{ height: "40px" }}
                   >
-                    Buscar
+                    {textButton}
                   </Button>
                 </InputAdornment>
               ),
@@ -140,7 +144,7 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
           />
         </Grid>
       </Grid>
-  
+
       {/* Mostrar resultados filtrados solo si se ha buscado y hay resultados */}
       {searched && filteredProducts.length > 0 && (
         <Box sx={{ marginTop: "20px" }}>
@@ -183,7 +187,7 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
                       </TableBody>
                     </Table>
                   </Grid>
-  
+
                   <Grid item xs={3}>
                     <Table>
                       <TableHead>
@@ -208,7 +212,7 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
                       </TableBody>
                     </Table>
                   </Grid>
-  
+
                   <Grid item xs={3}>
                     <Table>
                       <TableHead>
@@ -233,7 +237,7 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
                       </TableBody>
                     </Table>
                   </Grid>
-  
+
                   <Grid item xs={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <Button
                       variant="contained"
@@ -252,7 +256,7 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
           )}
         </Box>
       )}
-  
+
       {/* Snackbar */}
       <Snackbar
         open={openSnackbar}
@@ -260,7 +264,7 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
         autoHideDuration={3000}
         onClose={() => setOpenSnackbar(false)}
       />
-  
+
       {/* Confirmación de agregar producto */}
       {/* <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Confirmar Agregar Producto</DialogTitle>
@@ -279,7 +283,7 @@ const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
       </Dialog> */}
     </Box>
   );
-  
+
 };
 
 export default SearchProducts;
