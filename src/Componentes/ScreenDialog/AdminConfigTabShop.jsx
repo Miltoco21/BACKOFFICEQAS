@@ -284,8 +284,50 @@ const AdminConfigTabShop = ({
               />
 
 
+              <Grid container spacing={2}>
+                <Grid item xs={12} lg={12}>
+
+                  <h4 style={{
+                    textAlign: "left",
+                    marginTop: "30px"
+                  }}>Horarios</h4>
+
+                </Grid>
+
+                <Grid item xs={6} lg={6}>
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    label={"Apertura"}
+                    type="text" // Cambia dinámicamente el tipo del campo de contraseña
+                    value={infoComercio.time_start}
+                    onChange={(e) => cambiaInfoComercio("time_start", e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={6} lg={6}>
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    label={"Cierre"}
+                    type="text" // Cambia dinámicamente el tipo del campo de contraseña
+                    value={infoComercio.time_end}
+                    onChange={(e) => cambiaInfoComercio("time_end", e.target.value)}
+                  />
+
+                <br />
+                <br />
+                <br />
+                </Grid>
+
+
+              </Grid>
+
+
+
+
+
               <SmallButton
-                textButton={"Actualizar informacion"}
+                textButton={"Guardar cambios"}
                 style={{ width: "250px" }}
                 isDisabled={!cambioAlgo}
                 actionButton={actualizarInfoComercio}
