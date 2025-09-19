@@ -86,6 +86,7 @@ const AsignaIngredientes = ({
       if (resp.info != "") {
         setProductos(JSON.parse(resp.info))
       }
+      showMessage("Guardado correctamente")
       // hideLoading()
     }, (er) => {
       // hideLoading()

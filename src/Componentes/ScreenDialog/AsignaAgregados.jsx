@@ -86,10 +86,12 @@ const AsignaAgregados = ({
       producto.idSubCategoria + "-"
       + producto.idFamilia + "-"
       + producto.idSubFamilia, "agregados", valor, infoComercio, (resp) => {
-        // console.log("respuesta del servidor", resp)
+        console.log("respuesta del servidor", resp)
         if (resp.info != "") {
           setProductos(JSON.parse(resp.info))
         }
+        showMessage("Guardado correctamente")
+
         // hideLoading()
       }, (er) => {
         // hideLoading()
