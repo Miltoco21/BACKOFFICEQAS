@@ -33,7 +33,8 @@ const AdminConfigTabShop = ({
   const {
     showMessage,
     showLoading,
-    hideLoading
+    hideLoading,
+    showAlert,
   } = useContext(SelectedOptionsContext);
 
   const TAB_INDEX = 4
@@ -290,6 +291,84 @@ const AdminConfigTabShop = ({
                   <h4 style={{
                     textAlign: "left",
                     marginTop: "30px"
+                  }}>Posicion Gps de la tienda</h4>
+
+                </Grid>
+
+                <Grid item xs={12} lg={12}>
+
+
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    label={"Gps"}
+                    type="text" // Cambia dinámicamente el tipo del campo de contraseña
+                    value={infoComercio.gps_position}
+                    onChange={(e) => cambiaInfoComercio("gps_position", e.target.value)}
+                  />
+
+                </Grid>
+
+                <Grid item xs={12} lg={12}>
+                  {infoComercio.gps_position != "" && (
+                    <SmallButton textButton={"Ver en mapa"} actionButton={() => {
+                      // -34.566302, -58.543924
+                      const coords = infoComercio.gps_position.replaceAll(" ", "").split(",")
+                      const lat = coords[0]
+                      const lon = coords[1]
+
+                      var lk = "https://www.google.com/maps/search/" + lat + "," + lon
+
+                      window.open(lk, "_blank")
+                    }} />
+                  )}
+                  <SmallButton
+                    textButton={((infoComercio.gps_position != "") ? "Cambiar Posicion Gps" : "Asignar Posicion GPS")}
+                    style={{
+                      width: "300px"
+                    }}
+                    actionButton={() => {
+
+
+                      if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
+                          enableHighAccuracy: true,
+                          timeout: 5000, // 5 segundos de tiempo máximo para obtener la posición
+                          maximumAge: 0 // No usar una posición en caché anterior
+                        });
+                      } else {
+                        showMessage("La geolocalización no está disponible en este navegador.");
+                      }
+
+                      function successCallback(position) {
+                        const latitud = position.coords.latitude;
+                        const longitud = position.coords.longitude;
+                        console.log("actualiza gps", latitud, "..", longitud)
+                        // callbackOk(latitud, longitud)
+                        cambiaInfoComercio("gps_position", latitud + ", " + longitud)
+                        showMessage("Capturado gps correctamente")
+                        // -34.543082, -58.575656
+
+                        // -34.566302, -58.543924
+                      }
+
+                      function errorCallback(error) {
+                        showAlert(error)
+                      }
+
+
+
+
+                    }} />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={2}>
+                <Grid item xs={12} lg={12}>
+
+                  <h4 style={{
+                    textAlign: "left",
+                    marginTop: "30px"
                   }}>Horarios</h4>
 
                 </Grid>
@@ -314,11 +393,10 @@ const AdminConfigTabShop = ({
                     onChange={(e) => cambiaInfoComercio("time_end", e.target.value)}
                   />
 
-                <br />
-                <br />
-                <br />
+                  <br />
+                  <br />
+                  <br />
                 </Grid>
-
 
               </Grid>
 
