@@ -39,6 +39,7 @@ const AdminConfigTabGeneral = ({
   const [porcentajeMargen, setPorcentajeMargen] = useState(0);
 
   const [criterioCostoComercio, setCriterioCostoComercio] = useState(null)
+  const [idEmpresa, setIdEmpresa] = useState(0)
 
 
   const loadConfigSesion = () => {
@@ -46,6 +47,7 @@ const AdminConfigTabGeneral = ({
     setIva(ModelConfig.get("iva"))
     setPorcentajeMargen(ModelConfig.get("porcentajeMargen"))
     setCriterioCostoComercio(ModelConfig.get("criterioCostoComercio"))
+    setIdEmpresa(ModelConfig.get("idEmpresa"))
   }
 
   const confirmSave = (close = false) => {
@@ -53,6 +55,7 @@ const AdminConfigTabGeneral = ({
     ModelConfig.change("iva", iva)
     ModelConfig.change("porcentajeMargen", porcentajeMargen)
     ModelConfig.change("criterioCostoComercio", criterioCostoComercio)
+    ModelConfig.change("idEmpresa", idEmpresa)
 
     showMessage("Guardado correctamente")
     setSomeChange(false)
@@ -122,6 +125,18 @@ const AdminConfigTabGeneral = ({
           />
         </Grid>
 
+        <Grid item xs={12} sm={12} md={6} lg={6}>
+          <TextField
+            margin="normal"
+            fullWidth
+            label="Id Empresa(Mype)"
+            type="text" // Cambia dinámicamente el tipo del campo de contraseña
+            value={idEmpresa}
+            onKeyDown={() => { setSomeChange(true) }}
+            onChange={(e) => setIdEmpresa(e.target.value)}
+          />
+        </Grid>
+
         <div style={{
           width: "100%",
           height: "50px",
@@ -129,7 +144,7 @@ const AdminConfigTabGeneral = ({
 
 
         <SmallButton textButton="Guardar" actionButton={confirmSave} />
-        <SmallButton textButton="Guardar y salir" actionButton={()=>confirmSave(true)} />
+        <SmallButton textButton="Guardar y salir" actionButton={() => confirmSave(true)} />
 
       </Grid>
 
