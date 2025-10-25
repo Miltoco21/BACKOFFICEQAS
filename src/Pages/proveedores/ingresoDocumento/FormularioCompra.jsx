@@ -288,7 +288,15 @@ const FormularioCompra = ({
         proveedor.razonSocial.toLowerCase().includes(searchText.toLowerCase()) ||
         proveedor.rut.toLowerCase().includes(searchText.toLowerCase())
       );
-      setProveedoresFiltrados(filteredResults);
+
+      if (filteredResults.length == 1) {
+        setSelectedProveedor(filteredResults[0]);
+        setProveedoresFiltrados([]);
+        setSearchText("");
+        setShowPanel(false)
+      }else{
+        setProveedoresFiltrados(filteredResults);
+      }
     }
   };
 
