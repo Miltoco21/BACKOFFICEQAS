@@ -49,8 +49,22 @@ const AjustePrecios = ({
   useEffect(() => {
     if (!openDialog) return
 
+
+
     console.log("recibiendo el prod:", productoSel)
-    setPrecioVentaInicial(productoSel.precioVenta + 0)
+
+    const idProd = productoSel.idProducto
+    Product.getInstance().findByCodigoBarras({ codigoProducto: idProd }, (prods) => {
+      if (prods.length > 0) {
+        setPrecioVentaInicial(prods[0].precioVenta)
+      }
+    }, () => {
+      setPrecioVentaInicial(0)
+
+    })
+
+
+
     setAjuste(productoSel.precioVenta)
     setProductox(productoSel)
     setCambiosGuardados(true)
@@ -226,8 +240,8 @@ const AjustePrecios = ({
                   }}>Precio venta en pos</Typography>
                   <Typography sx={{
                     border: "1px solid #ccc",
-                    borderRadius:"5px",
-                    color:"black",
+                    borderRadius: "5px",
+                    color: "black",
                     backgroundColor: "#fff",
                     padding: "10px",
                     textAlign: "center"
