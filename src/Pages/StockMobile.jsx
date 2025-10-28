@@ -149,15 +149,13 @@ const StockMobile = () => {
         setopenEdit(true)
 
       } else {
-        showMessage("no existe el producto")
+        showMessage("no existe el producto '" + txtSearch + "'")
         setopenAdd(true)
       }
 
       hideLoading()
     }, () => {
-      showMessage("no existe el producto")
-
-
+      showMessage("no existe el producto '" + txtSearch + "'")
       hideLoading()
     })
   }
