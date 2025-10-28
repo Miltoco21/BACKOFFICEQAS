@@ -163,7 +163,7 @@ const SearchProducts = ({
                 }}
               >
                 <Grid container spacing={2}>
-                  <Grid item xs={3}>
+                  <Grid item xs={12} sm={12} md={3} lg={3}>
                     <Table>
                       <TableHead>
                         <TableRow>
@@ -188,7 +188,7 @@ const SearchProducts = ({
                     </Table>
                   </Grid>
 
-                  <Grid item xs={3}>
+                  <Grid item xs={6} sm={6} md={3} lg={3}>
                     <Table>
                       <TableHead>
                         <TableRow>
@@ -213,7 +213,7 @@ const SearchProducts = ({
                     </Table>
                   </Grid>
 
-                  <Grid item xs={3}>
+                  <Grid item xs={6} sm={6} md={3} lg={3}>
                     <Table>
                       <TableHead>
                         <TableRow>
@@ -238,7 +238,7 @@ const SearchProducts = ({
                     </Table>
                   </Grid>
 
-                  <Grid item xs={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <Grid item xs={12} sm={12} md={3} lg={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <Button
                       variant="contained"
                       color="secondary"

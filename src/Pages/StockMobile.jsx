@@ -9,13 +9,15 @@ import Modal from "@mui/joy/Modal";
 import { SelectedOptionsContext } from "./../Componentes/Context/SelectedOptionsProvider";
 import { Check, HorizontalSplit, LinkedCamera, Search } from "@mui/icons-material";
 import Product from "../Models/Product";
-import { Grid, InputAdornment, TextField } from "@mui/material";
+import { Dialog, Grid, InputAdornment, TextField } from "@mui/material";
 import EditarProducto from "./../Componentes/Productos/EditarProducto";
 import System from "../Helpers/System";
 import Model from "../Models/Model";
 import CrearSinCodigo from "../Componentes/Productos/SinCodigo/Crear";
 import CrearConCodigo from "../Componentes/Productos/ConCodigo/Crear";
 import StockMobileQR from "./StockMobileQR";
+import AjusteInventario from "../Componentes/Stock/AjusteInventario";
+import MovimientoStock from "../Componentes/Stock/MovimientoStock";
 
 const StockMobile = () => {
 
@@ -37,6 +39,10 @@ const StockMobile = () => {
 
   const refInputBuscar = useRef(null)
 
+  const [openAjusteInventario, setOpenAjusteInventario] = useState(false);
+  const [verMovStock, setVerMovStock] = useState(false);
+
+
 
   useEffect(() => {
     System.intentarFoco(refInputBuscar)
@@ -47,7 +53,7 @@ const StockMobile = () => {
     // console.log("open", open)
     // console.log("openAdd", openAdd)
     // console.log("openEdit", openEdit)
-    if (!open && !open2 && !openAdd && !openEdit) {
+    if (!open && !open2 && !openAdd && !openEdit && !openAjusteInventario && !verMovStock) {
       // console.log("intentar foco")
       System.intentarFoco(refInputBuscar)
     }
@@ -142,10 +148,21 @@ const StockMobile = () => {
   const [showQrReader, setShowQRReader] = useState(false)
   const [intentSearch, setIntentSearch] = useState(false)
 
-  
+
   useEffect(() => {
     doSearch()
   }, [intentSearch])
+
+
+
+  const handleOpenAjusteInventario = () => {
+    setOpenAjusteInventario(true);
+  };
+
+  const handleCloseAjusteInventario = () => {
+    setOpenAjusteInventario(false);
+  };
+
   return (
     <div style={{ display: "flex" }}>
       <GeneralElements />
@@ -285,11 +302,11 @@ const StockMobile = () => {
               }}
             >
 
-              <LinkedCamera sx={{ 
-                left:"-5px",
-                top:"-2px",
-                position:"relative"
-                }} />
+              <LinkedCamera sx={{
+                left: "-5px",
+                top: "-2px",
+                position: "relative"
+              }} />
               Capturar código
             </Button>
 
@@ -303,6 +320,63 @@ const StockMobile = () => {
                 }, 500);
               }}
             />
+
+            <Button
+              size="large"
+              variant="outlined"
+              style={{
+                marginLeft: "10%",
+                padding: "14px",
+                marginTop: "6px",
+                width: "80%",
+              }}
+              sx={{
+                my: 1,
+                mx: 2,
+              }}
+              onClick={handleOpenAjusteInventario} // Abre el modal al hacer clic en el botón
+            >
+              Ajuste de inventario
+            </Button>
+
+
+            <Dialog
+              open={openAjusteInventario}
+              onClose={handleCloseAjusteInventario}
+              maxWidth="lg"
+              fullWidth
+            >
+              <AjusteInventario onClose={handleCloseAjusteInventario} />
+            </Dialog>
+
+
+            <Button
+              size="large"
+              variant="outlined"
+              style={{
+                marginLeft: "10%",
+                padding: "14px",
+                marginTop: "6px",
+                width: "80%",
+              }}
+              sx={{
+                my: 1,
+                mx: 2,
+              }}
+              onClick={() => { setVerMovStock(true) }} // Abre el modal al hacer clic en el botón
+            >
+              Entrada/Salida
+            </Button>
+
+
+            <Dialog
+              open={verMovStock}
+              onClose={() => { setVerMovStock(false) }}
+              maxWidth="lg"
+              fullWidth
+            >
+              <MovimientoStock onClose={() => { setVerMovStock(false) }} />
+            </Dialog>
 
           </Grid>
 
@@ -354,8 +428,9 @@ const StockMobile = () => {
             >salir</Button>
           </Box>
         </Modal>
-
       </Box>
+
+
       <Modal open={open2} onClose={() => { }}>
         <Box
           sx={{
