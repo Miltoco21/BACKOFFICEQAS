@@ -157,7 +157,7 @@ const StockMobile = () => {
     }, (err) => {
       showMessage("no existe el producto '" + txtSearch + "'")
       setTimeout(() => {
-        showMessage(err)
+        showMessage(JSON.stringify(err))
 
       }, 3000);
       hideLoading()
