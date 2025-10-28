@@ -9,7 +9,7 @@ import Modal from "@mui/joy/Modal";
 import { SelectedOptionsContext } from "./../Componentes/Context/SelectedOptionsProvider";
 import { Check, HorizontalSplit, LinkedCamera, Search } from "@mui/icons-material";
 import Product from "../Models/Product";
-import { Dialog, Grid, InputAdornment, TextField } from "@mui/material";
+import { Dialog, Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import EditarProducto from "./../Componentes/Productos/EditarProducto";
 import System from "../Helpers/System";
 import Model from "../Models/Model";
@@ -18,6 +18,7 @@ import CrearConCodigo from "../Componentes/Productos/ConCodigo/Crear";
 import StockMobileQR from "./StockMobileQR";
 import AjusteInventario from "../Componentes/Stock/AjusteInventario";
 import MovimientoStock from "../Componentes/Stock/MovimientoStock";
+import dayjs from "dayjs";
 
 const StockMobile = () => {
 
@@ -42,7 +43,11 @@ const StockMobile = () => {
   const [openAjusteInventario, setOpenAjusteInventario] = useState(false);
   const [verMovStock, setVerMovStock] = useState(false);
 
+  const [footerTextSupport, setFooterTextSupport] = useState("Version 1.0.0");
 
+  useEffect(() => {
+    setFooterTextSupport(System.getInstance().getAppName())
+  }, [])
 
   useEffect(() => {
     System.intentarFoco(refInputBuscar)
@@ -377,6 +382,19 @@ const StockMobile = () => {
             >
               <MovimientoStock onClose={() => { setVerMovStock(false) }} />
             </Dialog>
+
+
+            <Typography component="h4" style={{
+              marginLeft: "10%",
+              padding: "14px",
+              marginTop: "130px",
+              width: "80%",
+              textAlign:"center"
+            }}>
+              <p>
+                {footerTextSupport}
+              </p>
+            </Typography>
 
           </Grid>
 
