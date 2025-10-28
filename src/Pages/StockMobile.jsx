@@ -43,6 +43,7 @@ const StockMobile = () => {
   const [verMovStock, setVerMovStock] = useState(false);
 
   const [footerTextSupport, setFooterTextSupport] = useState("Version 1.0.0");
+  const [msgerr, setMsgerr] = useState("");
 
   useEffect(() => {
     setFooterTextSupport(System.getInstance().getAppName())
@@ -156,10 +157,7 @@ const StockMobile = () => {
       hideLoading()
     }, (err) => {
       showMessage("no existe el producto '" + txtSearch + "'")
-      setTimeout(() => {
-        showMessage(JSON.stringify(err))
-
-      }, 3000);
+      setMsgerr(JSON.stringify(err))
       hideLoading()
     })
   }
@@ -383,6 +381,20 @@ const StockMobile = () => {
               padding: "14px",
               marginTop: "130px",
               width: "80%",
+              textAlign: "center",
+              border: "1px solid #ccc",
+              overflow: "scroll"
+            }}>
+              <p>
+                {msgerr}
+              </p>
+            </Typography>
+
+            <Typography component="h4" style={{
+              marginLeft: "10%",
+              padding: "14px",
+              marginTop: "130px",
+              width: "80%",
               textAlign: "center"
             }}>
               <p>
@@ -485,7 +497,6 @@ const StockMobile = () => {
 
 
       </Modal>
-
 
 
       {(productoEdit && (
