@@ -50,6 +50,35 @@ const StockMobile = () => {
 
   useEffect(() => {
     System.intentarFoco(refInputBuscar)
+
+
+
+
+    if (!window.catchCloseOrUpload) {
+      window.catchCloseOrUpload = 1
+      window.addEventListener("beforeunload", function (e, e2) {
+        console.log("antes de salir", e)
+        ejecutar();
+        (e || window.event).returnValue = null;
+        return null
+      });
+
+      function ejecutar() {
+        // UserEvent.send({
+        //   name: "cierre de pantalla Punto Venta",
+        //   info: ""
+        // })
+
+        // UserEvent.send({
+        //   name: "intento de cierre o actualizar ventana de punto de venta",
+        //   info: ""
+        // })
+      }
+
+
+    }
+
+
   }, [])
 
   const checkFoco = () => {
@@ -82,6 +111,7 @@ const StockMobile = () => {
   const handleCloseStepper2 = () => {
     setOpen2(false);
   };
+
 
 
 
@@ -351,7 +381,7 @@ const StockMobile = () => {
               padding: "14px",
               marginTop: "130px",
               width: "80%",
-              textAlign:"center"
+              textAlign: "center"
             }}>
               <p>
                 {footerTextSupport}
