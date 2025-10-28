@@ -25,11 +25,13 @@ import SearchIcon from "@mui/icons-material/Search"; // Importar el Ã­cono de bÃ
 import ModelConfig from "../../../Models/ModelConfig";
 import { SelectedOptionsContext } from "../../Context/SelectedOptionsProvider";
 import Product from "../../../Models/Product";
+import Model from "../../../Models/Model";
 
 const SearchProducts = ({
   onProductSelect,
   labelInput = "Buscar producto...",
-  textButton = "Buscar"
+  textButton = "Buscar",
+  focus = true
 }) => {
   const { showLoading, hideLoading } = useContext(SelectedOptionsContext);
   const apiUrl = ModelConfig.get().urlBase;
@@ -108,6 +110,19 @@ const SearchProducts = ({
       doSearch();
     }
   };
+
+  const cargaAnteriorDeSesion = async (funSet, propiedad) => {
+    const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
+    funSet(anterior)
+  }
+
+  useEffect(() => {
+    if (window.location.href.indexOf("stockmobile") > -1) {
+      cargaAnteriorDeSesion(setSearchTerm, "ultimaBusquedaStockMobile")
+    }
+    console.log("cambio focus", focus)
+  }, [focus])
+
 
   return (
     <Box sx={{ p: 2, mb: 4 }}>

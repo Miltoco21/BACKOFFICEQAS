@@ -40,7 +40,6 @@ const StockMobile = () => {
 
   const refInputBuscar = useRef(null)
 
-  const [openAjusteInventario, setOpenAjusteInventario] = useState(false);
   const [verMovStock, setVerMovStock] = useState(false);
 
   const [footerTextSupport, setFooterTextSupport] = useState("Version 1.0.0");
@@ -58,7 +57,7 @@ const StockMobile = () => {
     // console.log("open", open)
     // console.log("openAdd", openAdd)
     // console.log("openEdit", openEdit)
-    if (!open && !open2 && !openAdd && !openEdit && !openAjusteInventario && !verMovStock) {
+    if (!open && !open2 && !openAdd && !openEdit && !verMovStock) {
       // console.log("intentar foco")
       System.intentarFoco(refInputBuscar)
     }
@@ -158,15 +157,6 @@ const StockMobile = () => {
     doSearch()
   }, [intentSearch])
 
-
-
-  const handleOpenAjusteInventario = () => {
-    setOpenAjusteInventario(true);
-  };
-
-  const handleCloseAjusteInventario = () => {
-    setOpenAjusteInventario(false);
-  };
 
   return (
     <div style={{ display: "flex" }}>
@@ -326,34 +316,6 @@ const StockMobile = () => {
               }}
             />
 
-            <Button
-              size="large"
-              variant="outlined"
-              style={{
-                marginLeft: "10%",
-                padding: "14px",
-                marginTop: "6px",
-                width: "80%",
-              }}
-              sx={{
-                my: 1,
-                mx: 2,
-              }}
-              onClick={handleOpenAjusteInventario} // Abre el modal al hacer clic en el botón
-            >
-              Ajuste de inventario
-            </Button>
-
-
-            <Dialog
-              open={openAjusteInventario}
-              onClose={handleCloseAjusteInventario}
-              maxWidth="lg"
-              fullWidth
-            >
-              <AjusteInventario onClose={handleCloseAjusteInventario} />
-            </Dialog>
-
 
             <Button
               size="large"
@@ -370,7 +332,7 @@ const StockMobile = () => {
               }}
               onClick={() => { setVerMovStock(true) }} // Abre el modal al hacer clic en el botón
             >
-              Entrada/Salida
+              Entrada/Salida Stock
             </Button>
 
 
