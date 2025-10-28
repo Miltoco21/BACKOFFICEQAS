@@ -154,8 +154,12 @@ const StockMobile = () => {
       }
 
       hideLoading()
-    }, () => {
+    }, (err) => {
       showMessage("no existe el producto '" + txtSearch + "'")
+      setTimeout(() => {
+        showMessage(err)
+
+      }, 3000);
       hideLoading()
     })
   }
