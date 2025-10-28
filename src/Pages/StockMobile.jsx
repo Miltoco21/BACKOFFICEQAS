@@ -7,18 +7,17 @@ import Button from "@mui/material/Button";
 import Add from "@mui/icons-material/Add";
 import Modal from "@mui/joy/Modal";
 import { SelectedOptionsContext } from "./../Componentes/Context/SelectedOptionsProvider";
-import { Check, HorizontalSplit, LinkedCamera, Search } from "@mui/icons-material";
+import { Check, HorizontalSplit, LinkedCamera, Search, Settings } from "@mui/icons-material";
 import Product from "../Models/Product";
-import { Dialog, Grid, InputAdornment, TextField, Typography } from "@mui/material";
+import { Dialog, Grid, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
 import EditarProducto from "./../Componentes/Productos/EditarProducto";
 import System from "../Helpers/System";
 import Model from "../Models/Model";
 import CrearSinCodigo from "../Componentes/Productos/SinCodigo/Crear";
 import CrearConCodigo from "../Componentes/Productos/ConCodigo/Crear";
 import StockMobileQR from "./StockMobileQR";
-import AjusteInventario from "../Componentes/Stock/AjusteInventario";
 import MovimientoStock from "../Componentes/Stock/MovimientoStock";
-import dayjs from "dayjs";
+import ScreenDialogConfig from "../Componentes/ScreenDialog/AdminConfig";
 
 const StockMobile = () => {
 
@@ -43,6 +42,8 @@ const StockMobile = () => {
   const [verMovStock, setVerMovStock] = useState(false);
 
   const [footerTextSupport, setFooterTextSupport] = useState("Version 1.0.0");
+  const [showScreenConfig, setShowScreenConfig] = useState(false);
+
 
   useEffect(() => {
     setFooterTextSupport(System.getInstance().getAppName())
@@ -86,7 +87,7 @@ const StockMobile = () => {
     // console.log("open", open)
     // console.log("openAdd", openAdd)
     // console.log("openEdit", openEdit)
-    if (!open && !open2 && !openAdd && !openEdit && !verMovStock) {
+    if (!open && !open2 && !openAdd && !openEdit && !verMovStock && !showScreenConfig) {
       // console.log("intentar foco")
       System.intentarFoco(refInputBuscar)
     }
@@ -383,9 +384,17 @@ const StockMobile = () => {
             }}>
               <p>
                 {footerTextSupport}
+
+                <IconButton
+                  onClick={() => { setShowScreenConfig(true) }}
+                  edge="end"
+                >
+                  <Settings />
+                </IconButton>
               </p>
             </Typography>
 
+            <ScreenDialogConfig openDialog={showScreenConfig} setOpenDialog={setShowScreenConfig} />
           </Grid>
 
 
