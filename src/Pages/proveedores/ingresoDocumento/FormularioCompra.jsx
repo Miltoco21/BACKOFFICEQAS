@@ -294,7 +294,7 @@ const FormularioCompra = ({
         setProveedoresFiltrados([]);
         setSearchText("");
         setShowPanel(false)
-      }else{
+      } else {
         setProveedoresFiltrados(filteredResults);
       }
     }
@@ -778,6 +778,9 @@ const FormularioCompra = ({
                               onChange={(e) => {
                                 handleCostoChange(e.target.value, index)
                               }}
+
+
+                              onClick={() => ajustarPrecio(product, index)}
                             />
                           </TableCell>
                           <TableCell>
