@@ -776,7 +776,8 @@ const FormularioCompra = ({
                               // value={(product.precioCosto).toFixed(2)}
                               value={(product.precioCosto)}
                               onChange={(e) => {
-                                handleCostoChange(e.target.value, index)
+                                // handleCostoChange(e.target.value, index)
+                                ajustarPrecio(product, index)
                               }}
 
 
