@@ -40,7 +40,7 @@ class ModelConfig {
         return rs;
     }
 
-    static getValueOrDefault(name) {
+    static getValueOrDefault(name:string) {
         const all = ModelConfig.get()
 
         if (all[name] == undefined) {
@@ -54,7 +54,7 @@ class ModelConfig {
         }
     }
 
-    static change(propName, propValue) {
+    static change(propName:string, propValue:any) {
         var all = ModelConfig.get();
         all[propName] = propValue;
         ModelConfig.getInstance().sesion.guardar(all);
@@ -72,7 +72,7 @@ class ModelConfig {
     }
 
 
-    static async getAllComercio(callbackOk, callbackWrong) {
+    static async getAllComercio(callbackOk:any, callbackWrong:any) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
@@ -91,7 +91,7 @@ class ModelConfig {
         }
     }
 
-    static async updateComercio(data, callbackOk, callbackWrong) {
+    static async updateComercio(data:any, callbackOk:any, callbackWrong:any) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
@@ -110,7 +110,7 @@ class ModelConfig {
         }
     }
 
-    static async getAllImpresion(callbackOk, callbackWrong) {
+    static async getAllImpresion(callbackOk:any, callbackWrong:any) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
@@ -129,7 +129,7 @@ class ModelConfig {
         }
     }
 
-    static async updateImpresion(data, callbackOk, callbackWrong) {
+    static async updateImpresion(data:any, callbackOk:any, callbackWrong:any) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
@@ -148,7 +148,7 @@ class ModelConfig {
         }
     }
 
-    static async getAllSimpleApi(callbackOk, callbackWrong) {
+    static async getAllSimpleApi(callbackOk:any, callbackWrong:any) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
@@ -167,7 +167,7 @@ class ModelConfig {
         }
     }
 
-    static async updateSimpleApi(data, callbackOk, callbackWrong) {
+    static async updateSimpleApi(data:any, callbackOk:any, callbackWrong:any) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
