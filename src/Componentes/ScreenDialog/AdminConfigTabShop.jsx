@@ -269,6 +269,15 @@ const AdminConfigTabShop = ({
               <TextField
                 margin="normal"
                 fullWidth
+                label={"Direccion"}
+                type="text" // Cambia dinámicamente el tipo del campo de contraseña
+                value={infoComercio.full_adress}
+                onChange={(e) => cambiaInfoComercio("full_adress", e.target.value)}
+              />
+
+              <TextField
+                margin="normal"
+                fullWidth
                 label={"Descripcion"}
                 type="text" // Cambia dinámicamente el tipo del campo de contraseña
                 value={infoComercio.description}
@@ -281,7 +290,7 @@ const AdminConfigTabShop = ({
                 label={"Rut"}
                 type="text" // Cambia dinámicamente el tipo del campo de contraseña
                 value={infoComercio.unique_doc}
-                onChange={(e) => cambiaInfoComercio("unique_doc", e.target.value)}
+              // onChange={(e) => cambiaInfoComercio("unique_doc", e.target.value)}
               />
 
 
