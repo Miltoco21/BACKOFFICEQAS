@@ -25,9 +25,10 @@ const InputNumber = ({
   endAdornment = null,
   isDecimal = false,
   isRut = false,
-  onClick = ()=>{},
+  onClick = () => { },
 
-  onRef = ()=>{}
+  onRef = () => { },
+  readonly = false
 }) => {
 
   const {
@@ -80,7 +81,8 @@ const InputNumber = ({
     console.log("isDecimal", isDecimal)
     console.log("Validator.isDecimal(" + event.key + ")", Validator.isDecimal(event.key))
     console.log("Validator.isNumeric(" + event.key + ")", Validator.isNumeric(event.key))
-    if (!canAutoComplete && event.key == "Unidentified") {
+
+    if (readonly || (!canAutoComplete && event.key == "Unidentified")) {
       event.preventDefault();
       return false
     } else {
@@ -105,13 +107,13 @@ const InputNumber = ({
 
   const checkChange = (event) => {
     // console.log("checkChange")
-    
+
     // console.log("isDecimal", isDecimal)
     // console.log("Validator.isDecimal(" + event.target.value + ")", Validator.isDecimal(event.target.value))
     // console.log("Validator.isNumeric(" + event.target.value + ")", Validator.isNumeric(event.target.value))
-    
-    
-    if (!canAutoComplete && !keyPressed) {
+
+
+    if (readonly || (!canAutoComplete && !keyPressed)) {
       return
     }
     // console.log("checkChange2")
@@ -131,11 +133,11 @@ const InputNumber = ({
       setNumber(value);
     }
 
-    if(!isDecimal && isRut){
+    if (!isDecimal && isRut) {
       const numStr = number + ""
-      if(numStr.indexOf("-")>-1){
-        const numSinG = numStr.replace("-","")
-        if(Validator.isNumeric(numSinG)){
+      if (numStr.indexOf("-") > -1) {
+        const numSinG = numStr.replace("-", "")
+        if (Validator.isNumeric(numSinG)) {
           setNumber(value)
         }
       }
@@ -158,7 +160,7 @@ const InputNumber = ({
   }, [number])
 
   useEffect(() => {
-    if(refInput && refInput.current){
+    if (refInput && refInput.current) {
       onRef(refInput)
     }
   }, [refInput])
@@ -184,7 +186,7 @@ const InputNumber = ({
 
         ref={refInput}
 
-        onClick={()=>{
+        onClick={() => {
           onClick()
         }}
 

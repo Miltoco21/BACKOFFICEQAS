@@ -25,7 +25,8 @@ const InputName = ({
   required = false,
   vars = null,
   onEnter = () => { },
-  onRef = () => { }
+  onRef = () => { },
+  readonly = false
 }) => {
 
   const {
@@ -78,6 +79,8 @@ const InputName = ({
     // console.log("checkKeyDown:", event)
     setLastKeyPressed(event.key)
 
+    if (readonly) return
+
     if (Validator.isTeclaControl(event)) {
       setKeyPressed(true)
       return
@@ -96,6 +99,8 @@ const InputName = ({
   }
 
   const checkChange = (event) => {
+    if (readonly) return
+
     if (!canAutoComplete && !keyPressed) {
       return
     }

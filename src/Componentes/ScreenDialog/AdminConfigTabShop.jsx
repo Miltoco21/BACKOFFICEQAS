@@ -26,6 +26,8 @@ import InputName from "../Elements/Compuestos/InputName";
 import InputPage from "../Elements/Compuestos/InputPage";
 import InputNumber from "../Elements/Compuestos/InputNumber";
 import InputGeneric from "../Elements/Compuestos/InputGeneric";
+import SmallSecondaryButton from "../Elements/SmallSecondaryButton";
+import ShopDeliveryZones from "./ShopDeliveryZones";
 
 
 const AdminConfigTabShop = ({
@@ -52,6 +54,7 @@ const AdminConfigTabShop = ({
   const [checkingConnectMp, setCheckingConnectMp] = useState(false)
 
   const [cambioAlgo, setCambioAlgo] = useState(false)
+  const [showZones, setShowZones] = useState(false)
 
   const inputs = {
     name: useState(""),
@@ -479,14 +482,38 @@ const AdminConfigTabShop = ({
 
 
 
+              <Grid container spacing={2}>
+                <Grid item xs={12} lg={12}>
+                  <SmallButton
+                    textButton={"Guardar cambios"}
+                    style={{ width: "250px" }}
+                    isDisabled={!cambioAlgo}
+                    actionButton={actualizarInfoComercio}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={6} lg={6}>
+                  <SmallSecondaryButton
+                    textButton={"Tarifas de repartidores"}
+                    style={{ width: "100%" }}
+                    actionButton={() => setShowZones(true)}
+                  />
 
+                  <ShopDeliveryZones infoComercio={infoComercio} setOpenDialog={setShowZones} openDialog={showZones} />
 
-              <SmallButton
-                textButton={"Guardar cambios"}
-                style={{ width: "250px" }}
-                isDisabled={!cambioAlgo}
-                actionButton={actualizarInfoComercio}
-              />
+                </Grid>
+                <Grid item xs={12} sm={12} md={6} lg={6}>
+                  <SmallSecondaryButton
+                    textButton={"Horarios entregas programadas"}
+                    style={{ width: "100%" }}
+                  // actionButton={actualizarInfoComercio}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={12}>
+                  <br />
+                  <br />
+                  <br />
+                </Grid>
+              </Grid>
 
 
             </div>
