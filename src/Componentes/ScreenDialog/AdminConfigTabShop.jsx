@@ -28,6 +28,7 @@ import InputNumber from "../Elements/Compuestos/InputNumber";
 import InputGeneric from "../Elements/Compuestos/InputGeneric";
 import SmallSecondaryButton from "../Elements/SmallSecondaryButton";
 import ShopDeliveryZones from "./ShopDeliveryZones";
+import ShopDeliveryTimes from "./ShopDeliveryTimes";
 
 
 const AdminConfigTabShop = ({
@@ -55,6 +56,7 @@ const AdminConfigTabShop = ({
 
   const [cambioAlgo, setCambioAlgo] = useState(false)
   const [showZones, setShowZones] = useState(false)
+  const [showTimes, setShowTimes] = useState(false)
 
   const inputs = {
     name: useState(""),
@@ -496,16 +498,17 @@ const AdminConfigTabShop = ({
                     textButton={"Tarifas de repartidores"}
                     style={{ width: "100%" }}
                     actionButton={() => setShowZones(true)}
-                  />
+                    />
 
                   <ShopDeliveryZones infoComercio={infoComercio} setOpenDialog={setShowZones} openDialog={showZones} />
+                  <ShopDeliveryTimes infoComercio={infoComercio} setOpenDialog={setShowTimes} openDialog={showTimes} />
 
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} lg={6}>
                   <SmallSecondaryButton
                     textButton={"Horarios entregas programadas"}
                     style={{ width: "100%" }}
-                  // actionButton={actualizarInfoComercio}
+                    actionButton={() => setShowTimes(true)}
                   />
                 </Grid>
                 <Grid item xs={12} lg={12}>

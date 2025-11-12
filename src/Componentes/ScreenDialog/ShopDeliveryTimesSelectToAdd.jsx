@@ -39,14 +39,25 @@ export default function ({
     showMessage
   } = useContext(SelectedOptionsContext);
 
-  const [zones, setZones] = useState([])
+  const [times, setTimes] = useState([])
 
-  const loadZones = () => {
-    showLoading("Cargando zonas")
-    Shop.getAllZones(infoComercio, (resp) => {
-      console.log("resp zones", resp)
+  const ordenarPorNombre = (zonas) => {
+    const zonasCopia = System.clone(zonas)
+    return zonasCopia.sort((item1, item2) => {
+      const name1 = parseFloat(item1.name.replace(":", "."))
+      const name2 = parseFloat(item2.name.replace(":", "."))
+      return name1 - name2
+    })
+  }
+
+  const loadTimes = () => {
+    showLoading("Cargando horarios")
+    Shop.getAllTimes(infoComercio, (resp) => {
+      console.log("resp times", resp)
       hideLoading()
-      setZones(resp.zones)
+      console.log("normal", resp.times)
+      console.log("ordenado", ordenarPorNombre(resp.times))
+      setTimes(ordenarPorNombre(resp.times))
     }, (er) => {
       showMessage(er)
       hideLoading()
@@ -55,7 +66,7 @@ export default function ({
 
   useEffect(() => {
     if (!openDialog) return
-    loadZones()
+    loadTimes()
   }, [openDialog]);
 
 
@@ -64,7 +75,7 @@ export default function ({
   }}
   >
     <DialogTitle>
-      Agregar zona de entrega
+      Agregar horario de entrega
     </DialogTitle>
     <DialogContent>
 
@@ -75,26 +86,22 @@ export default function ({
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Nombre</TableCell>
-                <TableCell>Distancia(en Km)</TableCell>
-                <TableCell>Precio</TableCell>
                 <TableCell>&nbsp;</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {zones.length === 0 ? (
+              {times.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6}>No hay registros</TableCell>
                 </TableRow>
               ) : (
-                zones.map((zone, ix) => (
+                times.map((time, ix) => (
                   <TableRow key={ix}>
-                    <TableCell>{zone.id}</TableCell>
-                    <TableCell>{zone.name}</TableCell>
-                    <TableCell>{zone.distance_gps}</TableCell>
-                    <TableCell>{System.formatMonedaLocal(zone.price)}</TableCell>
+                    <TableCell>{time.id}</TableCell>
+                    <TableCell>{time.name}</TableCell>
                     <TableCell>
                       <SmallButton actionButton={() => {
-                        onSelect(zone)
+                        onSelect(time)
                         setOpenDialog(false)
                       }} textButton={"Seleccionar"} />
                     </TableCell>

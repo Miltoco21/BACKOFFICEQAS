@@ -227,9 +227,39 @@ class Shop extends ModelSingleton {
         })
     }
 
+    static async getAllTimes(infoComercio: any, callbackOk: any, callbackWrong: any) {
+        // const configs = ModelConfig.get()
+        var url = "https://softus.com.ar/easypos/get-all-times"
+
+        const ant = SoporteTicket.reportarError
+        SoporteTicket.reportarError = false
+        EndPoint.sendPost(url, infoComercio, (responseData: any, response: any) => {
+            callbackOk(responseData, response);
+            SoporteTicket.reportarError = ant
+        }, (err: any) => {
+            callbackWrong(err)
+            SoporteTicket.reportarError = ant
+        })
+    }
+
     static async getAllZonesCommerce(infoComercio: any, callbackOk: any, callbackWrong: any) {
         // const configs = ModelConfig.get()
         var url = "https://softus.com.ar/easypos/get-all-zones-of-commerce"
+
+        const ant = SoporteTicket.reportarError
+        SoporteTicket.reportarError = false
+        EndPoint.sendPost(url, infoComercio, (responseData: any, response: any) => {
+            callbackOk(responseData, response);
+            SoporteTicket.reportarError = ant
+        }, (err: any) => {
+            callbackWrong(err)
+            SoporteTicket.reportarError = ant
+        })
+    }
+
+    static async getAllTimesCommerce(infoComercio: any, callbackOk: any, callbackWrong: any) {
+        // const configs = ModelConfig.get()
+        var url = "https://softus.com.ar/easypos/get-all-times-of-commerce"
 
         const ant = SoporteTicket.reportarError
         SoporteTicket.reportarError = false
@@ -259,6 +289,23 @@ class Shop extends ModelSingleton {
         })
     }
 
+    static async addTimeToCommerce(infoComercio: any, time: any, callbackOk: any, callbackWrong: any) {
+        // const configs = ModelConfig.get()
+        var url = "https://softus.com.ar/easypos/add-time-to-commerce"
+        const info = Object.assign(infoComercio, {
+            time_id: time.id
+        })
+        const ant = SoporteTicket.reportarError
+        SoporteTicket.reportarError = false
+        EndPoint.sendPost(url, infoComercio, (responseData: any, response: any) => {
+            callbackOk(responseData, response);
+            SoporteTicket.reportarError = ant
+        }, (err: any) => {
+            callbackWrong(err)
+            SoporteTicket.reportarError = ant
+        })
+    }
+
     static async removeZoneToCommerce(infoComercio: any, zone: any, callbackOk: any, callbackWrong: any) {
         // const configs = ModelConfig.get()
         var url = "https://softus.com.ar/easypos/remove-zone-to-commerce"
@@ -276,12 +323,31 @@ class Shop extends ModelSingleton {
         })
     }
 
-    static async editZoneToCommerce(infoComercio: any, zone: any, callbackOk: any, callbackWrong: any) {
+    static async removeTimeToCommerce(infoComercio: any, time: any, callbackOk: any, callbackWrong: any) {
         // const configs = ModelConfig.get()
-        var url = "https://softus.com.ar/easypos/edit-zone-to-commerce"
+        var url = "https://softus.com.ar/easypos/remove-time-to-commerce"
+        const info = Object.assign(infoComercio, {
+            time_id: time.id
+        })
+        const ant = SoporteTicket.reportarError
+        SoporteTicket.reportarError = false
+        EndPoint.sendPost(url, infoComercio, (responseData: any, response: any) => {
+            callbackOk(responseData, response);
+            SoporteTicket.reportarError = ant
+        }, (err: any) => {
+            callbackWrong(err)
+            SoporteTicket.reportarError = ant
+        })
+    }
+
+    static async createAndAssignZoneToCommerce(infoComercio: any, zone: any, callbackOk: any, callbackWrong: any) {
+        // const configs = ModelConfig.get()
+        var url = "https://softus.com.ar/easypos/create-zone-and-assign-to-commerce"
         const info = Object.assign(infoComercio, {
             zone_id: zone.id,
             zone_price: zone.price,
+            zone_name: zone.name,
+            zone_distance_gps: zone.distance_gps,
         })
         const ant = SoporteTicket.reportarError
         SoporteTicket.reportarError = false
@@ -293,14 +359,13 @@ class Shop extends ModelSingleton {
             SoporteTicket.reportarError = ant
         })
     }
-    static async createAndAssignZoneToCommerce(infoComercio: any, zone: any, callbackOk: any, callbackWrong: any) {
+
+    static async createAndAssignTimeToCommerce(infoComercio: any, time: any, callbackOk: any, callbackWrong: any) {
         // const configs = ModelConfig.get()
-        var url = "https://softus.com.ar/easypos/create-zone-and-assign-to-commerce"
+        var url = "https://softus.com.ar/easypos/create-time-and-assign-to-commerce"
         const info = Object.assign(infoComercio, {
-            zone_id: zone.id,
-            zone_price: zone.price,
-            zone_name: zone.name,
-            zone_distance_gps: zone.distance_gps,
+            time_id: time.id,
+            time_name: time.name,
         })
         const ant = SoporteTicket.reportarError
         SoporteTicket.reportarError = false
