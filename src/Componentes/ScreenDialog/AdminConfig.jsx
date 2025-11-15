@@ -21,8 +21,12 @@ import AdminConfigTabImpresion from "./AdminConfigTabImpresion";
 
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 import AdminConfigTabSimpleApi from "./AdminConfigTabSimpleApi";
-import AdminConfigTabShop from "./AdminConfigTabShop";
 
+
+var prods = [];
+for (let index = 1; index <= 5; index++) {
+  prods.push(index);
+}
 
 const AdminConfig = ({
   openDialog,
@@ -49,10 +53,6 @@ const AdminConfig = ({
       setTabNumber(newValue);
     }
   };
-
-  const closeModal = () => {
-    setOpenDialog(false)
-  }
 
   useEffect(() => {
     if (!openDialog) return
@@ -82,22 +82,22 @@ const AdminConfig = ({
               <Tab label="Comercio" />
               <Tab label="Impresion" />
               <Tab label="Simple Api" />
-              <Tab label="Tienda" />
             </Tabs>
           </Grid>
 
           <Grid item xs={12}>
-            <AdminConfigTabGeneral tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
-            <AdminConfigTabComercio tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
-            <AdminConfigTabImpresion tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
-            <AdminConfigTabSimpleApi tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
-            <AdminConfigTabShop tabNumber={tabNumber} setSomeChange={setSomeChange} closeModal={closeModal} />
+            <AdminConfigTabGeneral tabNumber={tabNumber} setSomeChange={setSomeChange} />
+            <AdminConfigTabComercio tabNumber={tabNumber} setSomeChange={setSomeChange} />
+            <AdminConfigTabImpresion tabNumber={tabNumber} setSomeChange={setSomeChange} />
+            <AdminConfigTabSimpleApi tabNumber={tabNumber} setSomeChange={setSomeChange} />
           </Grid>
 
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeModal}>Atras</Button>
+        <Button onClick={() => {
+          setOpenDialog(false)
+        }}>Atras</Button>
       </DialogActions>
     </Dialog>
   );

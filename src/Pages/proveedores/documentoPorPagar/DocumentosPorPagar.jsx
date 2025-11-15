@@ -37,7 +37,6 @@ import { SelectedOptionsContext } from "../../../Componentes/Context/SelectedOpt
 import Proveedor from "../../../Models/Proveedor";
 import ItemListado from "./ItemListado";
 import System from "../../../Helpers/System";
-import ProveedorDocumento from "../../../Models/ProveedorDocumento";
 
 const DocumentosPorPagar = () => {
   const {
@@ -53,7 +52,7 @@ const DocumentosPorPagar = () => {
 
 
   const cargarComprasProveedores = () => {
-    ProveedorDocumento.getCompras((compras) => {
+    Proveedor.getCompras((compras) => {
       setProveedores(compras)
     }, showMessage)
   }

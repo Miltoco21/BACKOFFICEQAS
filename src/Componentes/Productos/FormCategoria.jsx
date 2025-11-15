@@ -26,7 +26,6 @@ import ModelConfig from "../../Models/ModelConfig";
 import Product from "../../Models/Product";
 import InputName from "../Elements/Compuestos/InputName";
 import System from "../../Helpers/System";
-import PropertyImage from "../Elements/ExtendProperty/PropertyImage";
 
 const theme = createTheme();
 
@@ -62,14 +61,14 @@ const FormCategoria = ({
     const dataRequest = {
       descripcionCategoria: states.nombre[0]
     }
-    if (isEdit) dataRequest.idCategoria = editData.idCategoria
+    if(isEdit) dataRequest.idCategoria = editData.idCategoria
 
     showLoading("Guardando categoria...")
     actionDo(dataRequest, (responseData) => {
       const categoria = responseData.categorias[0]
       categoria.descripcion = states.nombre[0]
 
-      if (categoria.idCategoria == -1 && editData.idCategoria) {
+      if(categoria.idCategoria == -1 && editData.idCategoria){
         categoria.idCategoria = editData.idCategoria
       }
 
@@ -81,20 +80,13 @@ const FormCategoria = ({
       hideLoading()
     })
   };
+  
 
-
-  useEffect(() => {
-    if (isEdit && editData) {
-      // console.log("edit", editData)
+  useEffect(()=>{
+    if(isEdit && editData){
       states.nombre[1](editData.descripcion)
     }
-  }, [isEdit, editData])
-
-
-
-  // fin funcionalidad imagen
-
-
+  },[ isEdit, editData ])
 
   return (
     <ThemeProvider theme={theme}>
@@ -102,18 +94,7 @@ const FormCategoria = ({
       <h4>{!isEdit ? "Ingreso" : "Editar"} Categoria</h4>
       <Box>
         <Grid container spacing={2}>
-
-
-          {editData && (
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-
-              <PropertyImage topic={"categoria"} unique={editData.idCategoria} />
-
-            </Grid>
-          )}
-
-          <Grid item xs={12} sm={12} md={12} lg={12}>
-
+          <Grid item xs={12} sm={6} md={12}>
             <InputName
               inputState={states.nombre}
               validationState={validatorStates.nombre}

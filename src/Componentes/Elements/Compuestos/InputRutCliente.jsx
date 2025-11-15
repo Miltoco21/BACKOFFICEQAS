@@ -25,7 +25,8 @@ const InputRutCliente = ({
   fieldName = "rut",
   required = false,
   isEdit = false,
-  vars = null
+  vars = null,
+ 
 }) => {
 
   const {
@@ -66,6 +67,19 @@ const InputRutCliente = ({
     validate()
   }, [])
 
+  useEffect(() => {
+    if (isEdit) {
+      // En modo edición, marcamos el RUT como válido automáticamente
+      setAllOk(true);
+      setValidation({
+        allOk: true,
+        message: ""
+      });
+    }
+  }, [isEdit]);
+
+
+
 
   useEffect(() => {
 
@@ -83,6 +97,7 @@ const InputRutCliente = ({
   }, [rut])
 
   const validate = () => {
+    if (isEdit) return; // No validar en modo edición
     // console.log("validate de:" + fieldName)
     const len = rut.trim().length
     const reqOk = (!required || (required && len > 0))
@@ -129,7 +144,7 @@ const InputRutCliente = ({
   }
   const checkUnique = () => {
     // console.log("checkUnique")
-
+    if (isEdit) return;  // No verificar unicidad en edición
     if (rut === "") return
     //usar distintos modelos para revision de rut 
     Client.getInstance().existRut(
@@ -153,7 +168,16 @@ const InputRutCliente = ({
           setRutUnique(true)
         }
       })
+
+
+      
+    
   }
+
+  if (isEdit) {
+    return null;
+  }
+
 
   return (
     <>

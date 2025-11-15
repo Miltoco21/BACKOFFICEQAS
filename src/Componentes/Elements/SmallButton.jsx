@@ -28,14 +28,6 @@ const SmallButton = ({
   const [clickeable, setClickeable] = useState(true);
   const [colorFondo, setColorFondo] = useState("#283048")
 
-  const [disabled, setDisabled] = useState(false);
-
-  useEffect(() => {
-    setDisabled(isDisabled)
-  }, [isDisabled])
-
-
-
   const changeBackgroundColor = () => {
     setColorFondo("#0dee8e")
     setTimeout(() => {
@@ -45,7 +37,7 @@ const SmallButton = ({
 
   return (
     <Button
-      disabled={disabled}
+      disabled={isDisabled}
       sx={{
         ...{
           width: "130px",

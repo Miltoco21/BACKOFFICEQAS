@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-const BaseConfig:any =  {
+const BaseConfig =  {
     shopName:'EasyPOSLite',
     urlBase : (import.meta.env.VITE_URL_BASE),
     sesionStart: dayjs().format('DD/MM/YYYY-HH:mm:ss'),
@@ -25,7 +25,6 @@ const BaseConfig:any =  {
     dashboardRefreshPreventasUsadas:30,
     dashboardRefreshPreventasDescartadas:30,
     
-    idEmpresa:0,
 };
 
 export default BaseConfig;

@@ -25,10 +25,6 @@ import {
   DialogActions,
   Tooltip,
 } from "@mui/material";
-import ExitToAppIcon from '@mui/icons-material/ExitToApp'; // Importar el icono
-
-import Icon from '@mui/material/Icon';
-
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -46,10 +42,6 @@ import IngresoDocProvBuscarProductos from "./BuscarProductos";
 import CrearProducto from "../../CrearProducto";
 import FormularioProveedor from "../FormularioProveedor";
 import CriterioCosto from "../../../definitions/CriterioCosto";
-import ProveedorDocumento from "../../../Models/ProveedorDocumento";
-import SeleccionaBorradorDocProv from "../../../Componentes/ScreenDialog/SeleccionaBorradorDocProv";
-import SelectList from "../../../Componentes/Elements/Compuestos/SelectList";
-import TiposDocumentoProveedor from "../../../definitions/TiposDocumentoProveedor";
 
 const FormularioCompra = ({
   openDialog,
@@ -94,9 +86,6 @@ const FormularioCompra = ({
   const [countPackage, setCountPackage] = useState(0);
 
   const [showCreateProduct, setShowCreateProduct] = useState(false);
-
-  const [borradores, setBorradores] = useState([]);
-  const [showBorradores, setShowBorradores] = useState(false);
 
   const ajustarPrecio = (producto, index) => {
     producto.index = index
@@ -175,29 +164,38 @@ const FormularioCompra = ({
 
   const handleCostoChange = (value, index) => {
     const updatedProducts = [...selectedProducts];
-    const isOk = Validator.isDecimal(value);
-    if (!isOk) return
-    const parsedValue = (value);
-    updatedProducts[index].precioCosto = parsedValue;
-    const prod = updatedProducts[index]
+    // console.log("updatedProduct")
+    // console.log(updatedProducts[index])
+    // // Parse the input value to an integer
+    const parsedValue = parseInt(value);
 
-    if (updatedProducts[index].sinPrecioCosto) {
-      const prodm = Product.calcularMargen(updatedProducts[index])
-      updatedProducts[index] = prodm
+    // Check if the parsed value is NaN or less than zero
+    if (isNaN(parsedValue) || parsedValue < 0) {
+
+      showMessage("valor incorrecto")
+      // If it's NaN or less than zero, set quantity and total to zero
+      // updatedProducts[index].cantidad = 0;
+      // updatedProducts[index].precioCosto = 0;
+      // updatedProducts[index].precio = 0;
+      // updatedProducts[index].total = 0;
+      return
     } else {
-      updatedProducts[index] = Product.logicaPrecios(prod, "final")
-    }
-    // updatedProducts[index].precio = parsedValue;
-    updatedProducts[index].total = calcularTotal(
-      parsedValue,
-      updatedProducts[index].cantidad,
-      updatedProducts[index].cantidadProveedor
-    )
+      // Otherwise, update quantity and calculate total
 
-    console.log("updatedProducts", updatedProducts)
+      updatedProducts[index].precioCosto = parsedValue;
+      const prod = updatedProducts[index]
+      updatedProducts[index] = Product.logicaPrecios(prod, "final")
+      // updatedProducts[index].precio = parsedValue;
+      updatedProducts[index].total = calcularTotal(
+        parsedValue,
+        updatedProducts[index].cantidad,
+        updatedProducts[index].cantidadProveedor
+      )
+    }
 
     setSelectedProducts(updatedProducts);
-  }
+  };
+
 
   const calcularTotal = (costo, cantidad, cantidadProveedor) => {
     // console.log("calcularTotal..costo", costo, "..cantidad:", cantidad,"..cantidad proveedor:",cantidadProveedor)
@@ -232,7 +230,6 @@ const FormularioCompra = ({
         return p;
       });
       setSelectedProducts(updatedProducts);
-
     } else {
       product.id = product.idProducto
       product.cantidad = 1
@@ -268,12 +265,6 @@ const FormularioCompra = ({
       product.total = calcularTotal(product.precioCosto, product.cantidad, product.cantidadProveedor)
       product.impuestosValor = Product.calcularImpuestos(product)
 
-      if (product.precioCosto == 0) {
-        product.sinPrecioCosto = true
-      } else {
-        product.sinPrecioCosto = false
-      }
-
       console.log("agregado queda asi:", System.clone(product))
       // setSelectedProducts([...selectedProducts, newProduct]);
       // console.log("seleccionados:",[...selectedProducts, product]);
@@ -281,28 +272,14 @@ const FormularioCompra = ({
     }
 
     setAssociating(false)
-
   };
 
   useEffect(() => {
     if (!openDialog) return
-    setBorradores(ProveedorDocumento.getBorradores())
     Proveedor.getInstance().getAll((provs) => {
       setProveedores(provs);
     }, () => { })
   }, [open]);
-
-
-  useEffect(() => {
-
-    console.log("cambio algo de productos seleccionados", selectedProducts)
-    if (folioDocumento) {
-      const cmb = ProveedorDocumento.crearBorrador(folioDocumento, tipoDocumento, fecha, selectedProveedor, selectedProducts)
-      if (cmb) {
-        showMessage("borrador creado")
-      }
-    }
-  }, [selectedProducts, fecha, tipoDocumento]);
 
   const buscarProveedor = () => {
     console.log("buscarProveedor")
@@ -314,127 +291,28 @@ const FormularioCompra = ({
         proveedor.razonSocial.toLowerCase().includes(searchText.toLowerCase()) ||
         proveedor.rut.toLowerCase().includes(searchText.toLowerCase())
       );
-
-      if (filteredResults.length == 1) {
-        setSelectedProveedor(filteredResults[0]);
-        setProveedoresFiltrados([]);
-        setSearchText("");
-        setShowPanel(false)
-      } else {
-        setProveedoresFiltrados(filteredResults);
-      }
+      setProveedoresFiltrados(filteredResults);
     }
   };
 
-  //guardar borrador si no existe aun
-  const clickEnProveedor = (prove) => {
-    setSelectedProveedor(prove);
+  const clickEnProveedor = (result) => {
+    setSelectedProveedor(result);
     setProveedoresFiltrados([]);
     setSearchText("");
     setShowPanel(false)
-
-    ProveedorDocumento.crearBorrador(folioDocumento, tipoDocumento, fecha, prove)
-    setBorradores(ProveedorDocumento.getBorradores())
   };
 
   const hoy = dayjs();
   const inicioRango = dayjs().subtract(1, "week");
 
-  const handleFolioChange = (e) => {
-    // Obtener la tecla presionada
-    const keyPressed = e.key;
-
-    if (Validator.isTeclaControl(e)) {
-      return
-    }
-
-    if (!Validator.isNumeric(keyPressed)) {
-      // console.log("e", e)
-      // console.log("keyPressed", keyPressed)
-      showMessage("valor incorrecto")
-      e.preventDefault();
-      return
-    }
-  };
-  const grandTotal = selectedProducts.reduce(
-    (total, product) => total + product.total,
-    0
-  );
-
-  const handleDeleteProduct = (index) => {
-    const updatedProducts = [...selectedProducts];
-    updatedProducts.splice(index, 1);
-    setSelectedProducts(updatedProducts);
-  };
-
-
-
-  const handleAsocAndAddProductToSales = (product) => {
-    console.log("asociando", product)
-    if (countPackage < 1) {
-      showMessage("Ingresar la cantidad de cada paquete")
-      return
-    }
-
-    Proveedor.assignAndAssociateProduct(product, {
-      codigoProveedor: selectedProveedor.codigoProveedor,
-      searchCodProv,
-      searchDescProv,
-      countPackage
-    }, (productx, response) => {
-      handleAddProductToSelecteds(productx)
-    }, (error) => {
-      showMessage(error)
-    })
-  }
-
-
-  const cerrarPantalla = () => {
-    // showConfirm("Realmente quiere salir?", () => {
-      setOpenDialog(false)
-
-      setProductoSel(null)
-      setAssociating(null)
-      setShowPanel(true)
-      setSelectedProducts([])
-      setSelectedProveedor(null)
-      setProveedores([])
-      setTipoDocumento("")
-      setFolioDocumento("")
-
-    // }, () => { })
-  }
-
-  const checkFolio = () => {
-    ProveedorDocumento.checkExistFolio(folioDocumento, () => {
-      showAlert("Ya existe el folio")
-    })
-
-
-    if (folioDocumento) {
-      const cmb = ProveedorDocumento.crearBorrador(folioDocumento, tipoDocumento, fecha, selectedProveedor, selectedProducts)
-      if (cmb) {
-        showMessage("borrador creado")
-      }
-    }
-  }
-
-  const revisarLabelCriterioCosto = (producto) => {
-    if (producto.precioCostoOriginal != undefined) {
-      return System.formatMonedaLocal(producto.precioCostoOriginal)
-    } else {
-      return ""
-    }
-  }
-
 
   const handleSubmit = async () => {
+
     console.log("handleSubmit")
     setLoading(true);
 
-    console.log("tipoDocumento", tipoDocumento)
     try {
-      if (!tipoDocumento && tipoDocumento !== 0) {
+      if (!tipoDocumento) {
         showMessage("Por favor complete tipo de documento.");
         setLoading(false);
         return;
@@ -509,7 +387,7 @@ const FormularioCompra = ({
 
       const dataToSend = {
         fechaIngreso: System.getInstance().getDateForServer(),
-        tipoDocumento: TiposDocumentoProveedor[tipoDocumento],
+        tipoDocumento: tipoDocumento,
         folio: folioDocumento,
         codigoProveedor: selectedProveedor.codigoProveedor,
         total: parseFloat(parseFloat(total).toFixed(2)),
@@ -519,11 +397,9 @@ const FormularioCompra = ({
       };
       console.log("Datos a enviar al servidor:", dataToSend);
 
-      ProveedorDocumento.agregarCompra(dataToSend, (responseData, response) => {
+      Proveedor.agregarCompra(dataToSend, (responseData, response) => {
         showMessage("Realizado correctamente");
         console.log("responseData", responseData)
-
-        ProveedorDocumento.eliminarBorrador(folioDocumento + "")
 
         setTipoDocumento("");
         setFolioDocumento("");
@@ -546,6 +422,85 @@ const FormularioCompra = ({
       console.log(err)
     }
   };
+
+  const handleFolioChange = (e) => {
+    // Obtener la tecla presionada
+    const keyPressed = e.key;
+
+    if (Validator.isTeclaControl(e)) {
+      return
+    }
+
+    if (!Validator.isNumeric(keyPressed)) {
+      // console.log("e", e)
+      // console.log("keyPressed", keyPressed)
+      showMessage("valor incorrecto")
+      e.preventDefault();
+      return
+    }
+  };
+  const grandTotal = selectedProducts.reduce(
+    (total, product) => total + product.total,
+    0
+  );
+
+  const handleDeleteProduct = (index) => {
+    const updatedProducts = [...selectedProducts];
+    updatedProducts.splice(index, 1);
+    setSelectedProducts(updatedProducts);
+  };
+
+
+
+  const handleAsocAndAddProductToSales = (product) => {
+    console.log("asociando", product)
+    if (countPackage < 1) {
+      showMessage("Ingresar la cantidad de cada paquete")
+      return
+    }
+
+    Proveedor.assignAndAssociateProduct(product, {
+      codigoProveedor: selectedProveedor.codigoProveedor,
+      searchCodProv,
+      searchDescProv,
+      countPackage
+    }, (productx, response) => {
+      handleAddProductToSelecteds(productx)
+    }, (error) => {
+      showMessage(error)
+    })
+  }
+
+
+  const cerrarPantalla = () => {
+    showConfirm("Realmente quiere salir?", () => {
+      setOpenDialog(false)
+
+      setProductoSel(null)
+      setAssociating(null)
+      setShowPanel(true)
+      setSelectedProducts([])
+      setSelectedProveedor(null)
+      setProveedores([])
+      setTipoDocumento("")
+      setFolioDocumento("")
+
+    }, () => { })
+  }
+
+  const checkFolio = () => {
+    Proveedor.checkExistFolio(folioDocumento, () => {
+      showAlert("Ya existe el folio")
+    })
+  }
+
+  const revisarLabelCriterioCosto = (producto) => {
+    if (producto.precioCostoOriginal != undefined) {
+      return System.formatMonedaLocal(producto.precioCostoOriginal)
+    } else {
+      return ""
+    }
+  }
 
   return (
     <>
@@ -590,16 +545,26 @@ const FormularioCompra = ({
               </Button>
               {showPanel &&
                 (<>
-                  <Grid item xs={12} sm={12} md={4} lg={4}>
-                    <SelectList
-                      inputState={[tipoDocumento, setTipoDocumento]}
-                      selectItems={TiposDocumentoProveedor}
-                      withLabel={false}
-                      label="Tipo de documento"
-                    />
-                  </Grid>
+                  <Grid item xs={12} sm={12} md={6} lg={6}>
 
-                  <Grid item xs={12} sm={12} md={5} lg={5}>
+
+                    <TextField
+                      select
+                      label="Tipo de documento"
+                      value={tipoDocumento}
+                      onChange={(e) => setTipoDocumento(e.target.value)}
+                      fullWidth
+                      sx={{ mb: 2 }}
+                    >
+                      <MenuItem value="Factura">Factura</MenuItem>
+                      <MenuItem value="Boleta">Boleta</MenuItem>
+                      <MenuItem value="Ticket">Ticket</MenuItem>
+                      <MenuItem value="Ingreso Interno">Ingreso Interno</MenuItem>
+                    </TextField>
+
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={6} lg={6}>
+
 
                     <TextField
                       name="folioDocumento"
@@ -611,32 +576,8 @@ const FormularioCompra = ({
                       fullWidth
                       sx={{ mb: 2 }}
                     />
-                  </Grid>
-
-                  <Grid item xs={12} sm={12} md={3} lg={3}>
-                    {borradores.length > 0 ? (
-                      <Button onClick={() => {
-                        setShowBorradores(true)
-                      }} variant="contained" sx={{
-                        backgroundColor: "#3d00af",
-                        width: "100%",
-                        color: "rgba(233, 233, 233, 1)",
-                        height: "55px"
-                      }}
-                      >
-                        Cargar borrador
-                      </Button>
-                    ) : (
-                      <Typography sx={{
-                        paddingTop: "15px",
-                        textAlign: "center"
-                      }}>No hay borradores</Typography>
-                    )}
-
-
 
                   </Grid>
-
                   <Grid item xs={12} sm={12} md={3} lg={3}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
@@ -676,7 +617,7 @@ const FormularioCompra = ({
                       width: "100%",
                       height: "55px"
                     }}>
-                      Buscar provedor
+                      Buscar
                     </Button>
 
                   </Grid>
@@ -827,15 +768,10 @@ const FormularioCompra = ({
                             <TextField
                               label={revisarLabelCriterioCosto(product)}
                               // value={revisarInputCriterioCosto(product.precioCosto)}
-                              // value={(product.precioCosto).toFixed(2)}
-                              value={(product.precioCosto)}
-                              onChange={(e) => {
-                                // handleCostoChange(e.target.value, index)
-                                ajustarPrecio(product, index)
-                              }}
-
-
-                              onClick={() => ajustarPrecio(product, index)}
+                              value={(product.precioCosto).toFixed(2)}
+                              onChange={(e) =>
+                                handleCostoChange(e.target.value, index)
+                              }
                             />
                           </TableCell>
                           <TableCell>
@@ -901,7 +837,7 @@ const FormularioCompra = ({
                 <Button
                   variant="contained"
                   color="secondary"
-                  disabled={!selectedProveedor}
+                  disabled={ !selectedProveedor}
                   onClick={() => {
                     if (associating && !countPackage) {
                       showMessage("Ingresar la cantidad por paquete antes de crear un producto")
@@ -974,7 +910,6 @@ const FormularioCompra = ({
         onChange={(changed) => {
           console.log("el changed es", changed)
           changed.total = calcularTotal(changed.precioCosto, changed.cantidad, changed.cantidadProveedor)
-          changed.sinPrecioCosto = false
           System.addAllInArr(setSelectedProducts, selectedProducts, changed.index, changed)
         }}
       />
@@ -1002,15 +937,6 @@ const FormularioCompra = ({
 
         onClose={() => { }}
       />
-
-      <SeleccionaBorradorDocProv openDialog={showBorradores} setOpenDialog={setShowBorradores} onSelect={(borrador) => {
-        console.log("onselect", borrador)
-        setFolioDocumento(borrador.nroFolio)
-        setTipoDocumento(borrador.tipoDoc)
-        setSelectedProveedor(borrador.proveedor)
-        setFecha(dayjs(borrador.fechaIngreso))
-        setSelectedProducts(borrador.productos)
-      }} />
 
     </>
   );

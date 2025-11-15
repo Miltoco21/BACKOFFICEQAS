@@ -434,9 +434,6 @@ const BuscarProductos = ({
                   </TableCell>
                   <TableCell sx={{ width: "21%" }}>
                     Precio Costo: {product.precioCosto}
-                    <br />
-                    Precio Venta: {product.precioVenta}
-
                   </TableCell>
                   <TableCell>
                     {associating ? (

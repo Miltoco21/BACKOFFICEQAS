@@ -7,21 +7,21 @@ import EndPoint from './EndPoint.ts';
 
 
 class Proveedor extends Model {
-  codigoProveedor: number = 0
-  razonSocial: string = ""
-  giro: string = ""
-  rut: string = ""
-  email: string = ""
-  telefono: string = ""
-  direccion: string = ""
-  comuna: string = ""
-  region: string | null = ""
-  pagina: string = ""
-  formaPago: string = ""
-  nombreResponsable: string = ""
-  correoResponsable: string = ""
-  telefonoResponsable: string = ""
-  sucursal: string = ""
+  codigoProveedor: number
+  razonSocial: string
+  giro: string
+  rut: string
+  email: string
+  telefono: string
+  direccion: string
+  comuna: string
+  region: string | null
+  pagina: string
+  formaPago: string
+  nombreResponsable: string
+  correoResponsable: string
+  telefonoResponsable: string
+  sucursal: string
 
   compraDeudaIds: any
   montoPagado: any
@@ -37,7 +37,7 @@ class Proveedor extends Model {
     return Proveedor.instance;
   }
 
-  async existRut({ rut }: any, callbackOk: any, callbackWrong: any) {
+  async existRut({ rut }, callbackOk, callbackWrong) {
     try {
       const configs = ModelConfig.get()
       var url = configs.urlBase
@@ -57,7 +57,7 @@ class Proveedor extends Model {
     }
   }
 
-  async getAll(callbackOk: any, callbackWrong: any) {
+  async getAll(callbackOk, callbackWrong) {
     try {
       const response = await axios.get(
         ModelConfig.get("urlBase")
@@ -71,9 +71,9 @@ class Proveedor extends Model {
     }
   }
 
-  async update(data: any, callbackOk: any, callbackWrong: any) {
+  async update(data, callbackOk, callbackWrong) {
     const url = ModelConfig.get("urlBase") + "/Proveedores/UpdateProveedor"
-    EndPoint.sendPut(url, data, (responseData: any, response: any) => {
+    EndPoint.sendPut(url, data, (responseData, response) => {
       callbackOk(responseData, response)
     }, callbackWrong)
   }
@@ -81,7 +81,7 @@ class Proveedor extends Model {
   async findProductsByCodigo({
     codigoBuscar,
     codigoProveedor,
-  }: any, callbackOk: any, callbackWrong: any) {
+  }, callbackOk, callbackWrong) {
     try {
       const configs = ModelConfig.get()
       var url = configs.urlBase +
@@ -106,8 +106,8 @@ class Proveedor extends Model {
   async findProductsByDescription({
     description,
     codigoProveedor
-  }: any,
-    callbackOk: any, callbackWrong: any) {
+  },
+    callbackOk, callbackWrong) {
     try {
       const configs = ModelConfig.get()
       var url = configs.urlBase +
@@ -130,7 +130,7 @@ class Proveedor extends Model {
     }
   }
 
-  async asociateProduct(data: any, callbackOk: any, callbackWrong: any) {
+  async asociateProduct(data, callbackOk, callbackWrong) {
     try {
       const configs = ModelConfig.get()
       var url = configs.urlBase +
@@ -152,12 +152,12 @@ class Proveedor extends Model {
     }
   }
 
-  static assignAndAssociateProduct(product: any, {
+  static assignAndAssociateProduct(product, {
     codigoProveedor,
     countPackage,
     searchCodProv,
     searchDescProv,
-  }: any, callbackOk: any, callbackWrong: any) {
+  }, callbackOk, callbackWrong) {
 
 
     const data = [{
@@ -177,17 +177,17 @@ class Proveedor extends Model {
     product.descripcionSegunProveedor = data[0].descripcionSegunProveedor
 
     console.log("datos para asociar:", data)
-    Proveedor.getInstance().asociateProduct(data, (res: any) => {
+    Proveedor.getInstance().asociateProduct(data, (res) => {
       callbackOk(product, res)
-    }, (error: any) => {
+    }, (error) => {
       callbackWrong(error)
     })
   }
 
-  static disAssociateProduct(product: any, {
+  static disAssociateProduct(product, {
     codigoProveedor,
     searchCodProv,
-  }: any, callbackOk: any, callbackWrong: any) {
+  }, callbackOk, callbackWrong) {
 
     const data = [
       {
@@ -198,15 +198,53 @@ class Proveedor extends Model {
     ]
 
     const url = ModelConfig.get("urlBase") + "/ProductosTmp/DeleteProductosByCodigoSegunProveedor"
-    EndPoint.sendDelete(url, data, (responseData: any, response: any) => {
+    EndPoint.sendDelete(url, data, (responseData, response) => {
       callbackOk(responseData, response)
     }, callbackWrong)
   }
 
 
-  static crearNuevo(proveedor: any, callbackOk: any, callbackWrong: any) {
+  static crearNuevo(proveedor, callbackOk, callbackWrong) {
     const url = ModelConfig.get("urlBase") + "/Proveedores/AddProveedor"
-    EndPoint.sendPost(url, proveedor, (responseData: any, response: any) => {
+    EndPoint.sendPost(url, proveedor, (responseData, response) => {
+      callbackOk(responseData, response)
+    }, callbackWrong)
+  }
+
+
+  static async agregarCompra(datosCompra, callbackOk, callbackWrong) {
+    const url = ModelConfig.get("urlBase") + "/Proveedores/AddProveedorCompra"
+    EndPoint.sendPost(url, datosCompra, (responseData, response) => {
+      callbackOk(responseData, response)
+    }, callbackWrong)
+  }
+
+  static async getCompras(callbackOk, callbackWrong) {
+    const url = ModelConfig.get("urlBase") + "/Proveedores/GetProveedorCompra"
+    EndPoint.sendGet(url, (responseData, response) => {
+      callbackOk(responseData.proveedorCompra.proveedorCompraCabeceras, response)
+    }, callbackWrong)
+  }
+
+
+  static async checkExistFolio(nroFolio, existFolio) {
+    this.getCompras((compras) => {
+      var existe = false
+      compras.forEach(compra => {
+        if (compra.folio == nroFolio) {
+          existe = true
+        }
+      });
+      if (existe) existFolio()
+    }, (err) => {
+      console.log("error al revisar si existe folio", err)
+    })
+  }
+
+
+  static async AddProveedorCompraPagar(datos,callbackOk, callbackWrong) {
+    const url = ModelConfig.get("urlBase") + "/Proveedores/AddProveedorCompraPagar"
+    EndPoint.sendPost(url, datos, (responseData, response) => {
       callbackOk(responseData, response)
     }, callbackWrong)
   }

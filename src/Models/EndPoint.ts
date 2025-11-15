@@ -52,9 +52,9 @@ class EndPoint extends Singleton {
   }
 
 
-  static async sendPost(url, data, callbackOk, callbackWrong, headers:any = undefined) {
+  static async sendPost(url, data, callbackOk, callbackWrong) {
     try {
-      const response = await axios.post(url, data, headers);
+      const response = await axios.post(url, data);
       if (
         (response.status === 200 || response.status === 201)
         || (response.data.statusCode === 200 || response.data.statusCode === 201)
@@ -90,14 +90,14 @@ class EndPoint extends Singleton {
     try {
       console.log("ya envio la data", data)
 
-      if (pasarAUrl) {
+      if(pasarAUrl){
         var aUrl = ""
         const keys = Object.keys(data)
-        keys.forEach((key) => {
-          if (aUrl != "") aUrl += "&"
-          aUrl += key + "=" + data[key]
+        keys.forEach((key)=>{
+          if(aUrl != "") aUrl += "&"
+          aUrl +=  key +  "=" + data[key]
         })
-        if (aUrl != "") {
+        if(aUrl != "") {
           aUrl = "?" + aUrl
           url += aUrl
         }

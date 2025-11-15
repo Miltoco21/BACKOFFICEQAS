@@ -29,10 +29,6 @@ class User extends Model {
         return User.instance;
     }
 
-    static mostrarNombre(usuario) {
-        return usuario.nombres + " " + usuario.apellidos
-    }
-
     saveInSesion(data) {
         this.sesion.guardar(data)
         // localStorage.setItem('userData', JSON.stringify(data));
@@ -180,9 +176,6 @@ class User extends Model {
         var url = configs.urlBase
             + "/Usuarios/GetAllUsuarios"
 
-        url += "?idEmpresa=" + configs.idEmpresa
-
-
         EndPoint.sendGet(url, (responseData, response) => {
             callbackOk(responseData.usuarios, response);
         }, callbackWrong)
@@ -239,6 +232,49 @@ class User extends Model {
             User.buscandoRoles = false
         })
     }
+
+    static getRepartidores(callbackOk, callbackWrong) {
+        try {
+          const configs = ModelConfig.get();
+          const url = `${configs.urlBase}/Usuarios/GetAllUsuarios`;
+          
+          axios.get(url)
+            .then(response => {
+              if (response.data && response.data.usuarios && Array.isArray(response.data.usuarios)) {
+                // Filtrar solo usuarios con rol 5 o 6
+                const repartidores = response.data.usuarios.filter(
+                  user => user.rol === "5" || user.rol === "6"
+                );
+                
+                callbackOk(repartidores);
+              } else {
+                callbackWrong("Formato de respuesta inválido");
+              }
+            })
+            .catch(error => {
+              callbackWrong(error.message || "Error al obtener repartidores");
+            });
+        } catch (error) {
+          callbackWrong("Error inesperado: " + error.message);
+        }
+      }
+
+      static async getRepartidoresAsociados(codigoCliente: number, callbackOk: (repartidores: any[]) => void, callbackWrong: (error: string) => void) {
+        try {
+          const configs = ModelConfig.get();
+          const url = `${configs.urlBase}/Usuarios/GetUsuariosAsociadoClienteByCodigoCliente?codigocliente=${codigoCliente}`;
+          
+          const response = await axios.get(url);
+          if (response.data.statusCode === 200 && response.data.usuariosActivos) {
+            callbackOk(response.data.usuariosActivos);
+          } else {
+            callbackWrong(response.data.descripcion || "Error al obtener repartidores asociados");
+          }
+        } catch (error) {
+          console.error("Error en getRepartidoresAsociados:", error);
+          callbackWrong(error.message || "Error al obtener repartidores asociados");
+        }
+      }
 
     //devuelve un numero id o id fijo default(cajero)
     static async findRolIdOrName(idOrName) {

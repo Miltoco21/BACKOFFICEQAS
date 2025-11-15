@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import {
   TextField,
@@ -21,12 +21,10 @@ const InputName = ({
   label = fieldName[0].toUpperCase() + fieldName.substr(1),
   minLength = null,
   canAutoComplete = false,
-  maxLength = 100,
+  maxLength = 20,
   required = false,
   vars = null,
-  onEnter = () => { },
-  onRef = () => { },
-  readonly = false
+  onEnter = () => { }
 }) => {
 
   const {
@@ -36,8 +34,9 @@ const InputName = ({
   const [name, setName] = inputState ? inputState : vars ? vars[0][fieldName] : useState("")
   const [validation, setValidation] = validationState ? validationState : vars ? vars[1][fieldName] : useState(null)
   const [keyPressed, setKeyPressed] = useState(false)
-
+  
   const [lastKeyPressed, setLastKeyPressed] = useState(null)
+
 
   const validate = () => {
     // console.log("validate de:" + fieldName)
@@ -79,8 +78,6 @@ const InputName = ({
     // console.log("checkKeyDown:", event)
     setLastKeyPressed(event.key)
 
-    if (readonly) return
-
     if (Validator.isTeclaControl(event)) {
       setKeyPressed(true)
       return
@@ -99,8 +96,6 @@ const InputName = ({
   }
 
   const checkChange = (event) => {
-    if (readonly) return
-
     if (!canAutoComplete && !keyPressed) {
       return
     }
@@ -113,9 +108,9 @@ const InputName = ({
       // console.log(value + " es valido")
       setName(value);
     } else {
-      if (lastKeyPressed == "Backspace") {
-        setName(value);
-      } else {
+      if(lastKeyPressed == "Backspace" ){
+      setName(value);
+      }else{
         showMessage("Valor erroneo")
       }
 
@@ -149,7 +144,6 @@ const InputName = ({
         </InputLabel>
       )}
       <TextField
-        ref={onRef}
         fullWidth
         autoFocus={autoFocus}
         margin="normal"

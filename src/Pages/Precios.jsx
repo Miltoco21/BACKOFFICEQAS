@@ -10,6 +10,7 @@ import AsocCliente from '../Componentes/Card-Modal/AsocCliente.jsx';
 import PreciosGenerales from '../Componentes/Card-Modal/PreciosGenerales.jsx';
 import BoxBuscador from '../Componentes/Card-Modal/BoxBuscador.jsx';
 import PreciosPorCategoria from '../Componentes/Card-Modal/PreciosPorCategoria.jsx';
+import PreciosPorClientes from '../Componentes/Precios/PreciosPorClientes.jsx';
 
 export const defaultTheme = createTheme();
 
@@ -71,21 +72,21 @@ const Precios = () => {
         </Button>
 
 
-        {/* <Button
+        <Button
           variant="outlined"
           sx={{
             my: 1,
             mx: 2,
           }}
-          startIcon={<Add />}
+        
           onClick={handleOpenModalAsoClientes}
         >
-          Asociación Clientes
-        </Button> */}
+          Asociar Precio / Cliente
+        </Button>
       </Box>
 
       <Dialog open={openAsocClientes} onClose={handleCloseModalAsoClientes}>
-        <BoxBuscador onClosePreciosClientes={handleCloseModalAsoClientes}  />
+        <PreciosPorClientes onClosePreciosClientes={handleCloseModalAsoClientes}  />
       </Dialog>
 
       <Dialog maxWidth={"lg"} open={openPrecios} onClose={handleCloseModal}>

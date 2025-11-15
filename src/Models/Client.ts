@@ -92,28 +92,136 @@ class Client extends Model {
       }
     }
 
-    async getAllFromServer(callbackOk, callbackWrong){
-        try{
-          const configs = ModelConfig.get()
-          var url = configs.urlBase
-          + "/api/Clientes/GetAllClientes"
-          const response = await axios.get(
-            url
-          );
-
-          if (
-              response.data.statusCode == 200
-
-          ) {
-              callbackOk(response.data.cliente);
-          }else{
-              callbackWrong(response.data.descripcion);
-          }
-        }catch(error){
-          callbackWrong(error);
-        }
+    async asociarRepartidor(
+    codigoUsuario: number,
+    callbackOk: (response: any) => void,
+    callbackWrong: (error: string) => void
+  ) {
+    // Verificar que tenemos los datos necesarios
+    if (!this.codigoCliente) {
+      callbackWrong("Cliente no tiene código asignado");
+      return;
     }
 
+    // Si clienteSucursal es null o undefined, usamos 0
+    const codigoSucursal = this.clienteSucursal ?? 0;
+
+    const data = {
+      codigoCliente: [this.codigoCliente],
+      codigoClienteSucursal: codigoSucursal,
+      codigoUsuario: codigoUsuario
+    };
+
+    try {
+      const configs = ModelConfig.get();
+      const url = `${configs.urlBase}/Clientes/PostClientesAsociarUsuario`;
+
+      const response = await axios.post(url, data, {
+        headers: {
+          'accept': '*/*',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        callbackOk(response.data.descripcion);
+      } else {
+        callbackWrong(`Error en la respuesta: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error en asociarRepartidor:", error);
+      if (error.response) {
+        // El servidor respondió con un status fuera de 2xx
+        callbackWrong(`Error ${error.response.status}: ${error.response.data}`);
+      } else if (error.request) {
+        // La solicitud fue hecha pero no se recibió respuesta
+        callbackWrong("No se recibió respuesta del servidor");
+      } else {
+        // Algo pasó al configurar la solicitud
+        callbackWrong("Error al configurar la solicitud: " + error.message);
+      }
+    }
+  }
+
+  
+  async desasociarRepartidor(
+    codigoUsuario: number,
+    callbackOk: (response: any) => void,
+    callbackWrong: (error: string) => void
+  ) {
+    if (!this.codigoCliente) {
+      callbackWrong("Cliente no tiene código asignado");
+      return;
+    }
+  
+    const codigoSucursal = this.clienteSucursal ?? 0;
+  
+    // Crear el objeto de datos con la estructura exacta que espera el servidor
+    const data = {
+      codigoCliente: this.codigoCliente,
+      codigoClienteSucursal: codigoSucursal,
+      codigoUsuario: codigoUsuario
+    };
+  
+    console.log("Datos de desasociación:", data);
+  
+    try {
+      const configs = ModelConfig.get();
+      const url = `${configs.urlBase}/Clientes/DeleteClientesAsociarUsuario`;
+  
+      // Usar axios.delete con el cuerpo JSON
+      const response = await axios.delete(url, {
+        data: data, // Enviar datos en el cuerpo
+        headers: {
+          'accept': '*/*',
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if (response.status === 200) {
+        callbackOk(response.data.descripcion);
+      } else {
+        callbackWrong(`Error en la respuesta: ${response.status} - ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Error en desasociarRepartidor:", error);
+      
+      let errorMessage = "Error desconocido";
+      if (error.response) {
+        // Proporcionar más detalles del error
+        errorMessage = `Error ${error.response.status}: ${JSON.stringify(error.response.data)}`;
+      } else if (error.request) {
+        errorMessage = "No se recibió respuesta del servidor";
+      } else {
+        errorMessage = "Error al configurar la solicitud: " + error.message;
+      }
+      
+      callbackWrong(errorMessage);
+    }
+  }
+
+    async getAllFromServer(callbackOk, callbackWrong) {
+      try {
+        const configs = ModelConfig.get();
+        const url = `${configs.urlBase}/Clientes/GetAllClientes`;
+        
+        console.log("Solicitando clientes en:", url);
+        const response = await axios.get(url);
+        console.log("Respuesta del servidor:", response.data);
+    
+        // Modificación importante: verifica la estructura real de la respuesta
+        const clientes = response.data.cliente || response.data.data || response.data;
+        
+        if (Array.isArray(clientes)) {
+          callbackOk(clientes);
+        } else {
+          callbackWrong("Formato de respuesta inválido");
+        }
+      } catch (error) {
+        console.error("Error en getAllFromServer:", error);
+        callbackWrong(error.message || "Error al obtener clientes");
+      }
+    }
     async findById(id,callbackOk, callbackWrong){
       this.getAllFromServer((clientes)=>{
         var clienteEncontrado = null
@@ -355,6 +463,101 @@ class Client extends Model {
         info.giro && info.giro.length>0
       )
     }
+
+    async getClientPrices(
+      codigoClienteSucursal,
+      codigoCliente,
+      callbackOk,
+      callbackWrong
+    ) {
+      try {
+        const configs = ModelConfig.get();
+        const url = `${configs.urlBase}/Clientes/GetClientesProductoPrecioByIdCliente?codigoClienteSucursal=${codigoClienteSucursal}&codigoCliente=${codigoCliente}`;
+  
+        const response = await axios.get(url);
+  
+        if (response.data.statusCode === 200) {
+          callbackOk(response.data.clientesProductoPrecioMostrar);
+        } else {
+          callbackWrong(
+            response.data.descripcion ||
+              "Error al obtener los precios del cliente"
+          );
+        }
+        console.log()
+      } catch (error) {
+        console.error("Error fetching client prices:", error);
+        callbackWrong(error);
+      }
+    }
+  
+    async saveClientPrices(data, callbackOk, callbackWrong) {
+    try {
+      const configs = ModelConfig.get();
+      const url = `${configs.urlBase}/Clientes/PutClientesProductoActualizarPrecioByIdCliente`;
+  
+      // Hacer la solicitud al endpoint con los datos proporcionados
+      const response = await axios.put(url, data);
+      console.log("precios clientes",response)
+  
+      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
+        callbackOk(response.data);
+        console.log("precios clientes",response.data)
+
+      } else {
+        callbackWrong(
+          response.data.descripcion ||
+            "Error al actualizar los precios del cliente"
+        );
+      }
+    } catch (error) {
+      console.error("Error updating client prices:", error);
+      callbackWrong(error);
+    }
+    
+  }  
+  // En tu modelo Client.js
+  async update(clientId, data, callbackOk, callbackWrong) {
+    try {
+      const configs = ModelConfig.get();
+      const url = `${configs.urlBase}/Clientes/PutClienteCliente`;
+      
+      // Asegurarse de incluir el ID del cliente en los datos
+      const payload = {
+        ...data,
+        codigoCliente: clientId
+      };
+  
+      const response = await axios.put(url, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+  
+      if (response.status === 200) {
+        callbackOk(response.data);
+      } else {
+        callbackWrong(`Error ${response.status}: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Error en update:", error);
+      
+      let errorMessage = "Error desconocido";
+      if (error.response) {
+        // El servidor respondió con un status fuera de 200-299
+        errorMessage = `Error ${error.response.status}: ${JSON.stringify(error.response.data)}`;
+      } else if (error.request) {
+        // La solicitud fue hecha pero no se recibió respuesta
+        errorMessage = "No se recibió respuesta del servidor";
+      } else {
+        // Error al configurar la solicitud
+        errorMessage = `Error de configuración: ${error.message}`;
+      }
+      
+      callbackWrong(errorMessage);
+    }
+  }
 };
 
 export default Client;

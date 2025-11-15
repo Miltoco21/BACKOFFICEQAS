@@ -90,13 +90,6 @@ const InputPage = ({
     validate();
   }, [page]); // Runs when `page` changes
 
-  useEffect(() => {
-    if (inputState) {
-      // console.log("cambio inputState", inputState)
-      setPage(inputState[0])
-    }
-  }, [inputState]); // Runs when `page` changes
-
   return (
     <>
       {withLabel && (

@@ -13,7 +13,7 @@ import {
   DialogTitle,
   Grid,
   InputAdornment,
-  Table,
+   Table,
   TableBody,
   TableCell,
   TableContainer,
@@ -25,14 +25,8 @@ import SearchIcon from "@mui/icons-material/Search"; // Importar el ícono de b�
 import ModelConfig from "../../../Models/ModelConfig";
 import { SelectedOptionsContext } from "../../Context/SelectedOptionsProvider";
 import Product from "../../../Models/Product";
-import Model from "../../../Models/Model";
 
-const SearchProducts = ({
-  onProductSelect,
-  labelInput = "Buscar producto...",
-  textButton = "Buscar",
-  focus = true
-}) => {
+const SearchProducts = ({ refresh, setRefresh,onProductSelect }) => {
   const { showLoading, hideLoading } = useContext(SelectedOptionsContext);
   const apiUrl = ModelConfig.get().urlBase;
   const [searchTerm, setSearchTerm] = useState("");
@@ -111,19 +105,6 @@ const SearchProducts = ({
     }
   };
 
-  const cargaAnteriorDeSesion = async (funSet, propiedad) => {
-    const anterior = await Model.getInstance().cargarDeSesion1(propiedad)
-    funSet(anterior)
-  }
-
-  useEffect(() => {
-    if (window.location.href.indexOf("stockmobile") > -1) {
-      cargaAnteriorDeSesion(setSearchTerm, "ultimaBusquedaStockMobile")
-    }
-    console.log("cambio focus", focus)
-  }, [focus])
-
-
   return (
     <Box sx={{ p: 2, mb: 4 }}>
       <Grid container spacing={2} alignItems="stretch">
@@ -131,7 +112,7 @@ const SearchProducts = ({
           <TextField
             fullWidth
             margin="dense"
-            label={labelInput}
+            label="Buscar productos..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={checkEnterSearch}
@@ -151,7 +132,7 @@ const SearchProducts = ({
                     startIcon={<SearchIcon />}
                     sx={{ height: "40px" }}
                   >
-                    {textButton}
+                    Buscar
                   </Button>
                 </InputAdornment>
               ),
@@ -159,7 +140,7 @@ const SearchProducts = ({
           />
         </Grid>
       </Grid>
-
+  
       {/* Mostrar resultados filtrados solo si se ha buscado y hay resultados */}
       {searched && filteredProducts.length > 0 && (
         <Box sx={{ marginTop: "20px" }}>
@@ -178,7 +159,7 @@ const SearchProducts = ({
                 }}
               >
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={12} md={3} lg={3}>
+                  <Grid item xs={3}>
                     <Table>
                       <TableHead>
                         <TableRow>
@@ -202,8 +183,8 @@ const SearchProducts = ({
                       </TableBody>
                     </Table>
                   </Grid>
-
-                  <Grid item xs={6} sm={6} md={3} lg={3}>
+  
+                  <Grid item xs={3}>
                     <Table>
                       <TableHead>
                         <TableRow>
@@ -227,8 +208,8 @@ const SearchProducts = ({
                       </TableBody>
                     </Table>
                   </Grid>
-
-                  <Grid item xs={6} sm={6} md={3} lg={3}>
+  
+                  <Grid item xs={3}>
                     <Table>
                       <TableHead>
                         <TableRow>
@@ -252,8 +233,8 @@ const SearchProducts = ({
                       </TableBody>
                     </Table>
                   </Grid>
-
-                  <Grid item xs={12} sm={12} md={3} lg={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+  
+                  <Grid item xs={3} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <Button
                       variant="contained"
                       color="secondary"
@@ -271,7 +252,7 @@ const SearchProducts = ({
           )}
         </Box>
       )}
-
+  
       {/* Snackbar */}
       <Snackbar
         open={openSnackbar}
@@ -279,7 +260,7 @@ const SearchProducts = ({
         autoHideDuration={3000}
         onClose={() => setOpenSnackbar(false)}
       />
-
+  
       {/* Confirmación de agregar producto */}
       {/* <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Confirmar Agregar Producto</DialogTitle>
@@ -298,7 +279,7 @@ const SearchProducts = ({
       </Dialog> */}
     </Box>
   );
-
+  
 };
 
 export default SearchProducts;

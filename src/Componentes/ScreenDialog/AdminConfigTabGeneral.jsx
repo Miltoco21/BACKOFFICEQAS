@@ -21,8 +21,7 @@ import CriterioCosto from "../../definitions/CriterioCosto";
 
 const AdminConfigTabGeneral = ({
   tabNumber,
-  setSomeChange,
-  closeModal = () => { }
+  setSomeChange
 }) => {
 
   const {
@@ -39,29 +38,23 @@ const AdminConfigTabGeneral = ({
   const [porcentajeMargen, setPorcentajeMargen] = useState(0);
 
   const [criterioCostoComercio, setCriterioCostoComercio] = useState(null)
-  const [idEmpresa, setIdEmpresa] = useState(0)
 
 
   const loadConfigSesion = () => {
-    setUrlBase(ModelConfig.get("urlBase"))
-    setIva(ModelConfig.get("iva"))
-    setPorcentajeMargen(ModelConfig.get("porcentajeMargen"))
-    setCriterioCostoComercio(ModelConfig.get("criterioCostoComercio"))
-    setIdEmpresa(ModelConfig.get("idEmpresa"))
+    setUrlBase(ModelConfig.get("urlBase") )
+    setIva(ModelConfig.get("iva") )
+    setPorcentajeMargen(ModelConfig.get("porcentajeMargen") )
+    setCriterioCostoComercio(ModelConfig.get("criterioCostoComercio") )
   }
 
-  const confirmSave = (close = false) => {
+  const confirmSave = () => {
     ModelConfig.change("urlBase", urlBase);
     ModelConfig.change("iva", iva)
     ModelConfig.change("porcentajeMargen", porcentajeMargen)
     ModelConfig.change("criterioCostoComercio", criterioCostoComercio)
-    ModelConfig.change("idEmpresa", idEmpresa)
 
     showMessage("Guardado correctamente")
     setSomeChange(false)
-    if (close) {
-      closeModal();
-    }
   }
 
   useEffect(() => {
@@ -115,25 +108,13 @@ const AdminConfigTabGeneral = ({
             optionSelected={criterioCostoComercio}
             setOptionSelected={setCriterioCostoComercio}
             options={
-              Object.keys(CriterioCosto).map((key) => {
+              Object.keys(CriterioCosto).map((key)=>{
                 return {
                   id: CriterioCosto[key],
                   value: key
                 }
               })
             }
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={12} md={6} lg={6}>
-          <TextField
-            margin="normal"
-            fullWidth
-            label="Id Empresa(Mype)"
-            type="text" // Cambia dinámicamente el tipo del campo de contraseña
-            value={idEmpresa}
-            onKeyDown={() => { setSomeChange(true) }}
-            onChange={(e) => setIdEmpresa(e.target.value)}
           />
         </Grid>
 
@@ -144,7 +125,6 @@ const AdminConfigTabGeneral = ({
 
 
         <SmallButton textButton="Guardar" actionButton={confirmSave} />
-        <SmallButton textButton="Guardar y salir" actionButton={() => confirmSave(true)} />
 
       </Grid>
 

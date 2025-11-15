@@ -41,7 +41,9 @@ import RankingLibroCompras from './Pages/RankingLibroCompras';
 import ReporteMaestroProductos from './Pages/ReporteMaestroProductos';
 import Stock from './Pages/Stock/';
 import EntradaSalidaStock from './Pages/EntradaSalidaStock';
-import Preventas from './Pages/Preventas';
+import UnidadesPesajes from './Pages/UnidadesPesajes';
+import EnvasesPesajes from './Pages/EnvasesPesajes'
+import CentroCostos from './Pages/CentroCostos'
 
 import { SelectedOptionsProvider } from "./Componentes/Context/SelectedOptionsProvider";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -55,7 +57,9 @@ import Preventa from './Pages/PreventaSucursal';
 import ReporteZ from './Pages/ReporteZ';
 import ReporteCierreZ from './Pages/ReporteCierreZ';
 import ReporteStockValorizado from './Pages/ReporteStockValorizado';
-
+import Repartidores from './Pages/Repartidores';
+import AsociacionClientesRepartidor from './Pages/AsociacionClientesRepartidor';
+import Ofertas from './Pages/Ofertas'
 function App() {
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -73,6 +77,8 @@ function App() {
               element={<Home/>}
             />
             <Route path="/usuarios" element={<Usuarios />} />
+            <Route path="/repartidores" element={<Repartidores />} />
+            <Route path="/asociar-cliente-repartidor" element={<AsociacionClientesRepartidor />} />
             <Route path="/sucursales" element={<Sucursales />} />
             <Route path="/sucursales/metodoimpresion" element={<MetodoImpresion/>} />
             <Route path="/sucursales/cajasucursal" element={<CajaSucursal />} />
@@ -105,7 +111,13 @@ function App() {
             <Route path="reportes/reportecierrez" element={<ReporteCierreZ />} />
             <Route path="reportes/reportestockvalorizado" element={<ReporteStockValorizado />} />
             <Route path="reportes/maestro-productos" element={<ReporteMaestroProductos />} />
-            <Route path="reportes/preventas" element={<Preventas />} />
+            <Route path="/unidadespesajes" element={<UnidadesPesajes />} />
+            <Route path="/envases-pesajes" element={<EnvasesPesajes />} />
+            <Route path="/centrocostos" element={<CentroCostos />} />
+            <Route path="/ofertas" element={<Ofertas />} />
+
+
+
           </Routes>
         </SelectedOptionsProvider>
       </LocalizationProvider>

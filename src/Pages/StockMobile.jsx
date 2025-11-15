@@ -7,17 +7,15 @@ import Button from "@mui/material/Button";
 import Add from "@mui/icons-material/Add";
 import Modal from "@mui/joy/Modal";
 import { SelectedOptionsContext } from "./../Componentes/Context/SelectedOptionsProvider";
-import { Check, HorizontalSplit, LinkedCamera, Search, Settings } from "@mui/icons-material";
+import { Check, HorizontalSplit, Search } from "@mui/icons-material";
 import Product from "../Models/Product";
-import { Dialog, Grid, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
+import { Grid, InputAdornment, TextField } from "@mui/material";
 import EditarProducto from "./../Componentes/Productos/EditarProducto";
 import System from "../Helpers/System";
 import Model from "../Models/Model";
 import CrearSinCodigo from "../Componentes/Productos/SinCodigo/Crear";
 import CrearConCodigo from "../Componentes/Productos/ConCodigo/Crear";
 import StockMobileQR from "./StockMobileQR";
-import MovimientoStock from "../Componentes/Stock/MovimientoStock";
-import ScreenDialogConfig from "../Componentes/ScreenDialog/AdminConfig";
 
 const StockMobile = () => {
 
@@ -39,47 +37,9 @@ const StockMobile = () => {
 
   const refInputBuscar = useRef(null)
 
-  const [verMovStock, setVerMovStock] = useState(false);
-
-  const [footerTextSupport, setFooterTextSupport] = useState("Version 1.0.0");
-  const [showScreenConfig, setShowScreenConfig] = useState(false);
-
-
-  useEffect(() => {
-    setFooterTextSupport(System.getInstance().getAppName())
-  }, [])
 
   useEffect(() => {
     System.intentarFoco(refInputBuscar)
-
-
-
-
-    if (!window.catchCloseOrUpload) {
-      window.catchCloseOrUpload = 1
-      window.addEventListener("beforeunload", function (e, e2) {
-        console.log("antes de salir", e)
-        ejecutar();
-        (e || window.event).returnValue = null;
-        return null
-      });
-
-      function ejecutar() {
-        // UserEvent.send({
-        //   name: "cierre de pantalla Punto Venta",
-        //   info: ""
-        // })
-
-        // UserEvent.send({
-        //   name: "intento de cierre o actualizar ventana de punto de venta",
-        //   info: ""
-        // })
-      }
-
-
-    }
-
-
   }, [])
 
   const checkFoco = () => {
@@ -87,7 +47,7 @@ const StockMobile = () => {
     // console.log("open", open)
     // console.log("openAdd", openAdd)
     // console.log("openEdit", openEdit)
-    if (!open && !open2 && !openAdd && !openEdit && !verMovStock && !showScreenConfig) {
+    if (!open && !open2 && !openAdd && !openEdit) {
       // console.log("intentar foco")
       System.intentarFoco(refInputBuscar)
     }
@@ -112,7 +72,6 @@ const StockMobile = () => {
   const handleCloseStepper2 = () => {
     setOpen2(false);
   };
-
 
 
 
@@ -150,13 +109,15 @@ const StockMobile = () => {
         setopenEdit(true)
 
       } else {
-        showMessage("no existe el producto '" + txtSearch + "'")
+        showMessage("no existe el producto")
         setopenAdd(true)
       }
 
       hideLoading()
-    }, (err) => {
-      showMessage("no existe el producto '" + txtSearch + "'")
+    }, () => {
+      showMessage("no existe el producto")
+
+
       hideLoading()
     })
   }
@@ -179,13 +140,6 @@ const StockMobile = () => {
   }
 
   const [showQrReader, setShowQRReader] = useState(false)
-  const [intentSearch, setIntentSearch] = useState(false)
-
-
-  useEffect(() => {
-    doSearch()
-  }, [intentSearch])
-
 
   return (
     <div style={{ display: "flex" }}>
@@ -317,7 +271,7 @@ const StockMobile = () => {
                 marginLeft: "10%",
                 padding: "14px",
                 marginTop: "6px",
-                width: "80%",
+                width: "80%"
               }}
 
               onClick={() => {
@@ -325,76 +279,19 @@ const StockMobile = () => {
                 setShowQRReader(true)
               }}
             >
-
-              <LinkedCamera sx={{
-                left: "-5px",
-                top: "-2px",
-                position: "relative"
+              <HorizontalSplit sx={{ transform: "rotate(270deg)" }} />
+              <Add sx={{
+                width: "15px",
+                position: "relative",
+                left: "-7px"
               }} />
-              Capturar código
+              Scan
             </Button>
 
-            <StockMobileQR
-              openDialog={showQrReader}
-              setOpenDialog={setShowQRReader}
-              onCapture={(info) => {
-                setSearchTerm(info)
-                setTimeout(() => {
-                  setIntentSearch(!intentSearch)
-                }, 500);
-              }}
-            />
+            {showQrReader && (
+              <StockMobileQR />
+            )}
 
-
-            <Button
-              size="large"
-              variant="outlined"
-              style={{
-                marginLeft: "10%",
-                padding: "14px",
-                marginTop: "6px",
-                width: "80%",
-              }}
-              sx={{
-                my: 1,
-                mx: 2,
-              }}
-              onClick={() => { setVerMovStock(true) }} // Abre el modal al hacer clic en el botón
-            >
-              Entrada/Salida Stock
-            </Button>
-
-
-            <Dialog
-              open={verMovStock}
-              onClose={() => { setVerMovStock(false) }}
-              maxWidth="lg"
-              fullWidth
-            >
-              <MovimientoStock onClose={() => { setVerMovStock(false) }} />
-            </Dialog>
-
-
-            <Typography component="h4" style={{
-              marginLeft: "10%",
-              padding: "14px",
-              marginTop: "130px",
-              width: "80%",
-              textAlign: "center"
-            }}>
-              <p>
-                {footerTextSupport}
-
-                <IconButton
-                  onClick={() => { setShowScreenConfig(true) }}
-                  edge="end"
-                >
-                  <Settings />
-                </IconButton>
-              </p>
-            </Typography>
-
-            <ScreenDialogConfig openDialog={showScreenConfig} setOpenDialog={setShowScreenConfig} />
           </Grid>
 
 
@@ -445,9 +342,8 @@ const StockMobile = () => {
             >salir</Button>
           </Box>
         </Modal>
+
       </Box>
-
-
       <Modal open={open2} onClose={() => { }}>
         <Box
           sx={{

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Grid, Paper, Dialog } from "@mui/material";
+import { Grid, Paper, Dialog,Box,InputLabel,Typography } from "@mui/material";
 import ModelConfig from "../../Models/ModelConfig";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
@@ -23,12 +23,14 @@ import SendingButton from "../Elements/SendingButton";
 import User from "../../Models/User";
 import Client from "../../Models/Client"
 import System from "../../Helpers/System";
+
 export const defaultTheme = createTheme();
 
-const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
+const IngresoCL = ({ onClose, openDialog, setOpendialog, isEdit = false, editData = null }) => {
   const { showLoading, hideLoading, showLoadingDialog, showMessage } =
     useContext(SelectedOptionsContext);
 
+  // Estados para los campos del formulario
   var states = {
     rut: useState(""),
     nombre: useState(""),
@@ -44,6 +46,7 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
     urlPagina: useState(""),
   };
 
+  // Estados para la validación de campos
   var validatorStates = {
     rut: useState(null),
     nombre: useState(null),
@@ -59,10 +62,30 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
     urlPagina: useState(null),
   };
 
+  // Cargar datos del cliente si estamos en modo edición
+  useEffect(() => {
+    if (isEdit && editData) {
+      // Asignar valores del cliente a editar
+      states.rut[1](editData.rut || "");
+      states.nombre[1](editData.nombre || "");
+      states.apellido[1](editData.apellido || "");
+      states.correo[1](editData.correo || "");
+      states.razonSocial[1](editData.razonSocial || "");
+      states.phone[1](editData.telefono || "");
+      states.direccion[1](editData.direccion || "");
+      states.region[1](editData.region || -1);
+      states.comuna[1](editData.comuna || -1);
+      states.giro[1](editData.giro || "");
+      states.formaPago[1](editData.formaPago || "");
+      states.urlPagina[1](editData.urlPagina || "");
+    }
+  }, [isEdit, editData]);
+
   const handleSubmit = async () => {
     if (!System.allValidationOk(validatorStates, showMessage)) {
       return false;
     }
+    
     const cliente = {
       rut: states.rut[0],
       nombre: states.nombre[0],
@@ -80,22 +103,45 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
 
     console.log("Datos antes de enviar:", cliente);
     showLoading("Enviando...");
-    Client.getInstance().create(
-      cliente,
-      (res) => {
-        console.log("llego al callok");
-        hideLoading();
-        showMessage("Cliente creado exitosamente");
-        setTimeout(() => {
-          onClose();
-        }, 2000);
-      },
-      (error) => {
-        console.log("llego al callwrong", error);
-        hideLoading();
-        showMessage(error);
-      }
-    );
+    
+    if (isEdit && editData) {
+      // Actualizar cliente existente
+      Client.getInstance().update(
+        editData.codigoCliente,
+        cliente,
+        (res) => {
+          hideLoading();
+          showMessage("Cliente actualizado exitosamente");
+          setTimeout(() => {
+            onClose();
+            setOpendialog(false);
+          }, 2000);
+        },
+        (error) => {
+          hideLoading();
+          showMessage(error);
+        }
+      );
+    }  else {
+      // Crear nuevo cliente
+      Client.getInstance().create(
+        cliente,
+        (res) => {
+          console.log("llego al callok");
+          hideLoading();
+          showMessage("Cliente creado exitosamente");
+          setTimeout(() => {
+            onClose();
+            setOpendialog(false);
+          }, 2000);
+        },
+        (error) => {
+          console.log("llego al callwrong", error);
+          hideLoading();
+          showMessage(error);
+        }
+      );
+    }
   };
 
   return (
@@ -110,9 +156,26 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
       <Paper elevation={16} square>
         <Grid container spacing={2} sx={{ padding: "2%" }}>
           <Grid item xs={12}>
-            <h2>Ingreso Clientes</h2>
+            <h2>{isEdit ? "Editar Cliente" : "Ingreso Clientes"}</h2>
           </Grid>
 
+          {isEdit ? (
+          // Mostrar RUT como texto en modo edición
+          <Grid item xs={12} md={4}>
+            <Box>
+              <InputLabel sx={{ marginBottom: "2%" }}>
+                RUT del cliente
+              </InputLabel>
+              <Typography variant="body1" sx={{ 
+                padding: "16px 0",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.42)"
+              }}>
+                {states.rut[0]}
+              </Typography>
+            </Box>
+          </Grid>
+        ) : (
+          // Mostrar input de RUT en modo creación
           <Grid item xs={12} md={4}>
             <InputRutCliente
               vars={[states, validatorStates]}
@@ -120,6 +183,34 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
               autoFocus={true}
             />
           </Grid>
+        )}
+        {isEdit ? (
+      // Mostrar Razón Social como texto en modo edición
+      <Grid item xs={12} md={4}>
+        <Box>
+          <InputLabel sx={{ marginBottom: "2%" }}>
+            Razón Social
+          </InputLabel>
+          <Typography variant="body1" sx={{ 
+            padding: "16px 0",
+            borderBottom: "1px solid rgba(0, 0, 0, 0.42)",
+            fontWeight: 500
+          }}>
+            {states.razonSocial[0]}
+          </Typography>
+        </Box>
+      </Grid>
+    ) : (
+      // Mostrar input de Razón Social en modo creación
+      <Grid item xs={12} md={4}>
+        <InputName
+          label="Razón Social"
+          fieldName="razonSocial"
+          vars={[states, validatorStates]}
+          required={true}
+        />
+      </Grid>
+    )}
           <Grid item xs={12} md={4}>
             <InputName
               vars={[states, validatorStates]}
@@ -141,14 +232,9 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
               required={true}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
-            <InputName
-              label="Razón Social"
-              fieldName="razonSocial"
-              vars={[states, validatorStates]}
-              required={true}
-            />
-          </Grid>
+      
+          
+
           <Grid item xs={12} md={4}>
             <InputPhone
               label="Tel&eacute;fono"
@@ -212,10 +298,10 @@ const IngresoCL = ({ onClose, openDialog, setOpendialog }) => {
 
           <Grid item xs={12}>
             <SendingButton
-              textButton="Registrar Cliente"
+              textButton={isEdit ? "Actualizar Cliente" : "Registrar Cliente"}
               actionButton={handleSubmit}
               sending={showLoadingDialog}
-              sendingText="Registrando..."
+              sendingText={isEdit ? "Actualizando..." : "Registrando..."}
               style={{
                 width: "50%",
                 margin: "0 25%",

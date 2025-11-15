@@ -5,13 +5,12 @@ import axios from 'axios';
 import ModelConfig from './ModelConfig.ts';
 import System from '../Helpers/System.ts';
 import EndPoint from './EndPoint.ts';
-import dayjs from 'dayjs';
 
 
 class Product extends Model {
-    idProducto: number | null = null;
-    description: string | null = null;
-    price: number = 0;
+    idProducto: number;
+    description: string | null;
+    price: number;
     precioCosto: string | null | undefined;
 
 
@@ -24,7 +23,7 @@ class Product extends Model {
         return Product.instance;
     }
 
-    static calcularImpuestos(producto: any) {
+    static calcularImpuestos(producto) {
         var impIva = producto.impuesto.toLowerCase()
 
         impIva = impIva.replace("iva", "")
@@ -35,7 +34,7 @@ class Product extends Model {
         return impIva
     }
 
-    static iniciarLogicaPrecios(product: any) {
+    static iniciarLogicaPrecios(product) {
         const margenConfig = ModelConfig.get("porcentajeMargen")
 
         if (!product.gananciaPorcentaje) {
@@ -71,7 +70,7 @@ class Product extends Model {
     }
 
     //direccion indica si se calcula para el lado del costo o del precio final
-    static logicaPrecios(product: any, direccion = "final") {
+    static logicaPrecios(product, direccion = "final") {
         // console.log("logicaPrecios " + direccion + " para ")
         // console.log("entra con:",System.clone(product))
         const margenConfig = ModelConfig.get("porcentajeMargen")
@@ -105,7 +104,7 @@ class Product extends Model {
         return product
     }
 
-    static calcularMargen(product: any) {
+    static calcularMargen(product) {
         const neto = parseFloat(product.precioVenta) / (1 + (parseInt(product.ivaPorcentaje) / 100))
         const sumGan = neto - product.precioCosto
         const porMar = ((neto - product.precioCosto) * 100) / product.precioCosto
@@ -119,48 +118,48 @@ class Product extends Model {
         return product
     }
 
-    static getNetoByCostoGanPor(costo: number, gananciaPorcentaje: number) {
+    static getNetoByCostoGanPor(costo, gananciaPorcentaje) {
         const sumGan = (costo) * ((gananciaPorcentaje) / 100)
-        return this.redondeo_precioNeto(parseFloat(costo + "") + sumGan)
+        return this.redondeo_precioNeto(parseFloat(costo) + sumGan)
     }
 
-    static getGanPorByCostoYNeto(costo: number, neto: number) {
+    static getGanPorByCostoYNeto(costo, neto) {
         return this.redondeo_gananciaPorcentaje(((neto - costo) * 100) / costo)
     }
 
     // REDONDEOS
-    static redondeo_precioCosto(precio: number) {
-        return parseInt(parseFloat(precio + "").toFixed(0))
+    static redondeo_precioCosto(precio) {
+        return parseInt(parseFloat(precio).toFixed(0))
     }
 
-    static redondeo_gananciaPorcentaje(precio: number) {
-        return parseInt(parseFloat(precio + "").toFixed(0))
+    static redondeo_gananciaPorcentaje(precio) {
+        return parseInt(parseFloat(precio).toFixed(0))
     }
 
-    static redondeo_gananciaValor(precio: number) {
-        return parseInt(parseFloat(precio + "").toFixed(0))
+    static redondeo_gananciaValor(precio) {
+        return parseInt(parseFloat(precio).toFixed(0))
     }
 
-    static redondeo_ivaPorcentaje(precio: number) {
-        return parseInt(parseFloat(precio + "").toFixed(0))
+    static redondeo_ivaPorcentaje(precio) {
+        return parseInt(parseFloat(precio).toFixed(0))
     }
 
-    static redondeo_ivaValor(precio: number) {
-        return parseInt(parseFloat(precio + "").toFixed(0))
+    static redondeo_ivaValor(precio) {
+        return parseInt(parseFloat(precio).toFixed(0))
     }
 
-    static redondeo_precioNeto(precio: number) {
-        return parseInt(parseFloat(precio + "").toFixed(0))
+    static redondeo_precioNeto(precio) {
+        return parseInt(parseFloat(precio).toFixed(0))
     }
 
-    static redondeo_precioVenta(precio: number) {
-        return parseInt(parseFloat(precio + "").toFixed(0))
+    static redondeo_precioVenta(precio) {
+        return parseInt(parseFloat(precio).toFixed(0))
     }
 
 
     // SERVICIOS
 
-    async getAll(callbackOk: any, callbackWrong: any) {
+    async getAll(callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase + "/ProductosTmp/GetProductos"
@@ -185,7 +184,7 @@ class Product extends Model {
     async getAllPaginate({
         pageNumber = 1,
         rowPage = 10
-    }, callbackOk: any, callbackWrong: any) {
+    }, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase + "/ProductosTmp/GetProductosPaginados"
@@ -218,7 +217,7 @@ class Product extends Model {
 
         pageNumber: number,
         rowPage: number,
-    }, callbackOk: any, callbackWrong: any) {
+    }, callbackOk, callbackWrong) {
 
 
         // &precio=PrecioVenta&pageNumber=1&rowPage=10
@@ -234,7 +233,7 @@ class Product extends Model {
             + "&pageNumber=" + data.pageNumber
             + "&rowPage=" + data.rowPage
 
-        EndPoint.sendGet(url, (responseData: any, response: any) => {
+        EndPoint.sendGet(url, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong)
     }
@@ -242,7 +241,7 @@ class Product extends Model {
     async getCriticosPaginate({
         pageNumber = 1,
         rowPage = 10
-    }, callbackOk: any, callbackWrong: any) {
+    }, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase + "/ProductosTmp/GetProductosStockCriticoPaginados"
@@ -268,7 +267,7 @@ class Product extends Model {
         }
     }
 
-    async findByDescription({ description, codigoCliente }: any, callbackOk: any, callbackWrong: any) {
+    async findByDescription({ description, codigoCliente }, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase +
@@ -297,7 +296,7 @@ class Product extends Model {
         codigoCliente,
         canPorPagina = 10,
         pagina = 1
-    }: any, callbackOk: any, callbackWrong: any) {
+    }, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase +
@@ -307,7 +306,6 @@ class Product extends Model {
             }
             url += "&pageNumber=" + pagina
             url += "&rowPage=" + canPorPagina
-            url += "&idEmpresa=" + configs.idEmpresa
             const response = await axios.get(url);
             if (
                 response.data.statusCode == 200
@@ -324,7 +322,7 @@ class Product extends Model {
         }
     }
 
-    async findByCodigo({ codigoProducto, codigoCliente }: any, callbackOk: any, callbackWrong: any) {
+    async findByCodigo({ codigoProducto, codigoCliente }, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase +
@@ -348,7 +346,7 @@ class Product extends Model {
         }
     }
 
-    async findByCodigoBarras({ codigoProducto, codigoCliente }: any, callbackOk: any, callbackWrong: any) {
+    async findByCodigoBarras({ codigoProducto, codigoCliente }, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase +
@@ -356,8 +354,6 @@ class Product extends Model {
             if (codigoCliente) {
                 url += "&codigoCliente=" + codigoCliente
             }
-            url += "&idEmpresa=" + configs.idEmpresa
-
             const response = await axios.get(url);
             if (
                 response.data.statusCode == 200
@@ -374,7 +370,7 @@ class Product extends Model {
         }
     }
 
-    async update(data: any, callbackOk: any, callbackWrong: any) {
+    async update(data, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase +
@@ -390,44 +386,7 @@ class Product extends Model {
             } else {
                 callbackWrong("respuesta incorrecta del servidor")
             }
-        } catch (error: any) {
-            console.log(error)
-            if (error.response && error.response.data && error.response.data.descripcion) {
-                callbackWrong(error.response.data.descripcion);
-            } else if (error.response && error.response.status === 500) {
-                callbackWrong(
-                    "Error interno del servidor. Por favor, inténtalo de nuevo más tarde."
-                );
-            } else if (error.message != "") {
-                callbackWrong(error.message)
-            } else {
-                callbackWrong(
-                    "Error al conectar con el servidor. Por favor, inténtalo de nuevo más tarde."
-                );
-            }
-        }
-    }
-    async updatePrecios(data: any, callbackOk: any, callbackWrong: any) {
-        try {
-            const configs = ModelConfig.get()
-            var url = configs.urlBase +
-                "/ProductosTmp/UpdateProductoPrecio"
-            data.codigoSucursal = 0;
-            data.puntoVenta = ""
-            data.codbarra = data.idProducto
-            data.fechaIngreso = System.getInstance().getDateForServer()
-
-            const response = await axios.put(url, data);
-            if (
-                response.data.statusCode == 200
-                || response.data.statusCode == 201
-
-            ) {
-                callbackOk(response.data, response);
-            } else {
-                callbackWrong("respuesta incorrecta del servidor")
-            }
-        } catch (error: any) {
+        } catch (error) {
             console.log(error)
             if (error.response && error.response.data && error.response.data.descripcion) {
                 callbackWrong(error.response.data.descripcion);
@@ -446,7 +405,7 @@ class Product extends Model {
     }
 
 
-    async getCategories(callbackOk: any, callbackWrong: any) {
+    async getCategories(callbackOk, callbackWrong) {
         try {
 
             const configs = ModelConfig.get()
@@ -472,7 +431,7 @@ class Product extends Model {
     }
 
 
-    async getSubCategories(categoriaId: number, callbackOk: any, callbackWrong: any) {
+    async getSubCategories(categoriaId, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
@@ -502,7 +461,7 @@ class Product extends Model {
     async getFamiliaBySubCat({
         categoryId,
         subcategoryId
-    }: any, callbackOk: any, callbackWrong: any) {
+    }, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
@@ -530,7 +489,7 @@ class Product extends Model {
         categoryId,
         subcategoryId,
         familyId
-    }: any, callbackOk: any, callbackWrong: any) {
+    }, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
@@ -562,7 +521,7 @@ class Product extends Model {
         subcatId,
         famId,
         subFamId
-    }: any, callbackOk: any, callbackWrong: any) {
+    }, callbackOk, callbackWrong) {
 
         if (!catId) catId = 1
         if (!subcatId) subcatId = 1
@@ -593,7 +552,7 @@ class Product extends Model {
     }
 
 
-    async getProductsFastSearch(callbackOk: any, callbackWrong: any) {
+    async getProductsFastSearch(callbackOk, callbackWrong) {
 
         try {
             const configs = ModelConfig.get()
@@ -617,7 +576,7 @@ class Product extends Model {
         }
     }
 
-    async addProductFastSearch(product: any, callbackOk: any, callbackWrong: any) {
+    async addProductFastSearch(product, callbackOk, callbackWrong) {
 
         try {
             const configs = ModelConfig.get()
@@ -642,7 +601,7 @@ class Product extends Model {
         }
     }
 
-    async changeProductFastSearch(product: any, callbackOk: any, callbackWrong: any) {
+    async changeProductFastSearch(product, callbackOk, callbackWrong) {
 
         try {
             const configs = ModelConfig.get()
@@ -667,7 +626,7 @@ class Product extends Model {
         }
     }
 
-    async assignPrice(product: any, callbackOk: any, callbackWrong: any) {
+    async assignPrice(product, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
@@ -690,7 +649,7 @@ class Product extends Model {
         }
     }
 
-    async newProductFromCode(product: any, callbackOk: any, callbackWrong: any) {
+    async newProductFromCode(product, callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
@@ -716,7 +675,7 @@ class Product extends Model {
         }
     }
 
-    async getTipos(callbackOk: any, callbackWrong: any) {
+    async getTipos(callbackOk, callbackWrong) {
         try {
             const configs = ModelConfig.get()
             var url = configs.urlBase
@@ -739,7 +698,7 @@ class Product extends Model {
         }
     }
 
-    static async addFull(data: any, callbackOk: any, callbackWrong: any) {
+    static async addFull(data, callbackOk, callbackWrong) {
 
         var url = ModelConfig.get("urlBase")
             + "/ProductosTmp/AddProducto"
@@ -747,14 +706,14 @@ class Product extends Model {
         // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
-        EndPoint.sendPost(url, data, (responseData: any, response: any) => {
+        EndPoint.sendPost(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong)
 
     }
 
 
-    static async addCategory(data: { descripcionCategoria: any }, callbackOk: any, callbackWrong: any) {
+    static async addCategory(data: { descripcionCategoria }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/AddCategoria"
 
@@ -762,14 +721,14 @@ class Product extends Model {
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
 
-        EndPoint.sendPost(url, data, (responseData: any, response: any) => {
+        EndPoint.sendPost(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong)
 
     }
 
 
-    static async editCategory(data: { idCategoria: number, descripcionCategoria: string }, callbackOk: any, callbackWrong: any) {
+    static async editCategory(data: { idCategoria, descripcionCategoria }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/UpdateCategoria"
 
@@ -777,7 +736,7 @@ class Product extends Model {
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
 
-        EndPoint.sendPut(url, data, (responseData: any, response: any) => {
+        EndPoint.sendPut(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong)
 
@@ -785,8 +744,8 @@ class Product extends Model {
 
 
     static async deleteCategory(data: {
-        Categoriaid: number
-    }, callbackOk: any, callbackWrong: any) {
+        Categoriaid
+    }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/DeleteCategoria"
 
@@ -794,15 +753,15 @@ class Product extends Model {
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
 
-        EndPoint.sendDelete(url, data, (responseData: any, response: any) => {
+        EndPoint.sendDelete(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong, true)
     }
 
     static async deleteSubCategory(data: {
-        categoriaid: number,
-        subcategoriaid: number
-    }, callbackOk: any, callbackWrong: any) {
+        categoriaid,
+        subcategoriaid
+    }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/DeleteSubCategoria"
 
@@ -810,16 +769,16 @@ class Product extends Model {
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
 
-        EndPoint.sendDelete(url, data, (responseData: any, response: any) => {
+        EndPoint.sendDelete(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong, true)
     }
 
     static async deleteFamiliy(data: {
-        categoriaid: number,
-        subcategoriaid: number,
-        familiaid: number
-    }, callbackOk: any, callbackWrong: any) {
+        categoriaid,
+        subcategoriaid,
+        familiaid
+    }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/DeleteFamilia"
 
@@ -827,17 +786,17 @@ class Product extends Model {
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
 
-        EndPoint.sendDelete(url, data, (responseData: any, response: any) => {
+        EndPoint.sendDelete(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong, true)
     }
 
     static async deleteSubFamily(data: {
-        categoriaid: any,
-        subcategoriaid: any,
-        familiaid: any,
-        subfamiliaid: any,
-    }, callbackOk: any, callbackWrong: any) {
+        categoriaid,
+        subcategoriaid,
+        familiaid,
+        subfamiliaid,
+    }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/DeleteSubFamilia"
 
@@ -845,13 +804,13 @@ class Product extends Model {
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
 
-        EndPoint.sendDelete(url, data, (responseData: any, response: any) => {
+        EndPoint.sendDelete(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong, true)
     }
 
 
-    static async addSubCategory(data: { idCategoria: number, descripcionSubCategoria: string }, callbackOk: any, callbackWrong: any) {
+    static async addSubCategory(data: { idCategoria, descripcionSubCategoria }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/AddSubCategoria"
 
@@ -859,95 +818,95 @@ class Product extends Model {
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
 
-        EndPoint.sendPost(url, data, (responseData: any, response: any) => {
+        EndPoint.sendPost(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong)
 
     }
 
     static async editSubCategory(data: {
-        idCategoria: number,
-        idSubCategoria: number,
-        descripcionSubCategoria: string
+        idCategoria,
+        idSubCategoria,
+        descripcionSubCategoria
     },
-        callbackOk: any, callbackWrong: any) {
+        callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/UpdateSubCategoria"
 
         // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
-        EndPoint.sendPut(url, data, (responseData: any, response: any) => {
+        EndPoint.sendPut(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong)
     }
 
 
-    static async addFamily(data: { idCategoria: number, idSubcategoria: number, descripcionFamilia: string }, callbackOk: any, callbackWrong: any) {
+    static async addFamily(data: { idCategoria, idSubcategoria, descripcionFamilia }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/AddFamilia"
 
         // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
-        EndPoint.sendPost(url, data, (responseData: any, response: any) => {
+        EndPoint.sendPost(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong)
 
     }
 
     static async editFamily(data: {
-        idCategoria: number,
-        idSubcategoria: number,
-        descripcionFamilia: string,
-        idFamilia: number,
+        idCategoria,
+        idSubcategoria,
+        descripcionFamilia,
+        idFamilia,
     },
-        callbackOk: any, callbackWrong: any) {
+        callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/UpdateFamilia"
 
         // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
-        EndPoint.sendPut(url, data, (responseData: any, response: any) => {
+        EndPoint.sendPut(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong)
     }
 
 
     static async addSubFamily(data: {
-        idCategoria: number,
-        idSubcategoria: number,
-        idFamilia: number,
-        descripcionSubFamilia: string
-    }, callbackOk: any, callbackWrong: any) {
+        idCategoria,
+        idSubcategoria,
+        idFamilia,
+        descripcionSubFamilia
+    }, callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/AddSubFamilia"
 
         // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
-        EndPoint.sendPost(url, data, (responseData: any, response: any) => {
+        EndPoint.sendPost(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong)
 
     }
 
     static async editSubFamily(data: {
-        idCategoria: number,
-        idSubcategoria: number,
-        idFamilia: number,
-        idSubFamilia: number,
-        descripcionSubFamilia: string,
+        idCategoria,
+        idSubcategoria,
+        idFamilia,
+        idSubFamilia,
+        descripcionSubFamilia,
     },
-        callbackOk: any, callbackWrong: any) {
+        callbackOk, callbackWrong) {
         var url = ModelConfig.get("urlBase")
             + "/NivelMercadoLogicos/UpdateSubFamilia"
 
         // if(!data.codigoSucursal) data.codigoSucursal = ModelConfig.get("sucursal")
         // if(!data.puntoVenta) data.puntoVenta = ModelConfig.get("puntoVenta")
 
-        EndPoint.sendPut(url, data, (responseData: any, response: any) => {
+        EndPoint.sendPut(url, data, (responseData, response) => {
             callbackOk(responseData, response);
         }, callbackWrong)
     }
