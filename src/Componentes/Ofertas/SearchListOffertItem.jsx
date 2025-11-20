@@ -125,7 +125,8 @@ const SearchListOfferItem = ({
   index,
   onEditClick,
   onDeleteClick,
-  onSelectProduct // Nueva prop para manejar la selección
+  onSelectProduct, // Nueva prop para manejar la selección
+  setSearchTerm
 }) => {
 
   const apiUrl = ModelConfig.get().urlBase;
@@ -139,6 +140,9 @@ const SearchListOfferItem = ({
     // Llamar a la función pasada desde el componente padre
     if (onSelectProduct) {
       onSelectProduct(product);
+     
+    
+
     }
   };
 

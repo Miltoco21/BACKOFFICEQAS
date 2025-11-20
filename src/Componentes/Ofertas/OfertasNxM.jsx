@@ -880,6 +880,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { TimeField } from "@mui/x-date-pickers/TimeField";
 import dayjs from "dayjs";
 import Ofertas from "../../Models/Ofertas";
 import EditIcon from "@mui/icons-material/Edit";
@@ -1565,17 +1566,21 @@ const OfertasNxM = ({ onClose }) => {
           {/* Horas */}
           <Box sx={{ display: "flex", gap: 2 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <TimePicker
-                label="Hora de Inicio"
-                value={startTime}
-                onChange={setStartTime}
-                slotProps={{ textField: { fullWidth: true } }}
-              />
+            <TimeField
+          label="Hora de Inicio"
+          // defaultValue={dayjs('2022-04-17T15:30')}
+          format="HH:mm"
+          value={startTime}
+          onChange={setStartTime}
+          slotProps={{ textField: { fullWidth: true } }}
+        />
             </LocalizationProvider>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <TimePicker
+            <TimeField
                 label="Hora de Término"
+                  // defaultValue={dayjs('2022-04-17T15:30')}
+          format="HH:mm"
                 value={endTime}
                 onChange={setEndTime}
                 slotProps={{ textField: { fullWidth: true } }}
