@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect, useContext } from "react";
 import {
+  Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
@@ -17,106 +17,167 @@ import {
   Paper,
   IconButton,
   Chip,
-  CircularProgress,
-  Alert,
   Checkbox,
   FormControlLabel,
   FormGroup,
+  Switch,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { TimeField } from "@mui/x-date-pickers/TimeField";
 import dayjs from "dayjs";
-import Ofertas from "../../Models/Ofertas";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchListOffers from "./SearchListOfertas";
-import DialogEditarOfertaNxM from "./DialogEditarOfertaNxM";
+import Ofertas from "../../Models/Ofertas";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
 
-/**
- * Componente principal para gestión de ofertas tipo N x M (Lleva N, Paga M)
- * Permite crear nuevas ofertas y visualizar/editar/eliminar ofertas existentes
- */
-const OfertasNxM = ({ onClose }) => {
-  const { showLoading, hideLoading, showMessage, showConfirm } = useContext(SelectedOptionsContext);
+const DialogEditarOfertaNxM = ({ open, onClose, ofertaEditar, onOfertaActualizada }) => {
+  const { showLoading, hideLoading, showMessage } = useContext(SelectedOptionsContext);
 
-  // Estados del formulario de creación
-  const [refresh, setRefresh] = useState(false);
+  // Estados del formulario para N x M
   const [nombreOferta, setNombreOferta] = useState("");
-  const [lleva, setlleva] = useState(null);
-  const [paga, setpaga] = useState(null);
+  const [lleva, setLleva] = useState(null);
+  const [paga, setPaga] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [productosSeleccionados, setProductosSeleccionados] = useState([]);
   const [diasSemana, setDiasSemana] = useState([true, true, true, true, true, true, true]);
-
-  // Estados para la lista de ofertas
-  const [ofertas, setOfertas] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  // Estados para el diálogo de edición
-  const [dialogEditarOpen, setDialogEditarOpen] = useState(false);
-  const [ofertaParaEditar, setOfertaParaEditar] = useState(null);
+  const [ofertaActiva, setOfertaActiva] = useState(true);
+  const [refresh, setRefresh] = useState(false);
+  const [clearSearch, setClearSearch] = useState(false);
 
   const nombresDias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
 
-  // Cargar ofertas al montar el componente y cuando refresh cambie
+  // Cargar datos de la oferta cuando cambie ofertaEditar o se abra el diálogo
   useEffect(() => {
-    loadOfertas();
-  }, [refresh]);
+    if (open && ofertaEditar) {
+      cargarDatosOferta();
+    }
+  }, [open, ofertaEditar]);
 
-  /**
-   * Carga todas las ofertas desde el backend
-   */
-  const loadOfertas = () => {
-    setLoading(true);
-    setError(null);
+  const cargarDatosOferta = () => {
+    if (!ofertaEditar) return;
 
-    Ofertas.getAllOfertas(
-      (data, response) => {
-        setOfertas(data);
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Error al cargar ofertas:", error);
-        setError("Error al cargar las ofertas");
-        setLoading(false);
-      }
-    );
+    console.log("========================================");
+    console.log("Cargando datos completos de oferta N x M:", ofertaEditar);
+    console.log("========================================");
+
+    // Información básica
+    setNombreOferta(ofertaEditar.descripcion || "");
+    setOfertaActiva(ofertaEditar.activo !== undefined ? ofertaEditar.activo : true);
+
+    // Calcular lleva y paga basado en la lista de canasta
+    if (ofertaEditar.oferta_ListaCanasta && ofertaEditar.oferta_ListaCanasta.length > 0) {
+      const totalUnidades = ofertaEditar.oferta_ListaCanasta.length;
+      const unidadesConDescuento = ofertaEditar.oferta_ListaCanasta.filter(
+        item => item.porcDescuento === 100
+      ).length;
+      
+      setLleva(totalUnidades);
+      setPaga(totalUnidades - unidadesConDescuento);
+      
+      console.log(`Calculado Lleva: ${totalUnidades}, Paga: ${totalUnidades - unidadesConDescuento}`);
+    }
+
+    // Fechas
+    if (ofertaEditar.fechaInicial) {
+      const fechaInicio = dayjs(ofertaEditar.fechaInicial);
+      setStartDate(fechaInicio);
+    }
+    if (ofertaEditar.fechaFinal) {
+      const fechaFin = dayjs(ofertaEditar.fechaFinal);
+      setEndDate(fechaFin);
+    }
+
+    // Horas
+    if (ofertaEditar.horaInicio && ofertaEditar.horaInicio !== "") {
+      const horaInicioParsed = dayjs(ofertaEditar.horaInicio, ["HH:mm:ss", "HH:mm"]);
+      setStartTime(horaInicioParsed);
+    } else {
+      setStartTime(null);
+    }
+    
+    if (ofertaEditar.horaFin && ofertaEditar.horaFin !== "") {
+      const horaFinParsed = dayjs(ofertaEditar.horaFin, ["HH:mm:ss", "HH:mm"]);
+      setEndTime(horaFinParsed);
+    } else {
+      setEndTime(null);
+    }
+
+    // Días de la semana
+    if (ofertaEditar.diasSemana) {
+      const diasArray = ofertaEditar.diasSemana.split("").map((dia) => dia === "1");
+      setDiasSemana(diasArray);
+    }
+
+    // Productos de la canasta - obtener productos únicos
+    let productosACargar = [];
+
+    if (ofertaEditar.oferta_ListaCanasta && ofertaEditar.oferta_ListaCanasta.length > 0) {
+      console.log("Cargando productos desde oferta_ListaCanasta");
+      
+      // Obtener productos únicos (sin duplicados por codbarra)
+      const productosUnicos = {};
+      ofertaEditar.oferta_ListaCanasta.forEach((item) => {
+        if (!productosUnicos[item.codbarra]) {
+          productosUnicos[item.codbarra] = {
+            codbarra: item.codbarra,
+            descripcionProducto: item.descripcionProducto,
+            cantidad: 0,
+            porcDescuento: 0,
+            precioVenta: 0,
+          };
+        }
+      });
+      
+      productosACargar = Object.values(productosUnicos);
+    } else if (ofertaEditar.products && ofertaEditar.products.length > 0) {
+      console.log("Cargando productos desde products (campo alternativo)");
+      productosACargar = ofertaEditar.products.map((item) => ({
+        codbarra: item.codbarra,
+        descripcionProducto: item.descripcion,
+        cantidad: 0,
+        porcDescuento: 0,
+        precioVenta: 0,
+      }));
+    }
+
+    console.log("Productos finales cargados:", productosACargar);
+    setProductosSeleccionados(productosACargar);
+    console.log("========================================");
   };
 
-  /**
-   * Convierte array de booleanos a string de días (ej: [true,false,...] -> "1011111")
-   */
+  const limpiarFormulario = () => {
+    setNombreOferta("");
+    setLleva(null);
+    setPaga(null);
+    setStartDate(null);
+    setEndDate(null);
+    setStartTime(null);
+    setEndTime(null);
+    setProductosSeleccionados([]);
+    setDiasSemana([true, true, true, true, true, true, true]);
+    setOfertaActiva(true);
+    setClearSearch(prev => !prev);
+  };
+
   const convertirDiasAString = (diasArray) => {
     return diasArray.map((dia) => (dia ? "1" : "0")).join("");
   };
 
-  /**
-   * Maneja el cambio de selección de un día específico
-   */
   const handleDiaChange = (index) => {
     const nuevosDias = [...diasSemana];
     nuevosDias[index] = !nuevosDias[index];
     setDiasSemana(nuevosDias);
   };
 
-  /**
-   * Selecciona o deselecciona todos los días de la semana
-   */
   const handleTodosLosDias = (seleccionar) => {
     setDiasSemana(new Array(7).fill(seleccionar));
   };
 
-  /**
-   * Agrega un producto a la lista de productos seleccionados
-   */
   const handleProductoSeleccionado = (producto) => {
     const yaExiste = productosSeleccionados.some((p) => p.codbarra === producto.codbarra);
 
@@ -134,19 +195,15 @@ const OfertasNxM = ({ onClose }) => {
     };
 
     setProductosSeleccionados((prev) => [...prev, nuevoProducto]);
+    setClearSearch(prev => !prev);
   };
 
-  /**
-   * Elimina un producto de la lista de productos seleccionados
-   */
   const handleEliminarProducto = (codbarra) => {
     setProductosSeleccionados((prev) => prev.filter((p) => p.codbarra !== codbarra));
   };
 
   /**
    * Calcula el valor de descuento para la oferta N x M
-   * CASO 1: Si hay un solo producto, se descuenta el valor de UNA unidad
-   * CASO 2: Si hay múltiples productos, se descuenta el valor del producto de menor precio
    */
   const calcularValorDescuento = () => {
     if (productosSeleccionados.length === 0 || !lleva || !paga) return 0;
@@ -155,28 +212,11 @@ const OfertasNxM = ({ onClose }) => {
     if (productosSeleccionados.length === 1) {
       const producto = productosSeleccionados[0];
       const precioUnitario = producto.precioVenta || 0;
-      
-      // El descuento es el valor de UNA unidad (porque se aplica por unidad)
-      const descuento = precioUnitario;
-      
-      console.log(`CASO 1 - Producto único:`);
-      console.log(`  Precio unitario: $${precioUnitario}`);
-      console.log(`  Lleva: ${lleva}, Paga: ${paga}`);
-      console.log(`  Descuento por unidad: $${descuento}`);
-      
-      return descuento;
+      return precioUnitario;
     }
     
     // CASO 2: Múltiples productos diferentes
-    // El descuento es el valor del producto de menor precio
     const precioMenor = Math.min(...productosSeleccionados.map(p => p.precioVenta || 0));
-    
-    console.log(`CASO 2 - Productos múltiples:`);
-    console.log(`  Productos: ${productosSeleccionados.length}`);
-    console.log(`  Precios: ${productosSeleccionados.map(p => `$${p.precioVenta}`).join(', ')}`);
-    console.log(`  Precio menor: $${precioMenor}`);
-    console.log(`  Descuento por unidad: $${precioMenor}`);
-    
     return precioMenor;
   };
 
@@ -217,7 +257,7 @@ const OfertasNxM = ({ onClose }) => {
     const precioMenor = Math.min(...precios);
     const productoMenor = productosSeleccionados.find(p => p.precioVenta === precioMenor);
     const descuentoPorUnidad = precioMenor;
-    const descuentoTotal = descuentoPorUnidad * 1; // siempre 1 unidad con descuento
+    const descuentoTotal = descuentoPorUnidad * 1;
     const totalConDescuento = totalSinDescuento - descuentoTotal;
 
     return {
@@ -240,9 +280,6 @@ const OfertasNxM = ({ onClose }) => {
     };
   };
 
-  /**
-   * Valida que todos los campos obligatorios estén completos
-   */
   const validarFormulario = () => {
     if (productosSeleccionados.length === 0) {
       showMessage("Debe seleccionar al menos un producto");
@@ -275,18 +312,9 @@ const OfertasNxM = ({ onClose }) => {
     return true;
   };
 
-  /**
-   * Guarda una nueva oferta N x M con cálculo mejorado
-   */
-  const handleGuardar = () => {
-    if (!validarFormulario()) {
-      return;
-    }
-
+  const construirObjetoOferta = () => {
     // Calcular el valor de descuento según el caso
     const valorDescuentoUnitario = calcularValorDescuento();
-    const detalleCalculo = obtenerDetalleCalculo();
-
     let oferta_ListaCanasta = [];
 
     // CASO 1: Producto único - se repite en la lista
@@ -302,15 +330,10 @@ const OfertasNxM = ({ onClose }) => {
         oferta_ListaCanasta.push({
           codbarra: producto.codbarra,
           descripcionProducto: producto.descripcionProducto,
-          cantidad: 1, // Siempre 1 por cada entrada
-          porcDescuento: esUnidadGratis ? 100 : 0, // 100% descuento en unidades gratis
+          cantidad: 1,
+          porcDescuento: esUnidadGratis ? 100 : 0,
         });
       }
-      
-      console.log(`CASO 1 - Lista generada:`);
-      console.log(`  Total de entradas: ${oferta_ListaCanasta.length}`);
-      console.log(`  Unidades con pago: ${paga}`);
-      console.log(`  Unidades con 100% descuento: ${unidadesGratis}`);
     } 
     // CASO 2: Múltiples productos diferentes
     else {
@@ -323,26 +346,27 @@ const OfertasNxM = ({ onClose }) => {
         oferta_ListaCanasta.push({
           codbarra: producto.codbarra,
           descripcionProducto: producto.descripcionProducto,
-          cantidad: 1, // Siempre 1 unidad de cada producto
-          porcDescuento: esProductoMenor ? 100 : 0, // 100% descuento al de menor valor
+          cantidad: 1,
+          porcDescuento: esProductoMenor ? 100 : 0,
         });
       });
-      
-      console.log(`CASO 2 - Lista generada:`);
-      console.log(`  Total de productos: ${oferta_ListaCanasta.length}`);
-      console.log(`  Producto con 100% descuento: ${oferta_ListaCanasta.find(p => p.porcDescuento === 100)?.descripcionProducto}`);
     }
 
-    // Construir el objeto de la oferta
-    const nuevaOferta = {
-      codigoTipo: 2, 
-      descripcion: nombreOferta,
-      fechaInicial: startDate.toISOString(),
-      fechaFinal: endDate.toISOString(),
+    // Asegurar formato ISO 8601 con zona horaria
+    const fechaInicialISO = startDate.toISOString();
+    const fechaFinalISO = endDate.toISOString();
+
+    return {
+      codigoOferta: ofertaEditar.codigoOferta,
+      codigoTipo: 2, // Tipo fijo para ofertas N x M
+      descripcion: nombreOferta.trim(),
+      fechaInicial: fechaInicialISO,
+      fechaFinal: fechaFinalISO,
       horaInicio: startTime ? startTime.format("HH:mm") : "",
       horaFin: endTime ? endTime.format("HH:mm") : "",
       diasSemana: convertirDiasAString(diasSemana),
-      fAplicaMix: productosSeleccionados.length > 1, // true si hay múltiples productos
+      fAplicaMix: productosSeleccionados.length > 1,
+      activo: ofertaActiva,
       oferta_Regla: {
         signo: "=",
         cantidad: 1, // Siempre 1 porque se aplica por unidad
@@ -352,112 +376,61 @@ const OfertasNxM = ({ onClose }) => {
       },
       oferta_ListaCanasta: oferta_ListaCanasta,
     };
-
-    console.log("=== GUARDANDO OFERTA N x M ===");
-    console.log("Tipo de oferta:", productosSeleccionados.length === 1 ? "CASO 1 (Producto único)" : "CASO 2 (Productos múltiples)");
-    console.log(`Lleva: ${lleva}, Paga: ${paga}`);
-    console.log(`Descuento por unidad: $${valorDescuentoUnitario}`);
-    console.log("oferta_ListaCanasta:", JSON.stringify(oferta_ListaCanasta, null, 2));
-    console.log("Objeto completo:", JSON.stringify(nuevaOferta, null, 2));
-    
-    showLoading();
-
-    Ofertas.addOferta(
-      nuevaOferta,
-      (data, response) => {
-        hideLoading();
-        showMessage("Oferta creada exitosamente");
-        setRefresh(!refresh);
-        limpiarFormulario();
-      },
-      (error) => {
-        hideLoading();
-        console.error("Error al guardar oferta:", error);
-        const mensajeError = error?.message || error?.descripcion || "Error desconocido";
-        showMessage(`Error al guardar la oferta: ${mensajeError}`);
-      }
-    );
   };
 
-  /**
-   * Limpia todos los campos del formulario de creación
-   */
-  const limpiarFormulario = () => {
-    setNombreOferta("");
-    setlleva(null);
-    setpaga(null);
-    setStartDate(null);
-    setEndDate(null);
-    setStartTime(null);
-    setEndTime(null);
-    setProductosSeleccionados([]);
-    setDiasSemana([true, true, true, true, true, true, true]);
-  };
-
-  /**
-   * Abre el diálogo de edición con los datos de la oferta seleccionada
-   */
-  const handleEdit = (oferta) => {
-    setOfertaParaEditar(oferta);
-    setDialogEditarOpen(true);
-  };
-
-  /**
-   * Cierra el diálogo de edición
-   */
-  const handleCloseDialogEditar = () => {
-    setDialogEditarOpen(false);
-    setOfertaParaEditar(null);
-  };
-
-  /**
-   * Callback ejecutado cuando se actualiza una oferta exitosamente
-   */
-  const handleOfertaActualizada = () => {
-    setRefresh(!refresh);
-  };
-
-  /**
-   * Elimina una oferta (baja lógica)
-   */
-  const handleDelete = (oferta) => {
-    if (!oferta || !oferta.codigoOferta) {
-      showMessage("Error: No se pudo identificar la oferta a eliminar");
-      console.error("Oferta inválida:", oferta);
+  const handleActualizar = () => {
+    if (!validarFormulario()) {
       return;
     }
 
-    const mensajeConfirmacion = `¿Está seguro de eliminar la oferta "${oferta.descripcion}"?\nCódigo: ${oferta.codigoOferta}`;
+    const ofertaActualizada = construirObjetoOferta();
 
-    showConfirm(
-      mensajeConfirmacion,
-      () => {
-        showLoading();
+    console.log("========================================");
+    console.log("Objeto N x M enviado al backend:", JSON.stringify(ofertaActualizada, null, 2));
+    console.log("========================================");
 
-        Ofertas.deleteOferta(
-          oferta.codigoOferta,
-          (data, response) => {
-            hideLoading();
-            showMessage("Oferta eliminada exitosamente");
-            setRefresh(!refresh);
-          },
-          (error) => {
-            hideLoading();
-            console.error("Error al eliminar oferta:", error);
-            const mensajeError = error?.message || error?.descripcion || "Error desconocido";
-            showMessage(`Error al eliminar la oferta: ${mensajeError}`);
-          }
-        );
+    showLoading();
+
+    Ofertas.updateOferta(
+      ofertaActualizada,
+      (data, response) => {
+        console.log("========================================");
+        console.log("✅ Oferta N x M actualizada exitosamente:", data);
+        console.log("========================================");
+        
+        hideLoading();
+        showMessage("Oferta N x M actualizada exitosamente");
+        
+        // Limpiar formulario
+        limpiarFormulario();
+        
+        // Cerrar diálogo
+        onClose();
+        
+        // Ejecutar callback para actualizar lista
+        if (onOfertaActualizada) {
+          setTimeout(() => {
+            onOfertaActualizada();
+          }, 100);
+        }
       },
-      () => {
-        console.log("Eliminación cancelada por el usuario");
+      (error) => {
+        console.log("========================================");
+        console.error("❌ Error al actualizar oferta N x M:", error);
+        console.log("========================================");
+        
+        hideLoading();
+        const mensajeError = error?.message || error?.descripcion || "Error desconocido al actualizar la oferta";
+        showMessage(`Error: ${mensajeError}`);
       }
     );
   };
 
-  /**
-   * Maneja cambios en campos numéricos
-   */
+  const handleCerrar = () => {
+    limpiarFormulario();
+    onClose();
+  };
+
   const handleNumericChange = (setter, value) => {
     const numericValue = value.replace(/[^0-9]/g, "");
     if (numericValue === "" || numericValue === "0") {
@@ -509,23 +482,6 @@ const OfertasNxM = ({ onClose }) => {
           </Typography>
           
           <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid #2196f3' }}>
-            <Typography variant="body2" gutterBottom>
-              <strong>Estructura de oferta_ListaCanasta:</strong>
-            </Typography>
-            <Box sx={{ ml: 2, p: 1, backgroundColor: '#e3f2fd', borderRadius: 1 }}>
-              <Typography variant="caption" display="block">
-                - {detalleCalculo.paga} entrada(s) con cantidad: 1, porcDescuento: 0%
-              </Typography>
-              <Typography variant="caption" display="block">
-                - {detalleCalculo.unidadesGratis} entrada(s) con cantidad: 1, porcDescuento: 100%
-              </Typography>
-              <Typography variant="caption" display="block" fontWeight="bold" color="primary">
-                Total: {detalleCalculo.lleva} entradas en la lista
-              </Typography>
-            </Box>
-          </Box>
-          
-          <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid #2196f3' }}>
             <Typography variant="body2">
               • Descuento por unidad: <strong>${detalleCalculo.descuentoPorUnidad}</strong>
             </Typography>
@@ -539,10 +495,6 @@ const OfertasNxM = ({ onClose }) => {
               💰 Descuento total: ${detalleCalculo.descuentoTotal}
             </Typography>
           </Box>
-          
-          <Typography variant="caption" color="textSecondary" display="block" sx={{ mt: 1, fontStyle: 'italic' }}>
-            oferta_Regla: cantidad = 1, valor = ${detalleCalculo.descuentoPorUnidad}, aplicacion = "Unidad"
-          </Typography>
         </Box>
       );
     }
@@ -575,22 +527,6 @@ const OfertasNxM = ({ onClose }) => {
           </Box>
           
           <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid #ffa726' }}>
-            <Typography variant="body2" gutterBottom>
-              <strong>Estructura de oferta_ListaCanasta:</strong>
-            </Typography>
-            <Box sx={{ ml: 2, p: 1, backgroundColor: '#fff3e0', borderRadius: 1 }}>
-              {detalleCalculo.productos.map((prod, idx) => (
-                <Typography key={idx} variant="caption" display="block">
-                  - {prod.descripcion}: cantidad: 1, porcDescuento: {prod.esMenor ? "100%" : "0%"}
-                </Typography>
-              ))}
-              <Typography variant="caption" display="block" fontWeight="bold" color="warning.dark" sx={{ mt: 0.5 }}>
-                Total: {detalleCalculo.productos.length} entradas en la lista
-              </Typography>
-            </Box>
-          </Box>
-          
-          <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid #ffa726' }}>
             <Typography variant="body2">
               • Producto con menor valor: <strong>{detalleCalculo.productoMenor}</strong>
             </Typography>
@@ -607,10 +543,6 @@ const OfertasNxM = ({ onClose }) => {
               💰 Descuento total: ${detalleCalculo.descuentoTotal}
             </Typography>
           </Box>
-          
-          <Typography variant="caption" color="textSecondary" display="block" sx={{ mt: 1, fontStyle: 'italic' }}>
-            oferta_Regla: cantidad = 1, valor = ${detalleCalculo.descuentoPorUnidad}, aplicacion = "Unidad"
-          </Typography>
         </Box>
       );
     }
@@ -619,21 +551,34 @@ const OfertasNxM = ({ onClose }) => {
   };
 
   return (
-    <>
-      <DialogTitle>Ofertas N x M (Lleva N, Paga M)</DialogTitle>
-      <DialogContent>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-          {/* Campo de nombre de oferta */}
+    <Dialog open={open} onClose={handleCerrar} maxWidth="md" fullWidth>
+      <DialogTitle>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Typography variant="h6">Editar Oferta N x M</Typography>
+          {ofertaEditar && (
+            <Chip 
+              label={`Código: ${ofertaEditar.codigoOferta}`} 
+              color="primary" 
+              size="small" 
+            />
+          )}
+        </Box>
+      </DialogTitle>
+
+      <DialogContent dividers>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          {/* Nombre de la oferta */}
           <TextField
             label="Nombre de la Oferta"
             type="text"
             value={nombreOferta}
             onChange={(e) => setNombreOferta(e.target.value)}
             fullWidth
+            required
             placeholder="Ej: 3x2 en productos seleccionados"
           />
 
-          {/* Componente de búsqueda de productos */}
+          {/* Buscador de productos */}
           <SearchListOffers
             refresh={refresh}
             setRefresh={setRefresh}
@@ -642,8 +587,8 @@ const OfertasNxM = ({ onClose }) => {
 
           {/* Tabla de productos seleccionados */}
           {productosSeleccionados.length > 0 && (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="h6" gutterBottom>
+            <Box>
+              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                 Productos Seleccionados ({productosSeleccionados.length})
               </Typography>
               <TableContainer component={Paper} elevation={2}>
@@ -675,7 +620,7 @@ const OfertasNxM = ({ onClose }) => {
                             size="small"
                             color="error"
                             onClick={() => handleEliminarProducto(producto.codbarra)}
-                            title="Eliminar"
+                            title="Eliminar producto"
                           >
                             <DeleteIcon fontSize="small" />
                           </IconButton>
@@ -686,7 +631,7 @@ const OfertasNxM = ({ onClose }) => {
                 </Table>
               </TableContainer>
 
-              {/* Resumen de cálculo mejorado */}
+              {/* Resumen de cálculo */}
               <ResumenCalculo />
             </Box>
           )}
@@ -699,7 +644,7 @@ const OfertasNxM = ({ onClose }) => {
                 value={startDate}
                 onChange={setStartDate}
                 format="DD/MM/YYYY"
-                slotProps={{ textField: { fullWidth: true } }}
+                slotProps={{ textField: { fullWidth: true, required: true } }}
               />
             </LocalizationProvider>
 
@@ -709,7 +654,7 @@ const OfertasNxM = ({ onClose }) => {
                 value={endDate}
                 onChange={setEndDate}
                 format="DD/MM/YYYY"
-                slotProps={{ textField: { fullWidth: true } }}
+                slotProps={{ textField: { fullWidth: true, required: true } }}
               />
             </LocalizationProvider>
           </Box>
@@ -717,21 +662,19 @@ const OfertasNxM = ({ onClose }) => {
           {/* Horas */}
           <Box sx={{ display: "flex", gap: 2 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <TimeField
-          label="Hora de Inicio"
-          // defaultValue={dayjs('2022-04-17T15:30')}
-          format="HH:mm"
-          value={startTime}
-          onChange={setStartTime}
-          slotProps={{ textField: { fullWidth: true } }}
-        />
+              <TimeField
+                label="Hora de Inicio"
+                format="HH:mm"
+                value={startTime}
+                onChange={setStartTime}
+                slotProps={{ textField: { fullWidth: true } }}
+              />
             </LocalizationProvider>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <TimeField
+              <TimeField
                 label="Hora de Término"
-                  // defaultValue={dayjs('2022-04-17T15:30')}
-          format="HH:mm"
+                format="HH:mm"
                 value={endTime}
                 onChange={setEndTime}
                 slotProps={{ textField: { fullWidth: true } }}
@@ -745,11 +688,12 @@ const OfertasNxM = ({ onClose }) => {
               label="Lleva (N)"
               type="text"
               value={lleva || ""}
-              onChange={(e) => handleNumericChange(setlleva, e.target.value)}
+              onChange={(e) => handleNumericChange(setLleva, e.target.value)}
               onKeyPress={(e) => {
                 if (!/[0-9]/.test(e.key)) e.preventDefault();
               }}
               fullWidth
+              required
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
               helperText="Cantidad que se lleva el cliente"
             />
@@ -757,11 +701,12 @@ const OfertasNxM = ({ onClose }) => {
               label="Paga (M)"
               type="text"
               value={paga || ""}
-              onChange={(e) => handleNumericChange(setpaga, e.target.value)}
+              onChange={(e) => handleNumericChange(setPaga, e.target.value)}
               onKeyPress={(e) => {
                 if (!/[0-9]/.test(e.key)) e.preventDefault();
               }}
               fullWidth
+              required
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
               helperText="Cantidad que paga el cliente"
             />
@@ -800,179 +745,59 @@ const OfertasNxM = ({ onClose }) => {
             </FormGroup>
           </Box>
 
-          {/* Tabla de ofertas existentes */}
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Todas las Ofertas
-            </Typography>
-            {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {error}
-              </Alert>
-            )}
-
-            {loading ? (
-              <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
-                <CircularProgress />
-              </Box>
-            ) : ofertas.length > 0 ? (
-              <TableContainer component={Paper} elevation={2}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-                      <TableCell><strong>Código</strong></TableCell>
-                      <TableCell><strong>Descripción</strong></TableCell>
-                      <TableCell><strong>Productos</strong></TableCell>
-                    
-                      <TableCell align="center"><strong>Descuento</strong></TableCell>
-                      <TableCell align="center"><strong>Vigencia</strong></TableCell>
-                      <TableCell align="center"><strong>Estado</strong></TableCell>
-                      <TableCell align="center"><strong>Acciones</strong></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {ofertas.map((oferta, index) => (
-                      <TableRow
-                        key={oferta.codigoOferta || index}
-                        hover
-                        sx={{
-                          backgroundColor: oferta.bajaLogica ? "#ffebee" : "inherit",
-                          opacity: oferta.bajaLogica ? 0.6 : 1,
-                        }}
-                      >
-                        <TableCell>
-                          <Typography variant="body2" fontWeight="bold">
-                            {oferta.codigoOferta}
-                          </Typography>
-                        </TableCell>
-
-                        <TableCell>
-                          <Typography variant="body2">{oferta.descripcion}</Typography>
-                          {oferta.codigoTipo && (
-                            <Chip label={`Tipo ${oferta.codigoTipo}`} size="small" variant="outlined" sx={{ mt: 0.5 }} />
-                          )}
-                        </TableCell>
-
-                        <TableCell>
-                          {oferta.products && oferta.products.length > 0 ? (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-                              {oferta.products.map((prod, idx) => (
-                                <Typography key={idx} variant="caption" color="textSecondary">
-                                  {prod.descripcion}
-                                </Typography>
-                              ))}
-                            </Box>
-                          ) : (
-                            <Chip label="Sin productos" size="small" color="default" />
-                          )}
-                        </TableCell>
-
-                      
-
-                       
-
-                        <TableCell align="center">
-                          {oferta.oferta_Regla && (
-                            <Typography variant="body2" color="success.main" fontWeight="bold">
-                              ${oferta.oferta_Regla.valor}
-                            </Typography>
-                          )}
-                        </TableCell>
-
-                        <TableCell align="center">
-                          <Typography variant="caption" display="block">
-                            {new Date(oferta.fechaInicial).toLocaleDateString("es-CL")}
-                          </Typography>
-                          <Typography variant="caption" display="block" color="textSecondary">
-                            hasta
-                          </Typography>
-                          <Typography variant="caption" display="block">
-                            {new Date(oferta.fechaFinal).toLocaleDateString("es-CL")}
-                          </Typography>
-                          {oferta.diasSemana && oferta.diasSemana !== "1111111" && (
-                            <Chip label="Días específicos" size="small" sx={{ mt: 0.5, fontSize: "0.7rem" }} />
-                          )}
-                        </TableCell>
-
-                        <TableCell align="center">
-                          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, alignItems: "center" }}>
-                            <Chip
-                              label={oferta.activo ? "Activa" : "Inactiva"}
-                              size="small"
-                              color={oferta.activo ? "success" : "default"}
-                            />
-                            {oferta.bajaLogica && (
-                              <Chip label="Eliminada" size="small" color="error" variant="outlined" />
-                            )}
-                          </Box>
-                        </TableCell>
-
-                        <TableCell align="center">
-                          <Box sx={{ display: "flex", gap: 0.5, justifyContent: "center" }}>
-                            <IconButton
-                              size="small"
-                              color="primary"
-                              onClick={() => handleEdit(oferta)}
-                              title="Editar"
-                              disabled={oferta.bajaLogica}
-                            >
-                              <EditIcon fontSize="small" />
-                            </IconButton>
-                            {!oferta.bajaLogica && (
-                              <IconButton
-                                size="small"
-                                color="error"
-                                onClick={() => handleDelete(oferta)}
-                                title="Eliminar"
-                              >
-                                <DeleteIcon fontSize="small" />
-                              </IconButton>
-                            )}
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            ) : (
-              <Paper elevation={1} sx={{ p: 3, textAlign: "center" }}>
-                <Typography variant="body2" color="textSecondary">
-                  No hay ofertas registradas
+          {/* Estado de la oferta (Activo/Inactivo) */}
+          <Box sx={{ p: 2, border: "1px solid #e0e0e0", borderRadius: 1, backgroundColor: "#fafafa" }}>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <Box>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  Estado de la Oferta
                 </Typography>
-              </Paper>
-            )}
-
-            <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <Typography variant="caption" color="textSecondary">
-                Total: {ofertas.length} oferta{ofertas.length !== 1 ? "s" : ""}
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
-                Activas: {ofertas.filter((o) => !o.bajaLogica && o.activo).length} | Inactivas:{" "}
-                {ofertas.filter((o) => !o.bajaLogica && !o.activo).length} | Eliminadas:{" "}
-                {ofertas.filter((o) => o.bajaLogica).length}
-              </Typography>
+                <Typography variant="caption" color="textSecondary">
+                  Define si la oferta estará activa o inactiva
+                </Typography>
+              </Box>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={ofertaActiva}
+                    onChange={(e) => setOfertaActiva(e.target.checked)}
+                    color="success"
+                  />
+                }
+                label={
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Typography variant="body2" fontWeight="bold">
+                      {ofertaActiva ? "Activa" : "Inactiva"}
+                    </Typography>
+                    <Chip
+                      label={ofertaActiva ? "ON" : "OFF"}
+                      size="small"
+                      color={ofertaActiva ? "success" : "default"}
+                    />
+                  </Box>
+                }
+                labelPlacement="start"
+              />
             </Box>
           </Box>
         </Box>
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancelar</Button>
-        <Button onClick={handleGuardar} variant="contained" disabled={productosSeleccionados.length === 0}>
-          Crear Oferta
+        <Button onClick={handleCerrar} color="inherit">
+          Cancelar
+        </Button>
+        <Button
+          onClick={handleActualizar}
+          variant="contained"
+          color="primary"
+          disabled={productosSeleccionados.length === 0}
+        >
+          Guardar Cambios
         </Button>
       </DialogActions>
-
-      {/* Diálogo de edición */}
-      <DialogEditarOfertaNxM
-        open={dialogEditarOpen}
-        onClose={handleCloseDialogEditar}
-        ofertaEditar={ofertaParaEditar}
-        onOfertaActualizada={handleOfertaActualizada}
-      />
-    </>
+    </Dialog>
   );
 };
 
-export default OfertasNxM;
+export default DialogEditarOfertaNxM;
