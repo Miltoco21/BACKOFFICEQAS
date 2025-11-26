@@ -40,7 +40,7 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
  * Componente principal para gestión de ofertas tipo N x M (Lleva N, Paga M)
  * Permite crear nuevas ofertas y visualizar/editar/eliminar ofertas existentes
  */
-const OfertasNxM = ({ onClose }) => {
+const OfertasNxM = ({ onClose,tipoOferta = 2  }) => {
   const { showLoading, hideLoading, showMessage, showConfirm } = useContext(SelectedOptionsContext);
 
   // Estados del formulario de creación
@@ -59,6 +59,7 @@ const OfertasNxM = ({ onClose }) => {
   const [ofertas, setOfertas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [ofertasFiltradas, setOfertasFiltradas] = useState([]);
 
   // Estados para el diálogo de edición
   const [dialogEditarOpen, setDialogEditarOpen] = useState(false);
@@ -70,6 +71,15 @@ const OfertasNxM = ({ onClose }) => {
   useEffect(() => {
     loadOfertas();
   }, [refresh]);
+
+  useEffect(() => {
+    if (ofertas.length > 0) {
+      const filtradas = ofertas.filter(oferta => oferta.codigoTipo === tipoOferta);
+      setOfertasFiltradas(filtradas);
+    } else {
+      setOfertasFiltradas([]);
+    }
+  }, [ofertas, tipoOferta]);
 
   /**
    * Carga todas las ofertas desde el backend
@@ -815,7 +825,7 @@ const OfertasNxM = ({ onClose }) => {
               <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
                 <CircularProgress />
               </Box>
-            ) : ofertas.length > 0 ? (
+            ) : ofertasFiltradas.length > 0 ? (
               <TableContainer component={Paper} elevation={2}>
                 <Table size="small">
                   <TableHead>
@@ -831,7 +841,7 @@ const OfertasNxM = ({ onClose }) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {ofertas.map((oferta, index) => (
+                    {ofertasFiltradas.map((oferta, index) => (
                       <TableRow
                         key={oferta.codigoOferta || index}
                         hover
