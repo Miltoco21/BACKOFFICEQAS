@@ -43,7 +43,7 @@ import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
  * Componente principal para gestión de ofertas tipo producto similar
  * Permite crear nuevas ofertas y visualizar/editar/eliminar ofertas existentes
  */
-const OfertasProductoSimilar = ({ onClose }) => {
+const OfertasProductoSimilar = ({ onClose ,tipoOferta = 1  }) => {
   const { showLoading, hideLoading, showMessage, showConfirm } = useContext(SelectedOptionsContext);
 
   // Estados del formulario de creación
@@ -59,6 +59,9 @@ const OfertasProductoSimilar = ({ onClose }) => {
   const [diasSemana, setDiasSemana] = useState([true, true, true, true, true, true, true]);
   const [ofertaActiva, setOfertaActiva] = useState(true);
   const [clearSearch, setClearSearch] = useState(false);
+
+
+  const [ofertasFiltradas, setOfertasFiltradas] = useState([]);
 
 
   // Estados para la lista de ofertas
@@ -77,6 +80,14 @@ const OfertasProductoSimilar = ({ onClose }) => {
     loadOfertas();
   }, [refresh]);
 
+  useEffect(() => {
+    if (ofertas.length > 0) {
+      const filtradas = ofertas.filter(oferta => oferta.codigoTipo === tipoOferta);
+      setOfertasFiltradas(filtradas);
+    } else {
+      setOfertasFiltradas([]);
+    }
+  }, [ofertas, tipoOferta]);
   /**
    * Carga todas las ofertas desde el backend
    */
@@ -199,7 +210,8 @@ const OfertasProductoSimilar = ({ onClose }) => {
 
     // Construir el objeto de la oferta
     const nuevaOferta = {
-      codigoTipo: 1,
+      // codigoTipo: 1,
+      codigoTipo: tipoOferta,
       descripcion: nombreOferta,
       fechaInicial: startDate.toISOString(),
       fechaFinal: endDate.toISOString(),
@@ -520,12 +532,11 @@ const OfertasProductoSimilar = ({ onClose }) => {
                 {error}
               </Alert>
             )}
-
-            {loading ? (
+ {loading ? (
               <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
                 <CircularProgress />
               </Box>
-            ) : ofertas.length > 0 ? (
+            ) : ofertasFiltradas.length > 0 ? (
               <TableContainer component={Paper} elevation={2}>
                 <Table size="small">
                   <TableHead>
@@ -541,7 +552,8 @@ const OfertasProductoSimilar = ({ onClose }) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {ofertas.map((oferta, index) => (
+                    {/* CORREGIDO: Cambiar ofertas por ofertasFiltradas */}
+                    {ofertasFiltradas.map((oferta, index) => (
                       <TableRow
                         key={oferta.codigoOferta || index}
                         hover
@@ -652,11 +664,12 @@ const OfertasProductoSimilar = ({ onClose }) => {
             ) : (
               <Paper elevation={1} sx={{ p: 3, textAlign: "center" }}>
                 <Typography variant="body2" color="textSecondary">
-                  No hay ofertas registradas
+                  No hay ofertas registradas para el tipo {tipoOferta}
                 </Typography>
               </Paper>
             )}
-
+            
+{/* 
             <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <Typography variant="caption" color="textSecondary">
                 Total: {ofertas.length} oferta{ofertas.length !== 1 ? "s" : ""}
@@ -666,7 +679,7 @@ const OfertasProductoSimilar = ({ onClose }) => {
                 {ofertas.filter((o) => !o.bajaLogica && !o.activo).length} | Eliminadas:{" "}
                 {ofertas.filter((o) => o.bajaLogica).length}
               </Typography>
-            </Box>
+            </Box> */}
           </Box>
         </Box>
       </DialogContent>
