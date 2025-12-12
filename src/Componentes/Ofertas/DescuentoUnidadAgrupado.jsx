@@ -1,73 +1,159 @@
-import React, { useState } from 'react';
-import {
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Box,
-  Typography
-} from '@mui/material';
+// import React, { useState } from "react";
+// import { Button, Dialog, Box } from "@mui/material";
+// import SideBar from "../NavBar/SideBar.jsx";
+// import { Typography } from "@mui/joy";
+// import OfertasProductoSimilar from "./OfertaProductoSimilar.jsx";
+// // import OfertasProductosComplementarios from  "./OfertaProductosComplementarios.jsx";
 
-const DescuentoUnidadAgrupado = ({ onClose }) => {
-  const [tipoDescuento, setTipoDescuento] = useState('unidad');
-  const [porcentajeDescuento, setPorcentajeDescuento] = useState('');
-  const [productosSeleccionados, setProductosSeleccionados] = useState([]);
+// // Importar los componentes de ofertas (deberás crearlos)
 
-  const handleGuardar = () => {
-    // Lógica para guardar la oferta
-    console.log('Guardando oferta de descuento:', {
-      tipoDescuento,
-      porcentajeDescuento,
-      productosSeleccionados
-    });
-    onClose();
-  };
+// const OfertasProductosMultiples = () => {
+//   // Estados para controlar la apertura/cierre de los modales
+//   const [openProductoSimilar, setOpenProductoSimilar] = useState(false);
+//   const [openOfertasMultiples, setOpenOfertasMultiples] = useState(false);
+//   const [openOfertasNxM, setOpenOfertasNxM] = useState(false);
+
+//   // Funciones para abrir y cerrar los modales
+//   const handleOpenProductoSimilar = () => setOpenProductoSimilar(true);
+//   const handleCloseProductoSimilar = () => setOpenProductoSimilar(false);
+
+//   const handleOpenOfertasMultiples = () => setOpenOfertasMultiples(true);
+//   const handleCloseOfertasMultiples = () => setOpenOfertasMultiples(false);
+
+//   return (
+//     <>
+//       <Box
+//         sx={{
+//           display: "flex",
+//           height: "100px", // Misma altura que el componente Stock
+//         }}
+//       >
+    
+//         <Button
+//           variant="outlined"
+//           sx={{
+//             my: 1,
+//             mx: 2,
+//           }}
+//           onClick={handleOpenProductoSimilar}
+//         >
+//           Oferta Producto Similar
+//         </Button>
+
+//         <Button
+//           variant="outlined"
+//           sx={{
+//             my: 1,
+//             mx: 2,
+//           }}
+//           onClick={handleOpenOfertasMultiples}
+//         >
+//           Ofertas Productos Complementario
+//         </Button>
+
+       
+//       </Box>
+
+//       {/* Dialogs para cada tipo de oferta */}
+//       <Dialog
+//         open={openProductoSimilar}
+//         onClose={handleCloseProductoSimilar}
+//         maxWidth="lg"
+//         fullWidth
+//       >
+//         <OfertasProductoSimilar onClose={handleCloseProductoSimilar} />
+//       </Dialog>
+
+//       <Dialog
+//         open={openOfertasMultiples}
+//         onClose={handleCloseOfertasMultiples}
+//         maxWidth="lg"
+//         fullWidth
+//       >
+//         <OfertasProductosMultiples onClose={handleCloseOfertasMultiples} />
+//       </Dialog>
+
+    
+//     </>
+//   );
+// };
+
+// export default OfertasProductosMultiples;
+import React, { useState } from "react";
+import { Button, Dialog, Box } from "@mui/material";
+import SideBar from "../NavBar/SideBar.jsx";
+import { Typography } from "@mui/joy";
+import OfertasProductoSimilar from "./OfertaProductoSimilar.jsx";
+import OfertasProductosComplementarios from "./OfertasProductosComplementarios.jsx"
+import OfertasProductoUnidad from "./OfertasProductoUnidad.jsx";
+const OfertasProductosMultiples = () => {
+  // Estados para controlar la apertura/cierre de los modales
+  const [openProductoSimilar, setOpenProductoSimilar] = useState(false);
+  const [openOfertasMultiples, setOpenOfertasMultiples] = useState(false);
+
+  // Funciones para abrir y cerrar los modales
+  const handleOpenProductoSimilar = () => setOpenProductoSimilar(true);
+  const handleCloseProductoSimilar = () => setOpenProductoSimilar(false);
+
+  const handleOpenOfertasMultiples = () => setOpenOfertasMultiples(true);
+  const handleCloseOfertasMultiples = () => setOpenOfertasMultiples(false);
 
   return (
     <>
-      <DialogTitle>Descuento por Unidad o Agrupado</DialogTitle>
-      <DialogContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-          <FormControl fullWidth>
-            <InputLabel>Tipo de Descuento</InputLabel>
-            <Select
-              value={tipoDescuento}
-              label="Tipo de Descuento"
-              onChange={(e) => setTipoDescuento(e.target.value)}
-            >
-              <MenuItem value="unidad">Por Unidad</MenuItem>
-              <MenuItem value="agrupado">Agrupado</MenuItem>
-            </Select>
-          </FormControl>
-
-          <TextField
-            label="Porcentaje de Descuento (%)"
-            type="number"
-            value={porcentajeDescuento}
-            onChange={(e) => setPorcentajeDescuento(e.target.value)}
-            fullWidth
-          />
-
-          <Typography variant="body2" color="textSecondary">
-            {tipoDescuento === 'unidad' 
-              ? 'Aplicar descuento a productos individuales'
-              : 'Aplicar descuento a grupos de productos'}
-          </Typography>
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancelar</Button>
-        <Button onClick={handleGuardar} variant="contained">
-          Guardar Oferta
+      <Box
+        sx={{
+          display: "flex",
+          height: "100px", // Misma altura que el componente Stock
+        }}
+      >
+    
+        <Button
+          variant="outlined"
+          sx={{
+            my: 1,
+            mx: 2,
+          }}
+          onClick={handleOpenProductoSimilar}
+        >
+        Descuento Producto Unidad
         </Button>
-      </DialogActions>
+
+        <Button
+          variant="outlined"
+          sx={{
+            my: 1,
+            mx: 2,
+          }}
+          onClick={handleOpenOfertasMultiples}
+        >
+          Descuento Productos Agrupados
+        </Button>
+
+       
+      </Box>
+
+      {/* Dialogs para cada tipo de oferta */}
+      <Dialog
+        open={openProductoSimilar}
+        onClose={handleCloseProductoSimilar}
+        maxWidth="lg"
+        fullWidth
+      >
+        <OfertasProductoUnidad onClose={handleCloseProductoSimilar} />
+      </Dialog>
+
+      <Dialog
+        open={openOfertasMultiples}
+        onClose={handleCloseOfertasMultiples}
+        maxWidth="lg"
+        fullWidth
+      >
+        <OfertasProductosComplementarios onClose={handleCloseOfertasMultiples} />
+      </Dialog>
+
+    
     </>
   );
 };
 
-export default DescuentoUnidadAgrupado;
+export default OfertasProductosMultiples;
