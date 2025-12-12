@@ -34,7 +34,7 @@ import { InputAdornment } from "@mui/material";
 import SearchListOffers from "./SearchListOfertas";
 import DialogEditarOfertaComplementarias from "./DialogEditarOfertaComplementarias";
 import { SelectedOptionsContext } from "../Context/SelectedOptionsProvider";
-
+import DialogEditarDescuentoUnidadAgrupado from "./DialogEditarDescuentoUnidadAgrupado";
 const OfertasProductoUnidad = ({ onClose, tipoOferta = 1 }) => {
   const { showLoading, hideLoading, showMessage, showConfirm } = useContext(
     SelectedOptionsContext
@@ -908,7 +908,7 @@ const OfertasProductoUnidad = ({ onClose, tipoOferta = 1 }) => {
       </DialogActions>
 
       {/* Diálogo de edición */}
-      <DialogEditarOfertaComplementarias
+      <DialogEditarDescuentoUnidadAgrupado
         open={dialogEditarOpen}
         onClose={handleCloseDialogEditar}
         ofertaEditar={ofertaParaEditar}
