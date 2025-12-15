@@ -86,6 +86,7 @@ import { Typography } from "@mui/joy";
 import OfertasProductoSimilar from "./OfertaProductoSimilar.jsx";
 import OfertasProductosComplementarios from "./OfertasProductosComplementarios.jsx"
 import OfertasProductoUnidad from "./OfertasProductoUnidad.jsx";
+import DescuentosProductosAgrupados from "./DescuentosProductosAgrupados.jsx";
 const OfertasProductosMultiples = () => {
   // Estados para controlar la apertura/cierre de los modales
   const [openProductoSimilar, setOpenProductoSimilar] = useState(false);
@@ -148,7 +149,7 @@ const OfertasProductosMultiples = () => {
         maxWidth="lg"
         fullWidth
       >
-        <OfertasProductosComplementarios onClose={handleCloseOfertasMultiples} />
+        <DescuentosProductosAgrupados onClose={handleCloseOfertasMultiples} />
       </Dialog>
 
     
