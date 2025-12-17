@@ -119,7 +119,7 @@ const OfertasProductosMultiples = () => {
         Descuento Producto Unidad
         </Button>
 
-        <Button
+        {/* <Button
           variant="outlined"
           sx={{
             my: 1,
@@ -128,7 +128,7 @@ const OfertasProductosMultiples = () => {
           onClick={handleOpenOfertasMultiples}
         >
           Descuento Productos Agrupados
-        </Button>
+        </Button> */}
 
        
       </Box>
