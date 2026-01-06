@@ -348,6 +348,7 @@ import CloseSession from '../ScreenDialog/CloseSession'
 import AddCardIcon from '@mui/icons-material/AddCard';
 import FindInPageIcon from '@mui/icons-material/FindInPage';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
+import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 
 const drawerWidth = 240;
 
@@ -426,6 +427,8 @@ export default function PermanentDrawerLeft() {
           link: "/stock",
           icon: <ListAltIcon />,
         },
+        { text: "Descuentos", link: "/descuentos", icon: <PriceCheckIcon /> },
+
         {
           text: "Ofertas",
           link: "/ofertas",

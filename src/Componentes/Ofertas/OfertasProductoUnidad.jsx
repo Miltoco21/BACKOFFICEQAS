@@ -1386,7 +1386,7 @@ const OfertasProductoUnidad = ({ onClose, tipoOferta = 1 }) => {
 
   return (
     <>
-      <DialogTitle>Ofertas Producto Unidad</DialogTitle>
+      <DialogTitle>Descuento Producto Unidad</DialogTitle>
       <DialogContent>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
           {/* Formulario de creación */}

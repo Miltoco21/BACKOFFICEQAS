@@ -60,6 +60,7 @@ import ReporteStockValorizado from './Pages/ReporteStockValorizado';
 import Repartidores from './Pages/Repartidores';
 import AsociacionClientesRepartidor from './Pages/AsociacionClientesRepartidor';
 import Ofertas from './Pages/Ofertas'
+import Descuentos from './Pages/Descuentos';
 function App() {
   return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -115,6 +116,7 @@ function App() {
             <Route path="/envases-pesajes" element={<EnvasesPesajes />} />
             <Route path="/centrocostos" element={<CentroCostos />} />
             <Route path="/ofertas" element={<Ofertas />} />
+            <Route path="/descuentos" element={<Descuentos />} />
 
 
 

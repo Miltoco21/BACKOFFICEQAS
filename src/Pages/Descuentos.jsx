@@ -2,27 +2,25 @@ import React, { useState } from "react";
 import { Button, Dialog, Box } from "@mui/material";
 import SideBar from "../Componentes/NavBar/SideBar.jsx";
 import { Typography } from "@mui/joy";
+import DescuentoUnidadAgrupado from "../Componentes/Ofertas/DescuentoUnidadAgrupado.jsx"
 
-// Importar los componentes de ofertas (deberás crearlos)
-import DescuentoUnidadAgrupado from "../Componentes/Ofertas/DescuentoUnidadAgrupado.jsx";
-import OfertasProductosMultiples from "../Componentes/Ofertas/OfertasProductosMultiples.jsx";
-import OfertasNxM from "../Componentes/Ofertas/OfertasNxM.jsx";
 
-const Ofertas = () => {
+
+const Descuentos = () => {
   // Estados para controlar la apertura/cierre de los modales
   const [openDescuentoUnidad, setOpenDescuentoUnidad] = useState(false);
-  const [openOfertasMultiples, setOpenOfertasMultiples] = useState(false);
-  const [openOfertasNxM, setOpenOfertasNxM] = useState(false);
+  const [openDescuentosMultiples, setOpenDescuentosMultiples] = useState(false);
+  const [openDescuentosNxM, setOpenDescuentosNxM] = useState(false);
 
   // Funciones para abrir y cerrar los modales
   const handleOpenDescuentoUnidad = () => setOpenDescuentoUnidad(true);
   const handleCloseDescuentoUnidad = () => setOpenDescuentoUnidad(false);
 
-  const handleOpenOfertasMultiples = () => setOpenOfertasMultiples(true);
-  const handleCloseOfertasMultiples = () => setOpenOfertasMultiples(false);
+  const handleOpenDescuentosMultiples = () => setOpenDescuentosMultiples(true);
+  const handleCloseDescuentosMultiples = () => setOpenDescuentosMultiples(false);
 
-  const handleOpenOfertasNxM = () => setOpenOfertasNxM(true);
-  const handleCloseOfertasNxM = () => setOpenOfertasNxM(false);
+  const handleOpenDescuentosNxM = () => setOpenDescuentosNxM(true);
+  const handleCloseDescuentosNxM = () => setOpenDescuentosNxM(false);
 
   return (
     <>
@@ -33,7 +31,7 @@ const Ofertas = () => {
         }}
       >
         <SideBar />
-        {/* <Button
+        <Button
           variant="outlined"
           sx={{
             my: 1,
@@ -41,33 +39,31 @@ const Ofertas = () => {
           }}
           onClick={handleOpenDescuentoUnidad}
         >
-          Descuento Unidad/Agrupado
+          Descuentos
+        </Button>
+
+        {/* <Button
+          variant="outlined"
+          sx={{
+            my: 1,
+            mx: 2,
+          }}
+          onClick={handleOpenDescuentosMultiples}
+        >
+          Descuentos Múltiples Productos
+        </Button>
+
+        <Button
+          variant="outlined"
+          sx={{
+            my: 1,
+            mx: 2,
+          }}
+          onClick={handleOpenDescuentosNxM}
+        >
+          Descuentos NxM 
         </Button> */}
-
-        <Button
-          variant="outlined"
-          sx={{
-            my: 1,
-            mx: 2,
-          }}
-          onClick={handleOpenOfertasMultiples}
-        >
-          Ofertas Múltiples Productos
-        </Button>
-
-        <Button
-          variant="outlined"
-          sx={{
-            my: 1,
-            mx: 2,
-          }}
-          onClick={handleOpenOfertasNxM}
-        >
-          Ofertas NxM 
-        </Button>
       </Box>
-
-      {/* Dialogs para cada tipo de oferta */}
       <Dialog
         open={openDescuentoUnidad}
         onClose={handleCloseDescuentoUnidad}
@@ -77,25 +73,36 @@ const Ofertas = () => {
         <DescuentoUnidadAgrupado onClose={handleCloseDescuentoUnidad} />
       </Dialog>
 
-      <Dialog
-        open={openOfertasMultiples}
-        onClose={handleCloseOfertasMultiples}
+      {/* Dialogs para cada tipo de oferta */}
+      {/*
+       <Dialog
+        open={openDescuentoUnidad}
+        onClose={handleCloseDescuentoUnidad}
         maxWidth="lg"
         fullWidth
       >
-        <OfertasProductosMultiples onClose={handleCloseOfertasMultiples} />
+        <DescuentoUnidadAgrupado onClose={handleCloseDescuentoUnidad} />
       </Dialog>
 
       <Dialog
-        open={openOfertasNxM}
-        onClose={handleCloseOfertasNxM}
+        open={openDescuentosMultiples}
+        onClose={handleCloseDescuentosMultiples}
         maxWidth="lg"
         fullWidth
       >
-        <OfertasNxM onClose={handleCloseOfertasNxM} />
+        <DescuentosProductosMultiples onClose={handleCloseDescuentosMultiples} />
       </Dialog>
+
+      <Dialog
+        open={openDescuentosNxM}
+        onClose={handleCloseDescuentosNxM}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DescuentosNxM onClose={handleCloseDescuentosNxM} />
+      </Dialog> */}
     </>
   );
 };
 
-export default Ofertas;
+export default Descuentos;
