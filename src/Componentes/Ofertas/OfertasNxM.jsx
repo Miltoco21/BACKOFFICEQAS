@@ -864,25 +864,7 @@ const OfertasNxM = ({ onClose, tipoOferta = 3 }) => {
               </Paper>
             )}
 
-            <Box
-              sx={{
-                mt: 2,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="caption" color="textSecondary">
-                Total: {ofertas.length} oferta{ofertas.length !== 1 ? "s" : ""}
-              </Typography>
-              <Typography variant="caption" color="textSecondary">
-                Activas:{" "}
-                {ofertas.filter((o) => !o.bajaLogica && o.activo).length} |
-                Inactivas:{" "}
-                {ofertas.filter((o) => !o.bajaLogica && !o.activo).length} |
-                Eliminadas: {ofertas.filter((o) => o.bajaLogica).length}
-              </Typography>
-            </Box>
+         
           </Box>
         </Box>
       </DialogContent>
