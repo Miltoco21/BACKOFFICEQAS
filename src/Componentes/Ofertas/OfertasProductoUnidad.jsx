@@ -963,7 +963,7 @@ import DialogEditarDescuentoUnidadAgrupado from "./DialogEditarDescuentoUnidadAg
 import PercentIcon from "@mui/icons-material/Percent";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
-const OfertasProductoUnidad = ({ onClose, tipoOferta = 1 }) => {
+const OfertasProductoUnidad = ({ onClose, tipoOferta = 4 }) => {
   const { showLoading, hideLoading, showMessage, showConfirm } = useContext(
     SelectedOptionsContext
   );
@@ -1383,6 +1383,10 @@ const OfertasProductoUnidad = ({ onClose, tipoOferta = 1 }) => {
     if (n == null || isNaN(n)) return "0%";
     return `${n}%`;
   };
+  const handleEdit = (oferta) => {
+    setOfertaParaEditar(oferta);
+    setDialogEditarOpen(true);
+  };
 
   return (
     <>
@@ -1562,38 +1566,7 @@ const OfertasProductoUnidad = ({ onClose, tipoOferta = 1 }) => {
                   />
                 </Box>
 
-                {/* Información del descuento aplicado */}
-                {descuentoAplicado > 0 && (
-                  <Box sx={{ 
-                    display: "flex", 
-                    flexDirection: "column", 
-                    gap: 1,
-                    p: 1.5,
-                    backgroundColor: tipoDescuento === "$" ? "#e8f5e9" : "#e3f2fd",
-                    borderRadius: 1,
-                    border: `1px solid ${tipoDescuento === "$" ? "#c8e6c9" : "#bbdefb"}`,
-                  }}>
-                    <Typography variant="body2" fontWeight="medium">
-                      Resumen del descuento:
-                    </Typography>
-                    <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                      <Typography variant="body2">
-                        {tipoDescuento === "$" 
-                          ? `Descuento fijo: ${formatCLP(descuentoManual)}`
-                          : `Porcentaje aplicado: ${descuentoPorcentaje}%`
-                        }
-                      </Typography>
-                      <Typography variant="body2" color="primary" fontWeight="bold">
-                        Descuento total: {formatCLP(descuentoAplicado)}
-                      </Typography>
-                      {tipoDescuento === "%" && (
-                        <Typography variant="caption" color="text.secondary">
-                          ({formatCLP(descuentoAplicado)} de {formatCLP(totalSinDescuento)})
-                        </Typography>
-                      )}
-                    </Box>
-                  </Box>
-                )}
+             
               </Box>
             </Box>
           )}
@@ -1698,8 +1671,222 @@ const OfertasProductoUnidad = ({ onClose, tipoOferta = 1 }) => {
             </FormGroup>
           </Box>
 
-          {/* Tabla de ofertas existentes - Código existente sin cambios */}
-          {/* ... (el resto del código de la tabla permanece igual) */}
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Todas las Ofertas 4
+            </Typography>
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
+            {loading ? (
+              <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+                <CircularProgress />
+              </Box>
+            ) : ofertasFiltradas.length > 0 ? (
+              <TableContainer component={Paper} elevation={2}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+                      <TableCell>
+                        <strong>Código oferta</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>Descripción</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>Productos</strong>
+                      </TableCell>
+                      <TableCell align="center">
+                        <strong>Cantidad</strong>
+                      </TableCell>
+                      <TableCell align="center">
+                        <strong>Valor oferta</strong>
+                      </TableCell>
+                      <TableCell align="center">
+                        <strong>Vigencia</strong>
+                      </TableCell>
+                      <TableCell align="center">
+                        <strong>Estado</strong>
+                      </TableCell>
+                      <TableCell align="center">
+                        <strong>Acciones</strong>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {ofertasFiltradas.map((oferta, index) => (
+                      <TableRow
+                        key={oferta.codigoOferta || index}
+                        hover
+                        sx={{
+                          backgroundColor: oferta.bajaLogica
+                            ? "#ffebee"
+                            : "inherit",
+                          opacity: oferta.bajaLogica ? 0.6 : 1,
+                        }}
+                      >
+                        <TableCell>
+                          <Typography variant="body2" fontWeight="bold">
+                            {oferta.codigoOferta}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">
+                            {oferta.descripcion}
+                          </Typography>
+                          {oferta.codigoTipo && (
+                            <Chip
+                              label={`Tipo ${oferta.codigoTipo}`}
+                              size="small"
+                              variant="outlined"
+                              sx={{ mt: 0.5 }}
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {oferta.products && oferta.products.length > 0 ? (
+                            <Box
+                              sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 0.5,
+                              }}
+                            >
+                              {oferta.products.map((prod, idx) => (
+                                <Typography
+                                  key={idx}
+                                  variant="caption"
+                                  color="textSecondary"
+                                >
+                                  {prod.descripcion}
+                                </Typography>
+                              ))}
+                            </Box>
+                          ) : (
+                            <Chip
+                              label="Sin productos"
+                              size="small"
+                              color="default"
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell align="center">
+                          {oferta.oferta_Regla && (
+                            <Typography
+                              variant="body2"
+                              color="secondary"
+                              fontWeight="bold"
+                            >
+                              {oferta.oferta_Regla.cantidad}
+                            </Typography>
+                          )}
+                        </TableCell>
+                        <TableCell align="center">
+                          {oferta.oferta_Regla && (
+                            <Typography
+                              variant="body2"
+                              color="secondary"
+                              fontWeight="bold"
+                            >
+                              ${oferta.oferta_Regla.valor}
+                            </Typography>
+                          )}
+                        </TableCell>
+                        <TableCell align="center">
+                          <Typography variant="caption" display="block">
+                            {new Date(oferta.fechaInicial).toLocaleDateString(
+                              "es-CL"
+                            )}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            display="block"
+                            color="textSecondary"
+                          >
+                            hasta
+                          </Typography>
+                          <Typography variant="caption" display="block">
+                            {new Date(oferta.fechaFinal).toLocaleDateString(
+                              "es-CL"
+                            )}
+                          </Typography>
+                          {oferta.diasSemana &&
+                            oferta.diasSemana !== "1111111" && (
+                              <Chip
+                                label="Días específicos"
+                                size="small"
+                                sx={{ mt: 0.5, fontSize: "0.7rem" }}
+                              />
+                            )}
+                        </TableCell>
+                        <TableCell align="center">
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 0.5,
+                              alignItems: "center",
+                            }}
+                          >
+                            <Chip
+                              label={oferta.activo ? "Activa" : "Inactiva"}
+                              size="small"
+                              color={oferta.activo ? "success" : "default"}
+                            />
+                            {oferta.bajaLogica && (
+                              <Chip
+                                label="Eliminada"
+                                size="small"
+                                color="error"
+                                variant="outlined"
+                              />
+                            )}
+                          </Box>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: 0.5,
+                              justifyContent: "center",
+                            }}
+                          >
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={() => handleEdit(oferta)}
+                              title="Editar"
+                              disabled={oferta.bajaLogica}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                            {!oferta.bajaLogica && (
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={() => handleDelete(oferta)}
+                                title="Eliminar"
+                              >
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            )}
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ) : (
+              <Paper elevation={1} sx={{ p: 3, textAlign: "center" }}>
+                <Typography variant="body2" color="textSecondary">
+                  No hay ofertas registradas para el tipo  {tipoOferta}
+                </Typography>
+              </Paper>
+            )}
+          </Box>
           
         </Box>
       </DialogContent>
